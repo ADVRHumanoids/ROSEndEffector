@@ -24,22 +24,28 @@
 #include <ros/ros.h>
 #include <yaml-cpp/yaml.h>
 
+#include <urdf_parser/urdf_parser.h>
+#include <kdl_parser/kdl_parser.hpp>
+
+#include <srdfdom/model.h>
+
+#include <ROSEndEffector/EEInterface.h>
+
 namespace ROSEE {
     
     
     /**
      * @brief Class responsible for parsing the YAML file providing
-     * the URDF, SRDF, the EE-HAL library implementation and the 
-     * Grasping Primitive Definition (GPD).
+     * the URDF, SRDF, the EE-HAL library implementation and the EEInterface
      * 
      */
     class Parser {
-    
-        typedef std::shared_ptr<Parser> Ptr;
-        typedef std::shared_ptr<const Parser> ConstPtr;
-        
+            
     public:
         
+        typedef std::shared_ptr<Parser> Ptr;
+        typedef std::shared_ptr<const Parser> ConstPtr;
+
         Parser( const ros::NodeHandle& nh );
         //Parser ( const Parser& other );
         //Parser& operator= ( const Parser& p );
@@ -60,13 +66,49 @@ namespace ROSEE {
          */
         bool init (const std::string& path_to_cfg);
         
+        /**
+         * @brief Getterr for the current End-Effector Interface
+         * 
+         * @return ROSEE::EEInterface::Ptr or nullptr is the Parser is not initialized
+         */
+        ROSEE::EEInterface::Ptr getEndEffectorInterface();
+        
+        /**
+         * @brief Utility to print the mapping between the End Effector finger chains and the related actuated joints
+         * 
+         * @return void
+         */
+        void printEndEffectorFingerJointsMap();
+        
     private:
         
         ros::NodeHandle _nh;
-        std::string _ros_ee_config_path, _urdf_path, _srdf_path;
+        std::string _ros_ee_config_path, _urdf_path, _srdf_path, _urdf_string, _srdf_string;
+        bool _is_initialized = false;
+        
+        urdf::ModelInterfaceSharedPtr _urdf_model;
+        KDL::Tree _robot_tree;
+        
+        srdf::Model _srdfdom;
+        
+        int _fingers_num = 0;
+        std::vector<std::string> _fingers_names;
+        std::vector<int> _fingers_group_id;
+        
+        std::map<std::string, std::vector<std::string>> _finger_joint_map;
+        
+        ROSEE::EEInterface::Ptr _ee_interface;
+        
         
         /**
-         * @brief Function responsble to fill the internal data structure of the Parser
+         * @brief configure the ROSEE parser based on the configration files requested
+         * 
+         * @return bool true on success, false otherwise
+         */
+        bool configure();
+        
+        /**
+         * @brief Function responsible to get the file needed to fill the internal data structure of the Parser
          * with data coming from the ros_ee configuration file requested by the user
          * 
          * @return bool true on success, false if the config file contains 
@@ -74,6 +116,39 @@ namespace ROSEE {
          * or in the Grasping Primitive Definition).
          */
         bool getROSEndEffectorConfig();
+        
+        /**
+         * @brief Function responsible to parse the URDF data
+         * 
+         * @return bool true if the URDF requested exists, false otherwise
+         */
+        bool parseURDF();
+        
+        /**
+         * @brief Function responsible to parse the SRDF data
+         * 
+         * @return bool true if the SRDF requested exists, false otherwise
+         */
+        bool parseSRDF();
+        
+        /**
+         * @brief fill a data structure related with the revolute/prismatic
+         * joints included in between base_link and tip_link in the requested URDF
+         * 
+         * @param base_link base link of the finger chain
+         * @param tip_link tip link of the finger chain
+         * @return bool true if the chain is found in the URDF, false otherwise
+         */
+        bool getJointsInFinger(std::string base_link, std::string tip_link, std::string finger_name);
+        
+        /**
+        * @brief getter for the map between the finger kinematic chains and the related actuated joints
+        * 
+        * @param finger_joint_map a map between the finger kinematic chains and the related actuated joints
+        * @return void
+        */
+        void getActuatedJointsMap(std::map<std::string, std::vector<std::string>>& finger_joint_map);
+        
         
     
     };
