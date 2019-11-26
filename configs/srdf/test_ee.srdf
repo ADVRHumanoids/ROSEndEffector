@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<robot name="test_ee">
+    
+    <group name="finger_1">
+        <chain base_link="base" tip_link="left_fingertip"/>
+    </group>
+    
+    <group name="finger_2">
+        <chain base_link="base" tip_link="right_fingertip1"/>
+    </group>
+    
+    <group name="finger_3">
+        <chain base_link="base" tip_link="right_fingertip2"/>
+    </group>
+   
+   <group name="end_effector_fingers">
+      <group name="finger_1" />
+      <group name="finger_2" />
+      <group name="finger_3" />
+   </group>
+   
+   <end_effector name="test_end_effector" parent_link="motor" group="end_effector_fingers"/>
+
+</robot>

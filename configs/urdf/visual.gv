@@ -1,0 +1,26 @@
+digraph G {
+node [shape=box];
+"motor" [label="motor"];
+"base" [label="base"];
+"left_finger" [label="left_finger"];
+"left_fingertip" [label="left_fingertip"];
+"right_finger1" [label="right_finger1"];
+"right_fingertip1" [label="right_fingertip1"];
+"right_finger2" [label="right_finger2"];
+"right_fingertip2" [label="right_fingertip2"];
+node [shape=ellipse, color=blue, fontcolor=blue];
+"motor" -> "motor_to_base" [label="xyz: 0 -0.15 0 \nrpy: 0 -0 0"]
+"motor_to_base" -> "base"
+"base" -> "base_to_left_finger" [label="xyz: -0.1 0 0 \nrpy: 0 -0 0"]
+"base_to_left_finger" -> "left_finger"
+"left_finger" -> "left_finger_to_left_fingertip" [label="xyz: -0.6 -0.5 0 \nrpy: 0 -0 0"]
+"left_finger_to_left_fingertip" -> "left_fingertip"
+"base" -> "base_to_right_finger1" [label="xyz: 0.1 0 0 \nrpy: 0 -0 0"]
+"base_to_right_finger1" -> "right_finger1"
+"right_finger1" -> "right_finger1_to_right_fingertip1" [label="xyz: 0.6 -0.5 0.25 \nrpy: 0 -0 0"]
+"right_finger1_to_right_fingertip1" -> "right_fingertip1"
+"base" -> "base_to_right_finger2" [label="xyz: 0.1 0 0 \nrpy: 0 -0 0"]
+"base_to_right_finger2" -> "right_finger2"
+"right_finger2" -> "right_finger2_to_right_fingertip2" [label="xyz: 0.6 -0.5 -0.25 \nrpy: 0 -0 0"]
+"right_finger2_to_right_fingertip2" -> "right_fingertip2"
+}
