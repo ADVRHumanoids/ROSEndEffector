@@ -7,8 +7,13 @@ add_compile_options(-std=c++11)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED)
+find_package(catkin REQUIRED COMPONENTS srdfdom 
+                                        kdl_parser
+                                        roscpp
+                                        )
+                                                                               
 find_package(matlogger2 REQUIRED)
+
 
 
 ## System dependencies are found with CMake's conventions
@@ -120,15 +125,21 @@ add_library(ROSEEParser
     src/Parser.cpp
 )
 
+add_library(ROSEEInterface
+    src/EEInterface.cpp
+)
+
+add_library(DummyHal
+    src/EEHal.cpp
+    src/DummyHal.cpp
+)
+
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
 # add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-## Declare a C++ executable
-## With catkin_make all packages are built within a single CMake context
-## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/ros_end_effector_node.cpp)
+add_executable(UniversalRosEndEffector src/UniversalRosEndEffector.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -144,7 +155,20 @@ add_library(ROSEEParser
 target_link_libraries(ROSEEParser
     ${catkin_LIBRARIES}
     yaml-cpp
-#     matlogger2::matlogger2
+)
+
+target_link_libraries(DummyHal
+    yaml-cpp
+)
+
+target_link_libraries(UniversalRosEndEffector
+    ${catkin_LIBRARIES}
+    ROSEEParser
+    ROSEEInterface
+    
+    # do it automatically
+    DummyHal
+    
 )
 
 #############
@@ -174,6 +198,11 @@ target_link_libraries(ROSEEParser
 #   FILES_MATCHING PATTERN "*.h"
 #   PATTERN ".svn" EXCLUDE
 # )
+
+install(DIRECTORY launch/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+  FILES_MATCHING PATTERN "*.launch"
+)
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
 # install(FILES
