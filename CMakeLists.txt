@@ -215,11 +215,17 @@ install(DIRECTORY launch/
 ## Testing ##
 #############
 
-## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_ros_end_effector.cpp)
-# if(TARGET ${PROJECT_NAME}-test)
-#   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
-# endif()
+if(CATKIN_ENABLE_TESTING)
+
+    # Add gtest based cpp test target and link libraries
+    catkin_add_gtest(EEInterface-test test/test_ee_interface.cpp)
+    if(TARGET EEInterface-test)
+        target_link_libraries(EEInterface-test ${catkin_LIBRARIES}
+                                                ROSEEParser
+                                                ROSEEInterface)
+    endif()
+
+endif()
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
