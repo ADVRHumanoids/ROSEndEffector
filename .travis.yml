@@ -1,0 +1,39 @@
+language: cpp
+compiler: g++
+dist: xenial
+notifications:
+  email:
+    recipients:
+      - luca.muratore@iit.it
+    on_success: never
+    on_failure: always
+sudo: required
+before_install:
+script: 
+- sudo apt-get install ros-kinetic-ros-desktop
+- sudo apt-get install git cmake
+
+#config git
+- git config --global user.name "liesrock"
+- git config --global user.email "luca.muratore@iit.it"
+#source env variables and install missing packages
+
+- pwd
+- source /opt/ros/kinetic/setup.bash
+
+#Build
+- mkdir -p build
+- cd build
+- cmake ..
+- make
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+  keep_history: true
+  local_dir: html
+  on:
+    branch: master
+
+
