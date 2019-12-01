@@ -17,32 +17,98 @@
 
 #include <ROSEndEffector/EEInterface.h>
 
-ROSEE::EEInterface::EEInterface ( const std::map< std::string, std::vector< std::string > >& ee_description ) {
+ROSEE::EEInterface::EEInterface ( const ROSEE::Parser& p  ) {
+    
+    // get number of joints from parse and resize dynamic structure
+    _joints_num = p.getActuatedJointsNumber();
+    _upper_limits.resize(_joints_num);
+    _lower_limits.resize(_joints_num);
+    
     
     // get the ee description
-    _ee_description = ee_description;
+    _ee_description = p.getFingerJointMap();
+    
+    // get he joints urdf description
+    _urdf_joint_map = p.getUrdfJointMap();
+    
+    int id = 0;
     
     // save the finger names
-    for( const auto& finger_joints_pair : ee_description ) {
+    for( const auto& finger_joints_pair : _ee_description ) {
         
+        // fingers
         std::string finger_name = finger_joints_pair.first;
         _fingers_names.push_back(finger_name);
-        
-        _joints_num += finger_joints_pair.second.size();
-        
+
         for( const auto& j : finger_joints_pair.second ) {
             
+            // joint name
             _actuated_joints.push_back(j);
+            
+            // internal id
+            _joints_internal_id_map[j] = id;
+            
+            // finger internal id map 
+            _finger_joints_internal_id_map[finger_name].push_back(id);
+            
+            // upper limits
+            _upper_limits[id] = _urdf_joint_map.at(j)->limits->upper;
+            
+            // lower limits
+            _lower_limits[id] = _urdf_joint_map.at(j)->limits->lower;
+            
+            // increase internal id
+            id++;
         }
     }
 
 }
 
+Eigen::VectorXd ROSEE::EEInterface::getLowerPoisitionLimits() {
+
+    return _lower_limits;
+}
+
+Eigen::VectorXd ROSEE::EEInterface::getUpperPoisitionLimits() {
+
+    return _upper_limits;
+}
+
+bool ROSEE::EEInterface::getInternalIdForJoint ( std::string joint_name, int& internal_id ) {
+        
+    if ( _joints_internal_id_map.count(joint_name) ) {
+        
+        internal_id = _joints_internal_id_map.at(joint_name);
+        return true;
+    }
+    
+    return false;
+
+}
+
+
+bool ROSEE::EEInterface::getInternalIdsForFinger ( std::string finger_name, std::vector< int >& internal_ids ) {
+
+    if ( _finger_joints_internal_id_map.count(finger_name) ) {
+        
+        internal_ids = _finger_joints_internal_id_map.at(finger_name);
+        return true;
+    }
+    
+    return false;
+
+}
+
+
+
+
 const std::vector< std::string >& ROSEE::EEInterface::getFingers() {
+    
     return _fingers_names;
 }
 
 bool ROSEE::EEInterface::isFinger ( std::string finger_name ) {
+    
     return ( _ee_description.count(finger_name) > 0 );
 }
 

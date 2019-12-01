@@ -22,8 +22,12 @@
 #include <vector>
 #include <memory>
 
+#include <ROSEndEffector/Parser.h>
+
+#include <Eigen/Dense>
+
+
 namespace ROSEE {
-    
     
     /**
      * @brief Class representing and End-Effector
@@ -36,7 +40,7 @@ namespace ROSEE {
         typedef std::shared_ptr<EEInterface> Ptr;
         typedef std::shared_ptr<const EEInterface> ConstPtr;
         
-        EEInterface( const std::map<std::string, std::vector<std::string>>& ee_description );
+        EEInterface( const ROSEE::Parser& p );
         //EEInterface ( const EEInterface& other );
         //EEInterface& operator= ( const EEInterface& p );
         virtual ~EEInterface();
@@ -86,11 +90,26 @@ namespace ROSEE {
          */
         int getActuatedJointsNumInFinger(  std::string finger_name );
         
+        Eigen::VectorXd getUpperPoisitionLimits();
+        
+        Eigen::VectorXd getLowerPoisitionLimits();
+        
+        bool getInternalIdsForFinger( std::string finger_name, std::vector< int >& internal_ids );
+        
+        bool getInternalIdForJoint ( std::string joint_name, int& internal_id );
+        
     private:
         
         std::map<std::string, std::vector<std::string>> _ee_description;
+        std::map<std::string, urdf::JointConstSharedPtr> _urdf_joint_map;
+        
+        std::map<std::string, std::vector<int>> _finger_joints_internal_id_map;
+        
+        std::map<std::string, int> _joints_internal_id_map;
         
         std::vector<std::string> _fingers_names, _actuated_joints;
+        
+        Eigen::VectorXd _upper_limits, _lower_limits;
         
         int _joints_num = 0;
         

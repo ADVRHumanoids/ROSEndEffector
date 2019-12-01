@@ -29,10 +29,7 @@
 
 #include <srdfdom/model.h>
 
-#include <ROSEndEffector/EEInterface.h>
-
 namespace ROSEE {
-    
     
     /**
      * @brief Class responsible for parsing the YAML file providing
@@ -67,18 +64,33 @@ namespace ROSEE {
         bool init (const std::string& path_to_cfg);
         
         /**
-         * @brief Getterr for the current End-Effector Interface
+         * @brief getter for the URDF information of the joints of the End-Effector
          * 
-         * @return ROSEE::EEInterface::Ptr or nullptr is the Parser is not initialized
+         * @return std::map<std::string, urdf::JointConstSharedPtr> map between the joint name and the URDF info of the joint
          */
-        ROSEE::EEInterface::Ptr getEndEffectorInterface();
+        std::map<std::string, urdf::JointConstSharedPtr> getUrdfJointMap() const;
+        
+        /**
+         * @brief getter for a description of the End-Effector as a map of finger name, finger joint names
+         * 
+         * @return std::map<std::string, std::vector<std::string> a map respresenting an End-Effector with a key representing the finger name 
+         * and the values representing a vector of joint names.
+         */
+        std::map<std::string, std::vector<std::string>> getFingerJointMap() const;
+        
+        /**
+         * @brief getter for the total number of actuated joints in the configuration files
+         * 
+         * @return int the number of actuated joints in the End-Effector
+         */
+        int getActuatedJointsNumber() const;
         
         /**
          * @brief Utility to print the mapping between the End Effector finger chains and the related actuated joints
          * 
          * @return void
          */
-        void printEndEffectorFingerJointsMap();
+        void printEndEffectorFingerJointsMap() const;
         
     private:
         
@@ -95,9 +107,10 @@ namespace ROSEE {
         std::vector<std::string> _fingers_names;
         std::vector<int> _fingers_group_id;
         
-        std::map<std::string, std::vector<std::string>> _finger_joint_map;
+        int _joints_num = 0;
         
-        ROSEE::EEInterface::Ptr _ee_interface;
+        std::map<std::string, std::vector<std::string>> _finger_joint_map;
+        std::map<std::string, urdf::JointConstSharedPtr> _urdf_joint_map;
         
         
         /**

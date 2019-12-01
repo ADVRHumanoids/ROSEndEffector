@@ -51,12 +51,18 @@ bool ROSEE::Parser::getJointsInFinger ( std::string base_link,
             bool is_valid_joint = false;
 
             // Check if joint is revolute or prismatic
-            is_valid_joint = actual_joint.getTypeName() == "RotAxis"   ||
-                             actual_joint.getTypeName() == "TransAxis";
+            is_valid_joint = actual_joint.getTypeName() == "RotAxis";   
+            
+//                              || actual_joint.getTypeName() == "TransAxis";
 
             // if the joint is revolute or prismatic
             if ( is_valid_joint ) {
+
                 _finger_joint_map[finger_name].push_back ( actual_joint.getName() );
+                _urdf_joint_map[actual_joint.getName()] = _urdf_model->getJoint ( actual_joint.getName() );
+
+                _joints_num++;
+
                 ROS_INFO_STREAM ( actual_joint.getName() );
             }
         }
@@ -111,7 +117,7 @@ bool ROSEE::Parser::parseSRDF() {
 
     // fill the chain names vector
     for ( int i = 0; i < _fingers_num; i++ ) {
-        
+
         _fingers_names[i] = fingers_group.subgroups_[i];
 
         // find the id of the current finger group
@@ -139,7 +145,7 @@ bool ROSEE::Parser::parseSRDF() {
         // fill the enabled/disabled joints in chain map
         if ( !getJointsInFinger ( current_finger_group.chains_[0].first,
                                   current_finger_group.chains_[0].second,
-                                  current_finger_group.name_ 
+                                  current_finger_group.name_
                                 ) ) {
             return false;
         }
@@ -251,7 +257,7 @@ bool ROSEE::Parser::configure() {
         if ( parseURDF() && parseSRDF() ) {
 
             // build the EEInterface
-            _ee_interface = std::make_shared<ROSEE::EEInterface>(_finger_joint_map);
+//             _ee_interface = std::make_shared<ROSEE::EEInterface>( this );
             ROS_INFO_STREAM ( "ROSEndEffector Parser successfully configured using config file:  " << _ros_ee_config_path );
         } else {
 
@@ -273,7 +279,7 @@ bool ROSEE::Parser::init() {
 
     // try to retrive the path to config from the ROS param server
     if ( _nh.getParam ( "ros_ee_config_path", _ros_ee_config_path ) ) {
-        
+
         _is_initialized =  configure();
         return _is_initialized;
     }
@@ -292,10 +298,10 @@ bool ROSEE::Parser::init ( const std::string& path_to_cfg ) {
     return _is_initialized;
 }
 
-void ROSEE::Parser::printEndEffectorFingerJointsMap() {
-    
+void ROSEE::Parser::printEndEffectorFingerJointsMap() const {
+
     if ( _is_initialized ) {
-        
+
         ROS_INFO_STREAM ( "ROS End Effector: Finger Joints Map" );
         ROS_INFO_STREAM ( "-------------------------" );
         for ( auto& chain_joints: _finger_joint_map ) {
@@ -307,31 +313,31 @@ void ROSEE::Parser::printEndEffectorFingerJointsMap() {
 
             ROS_INFO_STREAM ( "-------------------------" );
         }
-    }
-    else {
-        
+    } else {
+
         ROS_ERROR_STREAM ( "in " << __func__ << " :  ROSEE::Parser needs to be initialized. Call init() frist." );
     }
 }
 
-
-ROSEE::EEInterface::Ptr ROSEE::Parser::getEndEffectorInterface() {
+int ROSEE::Parser::getActuatedJointsNumber() const {
     
-    if ( _is_initialized ) {
-        
-        return _ee_interface;
-    }
-    else {
-        
-        ROS_ERROR_STREAM ( "in " << __func__ << " :  ROSEE::Parser needs to be initialized. Call init() frist." );
-        return nullptr;
-    }
-
+    return _joints_num;
 }
 
+
+
+std::map< std::string, std::vector< std::string > > ROSEE::Parser::getFingerJointMap() const {
+
+    return _finger_joint_map;
+}
+
+std::map< std::string, urdf::JointConstSharedPtr > ROSEE::Parser::getUrdfJointMap() const {
+
+    return _urdf_joint_map;
+}
 
 void ROSEE::Parser::getActuatedJointsMap ( std::map< std::string, std::vector< std::string > >& finger_joint_map ) {
-    
+
     finger_joint_map = _finger_joint_map;
 }
 

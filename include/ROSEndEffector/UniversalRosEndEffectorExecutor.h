@@ -30,7 +30,7 @@
 #include <ROSEndEffector/EEHal.h>
 #include <ROSEndEffector/DummyHal.h>
 
-#include <ros_end_effector/EEControl.h>
+#include <ros_end_effector/EEGraspControl.h>
 
 namespace ROSEE {
     
@@ -55,7 +55,7 @@ namespace ROSEE {
         
         void timer_callback(const ros::TimerEvent& timer_ev);
         
-        void controlCallback(const ros_end_effector::EEControlConstPtr& msg);
+        void graspCallback(const ros_end_effector::EEGraspControlConstPtr& msg);
 
     private:
         
@@ -80,8 +80,8 @@ namespace ROSEE {
         
         std::vector<std::string> _joints;
         
-        ros_end_effector::EEControl _ctrl_msg;
-        ros::Subscriber _sub_primitive;
+        ros_end_effector::EEGraspControl _ctrl_msg;
+        ros::Subscriber _sub_grasp;
 
     };
     

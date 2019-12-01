@@ -35,7 +35,8 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
     
     
     // retrieve the ee interface
-    _ee = p.getEndEffectorInterface();
+    _ee = std::make_shared<ROSEE::EEInterface>( p );
+    
     _joint_num = _ee->getActuatedJointsNum();
 
     ROS_INFO_STREAM("Fingers in EEInterface: ");
@@ -55,7 +56,6 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
     _js_msg.velocity.resize(_joint_num);
     _js_msg.effort.resize(_joint_num);
     
-    
     // allocate HAL TBD get from parser the lib to load
     _hal = std::make_shared<ROSEE::DummyHal>(_ee);
     
@@ -64,21 +64,46 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
 
 }
 
-void ROSEE::UniversalRosEndEffectorExecutor::controlCallback ( const ros_end_effector::EEControlConstPtr& msg ) {
+void ROSEE::UniversalRosEndEffectorExecutor::graspCallback ( const ros_end_effector::EEGraspControlConstPtr& msg ) {
 
-    if( msg->primitive == "grasp" ) {
+    Eigen::VectorXd pos_ref_upper, pos_ref_lower;
+    pos_ref_upper.resize(_ee->getActuatedJointsNum());
+    pos_ref_lower.resize(_ee->getActuatedJointsNum());
+    
+    pos_ref_upper = _ee->getUpperPoisitionLimits() * msg->percentage;
+    pos_ref_lower = _ee->getLowerPoisitionLimits() * msg->percentage;
+    
+    int id = -1;
+    for( auto& f : _ee->getFingers() ) {
         
-        double test_ref = 0.5;
-        _hal->moveMotor("base_to_right_finger2", 0.5);
+        std::vector<std::string> joints;
+        if ( _ee->getActuatedJointsInFinger(f, joints) ) {
+            
+            for( auto& j : joints ) {
+                
+                if ( _ee->getInternalIdForJoint(j, id) ) {
+                    
+                    if ( (pos_ref_upper[id] >= 0) && (pos_ref_lower[id] >= 0) ){
+                    
+                        _hal->moveMotor(j, pos_ref_upper[id] );
+                    }
+                    else {
+                        
+                        _hal->moveMotor(j, pos_ref_lower[id] );
+                    }
+                }
+            }
+        }
     }
+
 }
 
 
 bool ROSEE::UniversalRosEndEffectorExecutor::init_primitive_subscribers() {
 
-    _sub_primitive = _nh.subscribe<ros_end_effector::EEControl>( "/ros_end_effector_control",
+    _sub_grasp = _nh.subscribe<ros_end_effector::EEGraspControl>( "/ros_end_effector/grasp",
                                                 1,
-                                                &ROSEE::UniversalRosEndEffectorExecutor::controlCallback,
+                                                &ROSEE::UniversalRosEndEffectorExecutor::graspCallback,
                                                 this
     );
 }
