@@ -26,8 +26,8 @@ script:
 #config git
 - git config --global user.name "liesrock"
 - git config --global user.email "luca.muratore@iit.it"
-#source env variables and install missing packages
 
+#source env variables and install missing packages
 - pwd
 - source /opt/ros/kinetic/setup.bash
 
@@ -38,8 +38,14 @@ script:
 - make
 - make dox
 
+#tests
+- make tests
+- roscore &
+- make test
+
 deploy:
   provider: pages
+  skip_cleanup: true
   token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
   keep_history: true
   local_dir: doc/html
