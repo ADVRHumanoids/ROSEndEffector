@@ -44,7 +44,7 @@ deploy:
   provider: pages
   token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
   keep_history: true
-  local_dir: html
+  local_dir: doc/html
   on:
     branch: master
 
