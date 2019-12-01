@@ -33,7 +33,7 @@ protected:
         p.init ( "/home/lucamuratore/src/ros_end_effector__ws/src/ROSEndEffector/configs/test_ee.yaml" );
         p.printEndEffectorFingerJointsMap();
 
-        ee = p.getEndEffectorInterface();
+        ee = std::make_shared<ROSEE::EEInterface>(p);
     }
 
     virtual void TearDown() {
