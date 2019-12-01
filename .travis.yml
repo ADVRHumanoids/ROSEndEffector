@@ -36,8 +36,9 @@ C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
 #Build
 - mkdir -p build
 - cd build
-- cmake ..
+- cmake .. -DBUILD_documentation=ON
 - make
+- make dox
 
 deploy:
   provider: pages
