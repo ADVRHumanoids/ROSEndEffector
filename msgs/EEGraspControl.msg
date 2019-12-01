@@ -11,8 +11,5 @@ uint32 seq
 # time-handling sugar is provided by the client library
 time stamp
 
-# grasp primitive
-string primitive
-
 # grasp percentage from 0.0 to 1.0
 float64 percentage

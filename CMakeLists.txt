@@ -15,6 +15,8 @@ find_package(catkin REQUIRED COMPONENTS srdfdom
                                                                                
 find_package(matlogger2 REQUIRED)
 
+find_package(Eigen3 REQUIRED)
+
 
 
 ## System dependencies are found with CMake's conventions
@@ -33,7 +35,7 @@ find_package(matlogger2 REQUIRED)
 add_message_files(
 DIRECTORY msgs
 FILES
-EEControl.msg
+EEGraspControl.msg
 )
 
 generate_messages(
@@ -84,6 +86,7 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  ${EIGEN3_INCLUDE_DIRS}
 )
 
 add_library(ROSEEParser
@@ -124,6 +127,11 @@ add_executable(UniversalRosEndEffector src/UniversalRosEndEffector.cpp)
 target_link_libraries(ROSEEParser
     ${catkin_LIBRARIES}
     yaml-cpp
+)
+
+target_link_libraries(ROSEEInterface
+    ${catkin_LIBRARIES}
+    ROSEEParser
 )
 
 target_link_libraries(DummyHal
