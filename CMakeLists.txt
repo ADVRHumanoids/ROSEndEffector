@@ -13,7 +13,7 @@ find_package(catkin REQUIRED COMPONENTS srdfdom
                                         message_generation 
                                         )
                                                                                
-find_package(matlogger2 REQUIRED)
+# find_package(matlogger2 REQUIRED)
 
 find_package(Eigen3 REQUIRED)
 

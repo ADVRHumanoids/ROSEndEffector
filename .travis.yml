@@ -1,3 +1,4 @@
+os: linux
 language: cpp
 compiler: g++
 dist: xenial
@@ -7,9 +8,10 @@ notifications:
       - luca.muratore@iit.it
     on_success: never
     on_failure: always
-sudo: required
+
 before_install:
 script: 
+- sudo apt-get update
 - sudo apt-get install ros-kinetic-ros-desktop
 - sudo apt-get install git cmake
 
@@ -29,8 +31,7 @@ script:
 
 deploy:
   provider: pages
-  skip_cleanup: true
-  github_token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+  token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
   keep_history: true
   local_dir: html
   on:
