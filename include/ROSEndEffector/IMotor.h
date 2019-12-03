@@ -40,7 +40,7 @@ namespace ROSEE {
         virtual bool getMotorVelocity( std::string motor_name, double& motor_velocity ) = 0;
         virtual bool getMotorEffort( std::string motor_name, double& motor_effort ) = 0;
         
-        virtual bool moveMotor( std::string motor_name, double position_reference ) = 0;
+        virtual bool setPositionReference ( std::string motor_name, double position_reference ) = 0;
         
         
     };
