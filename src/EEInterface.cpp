@@ -64,12 +64,12 @@ ROSEE::EEInterface::EEInterface ( const ROSEE::Parser& p  ) {
 
 }
 
-Eigen::VectorXd ROSEE::EEInterface::getLowerPoisitionLimits() {
+Eigen::VectorXd ROSEE::EEInterface::getLowerPositionLimits() {
 
     return _lower_limits;
 }
 
-Eigen::VectorXd ROSEE::EEInterface::getUpperPoisitionLimits() {
+Eigen::VectorXd ROSEE::EEInterface::getUpperPositionLimits() {
 
     return _upper_limits;
 }
@@ -144,6 +144,10 @@ int ROSEE::EEInterface::getActuatedJointsNumInFinger ( std::string finger_name )
     return _ee_description.at(finger_name).size();
 }
 
+int ROSEE::EEInterface::getFingersNumber() {
+    
+    return _fingers_names.size();
+}
 
 
 ROSEE::EEInterface::~EEInterface() {

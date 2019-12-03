@@ -90,13 +90,45 @@ namespace ROSEE {
          */
         int getActuatedJointsNumInFinger(  std::string finger_name );
         
-        Eigen::VectorXd getUpperPoisitionLimits();
+        /**
+         * @brief getter for the upper position limits of EE joints as specified in the URDF
+         * 
+         * @return Eigen::VectorXd the upper position limits of EE joints as specified in the URDF
+         */
+        Eigen::VectorXd getUpperPositionLimits();
         
-        Eigen::VectorXd getLowerPoisitionLimits();
+        /**
+         * @brief getter for the lower position limits of EE joints as specified in the URDF
+         * 
+         * @return Eigen::VectorXd the lower position limits of EE joints as specified in the URDF
+         */
+        Eigen::VectorXd getLowerPositionLimits();
         
+        /**
+         * @brief getter for the internal ids (position in the EEInterface vectors) of joints in a certain finger
+         * 
+         * @param finger_name the name of the requested finger
+         * @param internal_ids the internal ids of the joints in the requested finger
+         * @return bool true if the finger exists, false otherwise
+         */
         bool getInternalIdsForFinger( std::string finger_name, std::vector< int >& internal_ids );
         
+        /**
+         * @brief getter for the internal id of a certain joint
+         * 
+         * @param joint_name the name of the requested joint
+         * @param internal_id the internal id of the requested joint
+         * @return bool true if the joint exists, false otherwise
+         */
         bool getInternalIdForJoint ( std::string joint_name, int& internal_id );
+        
+        
+        /**
+         * @brief getter for the number of fingers in the End-Effector
+         * 
+         * @return int the number of fingers in the End-Effector
+         */
+        int getFingersNumber();
         
     private:
         
