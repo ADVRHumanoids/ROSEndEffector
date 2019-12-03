@@ -1,10 +1,10 @@
 var indexSectionsWithContent =
 {
   0: "_cdegimprstu~",
-  1: "deipu",
+  1: "deipsu",
   2: "r",
   3: "deipru",
-  4: "degimpstu~",
+  4: "degimprstu~",
   5: "_",
   6: "cp",
   7: "c",

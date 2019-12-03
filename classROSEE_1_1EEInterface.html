@@ -106,7 +106,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
 </div>
 <div id="dynsection-0-content" class="dyncontent" style="display:none;">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classROSEE_1_1EEInterface__coll__graph.svg" width="252" height="250"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classROSEE_1_1EEInterface__coll__graph.svg" width="252" height="264"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
 </div>
 </div>
 <table class="memberdecls">
@@ -141,14 +141,21 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a253fcdcd07a04bdcf24ccc490c0bbbf4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classROSEE_1_1EEInterface.html#a253fcdcd07a04bdcf24ccc490c0bbbf4">getActuatedJointsNumInFinger</a> (std::string finger_name)</td></tr>
 <tr class="memdesc:a253fcdcd07a04bdcf24ccc490c0bbbf4"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for the number of actuated joints in the requested finger  <a href="#a253fcdcd07a04bdcf24ccc490c0bbbf4">More...</a><br /></td></tr>
 <tr class="separator:a253fcdcd07a04bdcf24ccc490c0bbbf4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a28cac11882a94462f362dd4da333c90b"><td class="memItemLeft" align="right" valign="top">Eigen::VectorXd&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classROSEE_1_1EEInterface.html#a28cac11882a94462f362dd4da333c90b">getUpperPoisitionLimits</a> ()</td></tr>
-<tr class="separator:a28cac11882a94462f362dd4da333c90b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a143a8d8778417c0af1e45bbe6df2c4b9"><td class="memItemLeft" align="right" valign="top">Eigen::VectorXd&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classROSEE_1_1EEInterface.html#a143a8d8778417c0af1e45bbe6df2c4b9">getLowerPoisitionLimits</a> ()</td></tr>
-<tr class="separator:a143a8d8778417c0af1e45bbe6df2c4b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae3171b74f97abe47218110dc4e64d51a"><td class="memItemLeft" align="right" valign="top">Eigen::VectorXd&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classROSEE_1_1EEInterface.html#ae3171b74f97abe47218110dc4e64d51a">getUpperPositionLimits</a> ()</td></tr>
+<tr class="memdesc:ae3171b74f97abe47218110dc4e64d51a"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for the upper position limits of EE joints as specified in the URDF  <a href="#ae3171b74f97abe47218110dc4e64d51a">More...</a><br /></td></tr>
+<tr class="separator:ae3171b74f97abe47218110dc4e64d51a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a01d410dc5b65b766120a8f6c4ef49be8"><td class="memItemLeft" align="right" valign="top">Eigen::VectorXd&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classROSEE_1_1EEInterface.html#a01d410dc5b65b766120a8f6c4ef49be8">getLowerPositionLimits</a> ()</td></tr>
+<tr class="memdesc:a01d410dc5b65b766120a8f6c4ef49be8"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for the lower position limits of EE joints as specified in the URDF  <a href="#a01d410dc5b65b766120a8f6c4ef49be8">More...</a><br /></td></tr>
+<tr class="separator:a01d410dc5b65b766120a8f6c4ef49be8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac288f08c0c338031ea6e9ac888cfdb1a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classROSEE_1_1EEInterface.html#ac288f08c0c338031ea6e9ac888cfdb1a">getInternalIdsForFinger</a> (std::string finger_name, std::vector&lt; int &gt; &amp;internal_ids)</td></tr>
+<tr class="memdesc:ac288f08c0c338031ea6e9ac888cfdb1a"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for the internal ids (position in the <a class="el" href="classROSEE_1_1EEInterface.html" title="Class representing and End-Effector. ">EEInterface</a> vectors) of joints in a certain finger  <a href="#ac288f08c0c338031ea6e9ac888cfdb1a">More...</a><br /></td></tr>
 <tr class="separator:ac288f08c0c338031ea6e9ac888cfdb1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6879f2960a965545bcba58202b2533d5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classROSEE_1_1EEInterface.html#a6879f2960a965545bcba58202b2533d5">getInternalIdForJoint</a> (std::string joint_name, int &amp;internal_id)</td></tr>
+<tr class="memdesc:a6879f2960a965545bcba58202b2533d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for the internal id of a certain joint  <a href="#a6879f2960a965545bcba58202b2533d5">More...</a><br /></td></tr>
 <tr class="separator:a6879f2960a965545bcba58202b2533d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac25d0a3ad69d93e9ef5ec79614c10cc0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classROSEE_1_1EEInterface.html#ac25d0a3ad69d93e9ef5ec79614c10cc0">getFingersNumber</a> ()</td></tr>
+<tr class="memdesc:ac25d0a3ad69d93e9ef5ec79614c10cc0"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for the number of fingers in the End-Effector  <a href="#ac25d0a3ad69d93e9ef5ec79614c10cc0">More...</a><br /></td></tr>
+<tr class="separator:ac25d0a3ad69d93e9ef5ec79614c10cc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Class representing and End-Effector. </p>
@@ -226,8 +233,8 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="EEInterface_8cpp_source.html#l00149">149</a> of file <a class="el" href="EEInterface_8cpp_source.html">EEInterface.cpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;                               {</div><div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;</div><div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;}</div></div><!-- fragment -->
+<p>Definition at line <a class="el" href="EEInterface_8cpp_source.html#l00153">153</a> of file <a class="el" href="EEInterface_8cpp_source.html">EEInterface.cpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;                               {</div><div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;</div><div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;}</div></div><!-- fragment -->
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
@@ -358,6 +365,26 @@ Public Member Functions</h2></td></tr>
 <div class="fragment"><div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;                                                           {</div><div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    </div><div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    <span class="keywordflow">return</span> _fingers_names;</div><div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;}</div></div><!-- fragment -->
 </div>
 </div>
+<a class="anchor" id="ac25d0a3ad69d93e9ef5ec79614c10cc0"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int ROSEE::EEInterface::getFingersNumber </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>getter for the number of fingers in the End-Effector </p>
+<dl class="section return"><dt>Returns</dt><dd>int the number of fingers in the End-Effector </dd></dl>
+
+<p>Definition at line <a class="el" href="EEInterface_8cpp_source.html#l00147">147</a> of file <a class="el" href="EEInterface_8cpp_source.html">EEInterface.cpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;                                       {</div><div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    </div><div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    <span class="keywordflow">return</span> _fingers_names.size();</div><div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;}</div></div><!-- fragment -->
+</div>
+</div>
 <a class="anchor" id="a6879f2960a965545bcba58202b2533d5"></a>
 <div class="memitem">
 <div class="memproto">
@@ -381,6 +408,16 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>getter for the internal id of a certain joint </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">joint_name</td><td>the name of the requested joint </td></tr>
+    <tr><td class="paramname">internal_id</td><td>the internal id of the requested joint </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>bool true if the joint exists, false otherwise </dd></dl>
 
 <p>Definition at line <a class="el" href="EEInterface_8cpp_source.html#l00077">77</a> of file <a class="el" href="EEInterface_8cpp_source.html">EEInterface.cpp</a>.</p>
 <div class="fragment"><div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;                                                                                      {</div><div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        </div><div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keywordflow">if</span> ( _joints_internal_id_map.count(joint_name) ) {</div><div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        </div><div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        internal_id = _joints_internal_id_map.at(joint_name);</div><div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div><div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    }</div><div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    </div><div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div><div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;</div><div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;}</div></div><!-- fragment -->
@@ -410,33 +447,46 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>getter for the internal ids (position in the <a class="el" href="classROSEE_1_1EEInterface.html" title="Class representing and End-Effector. ">EEInterface</a> vectors) of joints in a certain finger </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">finger_name</td><td>the name of the requested finger </td></tr>
+    <tr><td class="paramname">internal_ids</td><td>the internal ids of the joints in the requested finger </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>bool true if the finger exists, false otherwise </dd></dl>
+
 <p>Definition at line <a class="el" href="EEInterface_8cpp_source.html#l00090">90</a> of file <a class="el" href="EEInterface_8cpp_source.html">EEInterface.cpp</a>.</p>
 <div class="fragment"><div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;                                                                                                       {</div><div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;</div><div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="keywordflow">if</span> ( _finger_joints_internal_id_map.count(finger_name) ) {</div><div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        </div><div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        internal_ids = _finger_joints_internal_id_map.at(finger_name);</div><div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div><div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    }</div><div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    </div><div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div><div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;</div><div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;}</div></div><!-- fragment -->
 </div>
 </div>
-<a class="anchor" id="a143a8d8778417c0af1e45bbe6df2c4b9"></a>
+<a class="anchor" id="a01d410dc5b65b766120a8f6c4ef49be8"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">Eigen::VectorXd ROSEE::EEInterface::getLowerPoisitionLimits </td>
+          <td class="memname">Eigen::VectorXd ROSEE::EEInterface::getLowerPositionLimits </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>getter for the lower position limits of EE joints as specified in the URDF </p>
+<dl class="section return"><dt>Returns</dt><dd>Eigen::VectorXd the lower position limits of EE joints as specified in the URDF </dd></dl>
 
 <p>Definition at line <a class="el" href="EEInterface_8cpp_source.html#l00067">67</a> of file <a class="el" href="EEInterface_8cpp_source.html">EEInterface.cpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;                                                        {</div><div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;</div><div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keywordflow">return</span> _lower_limits;</div><div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;}</div></div><!-- fragment -->
+<div class="fragment"><div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;                                                       {</div><div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;</div><div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keywordflow">return</span> _lower_limits;</div><div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;}</div></div><!-- fragment -->
 </div>
 </div>
-<a class="anchor" id="a28cac11882a94462f362dd4da333c90b"></a>
+<a class="anchor" id="ae3171b74f97abe47218110dc4e64d51a"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">Eigen::VectorXd ROSEE::EEInterface::getUpperPoisitionLimits </td>
+          <td class="memname">Eigen::VectorXd ROSEE::EEInterface::getUpperPositionLimits </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -444,8 +494,11 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>getter for the upper position limits of EE joints as specified in the URDF </p>
+<dl class="section return"><dt>Returns</dt><dd>Eigen::VectorXd the upper position limits of EE joints as specified in the URDF </dd></dl>
+
 <p>Definition at line <a class="el" href="EEInterface_8cpp_source.html#l00072">72</a> of file <a class="el" href="EEInterface_8cpp_source.html">EEInterface.cpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;                                                        {</div><div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div><div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="keywordflow">return</span> _upper_limits;</div><div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;}</div></div><!-- fragment -->
+<div class="fragment"><div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;                                                       {</div><div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div><div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="keywordflow">return</span> _upper_limits;</div><div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;}</div></div><!-- fragment -->
 </div>
 </div>
 <a class="anchor" id="a43b3d0352faf02cc90064ef5dfea5ada"></a>
@@ -482,7 +535,7 @@ Public Member Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Dec 2 2019 21:17:34 for ROSEndEffector by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Dec 3 2019 19:15:02 for ROSEndEffector by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.11
 </small></address>

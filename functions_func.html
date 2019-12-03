@@ -84,6 +84,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="#index_i"><span>i</span></a></li>
       <li><a href="#index_m"><span>m</span></a></li>
       <li><a href="#index_p"><span>p</span></a></li>
+      <li><a href="#index_r"><span>r</span></a></li>
       <li><a href="#index_s"><span>s</span></a></li>
       <li><a href="#index_t"><span>t</span></a></li>
       <li><a href="#index_u"><span>u</span></a></li>
@@ -141,11 +142,17 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>getActuatedJointsNumInFinger()
 : <a class="el" href="classROSEE_1_1EEInterface.html#a253fcdcd07a04bdcf24ccc490c0bbbf4">ROSEE::EEInterface</a>
 </li>
+<li>getDamping()
+: <a class="el" href="classROSEE_1_1Utils_1_1SecondOrderFilter.html#acd521f5912ccd444f0ca370ad3dbd05d">ROSEE::Utils::SecondOrderFilter&lt; SignalType &gt;</a>
+</li>
 <li>getFingerJointMap()
 : <a class="el" href="classROSEE_1_1Parser.html#a890265e1e270a8f4dfe462c5505b1144">ROSEE::Parser</a>
 </li>
 <li>getFingers()
 : <a class="el" href="classROSEE_1_1EEInterface.html#a9693aae2e83a687e084844778215fabf">ROSEE::EEInterface</a>
+</li>
+<li>getFingersNumber()
+: <a class="el" href="classROSEE_1_1EEInterface.html#ac25d0a3ad69d93e9ef5ec79614c10cc0">ROSEE::EEInterface</a>
 </li>
 <li>getInternalIdForJoint()
 : <a class="el" href="classROSEE_1_1EEInterface.html#a6879f2960a965545bcba58202b2533d5">ROSEE::EEInterface</a>
@@ -162,8 +169,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>getJointVelocity()
 : <a class="el" href="classROSEE_1_1EEHal.html#a957290dd862a082636c15c14e95765d6">ROSEE::EEHal</a>
 </li>
-<li>getLowerPoisitionLimits()
-: <a class="el" href="classROSEE_1_1EEInterface.html#a143a8d8778417c0af1e45bbe6df2c4b9">ROSEE::EEInterface</a>
+<li>getLowerPositionLimits()
+: <a class="el" href="classROSEE_1_1EEInterface.html#a01d410dc5b65b766120a8f6c4ef49be8">ROSEE::EEInterface</a>
 </li>
 <li>getMotorEffort()
 : <a class="el" href="classROSEE_1_1DummyHal.html#a074517336dd25a1db55f931e36fb461e">ROSEE::DummyHal</a>
@@ -177,8 +184,17 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 : <a class="el" href="classROSEE_1_1DummyHal.html#a77ac994d48ce2dcfe83deddb0069eb7d">ROSEE::DummyHal</a>
 , <a class="el" href="classROSEE_1_1IMotor.html#a31434c560a2e2d7a1220ef7de8539a70">ROSEE::IMotor</a>
 </li>
-<li>getUpperPoisitionLimits()
-: <a class="el" href="classROSEE_1_1EEInterface.html#a28cac11882a94462f362dd4da333c90b">ROSEE::EEInterface</a>
+<li>getOmega()
+: <a class="el" href="classROSEE_1_1Utils_1_1SecondOrderFilter.html#a36aacae2d71ada21904e5ca7e6b99ab1">ROSEE::Utils::SecondOrderFilter&lt; SignalType &gt;</a>
+</li>
+<li>getOutput()
+: <a class="el" href="classROSEE_1_1Utils_1_1SecondOrderFilter.html#ae4b164d8983c62814d650857ae02517d">ROSEE::Utils::SecondOrderFilter&lt; SignalType &gt;</a>
+</li>
+<li>getTimeStep()
+: <a class="el" href="classROSEE_1_1Utils_1_1SecondOrderFilter.html#a2c1abf85d0da83553282aa759962b520">ROSEE::Utils::SecondOrderFilter&lt; SignalType &gt;</a>
+</li>
+<li>getUpperPositionLimits()
+: <a class="el" href="classROSEE_1_1EEInterface.html#ae3171b74f97abe47218110dc4e64d51a">ROSEE::EEInterface</a>
 </li>
 <li>getUrdfJointMap()
 : <a class="el" href="classROSEE_1_1Parser.html#a0acd8a760b06cca42cd82c7153aca1cc">ROSEE::Parser</a>
@@ -204,10 +220,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 : <a class="el" href="classROSEE_1_1DummyHal.html#a8dd71b67836352278d158ebfda09bd46">ROSEE::DummyHal</a>
 , <a class="el" href="classROSEE_1_1EEHal.html#a5312fec3d5db55313a02d8d4aa13d43a">ROSEE::EEHal</a>
 </li>
-<li>moveMotor()
-: <a class="el" href="classROSEE_1_1DummyHal.html#ae19632b891841d15f3cd3b9a46f3e289">ROSEE::DummyHal</a>
-, <a class="el" href="classROSEE_1_1IMotor.html#a023e312b13d6377d17294515d69f4942">ROSEE::IMotor</a>
-</li>
 </ul>
 
 
@@ -215,16 +227,35 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>Parser()
 : <a class="el" href="classROSEE_1_1Parser.html#a35a50b140b29170a33755ad4d4309825">ROSEE::Parser</a>
 </li>
+<li>pinchCallback()
+: <a class="el" href="classROSEE_1_1UniversalRosEndEffectorExecutor.html#a202196145db19b9c587a476be2d559c1">ROSEE::UniversalRosEndEffectorExecutor</a>
+</li>
 <li>printEndEffectorFingerJointsMap()
 : <a class="el" href="classROSEE_1_1Parser.html#a629a38e9fe53dd869bc9efd73817a118">ROSEE::Parser</a>
+</li>
+<li>process()
+: <a class="el" href="classROSEE_1_1Utils_1_1SecondOrderFilter.html#a8b2cb8cd2f8a0b7c0ba5a0bc4d3b5c58">ROSEE::Utils::SecondOrderFilter&lt; SignalType &gt;</a>
+</li>
+</ul>
+
+
+<h3><a class="anchor" id="index_r"></a>- r -</h3><ul>
+<li>reset()
+: <a class="el" href="classROSEE_1_1Utils_1_1SecondOrderFilter.html#a808a87034184c3046b2b20d398ff7f86">ROSEE::Utils::SecondOrderFilter&lt; SignalType &gt;</a>
 </li>
 </ul>
 
 
 <h3><a class="anchor" id="index_s"></a>- s -</h3><ul>
+<li>SecondOrderFilter()
+: <a class="el" href="classROSEE_1_1Utils_1_1SecondOrderFilter.html#ae8cbfad737042ca0cda6a9dd3b50ca00">ROSEE::Utils::SecondOrderFilter&lt; SignalType &gt;</a>
+</li>
 <li>sense()
 : <a class="el" href="classROSEE_1_1DummyHal.html#a92024536fe2f2b8a1f1e4fed8c0cbfa6">ROSEE::DummyHal</a>
 , <a class="el" href="classROSEE_1_1EEHal.html#a775292261de6c2dd89ff5085c868ac1b">ROSEE::EEHal</a>
+</li>
+<li>setDamping()
+: <a class="el" href="classROSEE_1_1Utils_1_1SecondOrderFilter.html#ad396e35a8f9d6ded1ce81ddae9d0b9b6">ROSEE::Utils::SecondOrderFilter&lt; SignalType &gt;</a>
 </li>
 <li>setJointEffort()
 : <a class="el" href="classROSEE_1_1EEHal.html#a4b5e0e83a2d964e319e11cce1bde9fae">ROSEE::EEHal</a>
@@ -234,6 +265,16 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </li>
 <li>setJointVelocity()
 : <a class="el" href="classROSEE_1_1EEHal.html#a20d36ab82153ebfd1e12a1f0ba101b53">ROSEE::EEHal</a>
+</li>
+<li>setOmega()
+: <a class="el" href="classROSEE_1_1Utils_1_1SecondOrderFilter.html#a60c7627287827aea54ff99b877feae50">ROSEE::Utils::SecondOrderFilter&lt; SignalType &gt;</a>
+</li>
+<li>setPositionReference()
+: <a class="el" href="classROSEE_1_1DummyHal.html#a34f2eea897de46fadb7be9ed3c5d22c3">ROSEE::DummyHal</a>
+, <a class="el" href="classROSEE_1_1IMotor.html#a3d61e0788d39138835ccd1c9faab50f0">ROSEE::IMotor</a>
+</li>
+<li>setTimeStep()
+: <a class="el" href="classROSEE_1_1Utils_1_1SecondOrderFilter.html#afcf6d3ee2939a222b4e4f425a99ed0b5">ROSEE::Utils::SecondOrderFilter&lt; SignalType &gt;</a>
 </li>
 <li>spin()
 : <a class="el" href="classROSEE_1_1UniversalRosEndEffectorExecutor.html#a5fe0a56faab3bbe91e0b5cb236cdb167">ROSEE::UniversalRosEndEffectorExecutor</a>
@@ -275,7 +316,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Dec 2 2019 21:17:34 for ROSEndEffector by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Dec 3 2019 19:15:02 for ROSEndEffector by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.11
 </small></address>

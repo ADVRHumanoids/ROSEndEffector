@@ -1,8 +1,9 @@
 <map id="/home/travis/build/ADVRHumanoids/ROSEndEffector/src/UniversalRosEndEffectorExecutor.cpp" name="/home/travis/build/ADVRHumanoids/ROSEndEffector/src/UniversalRosEndEffectorExecutor.cpp">
-<area shape="rect" id="node2" href="$UniversalRosEndEffectorExecutor_8h.html" title="ROSEndEffector/Universal\lRosEndEffectorExecutor.h" alt="" coords="1056,109,1243,151"/>
-<area shape="rect" id="node7" href="$Parser_8h.html" title="ROSEndEffector/Parser.h" alt="" coords="400,437,579,464"/>
-<area shape="rect" id="node13" href="$EEInterface_8h.html" title="ROSEndEffector/EEInterface.h" alt="" coords="689,363,900,389"/>
-<area shape="rect" id="node17" href="$EEHal_8h.html" title="ROSEndEffector/EEHal.h" alt="" coords="985,288,1159,315"/>
-<area shape="rect" id="node19" href="$DummyHal_8h.html" title="ROSEndEffector/DummyHal.h" alt="" coords="1187,206,1397,233"/>
-<area shape="rect" id="node18" href="$IMotor_8h.html" title="ROSEndEffector/IMotor.h" alt="" coords="975,363,1153,389"/>
+<area shape="rect" id="node2" href="$UniversalRosEndEffectorExecutor_8h.html" title="ROSEndEffector/Universal\lRosEndEffectorExecutor.h" alt="" coords="1064,109,1251,151"/>
+<area shape="rect" id="node7" href="$Parser_8h.html" title="ROSEndEffector/Parser.h" alt="" coords="369,437,548,464"/>
+<area shape="rect" id="node13" href="$EEInterface_8h.html" title="ROSEndEffector/EEInterface.h" alt="" coords="781,363,992,389"/>
+<area shape="rect" id="node17" href="$EEHal_8h.html" title="ROSEndEffector/EEHal.h" alt="" coords="1121,288,1295,315"/>
+<area shape="rect" id="node19" href="$DummyHal_8h.html" title="ROSEndEffector/DummyHal.h" alt="" coords="1296,206,1507,233"/>
+<area shape="rect" id="node20" href="$Utils_8h.html" title="ROSEndEffector/Utils.h" alt="" coords="953,206,1119,233"/>
+<area shape="rect" id="node18" href="$IMotor_8h.html" title="ROSEndEffector/IMotor.h" alt="" coords="1067,363,1245,389"/>
 </map>
