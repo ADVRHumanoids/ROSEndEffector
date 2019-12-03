@@ -99,13 +99,59 @@ void ROSEE::UniversalRosEndEffectorExecutor::graspCallback ( const ros_end_effec
 }
 
 
+void ROSEE::UniversalRosEndEffectorExecutor::pinchCallback ( const ros_end_effector::EEPinchControlConstPtr& msg ) {
+
+    std::vector<int> ids;
+
+    if ( _ee->isFinger ( msg->finger_pinch_1 ) && _ee->isFinger ( msg->finger_pinch_2 ) ) {
+
+        Eigen::VectorXd pos_ref_upper, pos_ref_lower;
+        pos_ref_upper.resize ( _ee->getActuatedJointsNum() );
+        pos_ref_lower.resize ( _ee->getActuatedJointsNum() );
+
+        pos_ref_upper = _ee->getUpperPositionLimits() * msg->percentage;
+        pos_ref_lower = _ee->getLowerPositionLimits() * msg->percentage;
+
+        // set references for finger_pinch_1
+        _ee->getInternalIdsForFinger ( msg->finger_pinch_1, ids );
+
+        for ( const auto& id : ids ) {
+
+            move_joint_in_finger(pos_ref_upper[id], pos_ref_lower[id], id);
+        }
+        
+        // set references for finger_pinch_2
+        _ee->getInternalIdsForFinger ( msg->finger_pinch_2, ids );
+
+        for ( const auto& id : ids ) {
+
+            move_joint_in_finger(pos_ref_upper[id], pos_ref_lower[id], id);
+        }
+
+    }
+    else {
+        ROS_ERROR_STREAM ( "finger_pinch_1 :" << msg->finger_pinch_1 << " or finger_pinch_2 :" << msg->finger_pinch_2 << " not defined in current End-Effector" );
+    }
+}
+
+
+
 bool ROSEE::UniversalRosEndEffectorExecutor::init_primitive_subscribers() {
 
-    _sub_grasp = _nh.subscribe<ros_end_effector::EEGraspControl>( "/ros_end_effector/grasp",
-                                                1,
-                                                &ROSEE::UniversalRosEndEffectorExecutor::graspCallback,
-                                                this
-    );
+    _sub_grasp = _nh.subscribe<ros_end_effector::EEGraspControl> ( "grasp",
+                 1,
+                 &ROSEE::UniversalRosEndEffectorExecutor::graspCallback,
+                 this
+                                                                 );
+
+    if( _ee->getFingersNumber() > 1 ) {
+        
+        _sub_pinch = _nh.subscribe<ros_end_effector::EEPinchControl> ( "pinch",
+                    1,
+                    &ROSEE::UniversalRosEndEffectorExecutor::pinchCallback,
+                    this
+                                                                    );
+    }
 }
 
 

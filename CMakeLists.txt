@@ -38,6 +38,12 @@ FILES
 EEGraspControl.msg
 )
 
+add_message_files(
+DIRECTORY msgs
+FILES
+EEPinchControl.msg
+)
+
 generate_messages(
 DEPENDENCIES
 std_msgs
