@@ -5,6 +5,8 @@ Documentation about the API of ROS End-Effector can be found here https://advrhu
 
 CI powered by Travis CI (.org) [![Build Status](https://travis-ci.org/ADVRHumanoids/ROSEndEffector.svg?branch=master)](https://travis-ci.org/ADVRHumanoids/ROSEndEffector)
 
+https://travis-ci.org/ADVRHumanoids/ROSEndEffector
+
 ***
 <!-- 
     ROSIN acknowledgement from the ROSIN press kit
