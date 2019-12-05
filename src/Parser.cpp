@@ -156,7 +156,7 @@ bool ROSEE::Parser::parseSRDF() {
 }
 
 
-bool ROSEE::Parser::parseURDF() {
+    bool ROSEE::Parser::parseURDF() {
 
     std::string xml_string;
     std::fstream xml_file ( _urdf_path.c_str(), std::fstream::in );
@@ -224,9 +224,15 @@ bool ROSEE::Parser::getROSEndEffectorConfig() {
         // check the urdf_filename
         if ( ros_ee_node["urdf_path"] ) {
 
-            // TBD relative path
-            _urdf_path = ros_ee_node["urdf_path"].as<std::string>();
+            // TBD relative path in more elegant way
+            // retrieve path of this source file (and its upper folder)
+            boost::filesystem::path path(__FILE__); 
+            path.remove_filename().remove_leaf();
+            std::string packagePath = path.string();
+            
+            _urdf_path = packagePath + "/configs/" + ros_ee_node["urdf_path"].as<std::string>();
             ROS_INFO_STREAM ( "ROSEndEffector Parser found URDF path: " << _urdf_path );
+            std::cin.get();
         } else {
 
             ROS_ERROR_STREAM ( "in " << __func__ << " : ROSEndEffector node of  " << _ros_ee_config_path << " does not contain urdf_path mandatory node!!" );
@@ -236,8 +242,13 @@ bool ROSEE::Parser::getROSEndEffectorConfig() {
         // check the srdf_filename
         if ( ros_ee_node["srdf_path"] ) {
 
-            // TBD relative path
-            _srdf_path = ros_ee_node["srdf_path"].as<std::string>();
+            // TBD relative path in more elegant way
+            // retrieve path of this source file (and its upper folder)
+            boost::filesystem::path path(__FILE__); 
+            path.remove_filename().remove_leaf();
+            std::string packagePath = path.string();
+            
+            _srdf_path = packagePath + "/configs/" + ros_ee_node["srdf_path"].as<std::string>();
             ROS_INFO_STREAM ( "ROSEndEffector Parser found SRDF path: " << _srdf_path );
         } else {
 

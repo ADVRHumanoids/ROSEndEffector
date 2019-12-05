@@ -29,6 +29,9 @@
 
 #include <srdfdom/model.h>
 
+//to find relative path for the config files
+#include <boost/filesystem/path.hpp>
+
 namespace ROSEE {
     
     /**
