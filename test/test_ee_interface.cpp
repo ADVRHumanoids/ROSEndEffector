@@ -7,6 +7,7 @@
 
 #include <ROSEndEffector/Parser.h>
 #include <ROSEndEffector/EEInterface.h>
+#include <ROSEndEffector/Utils.h>
 
 namespace {
 
@@ -30,7 +31,7 @@ protected:
         ros::NodeHandle nh;
 
         ROSEE::Parser p ( nh );
-        p.init ( "/home/lucamuratore/src/ros_end_effector__ws/src/ROSEndEffector/configs/test_ee.yaml" );
+        p.init (  ROSEE::Utils::getPackagePath() + "/configs/test_ee.yaml" );
         p.printEndEffectorFingerJointsMap();
 
         ee = std::make_shared<ROSEE::EEInterface>(p);
