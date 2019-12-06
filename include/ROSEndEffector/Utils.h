@@ -26,6 +26,14 @@ namespace ROSEE
 
 namespace Utils
 {
+    
+    
+static std::string getPackagePath() {
+    
+    boost::filesystem::path path(__FILE__);
+    path.remove_filename();
+    return path.string() + "/../../";
+}
 
 
 template <typename SignalType>
