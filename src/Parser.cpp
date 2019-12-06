@@ -232,7 +232,6 @@ bool ROSEE::Parser::getROSEndEffectorConfig() {
             
             _urdf_path = packagePath + "/configs/" + ros_ee_node["urdf_path"].as<std::string>();
             ROS_INFO_STREAM ( "ROSEndEffector Parser found URDF path: " << _urdf_path );
-            std::cin.get();
         } else {
 
             ROS_ERROR_STREAM ( "in " << __func__ << " : ROSEndEffector node of  " << _ros_ee_config_path << " does not contain urdf_path mandatory node!!" );
@@ -247,7 +246,7 @@ bool ROSEE::Parser::getROSEndEffectorConfig() {
             boost::filesystem::path path(__FILE__); 
             path.remove_filename().remove_leaf();
             std::string packagePath = path.string();
-            
+
             _srdf_path = packagePath + "/configs/" + ros_ee_node["srdf_path"].as<std::string>();
             ROS_INFO_STREAM ( "ROSEndEffector Parser found SRDF path: " << _srdf_path );
         } else {

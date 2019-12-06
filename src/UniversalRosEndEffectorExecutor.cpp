@@ -35,7 +35,7 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
     std::string thisSourcePath = path.string();
     
     ROSEE::Parser p ( _nh );
-    p.init ( thisSourcePath + "/../configs/two_finger.yaml" );
+    p.init ( thisSourcePath + "/../configs/test_ee.yaml" );
     p.printEndEffectorFingerJointsMap();
 
     // retrieve the ee interface
