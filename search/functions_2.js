@@ -20,6 +20,7 @@ var searchData=
   ['getmotorvelocity',['getMotorVelocity',['../classROSEE_1_1DummyHal.html#a77ac994d48ce2dcfe83deddb0069eb7d',1,'ROSEE::DummyHal::getMotorVelocity()'],['../classROSEE_1_1IMotor.html#a31434c560a2e2d7a1220ef7de8539a70',1,'ROSEE::IMotor::getMotorVelocity()']]],
   ['getomega',['getOmega',['../classROSEE_1_1Utils_1_1SecondOrderFilter.html#a36aacae2d71ada21904e5ca7e6b99ab1',1,'ROSEE::Utils::SecondOrderFilter']]],
   ['getoutput',['getOutput',['../classROSEE_1_1Utils_1_1SecondOrderFilter.html#ae4b164d8983c62814d650857ae02517d',1,'ROSEE::Utils::SecondOrderFilter']]],
+  ['getpackagepath',['getPackagePath',['../namespaceROSEE_1_1Utils.html#a8f237326c153c934ef6eca34a2a638b3',1,'ROSEE::Utils']]],
   ['gettimestep',['getTimeStep',['../classROSEE_1_1Utils_1_1SecondOrderFilter.html#a2c1abf85d0da83553282aa759962b520',1,'ROSEE::Utils::SecondOrderFilter']]],
   ['getupperpositionlimits',['getUpperPositionLimits',['../classROSEE_1_1EEInterface.html#ae3171b74f97abe47218110dc4e64d51a',1,'ROSEE::EEInterface']]],
   ['geturdfjointmap',['getUrdfJointMap',['../classROSEE_1_1Parser.html#a0acd8a760b06cca42cd82c7153aca1cc',1,'ROSEE::Parser']]],
