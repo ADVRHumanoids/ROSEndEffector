@@ -12,7 +12,7 @@ def scale_clb(v):
     scaleValue = v
 
 #ros things
-pub = rospy.Publisher("chatter", EEGraspControl, queue_size=10)
+pub = rospy.Publisher("ros_end_effector/grasp", EEGraspControl, queue_size=10)
 rospy.init_node('gui_pub', anonymous=True)
 
 #gui things
@@ -51,7 +51,7 @@ while not rospy.is_shutdown():
     
     msg.seq = seq
     seq += 1
-    msg.stamp = timestamp
+    msg.stamp = rospy.Time.now()
     print (type(scaleValue))
     msg.percentage = float(scaleValue.get())/100
     rospy.loginfo("Publishing message: ")
