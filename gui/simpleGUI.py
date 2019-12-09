@@ -1,8 +1,5 @@
 #! /usr/bin/python
 
-# tutorial from https://www.tutorialspoint.com/python/python_gui_programming.htm
-
-
 import Tkinter as tk
 import rospy 
 from ros_end_effector.msg import EEGraspControl, EEPinchControl
