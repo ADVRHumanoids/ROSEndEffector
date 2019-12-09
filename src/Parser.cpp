@@ -16,6 +16,7 @@
 */
 
 #include <ROSEndEffector/Parser.h>
+#include <ROSEndEffector/Utils.h>
 
 #include <ros/console.h>
 
@@ -225,12 +226,7 @@ bool ROSEE::Parser::getROSEndEffectorConfig() {
         if ( ros_ee_node["urdf_path"] ) {
 
             // TBD relative path in more elegant way
-            // retrieve path of this source file (and its upper folder)
-            boost::filesystem::path path(__FILE__); 
-            path.remove_filename().remove_leaf();
-            std::string packagePath = path.string();
-            
-            _urdf_path = packagePath + "/configs/" + ros_ee_node["urdf_path"].as<std::string>();
+            _urdf_path = ROSEE::Utils::getPackagePath() + "/configs/" + ros_ee_node["urdf_path"].as<std::string>();
             ROS_INFO_STREAM ( "ROSEndEffector Parser found URDF path: " << _urdf_path );
         } else {
 
@@ -242,12 +238,7 @@ bool ROSEE::Parser::getROSEndEffectorConfig() {
         if ( ros_ee_node["srdf_path"] ) {
 
             // TBD relative path in more elegant way
-            // retrieve path of this source file (and its upper folder)
-            boost::filesystem::path path(__FILE__); 
-            path.remove_filename().remove_leaf();
-            std::string packagePath = path.string();
-
-            _srdf_path = packagePath + "/configs/" + ros_ee_node["srdf_path"].as<std::string>();
+            _srdf_path = ROSEE::Utils::getPackagePath() + "/configs/" + ros_ee_node["srdf_path"].as<std::string>();
             ROS_INFO_STREAM ( "ROSEndEffector Parser found SRDF path: " << _srdf_path );
         } else {
 

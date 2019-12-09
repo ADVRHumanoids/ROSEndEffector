@@ -28,14 +28,9 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
                                     this, false, false );
     _time = 0.0;
 
-    // TBD relative path in more elegant way
-    // retrieve path of this source file
-    boost::filesystem::path path(__FILE__);
-    path.remove_filename();
-    std::string thisSourcePath = path.string();
-    
+    // TBD relative path in more elegant way   
     ROSEE::Parser p ( _nh );
-    p.init ( thisSourcePath + "/../configs/test_ee.yaml" );
+    p.init ( ROSEE::Utils::getPackagePath() + "/configs/two_finger.yaml" );
     p.printEndEffectorFingerJointsMap();
 
     // retrieve the ee interface
