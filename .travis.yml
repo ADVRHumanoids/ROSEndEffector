@@ -41,7 +41,7 @@ script:
 #tests
 - make tests
 - roscore &
-- make test ARGS="-V"
+- make test ARGS="-V" -i
 
 deploy:
   provider: pages
