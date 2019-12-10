@@ -30,9 +30,8 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
 
     // TBD relative path in more elegant way   
     ROSEE::Parser p ( _nh );
-    std::string yamlConfigFileName;
-    _nh.getParam("/UniversalRosEndEffector/yamlConfigFileName", yamlConfigFileName);
-    p.init ( ROSEE::Utils::getPackagePath() + yamlConfigFileName );
+    p.init ( ROSEE::Utils::getPackagePath() + 
+        ROSEE::Utils::getRosParam(_nh, "/UniversalRosEndEffector/yamlConfigFileName") );
     p.printEndEffectorFingerJointsMap();
 
     // retrieve the ee interface

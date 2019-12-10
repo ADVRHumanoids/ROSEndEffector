@@ -35,6 +35,13 @@ static std::string getPackagePath() {
     return path.string() + "/../../";
 }
 
+static std::string getRosParam(ros::NodeHandle _nh, std::string paramName) {
+    
+    std::string yamlConfigFileName;
+    _nh.getParam(paramName, yamlConfigFileName);
+    return yamlConfigFileName;
+    
+}
 
 template <typename SignalType>
 class SecondOrderFilter
