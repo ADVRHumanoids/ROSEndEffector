@@ -30,7 +30,8 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
 
     // TBD relative path in more elegant way   
     ROSEE::Parser p ( _nh );
-    p.init ( ROSEE::Utils::getPackagePath() + "/configs/two_finger.yaml" );
+    p.init ( ROSEE::Utils::getPackagePath() + 
+        ROSEE::Utils::getRosParam(_nh, "/UniversalRosEndEffector/yamlConfigFileName") );
     p.printEndEffectorFingerJointsMap();
 
     // retrieve the ee interface
