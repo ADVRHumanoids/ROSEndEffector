@@ -35,6 +35,7 @@ static std::string getPackagePath() {
     return path.string() + "/../../";
 }
 
+
 template <typename SignalType>
 class SecondOrderFilter
 {
