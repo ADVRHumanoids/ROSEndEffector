@@ -10,9 +10,7 @@
         
      <!-- <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"></node> -->
     
-    <node type="UniversalRosEndEffector" name="UniversalRosEndEffector" pkg="ros_end_effector" output="screen" >
-        <param name="yamlConfigFileName" type="str" value="/configs/two_finger.yaml" /> 
-    </node>
+    <node type="UniversalRosEndEffector" name="UniversalRosEndEffector" pkg="ros_end_effector" output="screen"/>
 
     <!-- start robot state publisher -->
     <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" output="screen" >

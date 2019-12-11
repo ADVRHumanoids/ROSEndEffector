@@ -29,7 +29,6 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
     _time = 0.0;
 
     ROSEE::Parser p ( _nh );
-
     p.init ();
     p.printEndEffectorFingerJointsMap();
 
