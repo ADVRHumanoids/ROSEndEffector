@@ -94,6 +94,52 @@ TEST_F ( testEEInterface, checkEEFingerJoints ) {
 
 }
 
+TEST_F ( testEEInterface, checkJointLimits) {
+
+    Eigen::VectorXd upperLimits = ee->getUpperPositionLimits();
+    Eigen::VectorXd lowerLimits = ee->getLowerPositionLimits();
+    
+    ASSERT_EQ (upperLimits.size(), lowerLimits.size()); //stop if fail here
+    
+    EXPECT_TRUE (upperLimits.size() > 0);
+    
+    for (int i=0; i<upperLimits.size(); i++) {
+    
+        EXPECT_GE (upperLimits(i), lowerLimits(i)); //greater or equal than
+        ROS_INFO_STREAM ( "Joint " << std::to_string(i) << " limits:  " <<
+                          upperLimits(i) <<  ", " << lowerLimits(i) );
+
+    }
+    
+}
+
+TEST_F ( testEEInterface, checkIdJoints ) {
+
+    std::vector<std::string> actJoints;
+    ee->getActuatedJoints(actJoints);
+    ASSERT_FALSE (actJoints.empty());
+    
+    for ( auto& j : actJoints ) {
+        int id = -1;
+        EXPECT_TRUE(ee->getInternalIdForJoint(j, id)); //return false if joint does not exist
+        EXPECT_GE ( id, 0); //check if id is positive
+    }
+    
+}
+
+TEST_F ( testEEInterface, checkIdFingers) {
+
+    std::vector<std::string> fingers  = ee->getFingers();
+    ASSERT_FALSE (fingers.empty());
+    
+    for ( auto& f : fingers ) {
+        int id = -1;
+        EXPECT_TRUE(ee->getInternalIdForJoint(f, id)); //return false if joint does not exist
+        EXPECT_GE ( id, 0); //check if id is positive
+    }
+    
+}
+
 
 
 } //namespace
