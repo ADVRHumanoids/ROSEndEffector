@@ -34,7 +34,7 @@ class Gui:
 
         maxPicks = 2 #only 2 finger for the pinch
         self.scalePinch = GuiScaleCheck(self.createFrameinGrid(0,1), 
-                                   "ros_end_effector/grasp", EEPinchControl,
+                                   "ros_end_effector/pinch", EEPinchControl,
                                    ["finger_1", "finger_2", "finger_3"], maxPicks)
 
     def createFrameinGrid(self, col, row):
