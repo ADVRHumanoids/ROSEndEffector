@@ -28,9 +28,8 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
                                     this, false, false );
     _time = 0.0;
 
-    // TBD relative path in more elegant way   
     ROSEE::Parser p ( _nh );
-    p.init ( ROSEE::Utils::getPackagePath() + "/configs/two_finger.yaml" );
+    p.init ();
     p.printEndEffectorFingerJointsMap();
 
     // retrieve the ee interface
