@@ -20,8 +20,10 @@
 
 ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::string ns ) : _nh ( ns ) {
 
-    // TBD rate from config
-    _rate = 100.0;
+    if (! _nh.getParam("/rate", _rate)){
+        ROS_INFO_STREAM ("Ros parameter for rate not found, I'm setting the default rate of 100 Hz");
+        _rate = 100.0;
+    }
     _period = 1.0 / _rate;
     _loop_timer = _nh.createTimer ( ros::Duration ( _period ),
                                     &UniversalRosEndEffectorExecutor::timer_callback,
