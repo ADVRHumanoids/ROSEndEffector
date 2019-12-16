@@ -1,7 +1,6 @@
 #! /usr/bin/python
 
 import Tkinter as tk
-import ttk
 import rospy 
 from ros_end_effector.msg import EEGraspControl, EEPinchControl
 
@@ -19,8 +18,6 @@ class Gui:
         self.rootWin = tk.Tk()
         self.rootWin.title("ros_end_effector control GUI")
         self.rootWin.geometry(str(winlength) + "x" + str(winheight) + "+" + winposition)
-        #self.rootWin.style = ttk.Style() #theme not work
-        #self.rootWin.style.theme_use("classic")  #'aqua', 'step', 'clam', 'alt', 'default', 'classic'
 
         idxRow = 0
         
