@@ -31,8 +31,7 @@ protected:
         ros::NodeHandle nh;
 
         ROSEE::Parser p ( nh );
-        p.init ();
-        p.printEndEffectorFingerJointsMap();
+        p.init (  ROSEE::Utils::getPackagePath() + "/configs/test_ee.yaml" );        p.printEndEffectorFingerJointsMap();
 
         ee = std::make_shared<ROSEE::EEInterface>(p);
     }
