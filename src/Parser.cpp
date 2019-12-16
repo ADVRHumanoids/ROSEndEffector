@@ -278,8 +278,8 @@ bool ROSEE::Parser::configure() {
 
 bool ROSEE::Parser::init() {
 
-    // try to retrive the path to config from the ROS param server
-    if ( _nh.getParam ( "ros_ee_config_path", _ros_ee_config_path ) ) {
+    // try to retrive the path to config from the ROS param server TBD namespace should be take into account
+    if ( _nh.getParam ( "/ros_ee_config_path", _ros_ee_config_path ) ) {
 
         _is_initialized =  configure();
         return _is_initialized;
