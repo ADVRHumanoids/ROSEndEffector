@@ -24,10 +24,10 @@ protected:
 
     virtual void SetUp() {
 
-        char *argv[] = {"testEEInterface", "arg"};
+        const char *argv[] = {"testEEInterface", "arg"};
         int argc = sizeof(argv) / sizeof(char*) - 1;
         
-        ros::init ( argc, argv, "testEEInterface" );
+        ros::init ( argc, const_cast<char **> (argv), "testEEInterface" );
         ros::NodeHandle nh;
 
         ROSEE::Parser p ( nh );
