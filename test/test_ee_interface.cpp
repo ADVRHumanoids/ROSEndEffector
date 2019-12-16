@@ -31,7 +31,7 @@ protected:
         ros::NodeHandle nh;
 
         ROSEE::Parser p ( nh );
-        p.init (  ROSEE::Utils::getPackagePath() + "/configs/test_ee.yaml" );
+        p.init ();
         p.printEndEffectorFingerJointsMap();
 
         ee = std::make_shared<ROSEE::EEInterface>(p);
@@ -99,7 +99,7 @@ TEST_F ( testEEInterface, checkJointLimits) {
     Eigen::VectorXd upperLimits = ee->getUpperPositionLimits();
     Eigen::VectorXd lowerLimits = ee->getLowerPositionLimits();
     
-    ASSERT_EQ (upperLimits.size(), lowerLimits.size()); //stop if fail here
+    ASSERT_EQ (upperLimits.size(), lowerLimits.size()); //stop if it fails here
     
     EXPECT_TRUE (upperLimits.size() > 0);
     
@@ -117,12 +117,15 @@ TEST_F ( testEEInterface, checkIdJoints ) {
 
     std::vector<std::string> actJoints;
     ee->getActuatedJoints(actJoints);
-    ASSERT_FALSE (actJoints.empty());
+   // ASSERT_FALSE (actJoints.empty());  //a hand can have no actuated joints?
     
+    // check if ids are unique
+    int id = -1;
+    int idPrevious = -1;
     for ( auto& j : actJoints ) {
-        int id = -1;
-        EXPECT_TRUE(ee->getInternalIdForJoint(j, id)); //return false if joint does not exist
-        EXPECT_GE ( id, 0); //check if id is positive
+        EXPECT_TRUE ( ee->getInternalIdForJoint (j, id) ); //return false if joint does not exist
+        EXPECT_NE ( id, idPrevious );
+        idPrevious = id;
     }
     
 }
@@ -132,10 +135,13 @@ TEST_F ( testEEInterface, checkIdFingers) {
     std::vector<std::string> fingers  = ee->getFingers();
     ASSERT_FALSE (fingers.empty());
     
+    int id = -1;
+    int idPrevious = -1;
+
     for ( auto& f : fingers ) {
-        int id = -1;
         EXPECT_TRUE(ee->getInternalIdForJoint(f, id)); //return false if joint does not exist
-        EXPECT_GE ( id, 0); //check if id is positive
+        EXPECT_NE ( id, idPrevious );
+        idPrevious = id;
     }
     
 }
