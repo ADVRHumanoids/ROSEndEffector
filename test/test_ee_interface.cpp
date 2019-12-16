@@ -31,7 +31,8 @@ protected:
         ros::NodeHandle nh;
 
         ROSEE::Parser p ( nh );
-        p.init (  ROSEE::Utils::getPackagePath() + "/configs/test_ee.yaml" );        p.printEndEffectorFingerJointsMap();
+        p.init ( ROSEE::Utils::getPackagePath() + "/configs/test_ee.yaml" );
+        p.printEndEffectorFingerJointsMap();
 
         ee = std::make_shared<ROSEE::EEInterface>(p);
     }
@@ -128,24 +129,6 @@ TEST_F ( testEEInterface, checkIdJoints ) {
     }
     
 }
-
-TEST_F ( testEEInterface, checkIdFingers) {
-
-    std::vector<std::string> fingers  = ee->getFingers();
-    ASSERT_FALSE (fingers.empty());
-    
-    int id = -1;
-    int idPrevious = -1;
-
-    for ( auto& f : fingers ) {
-        EXPECT_TRUE(ee->getInternalIdForJoint(f, id)); //return false if joint does not exist
-        EXPECT_NE ( id, idPrevious );
-        idPrevious = id;
-    }
-    
-}
-
-
 
 } //namespace
 
