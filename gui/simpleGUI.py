@@ -59,12 +59,9 @@ class GuiScale:
         self.scale.grid(row=0, column=0, padx=0, pady=0)
         
         #the entry widget to enter percentage directly
-        entryVcmd = (frame.register(self.entryClbk))       
         self.entry = tk.Entry(frame,
                               width = 4,
-                              textvariable = self.value,
-                              validate='focusout',
-                              validatecommand = (entryVcmd, '%P'))
+                              textvariable = self.value)
         self.entry.grid(row=0, column=1, padx=1, pady=0)
         
         #for ros messages
@@ -82,13 +79,6 @@ class GuiScale:
         rospy.loginfo("Publishing Grasp message: ")
         rospy.loginfo(msg)
         self.pub.publish(msg)
-        
-    def entryClbk ( self, P ):
-        if str.isdigit(P):
-            self.scaleClbk(P)
-            return True
-        else:
-            return False
         
 
 class GuiScaleCheck:
@@ -127,12 +117,9 @@ class GuiScaleCheck:
         self.scale.grid(row=1, column=0, columnspan=len(fingerList)-1, padx=0, pady=0)
         
         #the entry widget to enter percentage directly
-        entryVcmd = (frame.register(self.entryClbk))       
         self.entry = tk.Entry(frame,
                               width = 4,
                               textvariable = self.scaleVar,
-                              validate='focusout',
-                              validatecommand = (entryVcmd, '%P'),
                               state = tk.DISABLED)
         self.entry.grid(row = 1, column = len(fingerList)-1 , padx=1, pady=0)
         
@@ -142,12 +129,6 @@ class GuiScaleCheck:
         self.msgSeq = 0 #sequence incrementing for msg
         
         
-    def entryClbk ( self, P ):
-        if str.isdigit(P):
-            self.scaleClbk(P)
-            return True
-        else:
-            return False
         
     def scaleClbk(self, value):
         msg = self.msgType()
