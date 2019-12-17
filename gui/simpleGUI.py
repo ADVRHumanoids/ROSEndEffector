@@ -19,7 +19,6 @@ class Gui:
         self.rootWin.title("ros_end_effector control GUI")
         self.rootWin.geometry(str(winlength) + "x" + str(winheight) + "+" + winposition)
 
-        idxRow = 0
         
         #create the scale widgets
         self.scaleGrasp = GuiScale(self.createFrameinGrid(0,0), 
@@ -39,7 +38,7 @@ class Gui:
         Create a new frame and put it into rootWindow with grid(col, row)
         """
         widgetRow = tk.Frame(self.rootWin)
-        widgetRow.grid(column=col, row=row, padx =10, pady=10)
+        widgetRow.grid(column=col, row=row, padx =0, pady=15)
         return widgetRow
             
 
@@ -54,19 +53,27 @@ class GuiScale:
             orient = tk.HORIZONTAL, 
             length = 400,
             from_ = 0, to = 1,
-            showvalue = 1, 
+            showvalue = 0, #default is 1
             tickinterval = 0.1, resolution = 0.01,
             label = topicName)
-        self.scale.pack(side=tk.LEFT, padx=10, pady=0)
+        self.scale.grid(row=0, column=0, padx=0, pady=0)
+        
+        #the entry widget to enter percentage directly
+        entryVcmd = (frame.register(self.entryClbk))       
+        self.entry = tk.Entry(frame,
+                              width = 4,
+                              textvariable = self.value,
+                              validate='focusout',
+                              validatecommand = (entryVcmd, '%P'))
+        self.entry.grid(row=0, column=1, padx=1, pady=0)
         
         #for ros messages
         self.msgType = msgType
         self.pub = rospy.Publisher(topicName, msgType, queue_size=1)
         self.msgSeq = 0 #sequence incrementing for msg
-
         
         
-    def scaleClbk(self, value):
+    def scaleClbk ( self, value ):
         msg = self.msgType()
         msg.seq = self.msgSeq
         self.msgSeq += 1
@@ -75,8 +82,14 @@ class GuiScale:
         rospy.loginfo("Publishing Grasp message: ")
         rospy.loginfo(msg)
         self.pub.publish(msg)
-            
-
+        
+    def entryClbk ( self, P ):
+        if str.isdigit(P):
+            self.scaleClbk(P)
+            return True
+        else:
+            return False
+        
 
 class GuiScaleCheck:
     """
@@ -97,7 +110,7 @@ class GuiScaleCheck:
                                         text = finger,
                                         variable = self.varCheckButtons[idx],
                                         command = self.check_picked))
-            self.checkButtons[idx].grid(row=0, column=idx, pady=10)
+            self.checkButtons[idx].grid(row=0, column=idx, padx = 0, pady=0)
             
         #scale part
         self.scaleVar = tk.DoubleVar()
@@ -107,16 +120,34 @@ class GuiScaleCheck:
             orient = tk.HORIZONTAL, 
             length = 400,
             from_ = 0, to = 1,
-            showvalue = 1, 
+            showvalue = 0, 
             tickinterval = 0.1, resolution = 0.01,
             label = topicName,
             state = tk.DISABLED)
-        self.scale.grid(row=1, column=0, columnspan=len(fingerList), padx=10, pady=10)
+        self.scale.grid(row=1, column=0, columnspan=len(fingerList)-1, padx=0, pady=0)
+        
+        #the entry widget to enter percentage directly
+        entryVcmd = (frame.register(self.entryClbk))       
+        self.entry = tk.Entry(frame,
+                              width = 4,
+                              textvariable = self.scaleVar,
+                              validate='focusout',
+                              validatecommand = (entryVcmd, '%P'),
+                              state = tk.DISABLED)
+        self.entry.grid(row = 1, column = len(fingerList)-1 , padx=1, pady=0)
         
         #for ros messages
         self.msgType = msgType
         self.pub = rospy.Publisher(topicName, msgType, queue_size=1)
         self.msgSeq = 0 #sequence incrementing for msg
+        
+        
+    def entryClbk ( self, P ):
+        if str.isdigit(P):
+            self.scaleClbk(P)
+            return True
+        else:
+            return False
         
     def scaleClbk(self, value):
         msg = self.msgType()
@@ -144,12 +175,14 @@ class GuiScaleCheck:
                 else: #if zero, button has not been selected, disable it
                     chk['state'] = tk.DISABLED
             
-            #enable scale
+            #enable scale and relative entry
             self.scale['state'] = tk.NORMAL
+            self.entry['state'] = tk.NORMAL
         
         else:
         #enable all buttons and disable scale
             self.scale['state'] = tk.DISABLED
+            self.entry['state'] = tk.DISABLED
 
             for chk in self.checkButtons:
                 chk['state'] = tk.NORMAL
