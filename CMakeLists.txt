@@ -123,6 +123,7 @@ add_library(MoveItCollider
 # add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 add_executable(UniversalRosEndEffector src/UniversalRosEndEffector.cpp)
+add_executable(UniversalRosEndEffector2 src/UniversalRosEndEffector2.cpp)
 
 
 
@@ -168,6 +169,11 @@ target_link_libraries(MoveItCollider
 
 
 target_link_libraries(UniversalRosEndEffector
+    UniversalRosEndEffectorExecutor
+    MoveItCollider
+)
+
+target_link_libraries(UniversalRosEndEffector2
     UniversalRosEndEffectorExecutor
     MoveItCollider
 )

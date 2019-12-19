@@ -25,8 +25,11 @@ int main ( int argc, char **argv ) {
 
     ros::init ( argc, argv, "UniversalRosEndEffector" );
     
-    ROSEE::UniversalRosEndEffectorExecutor executor("ros_end_effector");
-    executor.spin();
+    //ROSEE::UniversalRosEndEffectorExecutor executor("ros_end_effector");
+    //executor.spin();
+    
+    ROSEE::MoveItCollider collider;
+    collider.run();
     
     return 0;
     
