@@ -63,11 +63,6 @@ int main(int argc, char** argv)
         
     }
     
-    for (auto it: kinematic_model->getJointModelGroup("end_effector_fingers")->getLinkModelNames()){
-        
-        std::cout << it << std::endl;
-    }
-    
     
     ros::shutdown();
     return 0;
