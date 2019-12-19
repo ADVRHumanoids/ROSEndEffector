@@ -1,34 +1,37 @@
-#include <ros/ros.h>
+#include <ROSEndEffector/MoveItCollider.h>
 
-// MoveIt!
-#include <moveit/robot_model_loader/robot_model_loader.h>
-#include <moveit/planning_scene/planning_scene.h>
+ROSEE::MoveItCollider::MoveItCollider(){
 
-int main(int argc, char** argv)
-{
-    ros::init(argc, argv, "collisionTest");
-    ros::AsyncSpinner spinner(1);
-    spinner.start();
-  
     //it is a ros param in the launch, take care that also sdrf is read (param: robot_description_semantic)
     robot_model_loader::RobotModelLoader robot_model_loader("robot_description"); 
-  
-    robot_model::RobotModelPtr kinematic_model = robot_model_loader.getModel();
+    kinematic_model = robot_model_loader.getModel();
+}
 
+ROSEE::MoveItCollider::MoveItCollider(std::string robot_description){
 
-    for ( auto it : kinematic_model->getEndEffectors() ){
-            std::vector < std::string> tips;
+    //it is a ros param in the launch, take care that also sdrf is read (param: robot_description_semantic)
+    robot_model_loader::RobotModelLoader robot_model_loader(robot_description); 
+    kinematic_model = robot_model_loader.getModel();
+}
 
-        it->getEndEffectorTips(tips);
-        std::cout << "number:  " << tips.size() << std::endl; 
-        for (auto itt : tips) {
-        
-            std::cout << "\t" << itt << std::endl;
-            
-        }
+void ROSEE::MoveItCollider::printFingertipNames(){
+
+    std::cout << "Fingertips list:" << std::endl;
+    for (auto it: fingertipNames) {
+        std::cout << it << std::endl;
     }
+    std::cout << std::endl;
     
-    std::cout << "baaaaaa\n";
+}
+
+void ROSEE::MoveItCollider::run(){
+    
+    lookForFingertips();
+    
+}
+
+void ROSEE::MoveItCollider::lookForFingertips(){
+
     for (auto it: kinematic_model->getJointModelGroups()) {
         
         std::string logGroupInfo;
@@ -52,19 +55,12 @@ int main(int argc, char** argv)
                        
                     } else { //TODO check if only a leaf link per finger
                        logGroupInfo.append("a leaf link (a fingertip)\n");
+                       fingertipNames.push_back(itt->getName());
                     }
                }
                 
             }
         }
-        
-        ROS_INFO_STREAM (logGroupInfo);
-        
-        
-    }
-    
-    
-    ros::shutdown();
-    return 0;
-  
+        std::cout << logGroupInfo;        
+    }    
 }

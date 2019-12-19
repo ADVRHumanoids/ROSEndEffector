@@ -113,6 +113,10 @@ add_library(UniversalRosEndEffectorExecutor
     src/UniversalRosEndEffectorExecutor.cpp
 )
 
+add_library(MoveItCollider 
+    src/MoveItCollider.cpp
+)
+
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
@@ -120,8 +124,7 @@ add_library(UniversalRosEndEffectorExecutor
 
 add_executable(UniversalRosEndEffector src/UniversalRosEndEffector.cpp)
 
-add_executable(collisionMoveit src/collisionMoveit.cpp)
-target_link_libraries(collisionMoveit ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -158,9 +161,18 @@ target_link_libraries(UniversalRosEndEffectorExecutor
     
 )
 
+target_link_libraries(MoveItCollider
+    ${catkin_LIBRARIES}     
+    ${Boost_LIBRARIES}
+)
+
+
 target_link_libraries(UniversalRosEndEffector
     UniversalRosEndEffectorExecutor
+    MoveItCollider
 )
+
+
 
 #############
 ## Install ##
