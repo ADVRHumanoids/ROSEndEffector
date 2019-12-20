@@ -75,7 +75,7 @@ void ROSEE::MoveItCollider::lookForFingertips(){
                        
                        logGroupInfo.append("not a leaf link (not a fingertip)\n");
                        
-                    } else { //TODO check if only a leaf link per finger
+                    } else {
                        logGroupInfo.append("a leaf link (a fingertip)\n");
                        fingertipNames.push_back(itt->getName());
                     }
@@ -105,7 +105,7 @@ void ROSEE::MoveItCollider::checkCollisions(){
 
     robot_state::RobotState kinematic_state(kinematic_model);
     
-    for (int i=0; i<15; i++){
+    for (int i=0; i<5; i++){
         collision_result.clear();
         kinematic_state.setToRandomPositions();
 
@@ -115,7 +115,7 @@ void ROSEE::MoveItCollider::checkCollisions(){
             std::cout << "Collision between " << it.first.first.c_str() << " and " << 
                                                 it.first.second.c_str() << std::endl;
             std::cout << "With the configuration:" << std::endl ;
-            kinematic_state.printStatePositions();
+            kinematic_state.printStateInfo();
             
             for (auto itt : it.second){ 
                 std::cout << "With a depth of contact: " << itt.depth << std::endl;
