@@ -110,16 +110,27 @@ void ROSEE::MoveItCollider::checkCollisions(){
         kinematic_state.setToRandomPositions();
 
         planning_scene.checkSelfCollision(collision_request, collision_result, kinematic_state, acm);
-        for (auto it : collision_result.contacts){
+        for (auto cont : collision_result.contacts){
             //contacts is a map between a pair (2 strings with link names) and a vector of Contact object            
-            std::cout << "Collision between " << it.first.first.c_str() << " and " << 
-                                                it.first.second.c_str() << std::endl;
+            std::cout << "Collision between " << cont.first.first.c_str() << " and " << 
+                                                cont.first.second.c_str() << std::endl;
             std::cout << "With the configuration:" << std::endl ;
-            kinematic_state.printStateInfo();
+            //kinematic_state.printStatePositions();
+        
+            for (auto actJ : kinematic_model->getActiveJointModels()){
+                std::string logInfo = "\tJoint " + actJ->getName() + " : " ;
+                //joint can have multiple pos (eg planar joint?)
+                const double* pos = kinematic_state.getJointPositions(actJ); 
+                for (unsigned int i =0; i< sizeof(pos)/sizeof(pos[0]); i++){
+                    logInfo.append(std::to_string(pos[i]) + ", ");
+                }
+                std::cout << logInfo << std::endl;
+                
+            }
             
-            for (auto itt : it.second){ 
-                std::cout << "With a depth of contact: " << itt.depth << std::endl;
-                std::cout << "Try Names: " << itt.body_name_1 << " and " << itt.body_name_2  << std::endl;
+            //?? I don't know why the contact is a vector, I have always find only one element
+            for (auto contInfo : cont.second){ 
+                std::cout << "With a depth of contact: " << contInfo.depth << std::endl;
             }
             std::cout << std::endl;
 
