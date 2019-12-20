@@ -20,13 +20,13 @@ public:
     MoveItCollider();
     MoveItCollider(std::string);
     void run();
-    void printFingertipNames();
-    void printNotFingertipNames();
+    void printFingertipLinkNames();
+    void printAllLinkNames();
+    void printActuatedJoints();
 private:
     robot_model::RobotModelPtr kinematic_model;
     void lookForFingertips();
     std::vector<std::string> fingertipNames;
-    std::vector<std::string> notFingertipNames;
     void checkCollisions();
 
 };

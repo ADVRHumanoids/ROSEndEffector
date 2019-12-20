@@ -14,7 +14,7 @@ ROSEE::MoveItCollider::MoveItCollider(std::string robot_description){
     kinematic_model = robot_model_loader.getModel();
 }
 
-void ROSEE::MoveItCollider::printFingertipNames(){
+void ROSEE::MoveItCollider::printFingertipLinkNames(){
 
     std::cout << "Fingertips list:" << std::endl;
     for (auto it: fingertipNames) {
@@ -24,23 +24,33 @@ void ROSEE::MoveItCollider::printFingertipNames(){
     
 }
 
-void ROSEE::MoveItCollider::printNotFingertipNames(){
+void ROSEE::MoveItCollider::printAllLinkNames(){
 
-    std::cout << "Not-Fingertips list:" << std::endl;
-    for (auto it: notFingertipNames) {
+    std::cout << "All Links  list:" << std::endl;
+    for (auto it: kinematic_model->getLinkModelNames()) {
         std::cout << it << std::endl;
     }
+    std::cout << std::endl;    
+}
+
+void ROSEE::MoveItCollider::printActuatedJoints(){
+
+    const std::vector<moveit::core::JointModel*> actJoints = kinematic_model->getActiveJointModels();
+    for (auto it: actJoints){
+        std::cout << "jointname: " << it->getName() << std::endl;
+    }  
     std::cout << std::endl;
-    
+
 }
 
 void ROSEE::MoveItCollider::run(){
     
     lookForFingertips();
-    printNotFingertipNames();
+    printFingertipLinkNames();
     checkCollisions();
-    
 }
+
+
 
 void ROSEE::MoveItCollider::lookForFingertips(){
 
@@ -64,7 +74,6 @@ void ROSEE::MoveItCollider::lookForFingertips(){
                     if (itt->getChildJointModels().size() != 0) {
                        
                        logGroupInfo.append("not a leaf link (not a fingertip)\n");
-                       notFingertipNames.push_back(itt->getName());
                        
                     } else { //TODO check if only a leaf link per finger
                        logGroupInfo.append("a leaf link (a fingertip)\n");
@@ -85,23 +94,18 @@ void ROSEE::MoveItCollider::checkCollisions(){
     collision_request.contacts = true;  //set to compute collisions
     collision_request.max_contacts = 1000;
     
-    const std::vector<moveit::core::JointModel*> actJoints = kinematic_model->getActiveJointModels();
-    
-    for (auto it: actJoints){
-    
-        std::cout << "jointname: " << it->getName() << std::endl;
-        
-    }
-    
+
     // Consider only collisions among fingertips 
     // If an object pair does not appear in the acm, it is assumed that collisions between those 
     // objects is no tolerated. So we must fill it with all the nonFingertips
     
     collision_detection::AllowedCollisionMatrix acm;
-    acm.setEntry(notFingertipNames, kinematic_model->getLinkModelNames(), true); //true==not considered collisions
+    acm.setEntry(kinematic_model->getLinkModelNames(), kinematic_model->getLinkModelNames(), true); //true==not considered collisions
+    acm.setEntry(fingertipNames, fingertipNames, false); //true==not considered collisions
+
     robot_state::RobotState kinematic_state(kinematic_model);
     
-    for (int i=0; i<100; i++){
+    for (int i=0; i<15; i++){
         collision_result.clear();
         kinematic_state.setToRandomPositions();
 
@@ -112,8 +116,10 @@ void ROSEE::MoveItCollider::checkCollisions(){
                                                 it.first.second.c_str() << std::endl;
             std::cout << "With the configuration:" << std::endl ;
             kinematic_state.printStatePositions();
+            
             for (auto itt : it.second){ 
                 std::cout << "With a depth of contact: " << itt.depth << std::endl;
+                std::cout << "Try Names: " << itt.body_name_1 << " and " << itt.body_name_2  << std::endl;
             }
             std::cout << std::endl;
 
