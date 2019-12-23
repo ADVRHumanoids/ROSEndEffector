@@ -7,6 +7,9 @@
 #include <moveit/robot_model_loader/robot_model_loader.h>
 #include <moveit/planning_scene/planning_scene.h>
 
+#include <ROSEndEffector/Utils.h>
+
+
 namespace ROSEE
 {
     
@@ -23,6 +26,17 @@ public:
     void printFingertipLinkNames();
     void printAllLinkNames();
     void printActuatedJoints();
+    void printBestCollisions();
+    
+    /** a vector containing pairs jointNames-jointValues. double* because a joint can have more than 1 dof */
+    typedef std::vector<std::pair<std::string, const double*>> JointStates; 
+
+    /**Contact informations for a contact that happens with a particular joint states*/
+    typedef std::pair <collision_detection::Contact, JointStates> ContactWithJointStates;     
+    
+    /** The object that contains all the "best" contact for each possible pair. Note that has a maximum size (binomial coeff of fingertips, for pinches)*/
+    std::vector<ContactWithJointStates> contactWithJointStatesVect; 
+    
 private:
     robot_model::RobotModelPtr kinematic_model;
     std::vector<std::string> fingertipNames;
@@ -42,6 +56,7 @@ private:
      */
     void lookForFingertips();
     void checkCollisions();
+    bool checkBestCollision(ContactWithJointStates contactJstates);
 
 };
     

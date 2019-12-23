@@ -34,8 +34,7 @@
 #include <ros_end_effector/EEGraspControl.h>
 #include <ros_end_effector/EEPinchControl.h>
 
-//to find relative path for the config files
-#include <boost/filesystem/path.hpp>
+
 
 
 namespace ROSEE

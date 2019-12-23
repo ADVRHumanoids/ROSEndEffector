@@ -21,11 +21,23 @@
 #include <cmath>
 #include <memory>
 
+//to find relative path for the config files
+#include <boost/filesystem/path.hpp>
+
 namespace ROSEE
 {
 
 namespace Utils
 {
+    
+static int binomial_coefficent(int n, int k) {
+
+    if (k == 0 || k == n){
+        return 1;
+    }
+    return Utils::binomial_coefficent(n - 1, k - 1) + Utils::binomial_coefficent(n - 1, k);
+    
+}
     
     
 static std::string getPackagePath() {
