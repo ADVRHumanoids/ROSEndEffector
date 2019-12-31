@@ -60,6 +60,8 @@ void ROSEE::MoveItCollider::run(){
     lookForFingertips();
     printFingertipLinkNames();
     checkCollisions();
+    printBestCollisions();
+
 }
 
 
@@ -127,7 +129,7 @@ void ROSEE::MoveItCollider::checkCollisions(){
     robot_state::RobotState kinematic_state(kinematic_model);
     
     
-    for (int i=0; i<3000; i++){
+    for (int i=0; i<5000; i++){
         collision_result.clear();
         kinematic_state.setToRandomPositions();
 
@@ -165,11 +167,12 @@ void ROSEE::MoveItCollider::checkCollisions(){
             contactJstates = std::make_pair(cont.second.at(0), jointStates); 
             
             // be sure to have two links name in order, so comparison in checkBestCollision is easier
-            //BUG TODO if names are swapped, sign in contact info should be swapped also?
             if (contactJstates.first.body_name_1.compare ( contactJstates.first.body_name_2 ) > 0 ){
-                std::string tmp = contactJstates.first.body_name_1;
-                contactJstates.first.body_name_1 = contactJstates.first.body_name_2;
-                contactJstates.first.body_name_2 = tmp;
+                //swap names
+                std::swap(contactJstates.first.body_name_1, contactJstates.first.body_name_2);
+                //invert depth
+                contactJstates.first.depth *= -1;
+                //I would keep the normal of contact and the contact position as they are
             }
             
             //Check if it is the best depth among the found collision among that pair
@@ -178,14 +181,9 @@ void ROSEE::MoveItCollider::checkCollisions(){
         }
     }
     
-    
-    printBestCollisions();
-
-    
     //TODO, IDEA: for each couple which collide at least once, do other checkcollisionf with
     //set randomPosNEAR, so more probability to find more depth contact for that pair
-    
-    
+        
 }
 
 bool ROSEE::MoveItCollider::checkBestCollision(ContactWithJointStates contactJstates){
