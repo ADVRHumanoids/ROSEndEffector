@@ -61,7 +61,6 @@ void ROSEE::MoveItCollider::run(){
     printFingertipLinkNames();
     checkCollisions();
     printBestCollisions();
-
 }
 
 
