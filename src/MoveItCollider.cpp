@@ -44,15 +44,21 @@ void ROSEE::MoveItCollider::printActuatedJoints(){
 }
 
 void ROSEE::MoveItCollider::printBestCollisions(){
-    
+    std::stringstream logStream;
+    logStream << "Contact list: " << std::endl ;
     for (const auto &it : contactWithJointStatesVect){
-        std::cout  << "contact list: " <<
-            it.first.body_name_1 << ", " <<
-            it.first.body_name_2 << ": " << 
-            it.first.depth << 
-            std::endl;
+        logStream << "\t" << it.first.body_name_1 << ", " <<
+            it.first.body_name_2 << ": \n \t\tdepth = " <<
+            it.first.depth << "\n \t\tJointStates=\n" ;
+        for (const auto &itt : it.second) {
+            logStream << "\t\t" << itt.first << " : ";
+            for (unsigned int i =0; i< sizeof(itt.second)/sizeof(itt.second[0]); i++){
+                logStream << itt.second[i] << ", ";
+            }
+            logStream << std::endl;       
+        }
     }
-    std::cout << std::endl;
+    std::cout << logStream.str() << std::endl;
 }
 
 void ROSEE::MoveItCollider::run(){
@@ -179,6 +185,7 @@ void ROSEE::MoveItCollider::checkCollisions(){
             
         }
     }
+    std::cout << std::endl;
     
     //TODO, IDEA: for each couple which collide at least once, do other checkcollisionf with
     //set randomPosNEAR, so more probability to find more depth contact for that pair
@@ -197,6 +204,12 @@ bool ROSEE::MoveItCollider::checkBestCollision(ContactWithJointStates contactJst
             
             if (std::abs(contactJstates.first.depth) > std::abs(savedContactJstate.first.depth) ) { 
                 savedContactJstate = contactJstates;
+                
+                /// DEVELOPING ************************************
+                
+                /////*********************************************
+                
+                
                 return true;
                 
             } else {
