@@ -14,6 +14,17 @@ ROSEE::MoveItCollider::MoveItCollider(std::string robot_description){
     kinematic_model = robot_model_loader.getModel();
 }
 
+void ROSEE::MoveItCollider::run(){
+    
+    lookForFingertips();
+    //printFingertipLinkNames();
+    lookJointsTipsCorrelation();
+    printJointsOfFingertips();
+    printFingertipsOfJoints();
+    checkCollisions();
+    printBestCollisions();
+}
+
 void ROSEE::MoveItCollider::printFingertipLinkNames(){
 
     std::cout << "Fingertips list:" << std::endl;
@@ -35,8 +46,7 @@ void ROSEE::MoveItCollider::printAllLinkNames(){
 
 void ROSEE::MoveItCollider::printActuatedJoints(){
 
-    const std::vector<moveit::core::JointModel*> actJoints = kinematic_model->getActiveJointModels();
-    for (const auto &it: actJoints){
+    for (const auto &it: kinematic_model->getActiveJointModels()){
         std::cout << "jointname: " << it->getName() << std::endl;
     }  
     std::cout << std::endl;
@@ -46,14 +56,15 @@ void ROSEE::MoveItCollider::printActuatedJoints(){
 void ROSEE::MoveItCollider::printBestCollisions(){
     std::stringstream logStream;
     logStream << "Contact list: " << std::endl ;
-    for (const auto &it : contactWithJointStatesVect){
-        logStream << "\t" << it.first.body_name_1 << ", " <<
-            it.first.body_name_2 << ": \n \t\tdepth = " <<
-            it.first.depth << "\n \t\tJointStates=\n" ;
-        for (const auto &itt : it.second) {
-            logStream << "\t\t" << itt.first << " : ";
-            for (unsigned int i =0; i< sizeof(itt.second)/sizeof(itt.second[0]); i++){
-                logStream << itt.second[i] << ", ";
+    
+    for (const auto &contact : contactWithJointStatesMap){
+        logStream << "\t" << contact.first.first << ", " <<
+            contact.first.second << ": \n \t\tdepth = " <<
+            contact.second.first.depth << "\n \t\tJointStates =\n" ;
+        for (const auto &jointState : contact.second.second) {
+            logStream << "\t\t" << jointState.first << " : "; //joint name
+            for(const auto &jointValue : jointState.second){
+                logStream << jointValue << ", "; //joint position (vector because can have multiple dof)
             }
             logStream << std::endl;       
         }
@@ -61,12 +72,30 @@ void ROSEE::MoveItCollider::printBestCollisions(){
     std::cout << logStream.str() << std::endl;
 }
 
-void ROSEE::MoveItCollider::run(){
-    
-    lookForFingertips();
-    printFingertipLinkNames();
-    checkCollisions();
-    printBestCollisions();
+void ROSEE::MoveItCollider::printJointsOfFingertips(){
+
+    std::stringstream logInfo;
+
+    for (const auto &it : jointsOfFingertipsMap) {
+        logInfo << it.first << " parent joints: \n";
+        for (const auto jointName : it.second) {
+            logInfo << "\t" << jointName << std::endl;
+        }
+    }
+    std::cout << logInfo.str() << std::endl;
+}
+
+void ROSEE::MoveItCollider::printFingertipsOfJoints(){
+
+    std::stringstream logInfo;
+
+    for (const auto &it : fingertipOfJointMap) {
+        logInfo << it.first << " child fingertips: \n";
+        for (const auto linkName : it.second) {
+            logInfo << "\t" << linkName << std::endl;
+        }
+    }
+    std::cout << logInfo.str() << std::endl;
 }
 
 
@@ -76,7 +105,7 @@ void ROSEE::MoveItCollider::lookForFingertips(){
     for (auto it: kinematic_model->getJointModelGroups()) {
         
         std::string logGroupInfo;
-        logGroupInfo = "Found Joint Group '" + it->getName() + "', " ;
+        logGroupInfo = "Found Group '" + it->getName() + "', " ;
         
         if (it->getSubgroupNames().size() != 0 ) {
             logGroupInfo.append("but it has some subgroups \n");
@@ -101,17 +130,35 @@ void ROSEE::MoveItCollider::lookForFingertips(){
                 }
             }
         }
-        std::cout << logGroupInfo; 
+        std::cout << logGroupInfo << std::endl; 
+    }
+
+    if (fingertipNames.size() <= 1){
+        //TODO no pinch with only one fingertip, print some message and exit pinch program
+    }
+}
+
+void ROSEE::MoveItCollider::lookJointsTipsCorrelation(){
+    
+    //initialize the map with all tips and with empty vectors of its joints
+    for (const auto &it: fingertipNames) { 
+        jointsOfFingertipsMap.insert ( std::make_pair (it, std::vector<std::string>() ) );
     }
     
-
-    if (fingertipNames.size() > 1){
-        // reserve space, we know the max size (that is when all fingertips can be in contact)
-        //TODO or not reserve space??
-        contactWithJointStatesVect.reserve(ROSEE::Utils::binomial_coefficent(fingertipNames.size(),2));
-    } else {
-        //TODO no pinch with only one fingertip, print some message
+    //initialize the map with all the actuated joints and an empty vector for the tips that the joint move
+    for (const auto &it: kinematic_model->getActiveJointModels()) { 
+        fingertipOfJointMap.insert ( std::make_pair (it->getName(), std::vector<std::string>() ) );
     }
+    
+    for ( const auto &joint: kinematic_model->getActiveJointModels()){ //for each actuated joint        
+        for (const auto &link : joint->getDescendantLinkModels()) { //for each descendand link
+            
+            if (std::find(fingertipNames.begin(), fingertipNames.end(), link->getName()) != fingertipNames.end()){
+                jointsOfFingertipsMap.at ( link->getName() ).push_back( joint->getName() );
+                fingertipOfJointMap.at ( joint->getName() ).push_back( link->getName() );
+            }
+        }
+    }      
 }
 
 void ROSEE::MoveItCollider::checkCollisions(){
@@ -122,7 +169,6 @@ void ROSEE::MoveItCollider::checkCollisions(){
     collision_request.contacts = true;  //set to compute collisions
     collision_request.max_contacts = 1000;
     
-
     // Consider only collisions among fingertips 
     // If an object pair does not appear in the acm, it is assumed that collisions between those 
     // objects is no tolerated. So we must fill it with all the nonFingertips
@@ -133,93 +179,102 @@ void ROSEE::MoveItCollider::checkCollisions(){
 
     robot_state::RobotState kinematic_state(kinematic_model);
     
-    
-    for (int i=0; i<5000; i++){
+    for (int i = 0; i < N_EXP_COLLISION; i++){
+        
+        std::stringstream logCollision;
         collision_result.clear();
         kinematic_state.setToRandomPositions();
-
         planning_scene.checkSelfCollision(collision_request, collision_result, kinematic_state, acm);
-        for (auto cont : collision_result.contacts){
-            //contacts is a map between a pair (2 strings with link names) and a vector of Contact object            
-            std::cout << "Collision between " << cont.first.first.c_str() << " and " << 
-                                                cont.first.second.c_str() << std::endl;
-            std::cout << "With the configuration:" << std::endl ;
-            //kinematic_state.printStatePositions();
         
+        if (collision_result.collision) { 
+
+            //store joint states
             JointStates jointStates;
-            ContactWithJointStates contactJstates;
-            
-            
             for (auto actJ : kinematic_model->getActiveJointModels()){
-                std::string logInfo = "\tJoint " + actJ->getName() + " : " ;
-                //joint can have multiple pos (eg planar joint?), so double*
+                //joint can have multiple pos, so double*, but we want to store in a vector 
                 const double* pos = kinematic_state.getJointPositions(actJ); 
-                for (unsigned int i =0; i< sizeof(pos)/sizeof(pos[0]); i++){
-                    logInfo.append(std::to_string(pos[i]) + ", ");
+                unsigned posSize = sizeof(pos) / sizeof(double);
+                std::vector <double> vecPos(pos, pos + posSize);
+                jointStates.push_back(std::make_pair(actJ->getName(), vecPos));
+            }
+            
+            //for each collision with this joints state...
+            for (auto cont : collision_result.contacts){
+
+                //moveit contacts is a map between a pair (2 strings with link names) and a vector of Contact object            
+                logCollision << "Collision between " << cont.first.first.c_str() << " and " << 
+                                                    cont.first.second.c_str() << std::endl;                                
+                //?? I don't know why the contact is a vector, I have always find only one element
+                for (auto contInfo : cont.second){ 
+                    logCollision << "\tWith a depth of contact: " << contInfo.depth;
                 }
-                std::cout << logInfo << std::endl;
-                jointStates.push_back(std::make_pair(actJ->getName(), pos));
+                
+                //Check if it is the best depth among the found collision among that pair
+                if ( checkBestCollision ( cont.first, std::make_pair(cont.second.at(0), jointStates)) ) {                        
+                    logCollision << ", NEW BEST";
+                }
+                logCollision << std::endl;
                 
             }
             
-            //?? I don't know why the contact is a vector, I have always find only one element
-            for (auto contInfo : cont.second){ 
-                std::cout << "With a depth of contact: " << contInfo.depth << std::endl;
+            for (auto actJ : jointStates){
+                logCollision << "\tJoint " << actJ.first << " : " ;
+                for (auto &jv : actJ.second){
+                    logCollision << jv << ", ";
+                }
+                logCollision << std::endl;                
             }
-            
-            //store contact and joint states, to pass as argument to checkBestCollision()
-            //?? I don't know why the cont.second is a vector, I have always find only one element
-            contactJstates = std::make_pair(cont.second.at(0), jointStates); 
-            
-            // be sure to have two links name in order, so comparison in checkBestCollision is easier
-            if (contactJstates.first.body_name_1.compare ( contactJstates.first.body_name_2 ) > 0 ){
-                //swap names
-                std::swap(contactJstates.first.body_name_1, contactJstates.first.body_name_2);
-                //invert depth
-                contactJstates.first.depth *= -1;
-                //I would keep the normal of contact and the contact position as they are
-            }
-            
-            //Check if it is the best depth among the found collision among that pair
-            checkBestCollision(contactJstates);
-            
-        }
+        
+            //std::cout << logCollision.str() << std::endl;
+        }            
     }
-    std::cout << std::endl;
     
+    setOnlyDependentJoints();
+
     //TODO, IDEA: for each couple which collide at least once, do other checkcollisionf with
     //set randomPosNEAR, so more probability to find more depth contact for that pair
-        
+    // and also set random position for only the joints that effectively move the two tips
+    
 }
 
-bool ROSEE::MoveItCollider::checkBestCollision(ContactWithJointStates contactJstates){
+bool ROSEE::MoveItCollider::checkBestCollision(
+    std::pair < std::string, std::string > tipsNames, ContactWithJointStates contactJstates){
+    
+    //check if pair already present
+    auto it = contactWithJointStatesMap.find(tipsNames);
+    if (it == contactWithJointStatesMap.end()) { //new pair
+        contactWithJointStatesMap.insert(std::make_pair(tipsNames, contactJstates));
         
-    for ( auto &savedContactJstate : contactWithJointStatesVect){
+    } else { 
+        // For now the "best" is the one with more depth
+        if ( std::abs(contactJstates.first.depth) > std::abs(it->second.first.depth) ) { 
             
-        //order is assured by function checkCollisions
-        if ( contactJstates.first.body_name_1.compare(savedContactJstate.first.body_name_1) == 0 && 
-             contactJstates.first.body_name_2.compare(savedContactJstate.first.body_name_2) == 0 ) {
-            //if so, we already have this contact. We need to check if the new one is better
-            //At the moment, to check the best, the one with greater depth of compenetration is taken
+            it->second = contactJstates;
             
-            if (std::abs(contactJstates.first.depth) > std::abs(savedContactJstate.first.depth) ) { 
-                savedContactJstate = contactJstates;
-                
-                /// DEVELOPING ************************************
-                
-                /////*********************************************
-                
-                
-                return true;
-                
-            } else {
-                return false; //no new contact has been added
+        } else {
+            return false; //no new added
+        }
+        
+    }
+    return true;
+}
+
+
+void ROSEE::MoveItCollider::setOnlyDependentJoints() {
+    
+    for (auto &coll : contactWithJointStatesMap){
+        
+        for (auto &js : coll.second.second) {
+            
+            std::vector < std::string> tips = fingertipOfJointMap.at(js.first); //the tips of the joint
+            
+            //check if the two tips that collide are among the ones that the joint move
+            if (std::find (tips.begin(), tips.end(), coll.first.first) == tips.end() &&
+                std::find (tips.begin(), tips.end(), coll.first.second) == tips.end() ) {
+                // not dependant, set to zero the position
+                std::fill ( js.second.begin(), js.second.end(), 0.0);               
             }
         }
     }
-    
-    //if here, new contact (otherwise function would have returned before
-    contactWithJointStatesVect.push_back(contactJstates);
-        
-    return true;
+   
 }

@@ -1,6 +1,8 @@
 #ifndef __ROSEE_MOVEIT_COLLIDER_
 #define __ROSEE_MOVEIT_COLLIDER_
 
+#include <unordered_set>
+
 #include <ros/console.h>
 
 // MoveIt!
@@ -9,6 +11,7 @@
 
 #include <ROSEndEffector/Utils.h>
 
+#define N_EXP_COLLISION 5000 //5000 is ok
 
 namespace ROSEE
 {
@@ -27,19 +30,27 @@ public:
     void printAllLinkNames();
     void printActuatedJoints();
     void printBestCollisions();
+    void printJointsOfFingertips();
+    void printFingertipsOfJoints();
+
     
+private:
     /** a vector containing pairs jointNames-jointValues. double* because a joint can have more than 1 dof */
-    typedef std::vector<std::pair<std::string, const double*>> JointStates; 
+    typedef std::vector < std::pair<std::string, std::vector <double> > > JointStates; 
 
     /**Contact informations for a contact that happens with a particular joint states*/
     typedef std::pair <collision_detection::Contact, JointStates> ContactWithJointStates;     
     
-    /** The object that contains all the "best" contact for each possible pair. Note that has a maximum size (binomial coeff of fingertips, for pinches)*/
-    std::vector<ContactWithJointStates> contactWithJointStatesVect; 
+    /** The object that contains all the "best" contact for each possible pair. 
+     It is a map with key the pair of the two tips colliding, and as value a ContactWithJointStates object*/
+    std::map < std::pair < std::string, std::string >, ContactWithJointStates> contactWithJointStatesMap; 
     
-private:
     robot_model::RobotModelPtr kinematic_model;
     std::vector<std::string> fingertipNames;
+    /** The map with as key the name of the fingertip and as value all the joints (actuated) that can modify its pose*/
+    std::map<std::string, std::vector<std::string>> jointsOfFingertipsMap;
+    /** The map with as key the name of the actuated joint and as value all the fingertips which pose can be modified by the joint */
+    std::map<std::string, std::vector<std::string>> fingertipOfJointMap;
 
     /**
      * @brief This function explore the kinematic_model (which was built from urdf and srdf files), 
@@ -55,8 +66,18 @@ private:
      *  are not considered 
      */
     void lookForFingertips();
+    
+    /** 
+     * @brief Here, we find for each tip, which are all the joints (active) that can modifies its position
+     * It is easier to start from each joint and see which tips has as its descendands, because there is the
+     * getDescendantLinkModels() function in moveit that gives ALL the child links.
+     * There is not a function like getNonFixedParentJointModels from the tip, there is only the one to take the 
+     * FIRST parent joint (getParentJointModel())
+     */
+    void lookJointsTipsCorrelation();
     void checkCollisions();
-    bool checkBestCollision(ContactWithJointStates contactJstates);
+    bool checkBestCollision(std::pair < std::string, std::string > tipsNames, ContactWithJointStates contactJstates);
+    void setOnlyDependentJoints();
 
 };
     
