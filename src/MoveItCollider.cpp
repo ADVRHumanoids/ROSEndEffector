@@ -228,8 +228,6 @@ void ROSEE::MoveItCollider::checkCollisions(){
             //std::cout << logCollision.str() << std::endl;
         }            
     }
-    
-    setOnlyDependentJoints();
 
     //TODO, IDEA: for each couple which collide at least once, do other checkcollisionf with
     //set randomPosNEAR, so more probability to find more depth contact for that pair
@@ -249,6 +247,7 @@ bool ROSEE::MoveItCollider::checkBestCollision(
         // For now the "best" is the one with more depth
         if ( std::abs(contactJstates.first.depth) > std::abs(it->second.first.depth) ) { 
             
+            setOnlyDependentJoints(tipsNames, &contactJstates);
             it->second = contactJstates;
             
         } else {
@@ -259,22 +258,21 @@ bool ROSEE::MoveItCollider::checkBestCollision(
     return true;
 }
 
-
-void ROSEE::MoveItCollider::setOnlyDependentJoints() {
-    
-    for (auto &coll : contactWithJointStatesMap){
+void ROSEE::MoveItCollider::setOnlyDependentJoints(
+    std::pair < std::string, std::string > tipsNames, ContactWithJointStates *contactJstates) {
         
-        for (auto &js : coll.second.second) {
-            
-            std::vector < std::string> tips = fingertipOfJointMap.at(js.first); //the tips of the joint
-            
-            //check if the two tips that collide are among the ones that the joint move
-            if (std::find (tips.begin(), tips.end(), coll.first.first) == tips.end() &&
-                std::find (tips.begin(), tips.end(), coll.first.second) == tips.end() ) {
-                // not dependant, set to zero the position
-                std::fill ( js.second.begin(), js.second.end(), 0.0);               
-            }
+    for (auto &js : contactJstates->second) {
+        
+        std::vector < std::string> tips = fingertipOfJointMap.at(js.first); //the tips of the joint
+        
+        //check if the two tips that collide are among the ones that the joint move
+        if (std::find (tips.begin(), tips.end(), tipsNames.first) == tips.end() &&
+            std::find (tips.begin(), tips.end(), tipsNames.second) == tips.end() ) {
+            // not dependant, set to zero the position
+            std::fill ( js.second.begin(), js.second.end(), DEFAULT_JOINT_POS);               
         }
     }
+    
    
 }
+

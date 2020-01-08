@@ -1,8 +1,6 @@
 #ifndef __ROSEE_MOVEIT_COLLIDER_
 #define __ROSEE_MOVEIT_COLLIDER_
 
-#include <unordered_set>
-
 #include <ros/console.h>
 
 // MoveIt!
@@ -12,6 +10,7 @@
 #include <ROSEndEffector/Utils.h>
 
 #define N_EXP_COLLISION 5000 //5000 is ok
+#define DEFAULT_JOINT_POS 0.0
 
 namespace ROSEE
 {
@@ -32,7 +31,6 @@ public:
     void printBestCollisions();
     void printJointsOfFingertips();
     void printFingertipsOfJoints();
-
     
 private:
     /** a vector containing pairs jointNames-jointValues. vector of double because a joint can have more than 1 dof */
@@ -43,8 +41,8 @@ private:
     
     /** The object that contains all the "best" contact for each possible pair. 
      It is a map with key the pair of the two tips colliding, and as value a ContactWithJointStates object*/
-    std::map < std::pair < std::string, std::string >, ContactWithJointStates> contactWithJointStatesMap; 
-    
+    std::map < std::pair < std::string, std::string >, ContactWithJointStates> contactWithJointStatesMap;
+        
     robot_model::RobotModelPtr kinematic_model;
     std::vector<std::string> fingertipNames;
     /** The map with as key the name of the fingertip and as value all the joints (actuated) that can modify its pose*/
@@ -79,7 +77,7 @@ private:
     void lookJointsTipsCorrelation();
     void checkCollisions();
     bool checkBestCollision(std::pair < std::string, std::string > tipsNames, ContactWithJointStates contactJstates);
-    void setOnlyDependentJoints();
+    void setOnlyDependentJoints(std::pair < std::string, std::string > tipsNames, ContactWithJointStates *contactJstates);
 
 };
     
