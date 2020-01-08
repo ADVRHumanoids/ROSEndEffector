@@ -241,6 +241,7 @@ bool ROSEE::MoveItCollider::checkBestCollision(
     //check if pair already present
     auto it = contactWithJointStatesMap.find(tipsNames);
     if (it == contactWithJointStatesMap.end()) { //new pair
+        setOnlyDependentJoints(tipsNames, &contactJstates);
         contactWithJointStatesMap.insert(std::make_pair(tipsNames, contactJstates));
         
     } else { 
