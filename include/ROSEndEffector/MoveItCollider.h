@@ -35,7 +35,7 @@ public:
 
     
 private:
-    /** a vector containing pairs jointNames-jointValues. double* because a joint can have more than 1 dof */
+    /** a vector containing pairs jointNames-jointValues. vector of double because a joint can have more than 1 dof */
     typedef std::vector < std::pair<std::string, std::vector <double> > > JointStates; 
 
     /**Contact informations for a contact that happens with a particular joint states*/
@@ -73,6 +73,8 @@ private:
      * getDescendantLinkModels() function in moveit that gives ALL the child links.
      * There is not a function like getNonFixedParentJointModels from the tip, there is only the one to take the 
      * FIRST parent joint (getParentJointModel())
+     * Meanwhile, we find also, for each joint, all the tips that are influenced by the joint movement. This map, 
+     * fingertipOfJointMap, is used in setOnlyDependentJoints()
      */
     void lookJointsTipsCorrelation();
     void checkCollisions();
