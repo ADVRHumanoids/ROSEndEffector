@@ -58,9 +58,9 @@ void ROSEE::MoveItCollider::printBestCollisions(){
     logStream << "Contact list: " << std::endl ;
     
     for (const auto &contact : contactWithJointStatesMap){
-        logStream << "\t" << contact.first.first << ", " <<
-            contact.first.second << ": \n \t\tdepth = " <<
-            contact.second.first.depth << "\n \t\tJointStates =\n" ;
+        logStream << "\t" << contact.first.first << ", " << contact.first.second <<
+            ": \n \t\tdepth = " << contact.second.first.depth <<
+            "\n \t\tJointStates =\n" ;
         for (const auto &jointState : contact.second.second) {
             logStream << "\t\t" << jointState.first << " : "; //joint name
             for(const auto &jointValue : jointState.second){
@@ -195,16 +195,16 @@ void ROSEE::MoveItCollider::checkCollisions(){
                 const double* pos = kinematic_state.getJointPositions(actJ); 
                 unsigned posSize = sizeof(pos) / sizeof(double);
                 std::vector <double> vecPos(pos, pos + posSize);
-                jointStates.push_back(std::make_pair(actJ->getName(), vecPos));
+                jointStates.insert(std::make_pair(actJ->getName(), vecPos));
             }
             
             //for each collision with this joints state...
             for (auto cont : collision_result.contacts){
 
-                //moveit contacts is a map between a pair (2 strings with link names) and a vector of Contact object            
+                //moveit contacts is a map between a pair (2 strings with link names) and a vector of Contact object ?? I don't know why the contact is a vector, I have always find only one element            
                 logCollision << "Collision between " << cont.first.first.c_str() << " and " << 
                                                     cont.first.second.c_str() << std::endl;                                
-                //?? I don't know why the contact is a vector, I have always find only one element
+
                 for (auto contInfo : cont.second){ 
                     logCollision << "\tWith a depth of contact: " << contInfo.depth;
                 }
@@ -261,12 +261,25 @@ bool ROSEE::MoveItCollider::checkBestCollision(
 
 void ROSEE::MoveItCollider::setOnlyDependentJoints(
     std::pair < std::string, std::string > tipsNames, ContactWithJointStates *contactJstates) {
+    
         
-    for (auto &js : contactJstates->second) {
+    for (auto &js : contactJstates->second) { //for each among ALL joints
+        
+        /** other way around, second is better?
+        std::vector <std::string> jointOfTips1 = jointsOfFingertipsMap.at(tipsNames.first);
+        std::vector <std::string> jointOfTips2 = jointsOfFingertipsMap.at(tipsNames.second);
+        
+        // if the joint is not linked with neither of the two colliding tips...
+        if ( std::find( jointOfTips1.begin(), jointOfTips1.end(), js.first) == jointOfTips1.end() &&
+             std::find( jointOfTips2.begin(), jointOfTips2.end(), js.first) == jointOfTips2.end() ) {
+              
+            std::fill ( js.second.begin(), js.second.end(), DEFAULT_JOINT_POS);                     
+        }
+        */
         
         std::vector < std::string> tips = fingertipOfJointMap.at(js.first); //the tips of the joint
         
-        //check if the two tips that collide are among the ones that the joint move
+        //check if the two tips that collide are among the ones that the joint moves
         if (std::find (tips.begin(), tips.end(), tipsNames.first) == tips.end() &&
             std::find (tips.begin(), tips.end(), tipsNames.second) == tips.end() ) {
             // not dependant, set to zero the position
@@ -307,6 +320,8 @@ bool ROSEE::MoveItCollider::checkBestCollisionMul(
     //check if pair already present
     auto it = pinchMap.find(tipsNames);
     if (it == pinchMap.end()) { //new pair
+        
+        setOnlyDependentJoints(tipsNames, &contactJstates);
         std::set<ContactWithJointStates, depthComp> newSet;
         newSet.insert(contactJstates);
         

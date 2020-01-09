@@ -40,8 +40,8 @@ public:
 
     
 private:
-    /** a vector containing pairs jointNames-jointValues. vector of double because a joint can have more than 1 dof */
-    typedef std::vector < std::pair<std::string, std::vector <double> > > JointStates; 
+    /** a map containing pairs jointNames-jointValues. vector of double because a joint can have more than 1 dof @NOTE: being a map the order (given by joint names) is assured*/
+    typedef std::map <std::string, std::vector <double> > JointStates;
 
     /**Contact informations for a contact that happens with a particular joint states*/
     typedef std::pair <collision_detection::Contact, JointStates> ContactWithJointStates;     
