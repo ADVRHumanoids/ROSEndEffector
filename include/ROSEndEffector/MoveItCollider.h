@@ -9,8 +9,10 @@
 
 #include <ROSEndEffector/Utils.h>
 
-#define N_EXP_COLLISION 5000 //5000 is ok
+#define N_EXP_COLLISION 200 //5000 is ok
 #define DEFAULT_JOINT_POS 0.0
+/** Max contact stored in the set for each pair */
+#define MAX_CONTACT_STORED 3
 
 namespace ROSEE
 {
@@ -32,6 +34,11 @@ public:
     void printJointsOfFingertips();
     void printFingertipsOfJoints();
     
+    //for part with x best collisions for each pair
+    void printBestCollisionsMul();
+    
+
+    
 private:
     /** a vector containing pairs jointNames-jointValues. vector of double because a joint can have more than 1 dof */
     typedef std::vector < std::pair<std::string, std::vector <double> > > JointStates; 
@@ -42,6 +49,13 @@ private:
     /** The object that contains all the "best" contact for each possible pair. 
      It is a map with key the pair of the two tips colliding, and as value a ContactWithJointStates object*/
     std::map < std::pair < std::string, std::string >, ContactWithJointStates> contactWithJointStatesMap;
+    
+    
+    struct depthComp {
+        bool operator() (const ContactWithJointStates& a, const ContactWithJointStates& b) const
+        {return (std::abs(a.first.depth) > std::abs(b.first.depth) );}
+    };
+    std::map < std::pair < std::string, std::string >, std::set<ContactWithJointStates, depthComp>> pinchMap; 
         
     robot_model::RobotModelPtr kinematic_model;
     std::vector<std::string> fingertipNames;
@@ -79,6 +93,8 @@ private:
     bool checkBestCollision(std::pair < std::string, std::string > tipsNames, ContactWithJointStates contactJstates);
     void setOnlyDependentJoints(std::pair < std::string, std::string > tipsNames, ContactWithJointStates *contactJstates);
 
+    
+    bool checkBestCollisionMul(std::pair < std::string, std::string > tipsNames, ContactWithJointStates contactJstates);
 };
     
 }

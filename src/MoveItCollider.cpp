@@ -19,10 +19,10 @@ void ROSEE::MoveItCollider::run(){
     lookForFingertips();
     //printFingertipLinkNames();
     lookJointsTipsCorrelation();
-    printJointsOfFingertips();
-    printFingertipsOfJoints();
+    //printJointsOfFingertips();
+    //printFingertipsOfJoints();
     checkCollisions();
-    printBestCollisions();
+    printBestCollisionsMul();
 }
 
 void ROSEE::MoveItCollider::printFingertipLinkNames(){
@@ -210,8 +210,8 @@ void ROSEE::MoveItCollider::checkCollisions(){
                 }
                 
                 //Check if it is the best depth among the found collision among that pair
-                if ( checkBestCollision ( cont.first, std::make_pair(cont.second.at(0), jointStates)) ) {                        
-                    logCollision << ", NEW BEST";
+                if ( checkBestCollisionMul ( cont.first, std::make_pair(cont.second.at(0), jointStates)) ) {                        
+                    logCollision << ", NEW INSERTION";
                 }
                 logCollision << std::endl;
                 
@@ -225,7 +225,7 @@ void ROSEE::MoveItCollider::checkCollisions(){
                 logCollision << std::endl;                
             }
         
-            //std::cout << logCollision.str() << std::endl;
+            std::cout << logCollision.str() << std::endl;
         }            
     }
 
@@ -273,7 +273,63 @@ void ROSEE::MoveItCollider::setOnlyDependentJoints(
             std::fill ( js.second.begin(), js.second.end(), DEFAULT_JOINT_POS);               
         }
     }
+       
+}
+
+void ROSEE::MoveItCollider::printBestCollisionsMul(){
+    std::stringstream logStream;
+    logStream << "Contact list: " << std::endl ;
     
-   
+    for (const auto &item : pinchMap){
+        logStream << "\t" << item.first.first << ", " << item.first.second << ": "<< std::endl;
+            
+        for (auto contact : item.second) {  //the element in the set
+            logStream << "\tWith depth of: " << contact.first.depth << " and joint states:" << std::endl;
+            
+            for (const auto &jointState : contact.second) {
+                logStream << "\t\t" << jointState.first << " : "; //joint name
+                for(const auto &jointValue : jointState.second){
+                    logStream << jointValue << ", "; //joint position (vector because can have multiple dof)
+                }
+            logStream << std::endl;       
+            }
+        }
+        logStream << std::endl;
+    }    
+    std::cout << logStream.str() << std::endl;
+}
+
+
+bool ROSEE::MoveItCollider::checkBestCollisionMul(
+    std::pair < std::string, std::string > tipsNames, ContactWithJointStates contactJstates){
+    
+    
+    //check if pair already present
+    auto it = pinchMap.find(tipsNames);
+    if (it == pinchMap.end()) { //new pair
+        std::set<ContactWithJointStates, depthComp> newSet;
+        newSet.insert(contactJstates);
+        
+        pinchMap.insert(std::make_pair(tipsNames, newSet));
+        
+    } else if (it->second.size() < MAX_CONTACT_STORED){
+            
+        setOnlyDependentJoints(tipsNames, &contactJstates);
+        it->second.insert(contactJstates); // the set will insert in order for us
+            
+    } else if (contactJstates.first.depth > it->second.rbegin()->first.depth) {
+
+        setOnlyDependentJoints(tipsNames, &contactJstates);
+        it->second.insert(contactJstates);
+        //delete the last element
+        std::set<ContactWithJointStates, depthComp>::iterator lastElem = it->second.end();
+        --lastElem;
+        it->second.erase(lastElem);
+        
+    } else {
+        return false; //no new added
+    }
+        
+    return true;
 }
 
