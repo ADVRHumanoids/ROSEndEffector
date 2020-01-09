@@ -27,6 +27,7 @@ public:
     MoveItCollider();
     MoveItCollider(std::string);
     void run();
+    
     void printFingertipLinkNames();
     void printAllLinkNames();
     void printActuatedJoints();
@@ -34,10 +35,6 @@ public:
     void printJointsOfFingertips();
     void printFingertipsOfJoints();
     
-    //for part with x best collisions for each pair
-    void printBestCollisionsMul();
-    
-
     
 private:
     /** a map containing pairs jointNames-jointValues. vector of double because a joint can have more than 1 dof @NOTE: being a map the order (given by joint names) is assured*/
@@ -45,20 +42,22 @@ private:
 
     /**Contact informations for a contact that happens with a particular joint states*/
     typedef std::pair <collision_detection::Contact, JointStates> ContactWithJointStates;     
-    
-    /** The object that contains all the "best" contact for each possible pair. 
-     It is a map with key the pair of the two tips colliding, and as value a ContactWithJointStates object*/
-    std::map < std::pair < std::string, std::string >, ContactWithJointStates> contactWithJointStatesMap;
-    
-    
+        
+    /** struct to put in order the set of ContactWithJointStates. The first elements are the ones 
+     * with greater depth
+     */
     struct depthComp {
         bool operator() (const ContactWithJointStates& a, const ContactWithJointStates& b) const
         {return (std::abs(a.first.depth) > std::abs(b.first.depth) );}
     };
+    /** The object that contains all the "best" MAX_CONTACT_STORED contact for each possible pair. 
+     It is a map with as key the pair of the two tips colliding, 
+     and as value a fixed size set of ContactWithJointStates object*/
     std::map < std::pair < std::string, std::string >, std::set<ContactWithJointStates, depthComp>> pinchMap; 
         
     robot_model::RobotModelPtr kinematic_model;
     std::vector<std::string> fingertipNames;
+    
     /** The map with as key the name of the fingertip and as value all the joints (actuated) that can modify its pose*/
     std::map<std::string, std::vector<std::string>> jointsOfFingertipsMap;
     /** The map with as key the name of the actuated joint and as value all the fingertips which pose can be modified by the joint */
@@ -89,12 +88,19 @@ private:
      * fingertipOfJointMap, is used in setOnlyDependentJoints()
      */
     void lookJointsTipsCorrelation();
+    
     void checkCollisions();
-    bool checkBestCollision(std::pair < std::string, std::string > tipsNames, ContactWithJointStates contactJstates);
+    
+    /**
+     * @brief Given the contact, we want to know the state of the joint to replicate it. But we want to know
+     * only the state of the joints that effectively act on the contact, that are the ones which moves one of the two tips (or both). So the other joints are put to the DEFAULT_JOINT_POS value
+     */
     void setOnlyDependentJoints(std::pair < std::string, std::string > tipsNames, ContactWithJointStates *contactJstates);
 
-    
-    bool checkBestCollisionMul(std::pair < std::string, std::string > tipsNames, ContactWithJointStates contactJstates);
+    /** 
+     * @brief insert the new contact in the map, if it is among the best ones
+     */
+    bool checkBestCollision(std::pair < std::string, std::string > tipsNames, ContactWithJointStates contactJstates);
 };
     
 }
