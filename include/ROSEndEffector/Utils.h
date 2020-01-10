@@ -21,8 +21,9 @@
 #include <cmath>
 #include <memory>
 
-//to find relative path for the config files
-#include <boost/filesystem/path.hpp>
+//to find relative path for the config files and create directories
+#include <boost/filesystem.hpp>
+#include <fstream>
 
 namespace ROSEE
 {
@@ -30,7 +31,17 @@ namespace ROSEE
 namespace Utils
 {
     
-static int binomial_coefficent(int n, int k) {
+static bool create_directory(std::string pathDirectory){
+    boost::filesystem::path path(pathDirectory);
+    return boost::filesystem::create_directories(path);
+}
+
+static void out2file ( std::string pathFile, std::string output) {
+    std::ofstream fout ( pathFile );
+    fout << output;
+}
+    
+static inline int binomial_coefficent(int n, int k) {
 
     if (k == 0 || k == n){
         return 1;

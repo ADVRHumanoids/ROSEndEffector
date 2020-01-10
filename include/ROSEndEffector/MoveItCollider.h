@@ -7,12 +7,16 @@
 #include <moveit/robot_model_loader/robot_model_loader.h>
 #include <moveit/planning_scene/planning_scene.h>
 
+//yaml
+#include <yaml-cpp/yaml.h>
+
 #include <ROSEndEffector/Utils.h>
 
 #define N_EXP_COLLISION 200 //5000 is ok
 #define DEFAULT_JOINT_POS 0.0
 /** Max contact stored in the set for each pair */
 #define MAX_CONTACT_STORED 3
+#define COLLIDER_REL_PATH "/configs/moveItCollider/pinch/"
 
 namespace ROSEE
 {
@@ -45,6 +49,10 @@ private:
         
     /** struct to put in order the set of ContactWithJointStates. The first elements are the ones 
      * with greater depth
+     * @FIX, even if is almost impossible, two different contact with same depth will be considered equal
+     * with this definition of depthComp. Theoretically they are equal only if the joint status are equal 
+     * (of only joints that act for the collision). In fact, we should have the possibility to have two contact
+     * with the same depth (if joint statuses are different), they will be equally good
      */
     struct depthComp {
         bool operator() (const ContactWithJointStates& a, const ContactWithJointStates& b) const
@@ -101,10 +109,13 @@ private:
      * @brief insert the new contact in the map, if it is among the best ones
      */
     bool checkBestCollision(std::pair < std::string, std::string > tipsNames, ContactWithJointStates contactJstates);
+    
+
+    std::string emitYaml();
+    void parseYaml(std::string);
 };
     
 }
-
 
 
 #endif //__ROSEE_MOVEIT_COLLIDER_

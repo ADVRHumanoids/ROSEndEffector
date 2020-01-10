@@ -165,6 +165,7 @@ target_link_libraries(UniversalRosEndEffectorExecutor
 target_link_libraries(MoveItCollider
     ${catkin_LIBRARIES}     
     ${Boost_LIBRARIES}
+    yaml-cpp
 )
 
 
