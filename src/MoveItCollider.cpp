@@ -335,11 +335,12 @@ std::string ROSEE::MoveItCollider::emitYaml() {
                     out << YAML::Value << contact.first.body_type_2;
                     out << YAML::Key << "depth";
                     out << YAML::Value << contact.first.depth;
-                    //TODO print these two eigen vect
-                    //out << YAML::Key << "normal";
-                    //out << YAML::Value << contact.first.normal;
-                    //out << YAML::Key << "pos";
-                    //out << YAML::Value << contact.first.pos;
+                    out << YAML::Key << "normal";
+                    std::vector < double > normal ( contact.first.normal.data(), contact.first.normal.data() +  contact.first.normal.rows());  
+                    out << YAML::Value << YAML::Flow << normal;
+                    out << YAML::Key << "pos";
+                    std::vector < double > pos ( contact.first.pos.data(), contact.first.pos.data() +  contact.first.pos.rows());
+                    out << YAML::Value << YAML::Flow << pos;
                     out << YAML::EndMap;
 
                 //contact.second, the jointstates map
