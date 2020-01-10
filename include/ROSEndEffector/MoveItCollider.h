@@ -12,11 +12,11 @@
 
 #include <ROSEndEffector/Utils.h>
 
-#define N_EXP_COLLISION 200 //5000 is ok
+#define N_EXP_COLLISION 5000 //5000 is ok
 #define DEFAULT_JOINT_POS 0.0
 /** Max contact stored in the set for each pair */
 #define MAX_CONTACT_STORED 3
-#define COLLIDER_REL_PATH "/configs/moveItCollider/pinch/"
+#define COLLIDER_REL_PATH "/configs/moveItCollider/"
 
 namespace ROSEE
 {

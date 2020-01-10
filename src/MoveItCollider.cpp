@@ -17,20 +17,22 @@ ROSEE::MoveItCollider::MoveItCollider(std::string robot_description){
 void ROSEE::MoveItCollider::run(){
     
     lookForFingertips();
-    //printFingertipLinkNames();
+    printFingertipLinkNames();
     lookJointsTipsCorrelation();
-    //printJointsOfFingertips();
-    //printFingertipsOfJoints();
+    printJointsOfFingertips();
+    printFingertipsOfJoints();
     checkCollisions();
-    //printBestCollisions();
+    printBestCollisions();
     
     //emit the yaml file
-    ROSEE::Utils::create_directory(ROSEE::Utils::getPackagePath() + COLLIDER_REL_PATH);
+    ROSEE::Utils::create_directory(ROSEE::Utils::getPackagePath() + COLLIDER_REL_PATH 
+        + "/" + kinematic_model->getName() + "/pinch");
     std::string output = emitYaml();
-    //std::cout << output;
-    ROSEE::Utils::out2file(ROSEE::Utils::getPackagePath() + COLLIDER_REL_PATH + "/pinch.yaml", output);
+    ROSEE::Utils::out2file(ROSEE::Utils::getPackagePath() + COLLIDER_REL_PATH 
+        + "/" + kinematic_model->getName() + "/pinch" + "/pinch.yaml", output);
     
-    parseYaml(ROSEE::Utils::getPackagePath() + COLLIDER_REL_PATH + "/pinch.yaml");
+    parseYaml(ROSEE::Utils::getPackagePath() + COLLIDER_REL_PATH 
+        + "/" + kinematic_model->getName() + "/pinch/pinch.yaml");
 
 }
 
@@ -241,6 +243,13 @@ void ROSEE::MoveItCollider::checkCollisions(){
             }        
             //std::cout << logCollision.str() << std::endl;
         }            
+    }
+    
+    //print if no collision at all 
+    if (pinchMap.size() == 0 ) {
+        std::cout << "WARNING: I found no collisions between tips. Are you sure your hand"
+            << " has some fingertips that collide? If yes, check your urdf/srdf, or"
+            << " set a bigger value in N_EXP_COLLISION." << std::endl;
     }
 }
 

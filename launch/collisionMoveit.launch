@@ -1,8 +1,10 @@
 <?xml version="1.0"?>
 <launch>
   <!-- send urdf to parameter server -->
-  <param name="robot_description" textfile="$(find ros_end_effector)/configs/urdf/svh-standalone.urdf"/>
-  <param name="robot_description_semantic" textfile="$(find ros_end_effector)/configs/srdf/svh-standalone.srdf" />   
+  <!-- <param name="robot_description" textfile="$(find ros_end_effector)/configs/urdf/svh-standalone.urdf"/>
+  <param name="robot_description_semantic" textfile="$(find ros_end_effector)/configs/srdf/svh-standalone.srdf" />-->
+  <param name="robot_description" textfile="$(find ros_end_effector)/configs/urdf/two_finger.urdf"/>
+  <param name="robot_description_semantic" textfile="$(find ros_end_effector)/configs/srdf/two_finger.srdf" />   
 
     <node type="UniversalRosEndEffector2" name="UniversalRosEndEffector2" pkg="ros_end_effector" output="screen"/>
 </launch>

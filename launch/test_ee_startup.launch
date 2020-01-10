@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <launch>
      <arg name="gui" default="true" />
+     <arg name="inSlider" default="false" />
 
      <!-- send the test_ee robot XML to param server -->
      <param name="robot_description" textfile="$(find ros_end_effector)/configs/urdf/test_ee.urdf"/>
@@ -11,7 +12,7 @@
         
      <!-- <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"></node> -->
     
-    <node type="UniversalRosEndEffector" name="UniversalRosEndEffector" pkg="ros_end_effector" output="screen"/>
+    <node unless="$(arg inSlider)" type="UniversalRosEndEffector" name="UniversalRosEndEffector" pkg="ros_end_effector" output="screen"/>
 
 
     <!-- start robot state publisher -->
@@ -21,5 +22,11 @@
     </node> 
     
     <node type="rviz" name="rviz" pkg="rviz" args="-d $(find ros_end_effector)/configs/rviz/test_ee.rviz" />
+    
+    <!-- sliders for control single joints-->
+    <node if="$(arg inSlider)" name="input_joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+        <remap from="joint_states" to="ros_end_effector/joint_states" />
+    </node>
+
     
 </launch>
