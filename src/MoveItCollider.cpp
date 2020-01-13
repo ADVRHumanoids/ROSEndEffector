@@ -22,17 +22,16 @@ void ROSEE::MoveItCollider::run(){
     printJointsOfFingertips();
     printFingertipsOfJoints();
     checkCollisions();
-    printBestCollisions();
+    pinchAction.printMap();
     
     //emit the yaml file
-    ROSEE::Utils::create_directory(ROSEE::Utils::getPackagePath() + COLLIDER_REL_PATH 
-        + "/" + kinematic_model->getName() + "/pinch");
-    std::string output = emitYaml();
-    ROSEE::Utils::out2file(ROSEE::Utils::getPackagePath() + COLLIDER_REL_PATH 
-        + "/" + kinematic_model->getName() + "/pinch" + "/pinch.yaml", output);
+    ROSEE::YamlWorker yamlWorker(kinematic_model->getName());
+    yamlWorker.createYamlFile(pinchAction);
+    yamlWorker.parseYaml("/pinch.yaml");
     
-    parseYaml(ROSEE::Utils::getPackagePath() + COLLIDER_REL_PATH 
-        + "/" + kinematic_model->getName() + "/pinch/pinch.yaml");
+    
+    //Trigger actions etc
+    trig();
 
 }
 
@@ -90,28 +89,8 @@ void ROSEE::MoveItCollider::printFingertipsOfJoints(){
     std::cout << logInfo.str() << std::endl;
 }
 
-void ROSEE::MoveItCollider::printBestCollisions(){
-    std::stringstream logStream;
-    logStream << "Contact list: " << std::endl ;
-    
-    for (const auto &item : pinchMap){
-        logStream << "\t" << item.first.first << ", " << item.first.second << ": "<< std::endl;
-            
-        for (auto contact : item.second) {  //the element in the set
-            logStream << "\tWith depth of: " << contact.first.depth << " and joint states:" << std::endl;
-            
-            for (const auto &jointState : contact.second) {
-                logStream << "\t\t" << jointState.first << " : "; //joint name
-                for(const auto &jointValue : jointState.second){
-                    logStream << jointValue << ", "; //joint position (vector because can have multiple dof)
-                }
-            logStream << std::endl;       
-            }
-        }
-        logStream << std::endl;
-    }    
-    std::cout << logStream.str() << std::endl;
-}
+
+
 
 
 
@@ -159,6 +138,7 @@ void ROSEE::MoveItCollider::lookJointsTipsCorrelation(){
     //initialize the map with all tips and with empty vectors of its joints
     for (const auto &it: fingertipNames) { 
         jointsOfFingertipsMap.insert ( std::make_pair (it, std::vector<std::string>() ) );
+        
     }
     
     //initialize the map with all the actuated joints and an empty vector for the tips that the joint move
@@ -195,7 +175,7 @@ void ROSEE::MoveItCollider::checkCollisions(){
     acm.setEntry(fingertipNames, fingertipNames, false); //true==not considered collisions
 
     robot_state::RobotState kinematic_state(kinematic_model);
-    
+        
     for (int i = 0; i < N_EXP_COLLISION; i++){
         
         std::stringstream logCollision;
@@ -206,7 +186,7 @@ void ROSEE::MoveItCollider::checkCollisions(){
         if (collision_result.collision) { 
 
             //store joint states
-            JointStates jointStates;
+            PinchAction::JointStates jointStates;
             for (auto actJ : kinematic_model->getActiveJointModels()){
                 //joint can have multiple pos, so double*, but we want to store in a vector 
                 const double* pos = kinematic_state.getJointPositions(actJ); 
@@ -226,8 +206,9 @@ void ROSEE::MoveItCollider::checkCollisions(){
                     logCollision << "\tWith a depth of contact: " << contInfo.depth;
                 }
                 
+                setOnlyDependentJoints(cont.first, &jointStates);
                 //Check if it is the best depth among the found collision among that pair
-                if ( checkBestCollision ( cont.first, std::make_pair(cont.second.at(0), jointStates)) ) {                        
+                if ( pinchAction.insertMap ( cont.first, std::make_pair(cont.second.at(0), jointStates)) ) {                        
                     logCollision << ", NEW INSERTION";
                 }
                 logCollision << std::endl;
@@ -246,7 +227,7 @@ void ROSEE::MoveItCollider::checkCollisions(){
     }
     
     //print if no collision at all 
-    if (pinchMap.size() == 0 ) {
+    if (pinchAction.pinchMap.size() == 0 ) {
         std::cout << "WARNING: I found no collisions between tips. Are you sure your hand"
             << " has some fingertips that collide? If yes, check your urdf/srdf, or"
             << " set a bigger value in N_EXP_COLLISION." << std::endl;
@@ -255,9 +236,9 @@ void ROSEE::MoveItCollider::checkCollisions(){
 
 
 void ROSEE::MoveItCollider::setOnlyDependentJoints(
-    std::pair < std::string, std::string > tipsNames, ContactWithJointStates *contactJstates) {
+    std::pair < std::string, std::string > tipsNames, PinchAction::JointStates *jStates) {
     
-    for (auto &js : contactJstates->second) { //for each among ALL joints
+    for (auto &js : *jStates) { //for each among ALL joints
         
         /** other way around, second is better?
         std::vector <std::string> jointOfTips1 = jointsOfFingertipsMap.at(tipsNames.first);
@@ -283,134 +264,63 @@ void ROSEE::MoveItCollider::setOnlyDependentJoints(
 }
 
 
-bool ROSEE::MoveItCollider::checkBestCollision(
-    std::pair < std::string, std::string > tipsNames, ContactWithJointStates contactJstates){
-    
-    auto it = pinchMap.find(tipsNames);
-    if (it == pinchMap.end()) { //new pair
-        
-        setOnlyDependentJoints(tipsNames, &contactJstates);
-        std::set<ContactWithJointStates, depthComp> newSet;
-        newSet.insert(contactJstates);
-        
-        pinchMap.insert(std::make_pair(tipsNames, newSet));
-        
-    } else if (it->second.size() < MAX_CONTACT_STORED){
-            
-        setOnlyDependentJoints(tipsNames, &contactJstates);
-        it->second.insert(contactJstates); // the set will insert in order for us
-            
-    } else if (contactJstates.first.depth > it->second.rbegin()->first.depth) {
+/// trig is the action of closing a SINGLE finger towards the palm
+/// to know the joint direction, the position is set to the limit which is different from 0
+/// if no limit is 0? TODO think, now solution is to take user info.
+/// if a joint is continuos, it is excluded from the trig action. (because I cant think about a continuos joint
+/// that is useful for a trig action, but can be present in theory)
+void ROSEE::MoveItCollider::trig() {
 
-        setOnlyDependentJoints(tipsNames, &contactJstates);
-        it->second.insert(contactJstates);
-        //delete the last element
-        std::set<ContactWithJointStates, depthComp>::iterator lastElem = it->second.end();
-        --lastElem;
-        it->second.erase(lastElem);
+    std::map < std::string, PinchAction::JointStates > trigMap;    
+    for (auto mapEl : fingertipOfJointMap) {
         
-    } else {
-        return false; //no new added
-    }
-    return true;
-}
+        if (mapEl.second.size() == 1) { //the joint must move ONLY a fingertip
+                        
+            moveit::core::JointModel::Bounds limits = 
+                kinematic_model->getJointModel(mapEl.first)->getVariableBounds();
 
-//TODO make in a function of another class (parser?)
-std::string ROSEE::MoveItCollider::emitYaml() {
-
-    YAML::Emitter out;
-    out << YAML::BeginMap;
-    for (const auto & tipPair : pinchMap) {
-    
-        //yaml does not accept a pair, we have to "convert" it into a vector
-        const std::vector <std::string> tipNamesStr { tipPair.first.first, tipPair.first.second };
-        out << YAML::Key << YAML::Flow << tipNamesStr;
-        
-        unsigned int nCont = 1;
-        out << YAML::Value << YAML::BeginMap;
-        for (const auto & contact : tipPair.second) {
-            std::string contSeq = "Contact_" + std::to_string(nCont);
-            out << YAML::Key << contSeq << YAML::Value;
-            //contact.first, the moveit Contact obj
-            out << YAML::BeginMap;
-                out << YAML::Key << "MoveItContact" << YAML::Value << YAML::BeginMap;
-                    out << YAML::Key << "body_name_1";
-                    out << YAML::Value << contact.first.body_name_1;
-                    out << YAML::Key << "body_name_2";
-                    out << YAML::Value << contact.first.body_name_2;
-                    out << YAML::Key << "body_type_1";
-                    out << YAML::Value << contact.first.body_type_1;
-                    out << YAML::Key << "body_type_2";
-                    out << YAML::Value << contact.first.body_type_2;
-                    out << YAML::Key << "depth";
-                    out << YAML::Value << contact.first.depth;
-                    out << YAML::Key << "normal";
-                    std::vector < double > normal ( contact.first.normal.data(), contact.first.normal.data() +  contact.first.normal.rows());  
-                    out << YAML::Value << YAML::Flow << normal;
-                    out << YAML::Key << "pos";
-                    std::vector < double > pos ( contact.first.pos.data(), contact.first.pos.data() +  contact.first.pos.rows());
-                    out << YAML::Value << YAML::Flow << pos;
-                    out << YAML::EndMap;
-
-                //contact.second, the jointstates map
-                out << YAML::Key << "JointStates" << YAML::Value << YAML::BeginMap;
-                for (const auto &joint : contact.second) {
-                    out << YAML::Key << joint.first;
-                    out << YAML::Value << YAML::Flow << joint.second; //vector of double is emit like Seq
+            //HACK consider only 2 bounds now, because 1dof joint
+            if ( limits.at(0).max_position_ - limits.at(0).min_position_ >= 6.28 ) { //continuos joint
+                std::cout << limits.at(0).max_position_ - limits.at(0).min_position_ << std::endl;
+                break;
+            }
+            //TODO if neither == 0, take trig value from file? or param
+            double trigMax = (limits.at(0).max_position_ == 0) ? limits.at(0).min_position_ :   
+                                                                 limits.at(0).max_position_ ;
+                                                                
+            auto itTrigMap = trigMap.find(  mapEl.second.at(0) );
+            if (itTrigMap == trigMap.end() ) {
+                PinchAction::JointStates js;
+                for (auto it : kinematic_model->getActiveJointModels()){
+                    std::vector <double> jPos (it->getVariableCount());
+                    std::fill (jPos.begin(), jPos.end(), 0.0);
+                    js.insert ( std::make_pair ( it->getName(), jPos ));
                 }
-                out << YAML::EndMap;
-                   
-            out << YAML::EndMap;
-            nCont++;
-        }
-        out << YAML::EndMap;
-        out << YAML::Newline << YAML::Newline; //double to insert a blanck line between tips pair
-    }
-    out << YAML::EndMap;
-    return out.c_str();
-}
-
-
-//TODO this function will be then in another part, it is not an "offline" part
-void ROSEE::MoveItCollider::parseYaml ( std::string filename ){
-    
-    std::map < std::pair < std::string, std::string >, std::map < std::string, JointStates> > pinchParsedMap; 
-    YAML::Node node = YAML::LoadFile(filename);
-        
-    for(YAML::const_iterator tipPair = node.begin(); tipPair != node.end(); ++tipPair) {
-        std::pair <std::string, std::string> tipNames = tipPair->first.as<std::pair<std::string, std::string>>();
-        auto insResult = pinchParsedMap.insert ( std::make_pair( tipNames, std::map<std::string, JointStates> () ) );
-        
-        //TODO check if new insertion, for security reason
-        if (!insResult.second) {
-            //PAIR already present, some error with the yaml file
-        }
-        
-        for ( YAML::const_iterator setElem = tipPair->second.begin(); setElem != tipPair->second.end(); ++setElem) {
-            
-            for(YAML::const_iterator cont = setElem->second.begin(); cont != setElem->second.end(); ++cont) {
-                //cont can be the map MoveItContact or JointStates
                 
-                if (cont->first.as<std::string>().compare ("JointStates") == 0 ) {
-                    
-                    JointStates jointMap = cont->second.as < JointStates >(); 
-                    insResult.first->second.insert(
-                        std::make_pair (setElem->first.as<std::string>(), jointMap)); //map insert return also the iterator to the added element
-                }
+                //HACK consider only 2 bounds now, because 1dof joint
+                js.at ( mapEl.first ).at(0) = trigMax;
+                trigMap.insert ( std::make_pair ( mapEl.second.at(0), js ) );
+
+            } else {
+                //HACK consider only 2 bounds now, because 1dof joint
+                itTrigMap->second.at (mapEl.first).at(0) = trigMax;
             }
+        }  
+    }
+    
+    //print debug
+    for (auto i : trigMap) {
+        std::cout << i.first << std::endl;
+        for (auto j : i.second) {
+            std::cout << "\t" << j.first << " : " ;
+            for(const auto &jointValue : j.second){
+                std::cout << jointValue << ", "; //joint position (vector because can have multiple dof)
+            }
+            std::cout << std::endl;
         }
     }
     
-    //print to check if parse is correct, DEBUG
-    for (auto i : pinchParsedMap) {
-        std::cout << i.first.first << " " << i.first.second << std::endl;
-        for (auto j : i.second) {
-            std::cout << "\t" << j.first << ":" << std::endl;
-            for (auto y : j.second) {
-                std::cout << "\t\t" <<y.first << ": " << y.second.at(0) << std::endl;                
-            }
-        }
-    }
+    
 }
 
 

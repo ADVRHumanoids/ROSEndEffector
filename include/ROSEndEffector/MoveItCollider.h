@@ -7,16 +7,13 @@
 #include <moveit/robot_model_loader/robot_model_loader.h>
 #include <moveit/planning_scene/planning_scene.h>
 
-//yaml
-#include <yaml-cpp/yaml.h>
-
-#include <ROSEndEffector/Utils.h>
+#include <ROSEndEffector/YamlWorker.h>
+#include <ROSEndEffector/PinchAction.h>
 
 #define N_EXP_COLLISION 5000 //5000 is ok
 #define DEFAULT_JOINT_POS 0.0
 /** Max contact stored in the set for each pair */
 #define MAX_CONTACT_STORED 3
-#define COLLIDER_REL_PATH "/configs/moveItCollider/"
 
 namespace ROSEE
 {
@@ -41,27 +38,8 @@ public:
     
     
 private:
-    /** a map containing pairs jointNames-jointValues. vector of double because a joint can have more than 1 dof @NOTE: being a map the order (given by joint names) is assured*/
-    typedef std::map <std::string, std::vector <double> > JointStates;
-
-    /**Contact informations for a contact that happens with a particular joint states*/
-    typedef std::pair <collision_detection::Contact, JointStates> ContactWithJointStates;     
-        
-    /** struct to put in order the set of ContactWithJointStates. The first elements are the ones 
-     * with greater depth
-     * @FIX, even if is almost impossible, two different contact with same depth will be considered equal
-     * with this definition of depthComp. Theoretically they are equal only if the joint status are equal 
-     * (of only joints that act for the collision). In fact, we should have the possibility to have two contact
-     * with the same depth (if joint statuses are different), they will be equally good
-     */
-    struct depthComp {
-        bool operator() (const ContactWithJointStates& a, const ContactWithJointStates& b) const
-        {return (std::abs(a.first.depth) > std::abs(b.first.depth) );}
-    };
-    /** The object that contains all the "best" MAX_CONTACT_STORED contact for each possible pair. 
-     It is a map with as key the pair of the two tips colliding, 
-     and as value a fixed size set of ContactWithJointStates object*/
-    std::map < std::pair < std::string, std::string >, std::set<ContactWithJointStates, depthComp>> pinchMap; 
+    
+    PinchAction pinchAction; 
         
     robot_model::RobotModelPtr kinematic_model;
     std::vector<std::string> fingertipNames;
@@ -103,16 +81,11 @@ private:
      * @brief Given the contact, we want to know the state of the joint to replicate it. But we want to know
      * only the state of the joints that effectively act on the contact, that are the ones which moves one of the two tips (or both). So the other joints are put to the DEFAULT_JOINT_POS value
      */
-    void setOnlyDependentJoints(std::pair < std::string, std::string > tipsNames, ContactWithJointStates *contactJstates);
-
-    /** 
-     * @brief insert the new contact in the map, if it is among the best ones
-     */
-    bool checkBestCollision(std::pair < std::string, std::string > tipsNames, ContactWithJointStates contactJstates);
+    void setOnlyDependentJoints(std::pair < std::string, std::string > tipsNames, PinchAction::JointStates *Jstates);
     
-
-    std::string emitYaml();
-    void parseYaml(std::string);
+    
+    //trig etc
+    void trig();
 };
     
 }

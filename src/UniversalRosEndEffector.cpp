@@ -15,11 +15,9 @@
 * limitations under the License.
 */
 
-
 #include <ros/ros.h>
 
 #include <ROSEndEffector/UniversalRosEndEffectorExecutor.h>
-#include <ROSEndEffector/MoveItCollider.h>
 
 int main ( int argc, char **argv ) {
 

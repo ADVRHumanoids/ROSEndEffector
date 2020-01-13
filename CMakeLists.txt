@@ -117,6 +117,14 @@ add_library(MoveItCollider
     src/MoveItCollider.cpp
 )
 
+add_library(YamlWorker
+    src/YamlWorker.cpp
+)
+
+add_library(PinchAction
+    src/PinchAction.cpp
+)
+
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
@@ -162,16 +170,23 @@ target_link_libraries(UniversalRosEndEffectorExecutor
     
 )
 
-target_link_libraries(MoveItCollider
-    ${catkin_LIBRARIES}     
-    ${Boost_LIBRARIES}
+target_link_libraries(YamlWorker
     yaml-cpp
+    PinchAction
 )
 
+target_link_libraries(PinchAction
+
+)
+
+target_link_libraries(MoveItCollider
+    ${catkin_LIBRARIES}
+    YamlWorker
+    PinchAction
+)
 
 target_link_libraries(UniversalRosEndEffector
     UniversalRosEndEffectorExecutor
-    MoveItCollider
 )
 
 target_link_libraries(UniversalRosEndEffector2
