@@ -121,8 +121,8 @@ add_library(YamlWorker
     src/YamlWorker.cpp
 )
 
-add_library(PinchAction
-    src/PinchAction.cpp
+add_library(ActionPinch
+    src/ActionPinch.cpp
 )
 
 ## Add cmake target dependencies of the library
@@ -172,17 +172,17 @@ target_link_libraries(UniversalRosEndEffectorExecutor
 
 target_link_libraries(YamlWorker
     yaml-cpp
-    PinchAction
+    ActionPinch
 )
 
-target_link_libraries(PinchAction
+target_link_libraries(ActionPinch
 
 )
 
 target_link_libraries(MoveItCollider
     ${catkin_LIBRARIES}
     YamlWorker
-    PinchAction
+    ActionPinch
 )
 
 target_link_libraries(UniversalRosEndEffector

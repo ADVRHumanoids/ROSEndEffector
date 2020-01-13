@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef ROSEE_PINCHACTION_H
-#define ROSEE_PINCHACTION_H
+#ifndef ROSEE_ACTIONPINCH_H
+#define ROSEE_ACTIONPINCH_H
 
 #include <moveit/robot_model_loader/robot_model_loader.h>
 #include <moveit/planning_scene/planning_scene.h>
@@ -29,7 +29,7 @@ namespace ROSEE {
 /**
  * @todo write docs
  */
-class PinchAction
+class ActionPinch
 {
 public:
     
@@ -64,7 +64,7 @@ public:
     /**
      * Default constructor
      */
-    PinchAction();
+    ActionPinch();
     
         /** 
      * @brief insert the new contact in the map, if it is among the best ones
@@ -72,7 +72,7 @@ public:
     bool insertMap( std::pair < std::string, std::string > tipsNames, ContactWithJointStates contactJstates);
     void printMap();
     
-    
+    std::string name;
     
     
     
@@ -81,4 +81,4 @@ public:
 
 }
 
-#endif // ROSEE_PINCHACTION_H
+#endif // ROSEE_ACTIONPINCH_H

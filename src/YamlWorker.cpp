@@ -19,30 +19,29 @@
 ROSEE::YamlWorker::YamlWorker ( std::string handName)
 {
     dirPath = ROSEE::Utils::getPackagePath() + COLLIDER_REL_PATH 
-        + "/" + handName;
+        + "/" + handName + "/" ;
     
     
 }
 
 
-std::string ROSEE::YamlWorker::createYamlFile(ROSEE::PinchAction pinchMap ) {
+std::string ROSEE::YamlWorker::createYamlFile(ROSEE::ActionPinch actionPinch ) {
 
     ROSEE::Utils::create_directory ( dirPath );
-    std::string output = emitYaml(pinchMap);
-    //TODO take name from the class
-    ROSEE::Utils::out2file(dirPath + "/pinch.yaml", output);
-    
-    return (dirPath + "/pinch.yaml");
+    std::string output = emitYaml ( actionPinch);
+
+    ROSEE::Utils::out2file(dirPath + actionPinch.name + ".yaml", output);
+    return (dirPath + actionPinch.name + ".yaml");
     
     
 }
 
 
-std::string ROSEE::YamlWorker::emitYaml ( ROSEE::PinchAction pinchAction )
+std::string ROSEE::YamlWorker::emitYaml ( ROSEE::ActionPinch actionPinch )
 {
     YAML::Emitter out;
     out << YAML::BeginMap;
-    for (const auto & tipPair : pinchAction.pinchMap) {
+    for (const auto & tipPair : actionPinch.pinchMap) {
     
         //yaml does not accept a pair, we have to "convert" it into a vector
         const std::vector <std::string> tipNamesStr { tipPair.first.first, tipPair.first.second };
@@ -94,18 +93,15 @@ std::string ROSEE::YamlWorker::emitYaml ( ROSEE::PinchAction pinchAction )
 }
 
 //TODO return the generic class movement
-std::map < std::pair < std::string, std::string >, std::map < std::string, ROSEE::PinchAction::JointStates> >
+std::map < std::pair < std::string, std::string >, std::map < std::string, ROSEE::ActionPinch::JointStates> >
     ROSEE::YamlWorker::parseYaml ( std::string filename ){
-        
-    std::cout << "Parsing " << dirPath + filename << std::endl;
-
     
-    std::map < std::pair < std::string, std::string >, std::map < std::string, PinchAction::JointStates> > pinchParsedMap; 
+    std::map < std::pair < std::string, std::string >, std::map < std::string, ActionPinch::JointStates> > pinchParsedMap; 
     YAML::Node node = YAML::LoadFile(dirPath + filename);
         
     for(YAML::const_iterator tipPair = node.begin(); tipPair != node.end(); ++tipPair) {
         std::pair <std::string, std::string> tipNames = tipPair->first.as<std::pair<std::string, std::string>>();
-        auto insResult = pinchParsedMap.insert ( std::make_pair( tipNames, std::map<std::string, PinchAction::JointStates> () ) );
+        auto insResult = pinchParsedMap.insert ( std::make_pair( tipNames, std::map<std::string, ActionPinch::JointStates> () ) );
         
         //TODO check if new insertion, for security reason
         if (!insResult.second) {
@@ -119,24 +115,14 @@ std::map < std::pair < std::string, std::string >, std::map < std::string, ROSEE
                 
                 if (cont->first.as<std::string>().compare ("JointStates") == 0 ) {
                     
-                    PinchAction::JointStates jointMap = cont->second.as < PinchAction::JointStates >(); 
+                    ActionPinch::JointStates jointMap = cont->second.as < ActionPinch::JointStates >(); 
                     insResult.first->second.insert(
                         std::make_pair (setElem->first.as<std::string>(), jointMap)); //map insert return also the iterator to the added element
                 }
             }
         }
     }
-    
-    //print to check if parse is correct, DEBUG
-    for (auto i : pinchParsedMap) {
-        std::cout << i.first.first << " " << i.first.second << std::endl;
-        for (auto j : i.second) {
-            std::cout << "\t" << j.first << ":" << std::endl;
-            for (auto y : j.second) {
-                std::cout << "\t\t" <<y.first << ": " << y.second.at(0) << std::endl;                
-            }
-        }
-    }
+
     
     return pinchParsedMap;
 }

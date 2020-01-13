@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-#include <ROSEndEffector/PinchAction.h>
+#include <ROSEndEffector/ActionPinch.h>
 
-#include <string> //TODO levalo da qua
-
-ROSEE::PinchAction::PinchAction()
+ROSEE::ActionPinch::ActionPinch()
 {
-
+    name = "pinch";
 }
 
-bool ROSEE::PinchAction::insertMap(
+bool ROSEE::ActionPinch::insertMap(
     std::pair < std::string, std::string > tipsNames, ContactWithJointStates contactJstates){
     
     auto it = pinchMap.find(tipsNames);
@@ -52,7 +50,7 @@ bool ROSEE::PinchAction::insertMap(
     return true;
 }
 
-void ROSEE::PinchAction::printMap(){
+void ROSEE::ActionPinch::printMap(){
     std::stringstream logStream;
     logStream << "Contact list: " << std::endl ;
     

@@ -22,16 +22,27 @@ void ROSEE::MoveItCollider::run(){
     printJointsOfFingertips();
     printFingertipsOfJoints();
     checkCollisions();
-    pinchAction.printMap();
+    actionPinch.printMap();
     
     //emit the yaml file
     ROSEE::YamlWorker yamlWorker(kinematic_model->getName());
-    yamlWorker.createYamlFile(pinchAction);
-    yamlWorker.parseYaml("/pinch.yaml");
+    yamlWorker.createYamlFile(actionPinch);
+    auto pinchParsedMap = yamlWorker.parseYaml(actionPinch.name + ".yaml");
+    
+    //print to check if parse is correct, DEBUG
+    for (auto i : pinchParsedMap) {
+        std::cout << i.first.first << " " << i.first.second << std::endl;
+        for (auto j : i.second) {
+            std::cout << "\t" << j.first << ":" << std::endl;
+            for (auto y : j.second) {
+                std::cout << "\t\t" <<y.first << ": " << y.second.at(0) << std::endl;                
+            }
+        }
+    }
     
     
     //Trigger actions etc
-    trig();
+    //trig();
 
 }
 
@@ -93,7 +104,7 @@ void ROSEE::MoveItCollider::printFingertipsOfJoints(){
 
 
 
-
+///TODO move i look for in Parser
 void ROSEE::MoveItCollider::lookForFingertips(){
 
     for (auto it: kinematic_model->getJointModelGroups()) {
@@ -186,7 +197,7 @@ void ROSEE::MoveItCollider::checkCollisions(){
         if (collision_result.collision) { 
 
             //store joint states
-            PinchAction::JointStates jointStates;
+            ActionPinch::JointStates jointStates;
             for (auto actJ : kinematic_model->getActiveJointModels()){
                 //joint can have multiple pos, so double*, but we want to store in a vector 
                 const double* pos = kinematic_state.getJointPositions(actJ); 
@@ -199,8 +210,8 @@ void ROSEE::MoveItCollider::checkCollisions(){
             for (auto cont : collision_result.contacts){
 
                 //moveit contacts is a map between a pair (2 strings with link names) and a vector of Contact object ?? I don't know why the contact is a vector, I have always find only one element            
-                logCollision << "Collision between " << cont.first.first.c_str() << " and " << 
-                                                    cont.first.second.c_str() << std::endl;                                
+                logCollision << "Collision between " << cont.first.first << " and " << 
+                                                    cont.first.second << std::endl;                                
 
                 for (auto contInfo : cont.second){ 
                     logCollision << "\tWith a depth of contact: " << contInfo.depth;
@@ -208,7 +219,7 @@ void ROSEE::MoveItCollider::checkCollisions(){
                 
                 setOnlyDependentJoints(cont.first, &jointStates);
                 //Check if it is the best depth among the found collision among that pair
-                if ( pinchAction.insertMap ( cont.first, std::make_pair(cont.second.at(0), jointStates)) ) {                        
+                if ( actionPinch.insertMap ( cont.first, std::make_pair(cont.second.at(0), jointStates)) ) {                        
                     logCollision << ", NEW INSERTION";
                 }
                 logCollision << std::endl;
@@ -227,7 +238,7 @@ void ROSEE::MoveItCollider::checkCollisions(){
     }
     
     //print if no collision at all 
-    if (pinchAction.pinchMap.size() == 0 ) {
+    if (actionPinch.pinchMap.size() == 0 ) {
         std::cout << "WARNING: I found no collisions between tips. Are you sure your hand"
             << " has some fingertips that collide? If yes, check your urdf/srdf, or"
             << " set a bigger value in N_EXP_COLLISION." << std::endl;
@@ -236,7 +247,7 @@ void ROSEE::MoveItCollider::checkCollisions(){
 
 
 void ROSEE::MoveItCollider::setOnlyDependentJoints(
-    std::pair < std::string, std::string > tipsNames, PinchAction::JointStates *jStates) {
+    std::pair < std::string, std::string > tipsNames, ActionPinch::JointStates *jStates) {
     
     for (auto &js : *jStates) { //for each among ALL joints
         
@@ -258,9 +269,10 @@ void ROSEE::MoveItCollider::setOnlyDependentJoints(
         if (std::find (tips.begin(), tips.end(), tipsNames.first) == tips.end() &&
             std::find (tips.begin(), tips.end(), tipsNames.second) == tips.end() ) {
             // not dependant, set to zero the position
-            std::fill ( js.second.begin(), js.second.end(), DEFAULT_JOINT_POS);               
+            std::fill ( js.second.begin(), js.second.end(), DEFAULT_JOINT_POS); 
         }
-    }       
+    } 
+    
 }
 
 
@@ -271,7 +283,7 @@ void ROSEE::MoveItCollider::setOnlyDependentJoints(
 /// that is useful for a trig action, but can be present in theory)
 void ROSEE::MoveItCollider::trig() {
 
-    std::map < std::string, PinchAction::JointStates > trigMap;    
+    std::map < std::string, ActionPinch::JointStates > trigMap;    
     for (auto mapEl : fingertipOfJointMap) {
         
         if (mapEl.second.size() == 1) { //the joint must move ONLY a fingertip
@@ -290,7 +302,7 @@ void ROSEE::MoveItCollider::trig() {
                                                                 
             auto itTrigMap = trigMap.find(  mapEl.second.at(0) );
             if (itTrigMap == trigMap.end() ) {
-                PinchAction::JointStates js;
+                ActionPinch::JointStates js;
                 for (auto it : kinematic_model->getActiveJointModels()){
                     std::vector <double> jPos (it->getVariableCount());
                     std::fill (jPos.begin(), jPos.end(), 0.0);
