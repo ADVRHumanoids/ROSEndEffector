@@ -22,23 +22,26 @@ void ROSEE::MoveItCollider::run(){
     printJointsOfFingertips();
     printFingertipsOfJoints();
     checkCollisions();
-    actionPinch.printMap();
-    
+   
+    std::cout << actionPinch ;
+        
     //emit the yaml file
     ROSEE::YamlWorker yamlWorker(kinematic_model->getName());
     yamlWorker.createYamlFile(actionPinch);
-    auto pinchParsedMap = yamlWorker.parseYaml(actionPinch.name + ".yaml");
     
-    //print to check if parse is correct, DEBUG
-    for (auto i : pinchParsedMap) {
-        std::cout << i.first.first << " " << i.first.second << std::endl;
-        for (auto j : i.second) {
-            std::cout << "\t" << j.first << ":" << std::endl;
-            for (auto y : j.second) {
-                std::cout << "\t\t" <<y.first << ": " << y.second.at(0) << std::endl;                
-            }
-        }
-    }
+    
+//     auto pinchParsedMap = yamlWorker.parseYaml(actionPinch.name + ".yaml");
+//     
+//     //print to check if parse is correct, DEBUG
+//     for (auto i : pinchParsedMap) {
+//         std::cout << i.first.first << " " << i.first.second << std::endl;
+//         for (auto j : i.second) {
+//             std::cout << "\t" << j.first << ":" << std::endl;
+//             for (auto y : j.second) {
+//                 std::cout << "\t\t" <<y.first << ": " << y.second.at(0) << std::endl;                
+//             }
+//         }
+//     }
     
     
     //Trigger actions etc
@@ -197,7 +200,7 @@ void ROSEE::MoveItCollider::checkCollisions(){
         if (collision_result.collision) { 
 
             //store joint states
-            ActionPinch::JointStates jointStates;
+            JointStates jointStates;
             for (auto actJ : kinematic_model->getActiveJointModels()){
                 //joint can have multiple pos, so double*, but we want to store in a vector 
                 const double* pos = kinematic_state.getJointPositions(actJ); 
@@ -219,7 +222,7 @@ void ROSEE::MoveItCollider::checkCollisions(){
                 
                 setOnlyDependentJoints(cont.first, &jointStates);
                 //Check if it is the best depth among the found collision among that pair
-                if ( actionPinch.insertMap ( cont.first, std::make_pair(cont.second.at(0), jointStates)) ) {                        
+                if ( actionPinch.insertInMap ( cont.first, jointStates, cont.second.at(0)) ) {                        
                     logCollision << ", NEW INSERTION";
                 }
                 logCollision << std::endl;
@@ -238,7 +241,7 @@ void ROSEE::MoveItCollider::checkCollisions(){
     }
     
     //print if no collision at all 
-    if (actionPinch.pinchMap.size() == 0 ) {
+    if (actionPinch.getMapSize() == 0 ) {
         std::cout << "WARNING: I found no collisions between tips. Are you sure your hand"
             << " has some fingertips that collide? If yes, check your urdf/srdf, or"
             << " set a bigger value in N_EXP_COLLISION." << std::endl;
@@ -247,7 +250,7 @@ void ROSEE::MoveItCollider::checkCollisions(){
 
 
 void ROSEE::MoveItCollider::setOnlyDependentJoints(
-    std::pair < std::string, std::string > tipsNames, ActionPinch::JointStates *jStates) {
+    std::pair < std::string, std::string > tipsNames, JointStates *jStates) {
     
     for (auto &js : *jStates) { //for each among ALL joints
         
@@ -281,9 +284,10 @@ void ROSEE::MoveItCollider::setOnlyDependentJoints(
 /// if no limit is 0? TODO think, now solution is to take user info.
 /// if a joint is continuos, it is excluded from the trig action. (because I cant think about a continuos joint
 /// that is useful for a trig action, but can be present in theory)
+/**
 void ROSEE::MoveItCollider::trig() {
 
-    std::map < std::string, ActionPinch::JointStates > trigMap;    
+    std::map < std::string, JointStates > trigMap;    
     for (auto mapEl : fingertipOfJointMap) {
         
         if (mapEl.second.size() == 1) { //the joint must move ONLY a fingertip
@@ -334,5 +338,6 @@ void ROSEE::MoveItCollider::trig() {
     
     
 }
+*/
 
 

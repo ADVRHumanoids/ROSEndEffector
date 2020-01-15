@@ -20,67 +20,48 @@ ROSEE::YamlWorker::YamlWorker ( std::string handName)
 {
     dirPath = ROSEE::Utils::getPackagePath() + COLLIDER_REL_PATH 
         + "/" + handName + "/" ;
-    
-    
 }
 
 
-std::string ROSEE::YamlWorker::createYamlFile(ROSEE::ActionPinch actionPinch ) {
+std::string ROSEE::YamlWorker::createYamlFile ( const ROSEE::ActionPrimitive action ) {
 
     ROSEE::Utils::create_directory ( dirPath );
-    std::string output = emitYaml ( actionPinch);
+    std::string output = emitYaml ( action);
 
-    ROSEE::Utils::out2file(dirPath + actionPinch.name + ".yaml", output);
-    return (dirPath + actionPinch.name + ".yaml");
-    
+    ROSEE::Utils::out2file(dirPath + action.actionName + ".yaml", output);
+    return (dirPath + action.actionName + ".yaml");
     
 }
 
 
-std::string ROSEE::YamlWorker::emitYaml ( ROSEE::ActionPinch actionPinch )
+std::string ROSEE::YamlWorker::emitYaml ( const ROSEE::ActionPrimitive action )
 {
     YAML::Emitter out;
     out << YAML::BeginMap;
-    for (const auto & tipPair : actionPinch.pinchMap) {
+    for (const auto & mapEl : action.getActionMap() ) {
     
-        //yaml does not accept a pair, we have to "convert" it into a vector
-        const std::vector <std::string> tipNamesStr { tipPair.first.first, tipPair.first.second };
-        out << YAML::Key << YAML::Flow << tipNamesStr;
+        // key: set of string (eg two tip names)
+        out << YAML::Key << YAML::Flow << mapEl.first;
         
         unsigned int nCont = 1;
         out << YAML::Value << YAML::BeginMap;
-        for (const auto & contact : tipPair.second) {
-            std::string contSeq = "Contact_" + std::to_string(nCont);
-            out << YAML::Key << contSeq << YAML::Value;
-            //contact.first, the moveit Contact obj
-            out << YAML::BeginMap;
-                out << YAML::Key << "MoveItContact" << YAML::Value << YAML::BeginMap;
-                    out << YAML::Key << "body_name_1";
-                    out << YAML::Value << contact.first.body_name_1;
-                    out << YAML::Key << "body_name_2";
-                    out << YAML::Value << contact.first.body_name_2;
-                    out << YAML::Key << "body_type_1";
-                    out << YAML::Value << contact.first.body_type_1;
-                    out << YAML::Key << "body_type_2";
-                    out << YAML::Value << contact.first.body_type_2;
-                    out << YAML::Key << "depth";
-                    out << YAML::Value << contact.first.depth;
-                    out << YAML::Key << "normal";
-                    std::vector < double > normal ( contact.first.normal.data(), contact.first.normal.data() +  contact.first.normal.rows());  
-                    out << YAML::Value << YAML::Flow << normal;
-                    out << YAML::Key << "pos";
-                    std::vector < double > pos ( contact.first.pos.data(), contact.first.pos.data() +  contact.first.pos.rows());
-                    out << YAML::Value << YAML::Flow << pos;
-                    out << YAML::EndMap;
-
-                //contact.second, the jointstates map
+        for (const auto & actionState : mapEl.second) { //.second is the set of ActionState
+            
+            std::string contSeq = "ActionState_" + std::to_string(nCont);
+            out << YAML::Key << contSeq; 
+            
+            out << YAML::Value << YAML::BeginMap;
+                //actionState.first, the jointstates map
                 out << YAML::Key << "JointStates" << YAML::Value << YAML::BeginMap;
-                for (const auto &joint : contact.second) {
+                for (const auto &joint : actionState.first) {
                     out << YAML::Key << joint.first;
-                    out << YAML::Value << YAML::Flow << joint.second; //vector of double is emit like Seq
+                    out << YAML::Value << YAML::Flow << joint.second; //vector of double is emitted like Seq
                 }
                 out << YAML::EndMap;
-                   
+                
+                //actionState.second, the optional
+                out << YAML::Key << "Optional" << YAML::Value;
+                actionState.second->emitYaml(out);
             out << YAML::EndMap;
             nCont++;
         }
@@ -88,42 +69,5 @@ std::string ROSEE::YamlWorker::emitYaml ( ROSEE::ActionPinch actionPinch )
         out << YAML::Newline << YAML::Newline; //double to insert a blanck line between tips pair
     }
     out << YAML::EndMap;
-    return out.c_str();
-    
+    return out.c_str();    
 }
-
-//TODO return the generic class movement
-std::map < std::pair < std::string, std::string >, std::map < std::string, ROSEE::ActionPinch::JointStates> >
-    ROSEE::YamlWorker::parseYaml ( std::string filename ){
-    
-    std::map < std::pair < std::string, std::string >, std::map < std::string, ActionPinch::JointStates> > pinchParsedMap; 
-    YAML::Node node = YAML::LoadFile(dirPath + filename);
-        
-    for(YAML::const_iterator tipPair = node.begin(); tipPair != node.end(); ++tipPair) {
-        std::pair <std::string, std::string> tipNames = tipPair->first.as<std::pair<std::string, std::string>>();
-        auto insResult = pinchParsedMap.insert ( std::make_pair( tipNames, std::map<std::string, ActionPinch::JointStates> () ) );
-        
-        //TODO check if new insertion, for security reason
-        if (!insResult.second) {
-            //PAIR already present, some error with the yaml file
-        }
-        
-        for ( YAML::const_iterator setElem = tipPair->second.begin(); setElem != tipPair->second.end(); ++setElem) {
-            
-            for(YAML::const_iterator cont = setElem->second.begin(); cont != setElem->second.end(); ++cont) {
-                //cont can be the map MoveItContact or JointStates
-                
-                if (cont->first.as<std::string>().compare ("JointStates") == 0 ) {
-                    
-                    ActionPinch::JointStates jointMap = cont->second.as < ActionPinch::JointStates >(); 
-                    insResult.first->second.insert(
-                        std::make_pair (setElem->first.as<std::string>(), jointMap)); //map insert return also the iterator to the added element
-                }
-            }
-        }
-    }
-
-    
-    return pinchParsedMap;
-}
-

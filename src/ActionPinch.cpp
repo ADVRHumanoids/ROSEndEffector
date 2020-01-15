@@ -19,56 +19,87 @@
 ROSEE::ActionPinch::ActionPinch()
 {
     name = "pinch";
+    actionStateSetDim = 3;
+    optUsed = true;
 }
 
-bool ROSEE::ActionPinch::insertMap(
-    std::pair < std::string, std::string > tipsNames, ContactWithJointStates contactJstates){
+std::ostream& ROSEE::ActionPinch::OptPinch::printOpt (std::ostream &output) const {
     
-    auto it = pinchMap.find(tipsNames);
-    if (it == pinchMap.end()) { //new pair
-        
-        std::set<ContactWithJointStates, depthComp> newSet;
-        newSet.insert(contactJstates);
-        
-        pinchMap.insert(std::make_pair(tipsNames, newSet));
-        
-    } else if (it->second.size() < MAX_CONTACT_STORED){
-            
-        it->second.insert(contactJstates); // the set will insert in order for us
-            
-    } else if (contactJstates.first.depth > it->second.rbegin()->first.depth) {
+    output << "MoveitContact: " << std::endl ;
+    output << "\t\t\t\tbody_name_1: " << moveitContact.body_name_1 << std::endl;
+    output << "\t\t\t\tbody_name_2: " << moveitContact.body_name_2 << std::endl;
+    output << "\t\t\t\tbody_type_1: " << moveitContact.body_type_1 << std::endl;
+    output << "\t\t\t\tbody_type_2: " << moveitContact.body_type_2 << std::endl;
+    output << "\t\t\t\tdepth: " << moveitContact.depth << std::endl;
+    //TODO print normal and pos
 
-        it->second.insert(contactJstates);
-        //delete the last element
-        std::set<ContactWithJointStates, depthComp>::iterator lastElem = it->second.end();
-        --lastElem;
-        it->second.erase(lastElem);
-        
-    } else {
-        return false; //no new added
-    }
+    return output;
+}
+
+bool ROSEE::ActionPinch::OptPinch::emitYaml ( YAML::Emitter& out) const {
+
+    std::cout << "PINCH EMIT YAML " << std::endl;
+    out << YAML::BeginMap;
+        out << YAML::Key << "MoveItContact" << YAML::Value << YAML::BeginMap;
+            out << YAML::Key << "body_name_1";
+            out << YAML::Value << moveitContact.body_name_1;
+            out << YAML::Key << "body_name_2";
+            out << YAML::Value << moveitContact.body_name_2;
+            out << YAML::Key << "body_type_1";
+            out << YAML::Value << moveitContact.body_type_1;
+            out << YAML::Key << "body_type_2";
+            out << YAML::Value << moveitContact.body_type_2;
+            out << YAML::Key << "depth";
+            out << YAML::Value << moveitContact.depth;
+            out << YAML::Key << "normal";
+            std::vector < double > normal ( moveitContact.normal.data(), moveitContact.normal.data() +  moveitContact.normal.rows());  
+            out << YAML::Value << YAML::Flow << normal;
+            out << YAML::Key << "pos";
+            std::vector < double > pos ( moveitContact.pos.data(), moveitContact.pos.data() +  moveitContact.pos.rows());
+            out << YAML::Value << YAML::Flow << pos;
+            out << YAML::EndMap;
+    out << YAML::EndMap;
+    
     return true;
 }
 
-void ROSEE::ActionPinch::printMap(){
-    std::stringstream logStream;
-    logStream << "Contact list: " << std::endl ;
+// bool ROSEE::ActionPinch::OptPinch::parseYaml (OptPrimitive* optPointer, YAML::const_iterator it) {
+//     
+//     if (it->first.as<std::string>().compare ("Optional") != 0 ) {
+//         return false;
+//     }
+//     
+//     OptPinch optional;
+//     
+//     optional.moveitContact.body_name_1 = it->second["body_name_1"].as<std::string>();
+//     optional.moveitContact.body_name_2 = it->second["body_name_2"].as<std::string>();
+//     optional.moveitContact.depth = it->second["depth"].as<double>();
+//     //TODO pos normal, body type
+//     
+//     optPointer = &optional;
+//     return true;
+//     
+// }
+
+
+
+bool ROSEE::ActionPinch::insertInMap (std::string link1, std::string link2, JointStates jstates, collision_detection::Contact contact) {
     
-    for (const auto &item : pinchMap){
-        logStream << "\t" << item.first.first << ", " << item.first.second << ": "<< std::endl;
-            
-        for (auto contact : item.second) {  //the element in the set
-            logStream << "\tWith depth of: " << contact.first.depth << " and joint states:" << std::endl;
-            
-            for (const auto &jointState : contact.second) {
-                logStream << "\t\t" << jointState.first << " : "; //joint name
-                for(const auto &jointValue : jointState.second){
-                    logStream << jointValue << ", "; //joint position (vector because can have multiple dof)
-                }
-            logStream << std::endl;       
-            }
-        }
-        logStream << std::endl;
-    }    
-    std::cout << logStream.str() << std::endl;
+    std::set<std::string> keys;
+    keys.insert(link1);
+    keys.insert(link2);
+    
+    std::shared_ptr<OptPrimitive> optPointer;
+    optPointer = std::make_shared < OptPinch >(contact);
+    
+    
+    return ActionPrimitive::insertInMap(keys, std::make_pair(jstates, optPointer));
+    
+}  
+
+bool ROSEE::ActionPinch::insertInMap (std::pair < std::string, std::string> keys, JointStates jstates, collision_detection::Contact contact) {
+    
+    return insertInMap(keys.first, keys.second, jstates, contact);
+    
 }
+

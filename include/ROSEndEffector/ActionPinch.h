@@ -17,8 +17,15 @@
 #ifndef ROSEE_ACTIONPINCH_H
 #define ROSEE_ACTIONPINCH_H
 
+#include <iostream>
+
+#include <ROSEndEffector/ActionPrimitive.h>
+
 #include <moveit/robot_model_loader/robot_model_loader.h>
 #include <moveit/planning_scene/planning_scene.h>
+
+
+
 
 
 /** Max contact stored in the set for each pair */
@@ -29,53 +36,51 @@ namespace ROSEE {
 /**
  * @todo write docs
  */
-class ActionPinch
+class ActionPinch : public ActionPrimitive
 {
-public:
     
-    //*****************************************TODO put this in the generic move class
+private:
     
-    /** a map containing pairs jointNames-jointValues. vector of double because a joint can have more than 1 dof @NOTE: being a map the order (given by joint names) is assured*/
-    typedef std::map <std::string, std::vector <double> > JointStates;
-
-    /**Contact informations for a contact that happens with a particular joint states*/
-    typedef std::pair <collision_detection::Contact, JointStates> ContactWithJointStates;     
+    class OptPinch : public ActionPrimitive::OptPrimitive {
+    public:
         
-    /** struct to put in order the set of ContactWithJointStates. The first elements are the ones 
-     * with greater depth
-     * @FIX, even if is almost impossible, two different contact with same depth will be considered equal
-     * with this definition of depthComp. Theoretically they are equal only if the joint status are equal 
-     * (of only joints that act for the collision). In fact, we should have the possibility to have two contact
-     * with the same depth (if joint statuses are different), they will be equally good
-     * @TODO put this in the generic move class
-     */
-    struct depthComp {
-        bool operator() (const ContactWithJointStates& a, const ContactWithJointStates& b) const
-        {return (std::abs(a.first.depth) > std::abs(b.first.depth) );}
+        OptPinch ( collision_detection::Contact contact) {moveitContact = contact;};
+        
+        /** @FIX, even if is almost impossible, two different contact with same depth will be considered equal
+        * with this definition of operator >. Theoretically they are equal only if the joint status are equal 
+        * (of only joints that act for the collision). In fact, we should have the possibility to have two contact
+        * with the same depth (if joint statuses are different), they will be equally good
+        */
+        bool operator > (const OptPinch &b) const {
+                            std::cout << "SOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOONN\n" ;
+
+            return std::abs(moveitContact.depth) > std::abs(b.moveitContact.depth);
+        };
+        
+        std::ostream& printOpt ( std::ostream &output ) const override;
+        bool emitYaml ( YAML::Emitter& ) const override;
+        //bool parseYaml (OptPrimitive*, YAML::const_iterator) override ;
+
+
+        
+        collision_detection::Contact moveitContact;
     };
-    /** The object that contains all the "best" MAX_CONTACT_STORED contact for each possible pair. 
-     It is a map with as key the pair of the two tips colliding, 
-     and as value a fixed size set of ContactWithJointStates object*/
-    std::map < std::pair < std::string, std::string >, std::set<ContactWithJointStates, depthComp>> pinchMap; 
     
-    //***************************************************
     
+public:
     
     /**
      * Default constructor
      */
     ActionPinch();
     
-        /** 
-     * @brief insert the new contact in the map, if it is among the best ones
-     */
-    bool insertMap( std::pair < std::string, std::string > tipsNames, ContactWithJointStates contactJstates);
-    void printMap();
+    bool insertInMap (std::string, std::string, JointStates, collision_detection::Contact);    
+    bool insertInMap (std::pair < std::string, std::string>, JointStates , collision_detection::Contact);
+
+
     
     std::string name;
-    
-    
-    
+ 
 
 };
 

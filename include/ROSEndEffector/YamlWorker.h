@@ -25,7 +25,9 @@
 //to create directories
 #include <ROSEndEffector/Utils.h>
 
+#include <ROSEndEffector/ActionPrimitive.h>
 #include <ROSEndEffector/ActionPinch.h>
+
 
 //TODO put this in the generic class
 #include <moveit/robot_model_loader/robot_model_loader.h>
@@ -43,26 +45,19 @@ class YamlWorker
     
 public:
     
-
-    
-    
     /**
      * Default constructor
      */
     YamlWorker(std::string handName);
     
     //TODO pass correctly the generic class
-    std::string createYamlFile ( ActionPinch ) ;
+    std::string createYamlFile ( const ActionPrimitive action) ;
     
-    //TODO, the name of the message, that is also the filename (the dir is inserted in the parseyaml)
-    std::map < std::pair < std::string, std::string >, std::map < std::string, ActionPinch::JointStates> >
-        parseYaml ( std::string filename );
-
     std::string dirPath;
     
 private:
     
-    std::string emitYaml ( ActionPinch );
+    std::string emitYaml ( const ActionPrimitive action );
     
     
 

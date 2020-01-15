@@ -87,7 +87,7 @@ private:
      * @brief Given the contact, we want to know the state of the joint to replicate it. But we want to know
      * only the state of the joints that effectively act on the contact, that are the ones which moves one of the two tips (or both). So the other joints are put to the DEFAULT_JOINT_POS value
      */
-    void setOnlyDependentJoints(std::pair < std::string, std::string > tipsNames, ActionPinch::JointStates *Jstates);
+    void setOnlyDependentJoints(std::pair < std::string, std::string > tipsNames, JointStates *Jstates);
     
     
     //trig etc
