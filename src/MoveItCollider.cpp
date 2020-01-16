@@ -101,9 +101,6 @@ void ROSEE::MoveItCollider::printFingertipsOfJoints(){
 }
 
 
-
-
-
 ///TODO move i look for in Parser
 void ROSEE::MoveItCollider::lookForFingertips(){
 
@@ -197,7 +194,7 @@ void ROSEE::MoveItCollider::checkCollisions(){
         if (collision_result.collision) { 
 
             //store joint states
-            ActionPinch::JointStates jointStates;
+            JointStates jointStates;
             for (auto actJ : kinematic_model->getActiveJointModels()){
                 //joint can have multiple pos, so double*, but we want to store in a vector 
                 const double* pos = kinematic_state.getJointPositions(actJ); 
@@ -218,9 +215,22 @@ void ROSEE::MoveItCollider::checkCollisions(){
                 }
                 
                 setOnlyDependentJoints(cont.first, &jointStates);
-                //Check if it is the best depth among the found collision among that pair
-                if ( actionPinch.insertMap ( cont.first, std::make_pair(cont.second.at(0), jointStates)) ) {                        
+                
+                //create the actionPinch
+                ActionPinch pinch (cont.first, jointStates, cont.second.at(0) );
+                std::pair <std::string, std::string>* key4map = &(pinch.tipsPair);
+                auto itFind = mapOfPinches.find ( key4map );
+                if ( itFind == mapOfPinches.end() ) {
+                    mapOfPinches.insert ( std::make_pair (key4map, pinch) );
                     logCollision << ", NEW INSERTION";
+
+                    
+                } else { //Check if it is the best depth among the found collision among that pair
+                    
+                    if (itFind->second.insertActionState( jointStates, cont.second.at(0)) ) {
+                         logCollision << ", NEW INSERTION";
+                    }
+                    
                 }
                 logCollision << std::endl;
             }

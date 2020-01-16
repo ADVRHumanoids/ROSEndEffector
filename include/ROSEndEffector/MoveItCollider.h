@@ -9,6 +9,7 @@
 
 #include <ROSEndEffector/YamlWorker.h>
 #include <ROSEndEffector/ActionPinch.h>
+#include <ROSEndEffector/ActionPrimitive.h>
 
 #define N_EXP_COLLISION 50 //5000 is ok
 #define DEFAULT_JOINT_POS 0.0
@@ -45,7 +46,7 @@ public:
     
 private:
     
-    ActionPinch actionPinch; 
+    std::map < std::pair <std::string,std::string>* , ActionPinch > mapOfPinches ; 
         
     robot_model::RobotModelPtr kinematic_model;
     std::vector<std::string> fingertipNames;

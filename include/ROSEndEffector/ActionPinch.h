@@ -17,65 +17,48 @@
 #ifndef ROSEE_ACTIONPINCH_H
 #define ROSEE_ACTIONPINCH_H
 
-#include <moveit/robot_model_loader/robot_model_loader.h>
+#include <ROSEndEffector/ActionPrimitive.h>
 #include <moveit/planning_scene/planning_scene.h>
-
-
-/** Max contact stored in the set for each pair */
-#define MAX_CONTACT_STORED 3
+#include <yaml-cpp/yaml.h>
+#include <iostream>
 
 namespace ROSEE {
 
 /**
  * @todo write docs
  */
-class ActionPinch
+class ActionPinch : public ActionPrimitive 
 {
+private:
+    
+    typedef std::pair <JointStates, collision_detection::Contact> StateWithContact; 
+    struct depthComp {
+        bool operator() (const StateWithContact& a, const StateWithContact& b) const
+        {return (std::abs(a.second.depth) > std::abs(b.second.depth) );}
+    };
+    std::set < StateWithContact, depthComp > statesInfoSet;
+    bool emitYamlForContact ( collision_detection::Contact, YAML::Emitter& );
+
+    
 public:
     
-    //*****************************************TODO put this in the generic move class
-    
-    /** a map containing pairs jointNames-jointValues. vector of double because a joint can have more than 1 dof @NOTE: being a map the order (given by joint names) is assured*/
-    typedef std::map <std::string, std::vector <double> > JointStates;
-
-    /**Contact informations for a contact that happens with a particular joint states*/
-    typedef std::pair <collision_detection::Contact, JointStates> ContactWithJointStates;     
-        
-    /** struct to put in order the set of ContactWithJointStates. The first elements are the ones 
-     * with greater depth
-     * @FIX, even if is almost impossible, two different contact with same depth will be considered equal
-     * with this definition of depthComp. Theoretically they are equal only if the joint status are equal 
-     * (of only joints that act for the collision). In fact, we should have the possibility to have two contact
-     * with the same depth (if joint statuses are different), they will be equally good
-     * @TODO put this in the generic move class
-     */
-    struct depthComp {
-        bool operator() (const ContactWithJointStates& a, const ContactWithJointStates& b) const
-        {return (std::abs(a.first.depth) > std::abs(b.first.depth) );}
-    };
-    /** The object that contains all the "best" MAX_CONTACT_STORED contact for each possible pair. 
-     It is a map with as key the pair of the two tips colliding, 
-     and as value a fixed size set of ContactWithJointStates object*/
-    std::map < std::pair < std::string, std::string >, std::set<ContactWithJointStates, depthComp>> pinchMap; 
-    
-    //***************************************************
-    
-    
-    /**
-     * Default constructor
-     */
     ActionPinch();
+    ActionPinch(unsigned int);
+    ActionPinch (std::pair <std::string, std::string>, JointStates, collision_detection::Contact );
+
+    ~ActionPinch();
     
-        /** 
-     * @brief insert the new contact in the map, if it is among the best ones
-     */
-    bool insertMap( std::pair < std::string, std::string > tipsNames, ContactWithJointStates contactJstates);
-    void printMap();
-    
-    std::string name;
-    
-    
-    
+    std::set < std::string > getLinksInvolved() const override;
+    std::vector < ROSEE::JointStates > getActionStates() const override;
+    bool setLinksInvolved (std::set < std::string >) override;
+    bool setActionStates (std::vector < ROSEE::JointStates > ) override;
+    bool insertActionState (JointStates, collision_detection::Contact);
+
+    std::ostream& printAction (std::ostream &output) const override;    
+    std::string emitYaml ( ) override;
+    bool fillFromYaml( YAML::const_iterator yamlIt ) override;
+
+    std::pair <std::string, std::string > tipsPair ;
 
 };
 
