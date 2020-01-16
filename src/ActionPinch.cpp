@@ -18,7 +18,7 @@
 
 ROSEE::ActionPinch::ActionPinch()
 {
-    name = "pinch";
+    actionName = "pinch";
     actionStateSetDim = 3;
     optUsed = true;
 }
@@ -38,7 +38,6 @@ std::ostream& ROSEE::ActionPinch::OptPinch::printOpt (std::ostream &output) cons
 
 bool ROSEE::ActionPinch::OptPinch::emitYaml ( YAML::Emitter& out) const {
 
-    std::cout << "PINCH EMIT YAML " << std::endl;
     out << YAML::BeginMap;
         out << YAML::Key << "MoveItContact" << YAML::Value << YAML::BeginMap;
             out << YAML::Key << "body_name_1";
@@ -63,27 +62,24 @@ bool ROSEE::ActionPinch::OptPinch::emitYaml ( YAML::Emitter& out) const {
     return true;
 }
 
-// bool ROSEE::ActionPinch::OptPinch::parseYaml (OptPrimitive* optPointer, YAML::const_iterator it) {
-//     
-//     if (it->first.as<std::string>().compare ("Optional") != 0 ) {
-//         return false;
-//     }
-//     
-//     OptPinch optional;
-//     
-//     optional.moveitContact.body_name_1 = it->second["body_name_1"].as<std::string>();
-//     optional.moveitContact.body_name_2 = it->second["body_name_2"].as<std::string>();
-//     optional.moveitContact.depth = it->second["depth"].as<double>();
-//     //TODO pos normal, body type
-//     
-//     optPointer = &optional;
-//     return true;
-//     
-// }
+bool ROSEE::ActionPinch::OptPinch::parseYaml (YAML::const_iterator it) {
+    
+    if (it->first.as<std::string>().compare ("Optional") != 0 ) {
+        return false;
+    }
+
+    moveitContact.body_name_1 = it->second["body_name_1"].as<std::string>();
+    moveitContact.body_name_2 = it->second["body_name_2"].as<std::string>();
+    moveitContact.depth = it->second["depth"].as<double>();
+    //TODO pos normal, body type
+    
+    return true;
+    
+}
 
 
 
-bool ROSEE::ActionPinch::insertInMap (std::string link1, std::string link2, JointStates jstates, collision_detection::Contact contact) {
+std::pair < ROSEE::ActionPrimitive::ActionMap::iterator, bool> ROSEE::ActionPinch::insertInMap (std::string link1, std::string link2, JointStates jstates, collision_detection::Contact contact) {
     
     std::set<std::string> keys;
     keys.insert(link1);
@@ -97,7 +93,7 @@ bool ROSEE::ActionPinch::insertInMap (std::string link1, std::string link2, Join
     
 }  
 
-bool ROSEE::ActionPinch::insertInMap (std::pair < std::string, std::string> keys, JointStates jstates, collision_detection::Contact contact) {
+std::pair < ROSEE::ActionPrimitive::ActionMap::iterator, bool> ROSEE::ActionPinch::insertInMap (std::pair < std::string, std::string> keys, JointStates jstates, collision_detection::Contact contact) {
     
     return insertInMap(keys.first, keys.second, jstates, contact);
     

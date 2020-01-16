@@ -71,3 +71,34 @@ std::string ROSEE::YamlWorker::emitYaml ( const ROSEE::ActionPrimitive action )
     out << YAML::EndMap;
     return out.c_str();    
 }
+
+
+//TODO, parse same order for action state, see comparator
+ROSEE::ActionPrimitive ROSEE::YamlWorker::parseYaml ( std::string filename, std::string actionName ){
+    
+    ROSEE::ActionPrimitive genericParsedAction; 
+    genericParsedAction.actionStateSetDim = 3;
+    YAML::Node node = YAML::LoadFile(dirPath + filename);
+        
+    for(YAML::const_iterator mapEl = node.begin(); mapEl != node.end(); ++mapEl) {
+        std::vector <std::string> keyMapVect = mapEl->first.as<std::vector<std::string>>();
+        std::set <std::string> keyMap;
+        for (const auto &it : keyMapVect) {
+            keyMap.insert(it);
+        }
+    
+        for ( YAML::const_iterator actionState = mapEl->second.begin(); actionState != mapEl->second.end(); ++actionState) {
+            for(YAML::const_iterator  asEl= actionState->second.begin(); asEl != actionState->second.end(); ++asEl) {
+                //asEl can be the map JointStates or the map Optional
+                if (asEl->first.as<std::string>().compare ("JointStates") == 0 ) {
+                    
+                    JointStates jointMap = asEl->second.as < JointStates >(); 
+                    std::pair < ActionPrimitive::ActionMap::iterator, bool> insResult = genericParsedAction.insertInMap ( keyMap, jointMap ) ;
+                }
+            }
+        }
+    }
+
+    
+    return genericParsedAction;
+}

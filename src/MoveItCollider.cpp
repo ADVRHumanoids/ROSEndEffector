@@ -30,18 +30,11 @@ void ROSEE::MoveItCollider::run(){
     yamlWorker.createYamlFile(actionPinch);
     
     
-//     auto pinchParsedMap = yamlWorker.parseYaml(actionPinch.name + ".yaml");
-//     
-//     //print to check if parse is correct, DEBUG
-//     for (auto i : pinchParsedMap) {
-//         std::cout << i.first.first << " " << i.first.second << std::endl;
-//         for (auto j : i.second) {
-//             std::cout << "\t" << j.first << ":" << std::endl;
-//             for (auto y : j.second) {
-//                 std::cout << "\t\t" <<y.first << ": " << y.second.at(0) << std::endl;                
-//             }
-//         }
-//     }
+     auto pinchParsed = yamlWorker.parseYaml(actionPinch.actionName + ".yaml", actionPinch.actionName);
+     std::cout << pinchParsed.actionStateSetDim << "ewewewe  \n "; 
+    //print to check if parse is correct, DEBUG
+     std::cout << pinchParsed ;
+        
     
     
     //Trigger actions etc
@@ -222,7 +215,7 @@ void ROSEE::MoveItCollider::checkCollisions(){
                 
                 setOnlyDependentJoints(cont.first, &jointStates);
                 //Check if it is the best depth among the found collision among that pair
-                if ( actionPinch.insertInMap ( cont.first, jointStates, cont.second.at(0)) ) {                        
+                if ( (actionPinch.insertInMap ( cont.first, jointStates, cont.second.at(0))).second ) {                        
                     logCollision << ", NEW INSERTION";
                 }
                 logCollision << std::endl;

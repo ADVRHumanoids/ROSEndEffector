@@ -22,31 +22,54 @@ ROSEE::ActionPrimitive::ActionPrimitive(){
     optUsed = false;
 }
 
-bool ROSEE::ActionPrimitive::insertInMap ( std::set<std::string> keys, ActionState actState) {
+std::pair < ROSEE::ActionPrimitive::ActionMap::iterator, bool> ROSEE::ActionPrimitive::insertInMap ( std::set<std::string> keys, ActionState actState) {
     
+    std::pair < ROSEE::ActionPrimitive::ActionMap::iterator, bool> pairReturn;
     auto it = actionMap.find(keys);
     if (it == actionMap.end()) { //new pair, we have to create the set
-        
+        std::cout << "primo if" << std::endl;
         std::set < ActionState, cmp> newSet;
         newSet.insert(actState);
-        actionMap.insert(std::make_pair(keys, newSet));
+        pairReturn = actionMap.insert(std::make_pair(keys, newSet));
         
     } else if (it->second.size() < actionStateSetDim){
-            
+                    std::cout << "sec if" << std::endl;
+
+        std::cout << "first: " << it->second.size() << std::endl;
         it->second.insert(actState); // the set will insert in order for us
+        std::cout << it->second.size() << std::endl;
+
+        pairReturn.first = it;
+        pairReturn.second = true;
             
     } else if (actState.second > it->second.rbegin()->second) {
+        std::cout << "ter if" << std::endl;
 
         it->second.insert(actState);
         //delete the last element
         std::set < ActionState, cmp >::iterator lastElem = it->second.end();
         --lastElem;
         it->second.erase(lastElem);
+                pairReturn.first = it;
+        pairReturn.second = true;
         
     } else {
-        return false; //no new added
+                std::cout << "last no entry if" << std::endl;
+
+        pairReturn.first = it;
+        pairReturn.second = false;
     }
-    return true;
+    return pairReturn;
+}
+
+std::pair < ROSEE::ActionPrimitive::ActionMap::iterator, bool> ROSEE::ActionPrimitive::insertInMap ( std::set<std::string> keys, JointStates js) {
+    
+      std::shared_ptr<ActionPrimitive::OptPrimitive> optPointer; 
+      ActionState actState = make_pair (js, optPointer);
+      insertInMap(keys, actState);
+
+    
+    
 }
 
 std::ostream& ROSEE::ActionPrimitive::printMap (std::ostream &output) const {

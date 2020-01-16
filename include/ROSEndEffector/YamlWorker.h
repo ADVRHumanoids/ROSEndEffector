@@ -52,13 +52,14 @@ public:
     
     //TODO pass correctly the generic class
     std::string createYamlFile ( const ActionPrimitive action) ;
-    
+    ROSEE::ActionPrimitive parseYaml ( std::string filename, std::string actionName );
+
     std::string dirPath;
     
 private:
     
     std::string emitYaml ( const ActionPrimitive action );
-    
+
     
 
 };

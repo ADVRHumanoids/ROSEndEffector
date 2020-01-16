@@ -51,19 +51,20 @@ private:
         * (of only joints that act for the collision). In fact, we should have the possibility to have two contact
         * with the same depth (if joint statuses are different), they will be equally good
         */
-        bool operator > (const OptPinch &b) const {
-                            std::cout << "SOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOONN\n" ;
-
-            return std::abs(moveitContact.depth) > std::abs(b.moveitContact.depth);
+        bool operator > (const OptPrimitive &b) const override {
+             if (const OptPinch* point = dynamic_cast < const OptPinch* >(&b)) {
+                return std::abs(moveitContact.depth) > std::abs(point->moveitContact.depth);
+            } else {
+                return false;
+            }
         };
         
         std::ostream& printOpt ( std::ostream &output ) const override;
         bool emitYaml ( YAML::Emitter& ) const override;
-        //bool parseYaml (OptPrimitive*, YAML::const_iterator) override ;
-
-
+        bool parseYaml (YAML::const_iterator) override ;
         
         collision_detection::Contact moveitContact;
+        
     };
     
     
@@ -74,12 +75,8 @@ public:
      */
     ActionPinch();
     
-    bool insertInMap (std::string, std::string, JointStates, collision_detection::Contact);    
-    bool insertInMap (std::pair < std::string, std::string>, JointStates , collision_detection::Contact);
-
-
-    
-    std::string name;
+    std::pair < ActionMap::iterator, bool> insertInMap (std::string, std::string, JointStates, collision_detection::Contact);    
+    std::pair < ActionMap::iterator, bool> insertInMap (std::pair < std::string, std::string>, JointStates , collision_detection::Contact);
  
 
 };

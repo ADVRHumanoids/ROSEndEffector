@@ -52,10 +52,11 @@ protected:
             
             virtual std::ostream& printOpt (std::ostream &output) const {return output;};
             virtual bool emitYaml (YAML::Emitter&) const {return false;};
-            //virtual bool parseYaml (OptPrimitive*, YAML::const_iterator) const {return false;};
+            virtual bool parseYaml (YAML::const_iterator) {return false;};
 
         protected :
             OptPrimitive(){};
+
 
     };
     
@@ -69,17 +70,26 @@ public:
     /** struct to put in order the set of ActionState. */
     struct cmp {
         bool operator() ( const ActionState& a ,  const ActionState& b) const
-        {return (*(a.second) > *(b.second);}
+        {
+            if (a.second != NULL && b.second != NULL) {
+                
+                return (*(a.second) > *(b.second));
+                
+            } else {
+                return true ;
+            }
+        }
     };
     typedef std::map < std::set<std::string>, std::set<ActionState, cmp> > ActionMap; 
-        
+    ActionPrimitive();
     virtual ~ActionPrimitive(){}; //important to have in parent class
     
     std::string actionName;
     unsigned int actionStateSetDim;
     bool optUsed; //true if any optional info is present in the set
     
-    bool insertInMap ( std::set<std::string>, ActionState );   
+    std::pair < ActionMap::iterator, bool> insertInMap ( std::set<std::string> , JointStates );
+    std::pair < ActionMap::iterator, bool> insertInMap ( std::set<std::string>, ActionState );   
     ActionMap getActionMap() const ;
     unsigned int getMapSize();
     
@@ -88,7 +98,7 @@ public:
     }
 
 protected:
-    ActionPrimitive();
+    
     ActionMap actionMap;
     OptPrimitive* optPointer;
 };
