@@ -8,8 +8,10 @@
 #include <moveit/planning_scene/planning_scene.h>
 
 #include <ROSEndEffector/YamlWorker.h>
-#include <ROSEndEffector/ActionPinch.h>
 #include <ROSEndEffector/ActionPrimitive.h>
+#include <ROSEndEffector/ActionPinch.h>
+#include <ROSEndEffector/ActionTrig.h>
+
 
 #define N_EXP_COLLISION 50 //5000 is ok
 #define DEFAULT_JOINT_POS 0.0
@@ -92,7 +94,7 @@ private:
     
     
     //trig etc
-    void trig();
+    std::map <std::string, ActionTrig> trig();
 };
     
 }

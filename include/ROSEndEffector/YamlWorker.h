@@ -19,13 +19,17 @@
 
 #define COLLIDER_REL_PATH "/configs/moveItCollider/"
 
+#include <memory>
+
 //yaml
 #include <yaml-cpp/yaml.h>
 
 //to create directories
 #include <ROSEndEffector/Utils.h>
 
+#include <ROSEndEffector/ActionPrimitive.h>
 #include <ROSEndEffector/ActionPinch.h>
+#include <ROSEndEffector/ActionTrig.h>
 
 //TODO put this in the generic class
 #include <moveit/robot_model_loader/robot_model_loader.h>
@@ -43,22 +47,15 @@ class YamlWorker
     
 public:
     
-
-    
-    
     /**
      * Default constructor
      */
     YamlWorker(std::string handName);
     
-    //TODO pass correctly the generic class
     std::string createYamlFile ( std::map < std::set <std::string> , ActionPrimitive* >  ) ;
     
-    /**
-    //TODO, the name of the message, that is also the filename (the dir is inserted in the parseyaml)
-    std::map < std::pair < std::string, std::string >, std::map < std::string, ActionPinch::JointStates> >
-        parseYaml ( std::string filename );
-    */
+    std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > parseYaml ( std::string filename, int act );
+
 
     std::string dirPath;
     

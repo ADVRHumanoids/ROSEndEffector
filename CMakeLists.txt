@@ -129,6 +129,10 @@ add_library(ActionPinch
     src/ActionPinch.cpp
 )
 
+add_library(ActionTrig
+    src/ActionTrig.cpp
+)
+
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
@@ -177,9 +181,15 @@ target_link_libraries(UniversalRosEndEffectorExecutor
 target_link_libraries(YamlWorker
     yaml-cpp
     ActionPrimitive
+    ActionPinch
+    ActionTrig
 )
 
 target_link_libraries(ActionPinch
+    ActionPrimitive
+)
+
+target_link_libraries(ActionTrig
     ActionPrimitive
 )
 
@@ -188,6 +198,7 @@ target_link_libraries(MoveItCollider
     YamlWorker
     ActionPrimitive
     ActionPinch
+    ActionTrig
     
 )
 

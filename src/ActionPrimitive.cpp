@@ -82,6 +82,7 @@ void ROSEE::ActionPrimitive::emitYaml ( YAML::Emitter& out )
         out << YAML::EndMap;
         nCont++;
     }
+    out << YAML::EndMap;
 
 }
 

@@ -35,6 +35,7 @@ ROSEE::ActionPinch::ActionPinch(unsigned int jointStateSetMaxSize)
 ROSEE::ActionPinch::ActionPinch (std::pair <std::string, std::string> tipNames, 
                                  JointStates js, collision_detection::Contact cont){
 
+    //different from insertState, here we are sure the set is empty (we are in costructor)
     name = "pinch";
     nLinksInvolved = 2;
     jointStateSetMaxSize = 3;
@@ -215,25 +216,29 @@ void ROSEE::ActionPinch::emitYaml ( YAML::Emitter& out ) {
 
 
 bool ROSEE::ActionPinch::fillFromYaml ( YAML::const_iterator yamlIt ) {
-    
+        
     tipsPair = yamlIt->first.as<std::pair < std::string, std::string >> ();
 
-    for ( YAML::const_iterator actionState = yamlIt->second.begin(); actionState != yamlIt->second.end(); ++actionState) {
-        
+    for ( YAML::const_iterator actionState = yamlIt->second.begin(); actionState != yamlIt->second.end(); ++actionState) {        
+        // actionState->first == ActionState_x
+
         JointStates jointStates;
         collision_detection::Contact contact;
         for(YAML::const_iterator asEl = actionState->second.begin(); asEl != actionState->second.end(); ++asEl) {
-            //asEl can be the map JointStates or the map Optional
 
+            //asEl can be the map JointStates or the map Optional
             if (asEl->first.as<std::string>().compare ("JointStates") == 0 ) {
                 jointStates = asEl->second.as < JointStates >(); 
             } else if (asEl->first.as<std::string>().compare ("Optional") == 0 ) {
-                contact.body_name_1 = asEl->second["body_name_1"].as<std::string>();
-                contact.body_name_2 = asEl->second["body_name_2"].as<std::string>();
-                contact.depth = asEl->second["depth"].as<double>();
+                
+                YAML::Node cont =  asEl->second["MoveItContact"];
+                contact.body_name_1 = cont["body_name_1"].as<std::string>();
+                contact.body_name_2 = cont["body_name_2"].as<std::string>();
+                contact.depth = cont["depth"].as<double>();
+                //TODO parse normal and depth
                 
             } else {
-                //ERRROr
+                //ERRROr, only joinstates and optional at this level
                 return false;
             }
         }  

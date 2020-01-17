@@ -22,9 +22,9 @@ void ROSEE::MoveItCollider::run(){
     printJointsOfFingertips();
     printFingertipsOfJoints();
     checkCollisions();
-    for (auto it : mapOfPinches ){
-        it.second.printAction();
-    }
+//     for (auto it : mapOfPinches ){
+//         it.second.printAction();
+//     }
     
     //emit the yaml file
     ROSEE::YamlWorker yamlWorker(kinematic_model->getName());
@@ -45,22 +45,47 @@ void ROSEE::MoveItCollider::run(){
     yamlWorker.createYamlFile(mapForWorker);
     
     
-    //auto pinchParsedMap = yamlWorker.parseYaml(actionPinch.name + ".yaml");
+    std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > pinchParsedMap = 
+        yamlWorker.parseYaml("pinch.yaml", 0);
     
     //print to check if parse is correct, DEBUG
-//     for (auto i : pinchParsedMap) {
-//         std::cout << i.first.first << " " << i.first.second << std::endl;
-//         for (auto j : i.second) {
-//             std::cout << "\t" << j.first << ":" << std::endl;
-//             for (auto y : j.second) {
-//                 std::cout << "\t\t" <<y.first << ": " << y.second.at(0) << std::endl;                
-//             }
-//         }
+//     std::cout << "printtttt" << std::endl;
+//     for (auto &i : pinchParsedMap) {
+//         i.second->printAction();
 //     }
     
     
     //Trigger actions etc
-    //trig();
+    std::map <std::string, ActionTrig> trigMap = trig();
+    std::cout << trigMap.size() << std::endl;
+    //print debug
+    for (auto i : trigMap) {
+        i.second.printAction();
+    }
+    
+    mapForWorker.clear();
+    //TODO fare funza per sto for e metterla in action primitive? vedi anche per pinch
+    for (auto& it : trigMap) {  // auto& and not auto alone!
+
+        ActionPrimitive* pointer = &(it.second);
+        std::set < std::string > keys ;
+        keys.insert (it.first) ;
+        mapForWorker.insert (std::make_pair ( keys, pointer ) );
+    }
+    
+    yamlWorker.createYamlFile(mapForWorker);
+
+    std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > trigParsedMap = 
+        yamlWorker.parseYaml("trig.yaml", 1);
+    
+    //print to check if parse is correct, DEBUG
+    std::cout << "printtttt" << std::endl;
+    for (auto &i : trigParsedMap) {
+        i.second->printAction();
+    }
+    
+    
+    
 
 }
 
@@ -303,19 +328,23 @@ void ROSEE::MoveItCollider::setOnlyDependentJoints(
     
 }
 
-/**
+
 /// trig is the action of closing a SINGLE finger towards the palm
 /// to know the joint direction, the position is set to the limit which is different from 0
 /// if no limit is 0? TODO think, now solution is to take user info.
+//TODO nikos easy solution: go in the direction of the max range. All hands have more range of motion
+// in the flexion respect to extension (as human finger). NOT valid for other motion, like finger spread or
+// thumb addition/abduction
 /// if a joint is continuos, it is excluded from the trig action. (because I cant think about a continuos joint
 /// that is useful for a trig action, but can be present in theory)
-void ROSEE::MoveItCollider::trig() {
+std::map <std::string, ROSEE::ActionTrig> ROSEE::MoveItCollider::trig() {
 
-    std::map < std::string, JointStates > trigMap;    
+    std::map <std::string, ActionTrig> trigMap;
     for (auto mapEl : fingertipOfJointMap) {
         
         if (mapEl.second.size() == 1) { //the joint must move ONLY a fingertip
-                        
+                
+            //TODO, better to set as name the name of the finger?
             moveit::core::JointModel::Bounds limits = 
                 kinematic_model->getJointModel(mapEl.first)->getVariableBounds();
 
@@ -325,42 +354,36 @@ void ROSEE::MoveItCollider::trig() {
                 break;
             }
             //TODO if neither == 0, take trig value from file? or param
+            //TODO go in the max range
             double trigMax = (limits.at(0).max_position_ == 0) ? limits.at(0).min_position_ :   
                                                                  limits.at(0).max_position_ ;
-                                                                
-            auto itTrigMap = trigMap.find(  mapEl.second.at(0) );
-            if (itTrigMap == trigMap.end() ) {
-                ActionPinch::JointStates js;
+                         
+            auto itMap = trigMap.find(mapEl.second.at(0)); //sure to have only 1 element for the if before
+            if (itMap == trigMap.end() ) {
+                //still no action for this tip, we have to create the Object
+                
+                JointStates js;
                 for (auto it : kinematic_model->getActiveJointModels()){
                     std::vector <double> jPos (it->getVariableCount());
                     std::fill (jPos.begin(), jPos.end(), 0.0);
                     js.insert ( std::make_pair ( it->getName(), jPos ));
                 }
                 
-                //HACK consider only 2 bounds now, because 1dof joint
+                //HACK at(0) because 1dof joint
                 js.at ( mapEl.first ).at(0) = trigMax;
-                trigMap.insert ( std::make_pair ( mapEl.second.at(0), js ) );
+                ActionTrig action(mapEl.second.at(0), js);
+                trigMap.insert ( std::make_pair ( mapEl.second.at(0), action ) );
 
             } else {
-                //HACK consider only 2 bounds now, because 1dof joint
-                itTrigMap->second.at (mapEl.first).at(0) = trigMax;
+                //action already created, but we have to modify the position of a joint
+                //itMap->second is an iterator to the already present element
+                JointStates js = itMap->second.getActionState();
+                //HACK at(0) because 1dof joint
+                js.at (mapEl.first).at(0) = trigMax;
+                itMap->second.setActionState(js);
             }
         }  
     }
     
-    //print debug
-    for (auto i : trigMap) {
-        std::cout << i.first << std::endl;
-        for (auto j : i.second) {
-            std::cout << "\t" << j.first << " : " ;
-            for(const auto &jointValue : j.second){
-                std::cout << jointValue << ", "; //joint position (vector because can have multiple dof)
-            }
-            std::cout << std::endl;
-        }
-    }
-    
-    
+    return trigMap;
 }
-
-*/

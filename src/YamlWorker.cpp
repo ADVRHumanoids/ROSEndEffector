@@ -52,40 +52,29 @@ std::string ROSEE::YamlWorker::emitYaml (
     
 }
 
-/**
-//TODO return the generic class movement
-std::map < std::pair < std::string, std::string >, std::map < std::string, ROSEE::ActionPinch::JointStates> >
-    ROSEE::YamlWorker::parseYaml ( std::string filename ){
+//TODO invece di int metter enum oppure capire dal nome del file, o da prima riga nel file
+std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > ROSEE::YamlWorker::parseYaml ( std::string filename, int act ){
     
-    std::map < std::pair < std::string, std::string >, std::map < std::string, ActionPinch::JointStates> > pinchParsedMap; 
+    std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > parsedMap; 
     YAML::Node node = YAML::LoadFile(dirPath + filename);
-        
-    for(YAML::const_iterator tipPair = node.begin(); tipPair != node.end(); ++tipPair) {
-        std::pair <std::string, std::string> tipNames = tipPair->first.as<std::pair<std::string, std::string>>();
-        auto insResult = pinchParsedMap.insert ( std::make_pair( tipNames, std::map<std::string, ActionPinch::JointStates> () ) );
-        
-        //TODO check if new insertion, for security reason
-        if (!insResult.second) {
-            //PAIR already present, some error with the yaml file
+    
+    for(YAML::const_iterator it4Action = node.begin(); it4Action != node.end(); ++it4Action) {
+        std::shared_ptr <ActionPrimitive> ptr;
+        if (act == 0) {
+            ptr = std::make_shared <ActionPinch>();
+
+        } else if (act==1) {
+            ptr = std::make_shared <ActionTrig>();
+
+        } else {
+            //errror
         }
+        ptr->fillFromYaml(it4Action);
         
-        for ( YAML::const_iterator setElem = tipPair->second.begin(); setElem != tipPair->second.end(); ++setElem) {
-            
-            for(YAML::const_iterator cont = setElem->second.begin(); cont != setElem->second.end(); ++cont) {
-                //cont can be the map MoveItContact or JointStates
-                
-                if (cont->first.as<std::string>().compare ("JointStates") == 0 ) {
-                    
-                    ActionPinch::JointStates jointMap = cont->second.as < ActionPinch::JointStates >(); 
-                    insResult.first->second.insert(
-                        std::make_pair (setElem->first.as<std::string>(), jointMap)); //map insert return also the iterator to the added element
-                }
-            }
-        }
+        parsedMap.insert ( std::make_pair ( ptr->getLinksInvolved(), ptr) );
     }
+        
 
     
-    return pinchParsedMap;
+    return parsedMap;
 }
-
-*/
