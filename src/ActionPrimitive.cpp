@@ -35,31 +35,30 @@ unsigned int ROSEE::ActionPrimitive::getnLinksInvolved() const {
     return nLinksInvolved;
 }
 
+void ROSEE::ActionPrimitive::printAction () const {
 
-std::ostream& ROSEE::ActionPrimitive::printAction (std::ostream &output) const {
-    
+    std::stringstream output;
     for (auto names : getLinksInvolved()){
         output << names << ", " ;
     }
+
     output << std::endl;
     
     unsigned int nActState = 1;
     for (auto item : getActionStates()) {  //the element in the vector
         output << "\tAction_State_" << nActState << " :" << std::endl;
-        output << "\t\t" << "Joint States:" << std::endl;
+        output << "\t\t" << "JointStates:" << std::endl;
         output << item;
         output << std::endl;
         nActState++;
     }
     output << std::endl;
-    
-    return output;
+
+    std::cout << output.str();
 }
 
-std::string ROSEE::ActionPrimitive::emitYaml ( )
+void ROSEE::ActionPrimitive::emitYaml ( YAML::Emitter& out )
 {
-    YAML::Emitter out;
-    out << YAML::BeginMap;
     
     // key: set of string (eg two tip names)
     out << YAML::Key << YAML::Flow << getLinksInvolved();
@@ -83,10 +82,7 @@ std::string ROSEE::ActionPrimitive::emitYaml ( )
         out << YAML::EndMap;
         nCont++;
     }
-    out << YAML::EndMap;
-    out << YAML::Newline << YAML::Newline; //double to insert a blanck line
 
-    return out.c_str();    
 }
 
 bool ROSEE::ActionPrimitive::fillFromYaml ( YAML::const_iterator yamlIt ) {

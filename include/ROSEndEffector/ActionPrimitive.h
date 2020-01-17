@@ -31,7 +31,7 @@ namespace ROSEE{
 typedef std::map <std::string, std::vector <double> > JointStates;
 std::ostream& operator << (std::ostream& output, const JointStates js) {
     for (const auto &jsEl : js) {
-        output << jsEl.first << " : "; //joint name
+        output << "\t\t\t"<<jsEl.first << " : "; //joint name
         for(const auto &jValue : jsEl.second){
             output << jValue << ", "; //joint position (vector because can have multiple dof)
         }
@@ -47,7 +47,6 @@ class ActionPrimitive
 protected:
  
     ActionPrimitive();
-    virtual ~ActionPrimitive() {};
     
     //TODO make these constant (and initialize them with initializer list)
     std::string name;
@@ -55,6 +54,9 @@ protected:
     unsigned int jointStateSetMaxSize;
     
 public:
+    
+    virtual ~ActionPrimitive() {};
+
     
     std::string getName () const;
     unsigned int getJointStatesSetMaxSize() const;
@@ -65,8 +67,8 @@ public:
     virtual bool setLinksInvolved (std::set < std::string >) = 0;
     virtual bool setActionStates (std::vector < ROSEE::JointStates > ) = 0;
     
-    virtual std::ostream& printAction (std::ostream &output) const ;
-    virtual std::string emitYaml ( ) ;
+    virtual void printAction () const ;
+    virtual void emitYaml ( YAML::Emitter& ) ;
     virtual bool fillFromYaml( YAML::const_iterator yamlIt );
 
     

@@ -45,8 +45,6 @@ public:
     ActionPinch();
     ActionPinch(unsigned int);
     ActionPinch (std::pair <std::string, std::string>, JointStates, collision_detection::Contact );
-
-    ~ActionPinch();
     
     std::set < std::string > getLinksInvolved() const override;
     std::vector < ROSEE::JointStates > getActionStates() const override;
@@ -54,8 +52,8 @@ public:
     bool setActionStates (std::vector < ROSEE::JointStates > ) override;
     bool insertActionState (JointStates, collision_detection::Contact);
 
-    std::ostream& printAction (std::ostream &output) const override;    
-    std::string emitYaml ( ) override;
+    void printAction () const override;
+    void emitYaml ( YAML::Emitter&) override;
     bool fillFromYaml( YAML::const_iterator yamlIt ) override;
 
     std::pair <std::string, std::string > tipsPair ;

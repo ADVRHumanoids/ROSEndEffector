@@ -123,7 +123,9 @@ bool ROSEE::ActionPinch::insertActionState (ROSEE::JointStates js, collision_det
 }
 
 
-std::ostream& ROSEE::ActionPinch::printAction (std::ostream &output) const {
+void ROSEE::ActionPinch::printAction () const {
+    
+    std::stringstream output;
     
     output << tipsPair.first << ", " << tipsPair.second << std::endl ;
     
@@ -131,22 +133,25 @@ std::ostream& ROSEE::ActionPinch::printAction (std::ostream &output) const {
     for (auto itemSet : statesInfoSet) {  //the element in the set
         output << "\tAction_State_" << nActState << " :" << std::endl;
 
-        output << "\t\t" << "Joint States:" << std::endl;
+        output << "\t\t" << "JointStates:" << std::endl;
         output << itemSet.first;
         output << "\t\t" << "MoveitContact:" << std::endl;
-        output << "\t\t\t\tbody_name_1: " << itemSet.second.body_name_1 << std::endl;
-        output << "\t\t\t\tbody_name_2: " << itemSet.second.body_name_2 << std::endl;
-        output << "\t\t\t\tbody_type_1: " << itemSet.second.body_type_1 << std::endl;
-        output << "\t\t\t\tbody_type_2: " << itemSet.second.body_type_2 << std::endl;
-        output << "\t\t\t\tdepth: " << itemSet.second.depth << std::endl;
-        //TODO print normal and pos
-                
-        output << std::endl;
+        output << "\t\t\tbody_name_1: " << itemSet.second.body_name_1 << std::endl;
+        output << "\t\t\tbody_name_2: " << itemSet.second.body_name_2 << std::endl;
+        output << "\t\t\tbody_type_1: " << itemSet.second.body_type_1 << std::endl;
+        output << "\t\t\tbody_type_2: " << itemSet.second.body_type_2 << std::endl;
+        output << "\t\t\tdepth: " << itemSet.second.depth << std::endl;
+        output << "\t\t\tnormal: " << "["<< itemSet.second.normal.x() << ", " 
+            << itemSet.second.normal.y() << ", " << itemSet.second.normal.z() << "]" << std::endl;
+        output << "\t\t\tpos: " << "["<< itemSet.second.pos.x() << ", " 
+            << itemSet.second.pos.y() << ", " << itemSet.second.pos.z() << "]" << std::endl;
+            
         nActState++;
     }
     output << std::endl;
     
-    return output;
+    std::cout << output.str();
+
 }
 
 bool ROSEE::ActionPinch::emitYamlForContact (collision_detection::Contact moveitContact, YAML::Emitter& out) {
@@ -169,19 +174,17 @@ bool ROSEE::ActionPinch::emitYamlForContact (collision_detection::Contact moveit
             out << YAML::Key << "pos";
             std::vector < double > pos ( moveitContact.pos.data(), moveitContact.pos.data() +  moveitContact.pos.rows());
             out << YAML::Value << YAML::Flow << pos;
-            out << YAML::EndMap;
+        out << YAML::EndMap;
     out << YAML::EndMap;
     
     return true;
 }
 
-std::string ROSEE::ActionPinch::emitYaml ( )
-{
-    YAML::Emitter out;
-    out << YAML::BeginMap;
+void ROSEE::ActionPinch::emitYaml ( YAML::Emitter& out ) {
     
-    // key: set of string (eg two tip names)
-    out << YAML::Key << YAML::Flow << tipsPair.first << tipsPair.second;
+    // YAML << not valid for pair, we have to "convert" into vector
+    std::vector <std::string> vectKeys {tipsPair.first, tipsPair.second};
+    out << YAML::Key << YAML::Flow << vectKeys;
     
     unsigned int nCont = 1;
     out << YAML::Value << YAML::BeginMap;
@@ -202,13 +205,12 @@ std::string ROSEE::ActionPinch::emitYaml ( )
             //actionState.second, the optional
             out << YAML::Key << "Optional" << YAML::Value;
             emitYamlForContact(actionState.second, out);
+            
         out << YAML::EndMap;
         nCont++;
     }
     out << YAML::EndMap;
-    out << YAML::Newline << YAML::Newline; //double to insert a blanck line between tips pair
 
-    return out.c_str();    
 }
 
 

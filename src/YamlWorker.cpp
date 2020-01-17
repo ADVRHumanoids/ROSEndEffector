@@ -25,66 +25,26 @@ ROSEE::YamlWorker::YamlWorker ( std::string handName)
 }
 
 
-std::string ROSEE::YamlWorker::createYamlFile(ROSEE::ActionPinch actionPinch ) {
+std::string ROSEE::YamlWorker::createYamlFile(
+    std::map < std::set <std::string> , ActionPrimitive* > mapOfActions ) {
 
     ROSEE::Utils::create_directory ( dirPath );
-    std::string output = emitYaml ( actionPinch);
+    std::string output = emitYaml ( mapOfActions );
 
-    ROSEE::Utils::out2file(dirPath + actionPinch.name + ".yaml", output);
-    return (dirPath + actionPinch.name + ".yaml");
+    ROSEE::Utils::out2file(dirPath + mapOfActions.begin()->second->getName() + ".yaml", output);
+    return (dirPath + mapOfActions.begin()->second->getName() + ".yaml");
     
     
 }
 
 
-std::string ROSEE::YamlWorker::emitYaml ( ROSEE::ActionPinch actionPinch )
-{
+std::string ROSEE::YamlWorker::emitYaml ( 
+    std::map < std::set <std::string> , ActionPrimitive* > mapOfActions ) {
+    
     YAML::Emitter out;
     out << YAML::BeginMap;
-    for (const auto & tipPair : actionPinch.pinchMap) {
-    
-        //yaml does not accept a pair, we have to "convert" it into a vector
-        const std::vector <std::string> tipNamesStr { tipPair.first.first, tipPair.first.second };
-        out << YAML::Key << YAML::Flow << tipNamesStr;
-        
-        unsigned int nCont = 1;
-        out << YAML::Value << YAML::BeginMap;
-        for (const auto & contact : tipPair.second) {
-            std::string contSeq = "Contact_" + std::to_string(nCont);
-            out << YAML::Key << contSeq << YAML::Value;
-            //contact.first, the moveit Contact obj
-            out << YAML::BeginMap;
-                out << YAML::Key << "MoveItContact" << YAML::Value << YAML::BeginMap;
-                    out << YAML::Key << "body_name_1";
-                    out << YAML::Value << contact.first.body_name_1;
-                    out << YAML::Key << "body_name_2";
-                    out << YAML::Value << contact.first.body_name_2;
-                    out << YAML::Key << "body_type_1";
-                    out << YAML::Value << contact.first.body_type_1;
-                    out << YAML::Key << "body_type_2";
-                    out << YAML::Value << contact.first.body_type_2;
-                    out << YAML::Key << "depth";
-                    out << YAML::Value << contact.first.depth;
-                    out << YAML::Key << "normal";
-                    std::vector < double > normal ( contact.first.normal.data(), contact.first.normal.data() +  contact.first.normal.rows());  
-                    out << YAML::Value << YAML::Flow << normal;
-                    out << YAML::Key << "pos";
-                    std::vector < double > pos ( contact.first.pos.data(), contact.first.pos.data() +  contact.first.pos.rows());
-                    out << YAML::Value << YAML::Flow << pos;
-                    out << YAML::EndMap;
-
-                //contact.second, the jointstates map
-                out << YAML::Key << "JointStates" << YAML::Value << YAML::BeginMap;
-                for (const auto &joint : contact.second) {
-                    out << YAML::Key << joint.first;
-                    out << YAML::Value << YAML::Flow << joint.second; //vector of double is emit like Seq
-                }
-                out << YAML::EndMap;
-                   
-            out << YAML::EndMap;
-            nCont++;
-        }
-        out << YAML::EndMap;
+    for (const auto & mapEl : mapOfActions) {
+        mapEl.second->emitYaml(out);
         out << YAML::Newline << YAML::Newline; //double to insert a blanck line between tips pair
     }
     out << YAML::EndMap;
@@ -92,6 +52,7 @@ std::string ROSEE::YamlWorker::emitYaml ( ROSEE::ActionPinch actionPinch )
     
 }
 
+/**
 //TODO return the generic class movement
 std::map < std::pair < std::string, std::string >, std::map < std::string, ROSEE::ActionPinch::JointStates> >
     ROSEE::YamlWorker::parseYaml ( std::string filename ){
@@ -127,3 +88,4 @@ std::map < std::pair < std::string, std::string >, std::map < std::string, ROSEE
     return pinchParsedMap;
 }
 
+*/

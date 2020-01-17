@@ -121,6 +121,10 @@ add_library(YamlWorker
     src/YamlWorker.cpp
 )
 
+add_library(ActionPrimitive 
+    src/ActionPrimitive.cpp
+)
+
 add_library(ActionPinch
     src/ActionPinch.cpp
 )
@@ -172,17 +176,19 @@ target_link_libraries(UniversalRosEndEffectorExecutor
 
 target_link_libraries(YamlWorker
     yaml-cpp
-    ActionPinch
+    ActionPrimitive
 )
 
 target_link_libraries(ActionPinch
-
+    ActionPrimitive
 )
 
 target_link_libraries(MoveItCollider
     ${catkin_LIBRARIES}
     YamlWorker
+    ActionPrimitive
     ActionPinch
+    
 )
 
 target_link_libraries(UniversalRosEndEffector

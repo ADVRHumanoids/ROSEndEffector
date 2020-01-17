@@ -52,17 +52,19 @@ public:
     YamlWorker(std::string handName);
     
     //TODO pass correctly the generic class
-    std::string createYamlFile ( ActionPinch ) ;
+    std::string createYamlFile ( std::map < std::set <std::string> , ActionPrimitive* >  ) ;
     
+    /**
     //TODO, the name of the message, that is also the filename (the dir is inserted in the parseyaml)
     std::map < std::pair < std::string, std::string >, std::map < std::string, ActionPinch::JointStates> >
         parseYaml ( std::string filename );
+    */
 
     std::string dirPath;
     
 private:
-    
-    std::string emitYaml ( ActionPinch );
+    std::string emitYaml ( std::map < std::set <std::string> , ActionPrimitive* > ) ;
+
     
     
 
