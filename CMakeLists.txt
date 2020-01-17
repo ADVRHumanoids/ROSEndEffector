@@ -118,6 +118,8 @@ add_library(UniversalRosEndEffectorExecutor
 # add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 add_executable(UniversalRosEndEffector src/UniversalRosEndEffector.cpp)
+add_dependencies(UniversalRosEndEffector ros_end_effector_generate_messages_cpp)
+
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
