@@ -1,5 +1,7 @@
 /*
- * Copyright 2020 <copyright holder> <email>
+ * Copyright (C) 2020 IIT-HHCM
+ * Author: Davide Torielli
+ * email:  davide.torielli@iit.it
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +18,14 @@
 
 #include <ROSEndEffector/ActionTrig.h>
 
-ROSEE::ActionTrig::ActionTrig()
-{
-    name = "trig";
-    nLinksInvolved = 1;
-    jointStateSetMaxSize = 1;
-    
-}
+ROSEE::ActionTrig::ActionTrig() :
+    ActionPrimitive ( "trig", 1, 1, Trig ) { }
 
-ROSEE::ActionTrig::ActionTrig (std::string tip, JointStates js){
-
-    name = "trig";
-    nLinksInvolved = 2;
-    jointStateSetMaxSize = 3;
+ROSEE::ActionTrig::ActionTrig (std::string tip, JointStates js) :
+    ActionPrimitive ( "trig", 1, 1, Trig ) {
+        
     this->tip = tip;
-    jointStates = js;
-    
+    jointStates = js;    
 }
 
 
@@ -49,8 +43,7 @@ std::vector < ROSEE::JointStates > ROSEE::ActionTrig::getActionStates() const{
     return retVect;
 }
 
-ROSEE::JointStates ROSEE::ActionTrig::getActionState() const{
-    
+ROSEE::JointStates ROSEE::ActionTrig::getActionState() const{    
     return jointStates;
 }
 
@@ -64,7 +57,6 @@ bool ROSEE::ActionTrig::setLinksInvolved (std::set < std::string > setTips) {
         tip = *it;
     }
     return true;
-    
 }
 
 bool ROSEE::ActionTrig::setActionStates (std::vector < ROSEE::JointStates > jsVect) {
@@ -81,9 +73,3 @@ bool ROSEE::ActionTrig::setActionState (ROSEE::JointStates js) {
     jointStates = js;
     return true;
 }
-
-
-
-
-
-

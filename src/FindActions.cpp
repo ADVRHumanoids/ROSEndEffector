@@ -1,69 +1,43 @@
-#include <ROSEndEffector/MoveItCollider.h>
+#include <ROSEndEffector/FindActions.h>
 
-ROSEE::MoveItCollider::MoveItCollider(){
-
-    //it is a ros param in the launch, take care that also sdrf is read (param: robot_description_semantic)
-    robot_model_loader::RobotModelLoader robot_model_loader("robot_description"); 
-    kinematic_model = robot_model_loader.getModel();
-}
-
-ROSEE::MoveItCollider::MoveItCollider(std::string robot_description){
+ROSEE::FindActions::FindActions ( std::string robot_description ){
 
     //it is a ros param in the launch, take care that also sdrf is read (param: robot_description_semantic)
     robot_model_loader::RobotModelLoader robot_model_loader(robot_description); 
     kinematic_model = robot_model_loader.getModel();
-}
-
-void ROSEE::MoveItCollider::run(){
     
     lookForFingertips();
     printFingertipLinkNames();
     lookJointsTipsCorrelation();
     printJointsOfFingertips();
     printFingertipsOfJoints();
-    checkCollisions();
-//     for (auto it : mapOfPinches ){
-//         it.second.printAction();
-//     }
-    
-    //emit the yaml file
-    ROSEE::YamlWorker yamlWorker(kinematic_model->getName());
+}
 
+void ROSEE::FindActions::findPinch(){
+    
+    std::map < std::pair <std::string, std::string> , ActionPinch > mapOfPinches = checkCollisions();
+    
+    ROSEE::YamlWorker yamlWorker(kinematic_model->getName());
+    
     std::map < std::set <std::string> , ActionPrimitive* > mapForWorker;
     for (auto& it : mapOfPinches) {  // auto& and not auto alone!
 
         ActionPrimitive* pointer = &(it.second);
-        
         std::set < std::string > keys ;
         keys.insert (it.first.first) ;
         keys.insert (it.first.second) ;
-
-        mapForWorker.insert (std::make_pair ( keys, pointer ) );
-                
+        mapForWorker.insert (std::make_pair ( keys, pointer ) );                
     }
     
     yamlWorker.createYamlFile(mapForWorker);
+}
+
+void ROSEE::FindActions::findTrig () {
     
-    
-    std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > pinchParsedMap = 
-        yamlWorker.parseYaml("pinch.yaml", 0);
-    
-    //print to check if parse is correct, DEBUG
-//     std::cout << "printtttt" << std::endl;
-//     for (auto &i : pinchParsedMap) {
-//         i.second->printAction();
-//     }
-    
-    
-    //Trigger actions etc
     std::map <std::string, ActionTrig> trigMap = trig();
-    std::cout << trigMap.size() << std::endl;
-    //print debug
-    for (auto i : trigMap) {
-        i.second.printAction();
-    }
-    
-    mapForWorker.clear();
+
+    std::map < std::set <std::string> , ActionPrimitive* > mapForWorker;
+
     //TODO fare funza per sto for e metterla in action primitive? vedi anche per pinch
     for (auto& it : trigMap) {  // auto& and not auto alone!
 
@@ -73,23 +47,13 @@ void ROSEE::MoveItCollider::run(){
         mapForWorker.insert (std::make_pair ( keys, pointer ) );
     }
     
+    ROSEE::YamlWorker yamlWorker(kinematic_model->getName());
     yamlWorker.createYamlFile(mapForWorker);
-
-    std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > trigParsedMap = 
-        yamlWorker.parseYaml("trig.yaml", 1);
-    
-    //print to check if parse is correct, DEBUG
-    std::cout << "printtttt" << std::endl;
-    for (auto &i : trigParsedMap) {
-        i.second->printAction();
-    }
-    
-    
-    
-
 }
+    
 
-void ROSEE::MoveItCollider::printFingertipLinkNames(){
+
+void ROSEE::FindActions::printFingertipLinkNames(){
 
     std::cout << "Fingertips list:" << std::endl;
     for (const auto &it: fingertipNames) {
@@ -99,7 +63,7 @@ void ROSEE::MoveItCollider::printFingertipLinkNames(){
     
 }
 
-void ROSEE::MoveItCollider::printAllLinkNames(){
+void ROSEE::FindActions::printAllLinkNames(){
 
     std::cout << "All Links  list:" << std::endl;
     for (const auto &it: kinematic_model->getLinkModelNames()) {
@@ -108,7 +72,7 @@ void ROSEE::MoveItCollider::printAllLinkNames(){
     std::cout << std::endl;    
 }
 
-void ROSEE::MoveItCollider::printActuatedJoints(){
+void ROSEE::FindActions::printActuatedJoints(){
 
     for (const auto &it: kinematic_model->getActiveJointModels()){
         std::cout << "jointname: " << it->getName() << std::endl;
@@ -117,7 +81,7 @@ void ROSEE::MoveItCollider::printActuatedJoints(){
 
 }
 
-void ROSEE::MoveItCollider::printJointsOfFingertips(){
+void ROSEE::FindActions::printJointsOfFingertips(){
 
     std::stringstream logInfo;
 
@@ -130,7 +94,7 @@ void ROSEE::MoveItCollider::printJointsOfFingertips(){
     std::cout << logInfo.str() << std::endl;
 }
 
-void ROSEE::MoveItCollider::printFingertipsOfJoints(){
+void ROSEE::FindActions::printFingertipsOfJoints(){
 
     std::stringstream logInfo;
 
@@ -145,7 +109,7 @@ void ROSEE::MoveItCollider::printFingertipsOfJoints(){
 
 
 ///TODO move i look for in Parser
-void ROSEE::MoveItCollider::lookForFingertips(){
+void ROSEE::FindActions::lookForFingertips(){
 
     for (auto it: kinematic_model->getJointModelGroups()) {
         
@@ -184,7 +148,7 @@ void ROSEE::MoveItCollider::lookForFingertips(){
 }
 
 
-void ROSEE::MoveItCollider::lookJointsTipsCorrelation(){
+void ROSEE::FindActions::lookJointsTipsCorrelation(){
     
     //initialize the map with all tips and with empty vectors of its joints
     for (const auto &it: fingertipNames) { 
@@ -209,8 +173,10 @@ void ROSEE::MoveItCollider::lookJointsTipsCorrelation(){
 }
 
 
-void ROSEE::MoveItCollider::checkCollisions(){
+std::map < std::pair <std::string, std::string> , ROSEE::ActionPinch > ROSEE::FindActions::checkCollisions () {
         
+    std::map < std::pair <std::string, std::string> , ROSEE::ActionPinch > mapOfPinches;
+    
     planning_scene::PlanningScene planning_scene(kinematic_model);
     collision_detection::CollisionRequest collision_request;
     collision_detection::CollisionResult collision_result;
@@ -245,7 +211,6 @@ void ROSEE::MoveItCollider::checkCollisions(){
                 std::vector <double> vecPos(pos, pos + posSize);
                 jointStates.insert(std::make_pair(actJ->getName(), vecPos));
             }
-            
             //for each collision with this joints state...
             for (auto cont : collision_result.contacts){
 
@@ -296,10 +261,12 @@ void ROSEE::MoveItCollider::checkCollisions(){
             << " has some fingertips that collide? If yes, check your urdf/srdf, or"
             << " set a bigger value in N_EXP_COLLISION." << std::endl;
     }
+    
+    return mapOfPinches;
 }
 
 
-void ROSEE::MoveItCollider::setOnlyDependentJoints(
+void ROSEE::FindActions::setOnlyDependentJoints(
     std::pair < std::string, std::string > tipsNames, JointStates *jStates) {
     
     for (auto &js : *jStates) { //for each among ALL joints
@@ -337,7 +304,7 @@ void ROSEE::MoveItCollider::setOnlyDependentJoints(
 // thumb addition/abduction
 /// if a joint is continuos, it is excluded from the trig action. (because I cant think about a continuos joint
 /// that is useful for a trig action, but can be present in theory)
-std::map <std::string, ROSEE::ActionTrig> ROSEE::MoveItCollider::trig() {
+std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::trig() {
 
     std::map <std::string, ActionTrig> trigMap;
     for (auto mapEl : fingertipOfJointMap) {

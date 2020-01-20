@@ -113,8 +113,8 @@ add_library(UniversalRosEndEffectorExecutor
     src/UniversalRosEndEffectorExecutor.cpp
 )
 
-add_library(MoveItCollider 
-    src/MoveItCollider.cpp
+add_library(FindActions 
+    src/FindActions.cpp
 )
 
 add_library(YamlWorker
@@ -138,7 +138,7 @@ add_library(ActionTrig
 ## either from message generation or dynamic reconfigure
 # add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_executable(UniversalRosEndEffector src/UniversalRosEndEffector.cpp)
-add_executable(UniversalRosEndEffector2 src/UniversalRosEndEffector2.cpp)
+add_executable(UniversalFindActions src/UniversalFindActions.cpp)
 add_dependencies(UniversalRosEndEffector ros_end_effector_generate_messages_cpp)
 
 
@@ -193,7 +193,7 @@ target_link_libraries(ActionTrig
     ActionPrimitive
 )
 
-target_link_libraries(MoveItCollider
+target_link_libraries(FindActions
     ${catkin_LIBRARIES}
     YamlWorker
     ActionPrimitive
@@ -206,9 +206,8 @@ target_link_libraries(UniversalRosEndEffector
     UniversalRosEndEffectorExecutor
 )
 
-target_link_libraries(UniversalRosEndEffector2
-    UniversalRosEndEffectorExecutor
-    MoveItCollider
+target_link_libraries(UniversalFindActions
+    FindActions
 )
 
 

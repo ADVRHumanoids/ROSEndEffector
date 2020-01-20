@@ -17,7 +17,7 @@
 #ifndef YAMLWORKER_H
 #define YAMLWORKER_H
 
-#define COLLIDER_REL_PATH "/configs/moveItCollider/"
+#define COLLIDER_REL_PATH "/configs/actions/"
 
 #include <memory>
 
@@ -31,16 +31,13 @@
 #include <ROSEndEffector/ActionPinch.h>
 #include <ROSEndEffector/ActionTrig.h>
 
-//TODO put this in the generic class
-#include <moveit/robot_model_loader/robot_model_loader.h>
-#include <moveit/planning_scene/planning_scene.h>
-
+//TODO change folder to which file are stored
 
 namespace ROSEE
 {
 
 /**
- * @todo write docs
+ * @todo PUT this in Parser?
  */
 class YamlWorker
 {
@@ -54,8 +51,7 @@ public:
     
     std::string createYamlFile ( std::map < std::set <std::string> , ActionPrimitive* >  ) ;
     
-    std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > parseYaml ( std::string filename, int act );
-
+    std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > parseYaml ( std::string filename, ActionType actionType );
 
     std::string dirPath;
     

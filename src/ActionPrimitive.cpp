@@ -1,5 +1,7 @@
 /*
- * Copyright 2020 <copyright holder> <email>
+ * Copyright (C) 2020 IIT-HHCM
+ * Author: Davide Torielli
+ * email:  davide.torielli@iit.it
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +18,11 @@
 
 #include "../include/ROSEndEffector/ActionPrimitive.h"
 
-ROSEE::ActionPrimitive::ActionPrimitive()
-{
-    name = "pinch";
-    nLinksInvolved = 1;
-    jointStateSetMaxSize = 1;
-}
+ROSEE::ActionPrimitive::ActionPrimitive( 
+    std::string name, unsigned int nLinksInvolved, unsigned int jointStateSetMaxSize, 
+        ActionType actionType) : 
+        name(name), nLinksInvolved(nLinksInvolved), jointStateSetMaxSize(jointStateSetMaxSize), 
+        actionType(actionType) {}
 
 std::string ROSEE::ActionPrimitive::getName () const{
     return name;    

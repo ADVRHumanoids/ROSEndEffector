@@ -1,5 +1,7 @@
 /*
- * Copyright 2020 <copyright holder> <email>
+ * Copyright (C) 2020 IIT-HHCM
+ * Author: Davide Torielli
+ * email:  davide.torielli@iit.it
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,36 +18,20 @@
 
 #include <ROSEndEffector/ActionPinch.h>
 
-ROSEE::ActionPinch::ActionPinch()
-{
-    name = "pinch";
-    nLinksInvolved = 2;
-    jointStateSetMaxSize = 3;
-    
-}
+ROSEE::ActionPinch::ActionPinch() : 
+    ActionPrimitive ("pinch", 2, 3, Pinch) { }
 
-ROSEE::ActionPinch::ActionPinch(unsigned int jointStateSetMaxSize)
-{
-    name = "pinch";
-    nLinksInvolved = 2;
-    this->jointStateSetMaxSize = jointStateSetMaxSize;
-    
-}
+ROSEE::ActionPinch::ActionPinch(unsigned int jointStateSetMaxSize) : 
+    ActionPrimitive ("pinch", 2, jointStateSetMaxSize, Pinch) { }
 
 ROSEE::ActionPinch::ActionPinch (std::pair <std::string, std::string> tipNames, 
-                                 JointStates js, collision_detection::Contact cont){
+    JointStates js, collision_detection::Contact cont) :
+    ActionPrimitive ("pinch", 2, 3, Pinch )  {
 
     //different from insertState, here we are sure the set is empty (we are in costructor)
-    name = "pinch";
-    nLinksInvolved = 2;
-    jointStateSetMaxSize = 3;
     this->tipsPair = tipNames;
     statesInfoSet.insert (std::make_pair (js, cont) );
-    
 }
-
-
-
 
 
 std::set < std::string > ROSEE::ActionPinch::getLinksInvolved() const {
@@ -232,10 +218,13 @@ bool ROSEE::ActionPinch::fillFromYaml ( YAML::const_iterator yamlIt ) {
             } else if (asEl->first.as<std::string>().compare ("Optional") == 0 ) {
                 
                 YAML::Node cont =  asEl->second["MoveItContact"];
-                contact.body_name_1 = cont["body_name_1"].as<std::string>();
-                contact.body_name_2 = cont["body_name_2"].as<std::string>();
+                contact.body_name_1 = cont["body_name_1"].as < std::string >();
+                contact.body_name_2 = cont["body_name_2"].as < std::string >();
                 contact.depth = cont["depth"].as<double>();
-                //TODO parse normal and depth
+                std::vector < double > normVect = cont["normal"].as < std::vector <double> >();
+                std::vector < double > posVect = cont["pos"].as < std::vector <double> >();
+                contact.normal = Eigen::Vector3d (normVect.data() );
+                contact.pos = Eigen::Vector3d (posVect.data() );
                 
             } else {
                 //ERRROr, only joinstates and optional at this level

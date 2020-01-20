@@ -13,10 +13,9 @@
 #include <ROSEndEffector/ActionTrig.h>
 
 
-#define N_EXP_COLLISION 50 //5000 is ok
+#define N_EXP_COLLISION 5000 //5000 is ok
 #define DEFAULT_JOINT_POS 0.0
 /** Max contact stored in the set for each pair */
-#define MAX_CONTACT_STORED 3
 
 namespace ROSEE
 {
@@ -31,12 +30,12 @@ namespace ROSEE
  * I dont know if it is a problem of schunk model, moveit, or both.
  * 
  */
-class MoveItCollider
+class FindActions
 {
 public:
-    MoveItCollider();
-    MoveItCollider(std::string);
-    void run();
+    FindActions ( std::string ) ;
+    void findPinch();
+    void findTrig();
     
     void printFingertipLinkNames();
     void printAllLinkNames();
@@ -48,8 +47,6 @@ public:
     
 private:
     
-    std::map < std::pair <std::string,std::string> , ActionPinch > mapOfPinches ; 
-        
     robot_model::RobotModelPtr kinematic_model;
     std::vector<std::string> fingertipNames;
     
@@ -83,15 +80,15 @@ private:
      * fingertipOfJointMap, is used in setOnlyDependentJoints()
      */
     void lookJointsTipsCorrelation();
+        
     
-    void checkCollisions();
-    
+    std::map < std::pair <std::string, std::string> , ROSEE::ActionPinch >  checkCollisions();
+
     /**
      * @brief Given the contact, we want to know the state of the joint to replicate it. But we want to know
      * only the state of the joints that effectively act on the contact, that are the ones which moves one of the two tips (or both). So the other joints are put to the DEFAULT_JOINT_POS value
      */
     void setOnlyDependentJoints(std::pair < std::string, std::string > tipsNames, JointStates *Jstates);
-    
     
     //trig etc
     std::map <std::string, ActionTrig> trig();

@@ -20,8 +20,6 @@ ROSEE::YamlWorker::YamlWorker ( std::string handName)
 {
     dirPath = ROSEE::Utils::getPackagePath() + COLLIDER_REL_PATH 
         + "/" + handName + "/" ;
-    
-    
 }
 
 
@@ -52,29 +50,31 @@ std::string ROSEE::YamlWorker::emitYaml (
     
 }
 
-//TODO invece di int metter enum oppure capire dal nome del file, o da prima riga nel file
-std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > ROSEE::YamlWorker::parseYaml ( std::string filename, int act ){
+std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > ROSEE::YamlWorker::parseYaml ( std::string filename, ROSEE::ActionType actionType){
     
     std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > parsedMap; 
     YAML::Node node = YAML::LoadFile(dirPath + filename);
     
     for(YAML::const_iterator it4Action = node.begin(); it4Action != node.end(); ++it4Action) {
         std::shared_ptr <ActionPrimitive> ptr;
-        if (act == 0) {
+        switch (actionType) {
+        case Pinch: {
             ptr = std::make_shared <ActionPinch>();
-
-        } else if (act==1) {
-            ptr = std::make_shared <ActionTrig>();
-
-        } else {
-            //errror
+            break;
         }
-        ptr->fillFromYaml(it4Action);
+        case Trig: {
+            ptr = std::make_shared <ActionTrig>();
+            break;
+        }
+        default : {
+            //ERROR STOP ALL
+        }
+        }
+        
+        ptr->fillFromYaml ( it4Action );
         
         parsedMap.insert ( std::make_pair ( ptr->getLinksInvolved(), ptr) );
     }
         
-
-    
     return parsedMap;
 }

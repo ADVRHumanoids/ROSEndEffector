@@ -1,5 +1,7 @@
 /*
- * Copyright 2020 <copyright holder> <email>
+ * Copyright (C) 2020 IIT-HHCM
+ * Author: Davide Torielli
+ * email:  davide.torielli@iit.it
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +29,10 @@
 
 
 namespace ROSEE{
-    
+/** The map to store the couple jointName (key) --- jointPositions (value), multiple dof in general
+ */
 typedef std::map <std::string, std::vector <double> > JointStates;
+
 std::ostream& operator << (std::ostream& output, const JointStates js) {
     for (const auto &jsEl : js) {
         output << "\t\t\t"<<jsEl.first << " : "; //joint name
@@ -37,44 +41,65 @@ std::ostream& operator << (std::ostream& output, const JointStates js) {
         }
         output << std::endl;       
     }
+    return output;
 }
 
+enum ActionType {Pinch, Trig, None};
+
 /**
- * @todo write docs
+ * @brief Virtual class, Base of all the primitive action. It has some implemented functions that a 
+ * derived class can use, if you don't want to override to make them more action-specific.
+ * All the primitives are defined by:
+ *  - A set containing a fixed number (@nLinksInvolved ) of links/handparts, which are involved in
+ *    the action. (e.g. two fingertips for a pinch)
+ *  - JointStates position: hand configuration for which the 100% action happens. This is a member that
+ *    all the derived class must have, but it can be store as it is (e.g. trigger) but also in a set 
+ *    (if jointStateSetMaxSize > 1) or in a set with some other info linked (e.g. in the pinch we have a
+ *    pair JointStates - Contact stored in the set). So it is not a member of this base class
+ *  - Optional info about the action (e.g. a moveit Contact class for the pinch). Being optional, 
+ *    we don't have a member for this in this base class
  */
 class ActionPrimitive
 {
 protected:
  
-    ActionPrimitive();
+    /* Protected costructor: object creable only by derived classes. 
+     No default costructo (without arguments) because we want to set always these three member */
+    ActionPrimitive( std::string name, unsigned int nLinksInvolved, unsigned int jointStateSetMaxSize,
+        ActionType actionType
+    );
     
-    //TODO make these constant (and initialize them with initializer list)
-    std::string name;
-    unsigned int nLinksInvolved;
-    unsigned int jointStateSetMaxSize;
+    const std::string name;
+    
+    /* e.g. two tips for the pinch*/
+    const unsigned int nLinksInvolved;
+    
+    /* the max number of action for each linksInvolved set that we want to store */
+    const unsigned int jointStateSetMaxSize;
+    
+    const ActionType actionType;
     
 public:
     
+    /* destructor of base must be virtual */
     virtual ~ActionPrimitive() {};
 
-    
+    /* virtual and not getters */
     std::string getName () const;
     unsigned int getJointStatesSetMaxSize() const;
     unsigned int getnLinksInvolved() const;
-    
     virtual std::set < std::string > getLinksInvolved() const = 0;
     virtual std::vector < ROSEE::JointStates > getActionStates() const = 0;
+    
+    /* virtual setters */
     virtual bool setLinksInvolved (std::set < std::string >) = 0;
     virtual bool setActionStates (std::vector < ROSEE::JointStates > ) = 0;
     
+    /* overridable functions, if we want to make them more action-specific*/
     virtual void printAction () const ;
     virtual void emitYaml ( YAML::Emitter& ) ;
     virtual bool fillFromYaml( YAML::const_iterator yamlIt );
-
     
-    
-    
-
 };
 }
 

@@ -1,5 +1,7 @@
 /*
- * Copyright 2020 <copyright holder> <email>
+ * Copyright (C) 2020 IIT-HHCM
+ * Author: Davide Torielli
+ * email:  davide.torielli@iit.it
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +26,15 @@
 namespace ROSEE {
 
 /**
- * @todo write docs
+ * @brief The action of moving a finger in a full clousure position towards the palm. 
+ * The action is unique (joints involved in a certain position: the bound) so @jointStateSetMaxSize == 1
+ * Described by:
+ *  - a tip (@tip ): the tip of the finger that is involved in the tip. So @nLinksInvolved == 1
+ *  - JointStates position: which set the joints of the finger to a bound to make the finger closes, 
+ *    and all the other non-involved joints to zero
+ *  - Optional info not used
+ * 
+ * @todo instead of @tip , use the finger name (i.e. the defined srdf group) 
  */
 class ActionTrig : public ActionPrimitive 
 {
@@ -37,6 +47,8 @@ public:
     ActionTrig();
     ActionTrig (std::string, JointStates);
     
+    /** Overriden set and get from the pure virtual functions of the base class @ActionPrimitive 
+     The signature must be equal, even if here we have set and vector of only one element */
     std::set < std::string > getLinksInvolved() const override;
     std::vector < JointStates > getActionStates() const override;
     bool setLinksInvolved (std::set < std::string >) override;
@@ -45,10 +57,12 @@ public:
     JointStates getActionState() const;
     bool setActionState (JointStates);
 
+    // we are ok with the default functions of the base class ActionPrimitive
     //void printAction () const override;
     //void emitYaml ( YAML::Emitter&) override;
     //bool fillFromYaml( YAML::const_iterator yamlIt ) override;
 
+    /** the tip involved in the action. @TODO it should be the finger?*/
     std::string tip;
 
 };
