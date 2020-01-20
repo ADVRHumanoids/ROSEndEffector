@@ -44,6 +44,9 @@ public:
     void printJointsOfFingertips();
     void printFingertipsOfJoints();
     
+    //TODO should be in the parser
+    std::string getHandName();
+    
     
 private:
     

@@ -1,0 +1,47 @@
+[left_fingertip, right_fingertip]:
+  ActionState_1:
+    JointStates:
+      base_to_left_finger: [0.616359637887217]
+      base_to_right_finger: [-0.6896010515047237]
+      left_finger_to_left_fingertip: [0.6150600257562474]
+      right_finger_to_right_fingertip: [-0.4660229932051152]
+    Optional:
+      MoveItContact:
+        body_name_1: right_fingertip
+        body_name_2: left_fingertip
+        body_type_1: 0
+        body_type_2: 0
+        depth: -0.1
+        normal: [0, -0, 1]
+        pos: [0.02023359925342239, -1.071110737321116, -0.05]
+  ActionState_2:
+    JointStates:
+      base_to_left_finger: [0.5779396114638075]
+      base_to_right_finger: [-0.6774413482286036]
+      left_finger_to_left_fingertip: [0.5197809190722182]
+      right_finger_to_right_fingertip: [-0.656320915161632]
+    Optional:
+      MoveItContact:
+        body_name_1: left_fingertip
+        body_name_2: right_fingertip
+        body_type_1: 0
+        body_type_2: 0
+        depth: -0.09981679339647376
+        normal: [0.4556264211917394, 0.8901710871018041, 0]
+        pos: [-0.1229677466417252, -1.058200574066895, -0.05]
+  ActionState_3:
+    JointStates:
+      base_to_left_finger: [0.6643633346073329]
+      base_to_right_finger: [-0.6565617717802524]
+      left_finger_to_left_fingertip: [0.5065889302175492]
+      right_finger_to_right_fingertip: [-0.7680553475394845]
+    Optional:
+      MoveItContact:
+        body_name_1: left_fingertip
+        body_name_2: right_fingertip
+        body_type_1: 0
+        body_type_2: 0
+        depth: -0.09130913599516785
+        normal: [0.3892747091376528, 0.9211217079332111, 0]
+        pos: [-0.1183921482050984, -1.020016438939629, -0.05]
+

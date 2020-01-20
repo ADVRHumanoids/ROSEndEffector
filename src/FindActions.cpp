@@ -6,17 +6,36 @@ ROSEE::FindActions::FindActions ( std::string robot_description ){
     robot_model_loader::RobotModelLoader robot_model_loader(robot_description); 
     kinematic_model = robot_model_loader.getModel();
     
+    std::cout << "look for fingertips... " << std::endl;
     lookForFingertips();
-    printFingertipLinkNames();
     lookJointsTipsCorrelation();
+    
+    std::cout << "PARSING with MOVEIT PRINTS RESULT START ********************************************************************************" << std::endl;
+    printFingertipLinkNames();
     printJointsOfFingertips();
     printFingertipsOfJoints();
+    std::cout << "PARSING with MOVEIT PRINTS RESULT END ********************************************************************************" << std::endl << std::endl;
+
 }
+
+//TODO shoudl be in parser
+std::string ROSEE::FindActions::getHandName() {      
+    return kinematic_model->getName();
+}
+
 
 void ROSEE::FindActions::findPinch(){
     
     std::map < std::pair <std::string, std::string> , ActionPinch > mapOfPinches = checkCollisions();
     
+    if (mapOfPinches.size() == 0 ) {  //print if no collision at all
+        //Remove here after checking pinches further with method said
+        std::cout << "WARNING: I found no collisions between tips. Are you sure your hand"
+            << " has some fingertips that collide? If yes, check your urdf/srdf, or"
+            << " set a bigger value in N_EXP_COLLISION." << std::endl;
+            return;
+    }
+        
     ROSEE::YamlWorker yamlWorker(kinematic_model->getName());
     
     std::map < std::set <std::string> , ActionPrimitive* > mapForWorker;
@@ -85,6 +104,7 @@ void ROSEE::FindActions::printJointsOfFingertips(){
 
     std::stringstream logInfo;
 
+    logInfo << "Tip and joints that influence its position" << std::endl;
     for (const auto &it : jointsOfFingertipsMap) {
         logInfo << it.first << " parent joints: \n";
         for (const auto jointName : it.second) {
@@ -97,6 +117,7 @@ void ROSEE::FindActions::printJointsOfFingertips(){
 void ROSEE::FindActions::printFingertipsOfJoints(){
 
     std::stringstream logInfo;
+    logInfo << "Joint and the tips that it moves" << std::endl;
 
     for (const auto &it : fingertipOfJointMap) {
         logInfo << it.first << " child fingertips: \n";
@@ -255,13 +276,6 @@ std::map < std::pair <std::string, std::string> , ROSEE::ActionPinch > ROSEE::Fi
         }            
     }
     
-    //print if no collision at all 
-    if (mapOfPinches.size() == 0 ) {
-        std::cout << "WARNING: I found no collisions between tips. Are you sure your hand"
-            << " has some fingertips that collide? If yes, check your urdf/srdf, or"
-            << " set a bigger value in N_EXP_COLLISION." << std::endl;
-    }
-    
     return mapOfPinches;
 }
 
@@ -301,7 +315,7 @@ void ROSEE::FindActions::setOnlyDependentJoints(
 /// if no limit is 0? TODO think, now solution is to take user info.
 //TODO nikos easy solution: go in the direction of the max range. All hands have more range of motion
 // in the flexion respect to extension (as human finger). NOT valid for other motion, like finger spread or
-// thumb addition/abduction
+// thumb addition/abduction. PROBLEM IS: what is the default position????? WE have to assume 0?
 /// if a joint is continuos, it is excluded from the trig action. (because I cant think about a continuos joint
 /// that is useful for a trig action, but can be present in theory)
 std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::trig() {
@@ -316,14 +330,21 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::trig() {
                 kinematic_model->getJointModel(mapEl.first)->getVariableBounds();
 
             //HACK consider only 2 bounds now, because 1dof joint
+            // Except planar and full 6-dof, urdf (in 2020) does not permit to have more dofs joints
+            
+            //HACK referring to revolute joints here
             if ( limits.at(0).max_position_ - limits.at(0).min_position_ >= 6.28 ) { //continuos joint
                 std::cout << limits.at(0).max_position_ - limits.at(0).min_position_ << std::endl;
                 break;
             }
-            //TODO if neither == 0, take trig value from file? or param
-            //TODO go in the max range
-            double trigMax = (limits.at(0).max_position_ == 0) ? limits.at(0).min_position_ :   
-                                                                 limits.at(0).max_position_ ;
+
+            //Go in the max range, calculating default pos as 0.
+            double trigMax;
+            if ( std::abs(limits.at(0).max_position_) > std::abs(limits.at(0).min_position_)) {
+                trigMax = limits.at(0).max_position_ ;
+            } else {
+                trigMax = limits.at(0).min_position_ ;
+            }
                          
             auto itMap = trigMap.find(mapEl.second.at(0)); //sure to have only 1 element for the if before
             if (itMap == trigMap.end() ) {

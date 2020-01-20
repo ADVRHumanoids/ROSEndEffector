@@ -53,6 +53,15 @@ std::string ROSEE::YamlWorker::emitYaml (
 std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > ROSEE::YamlWorker::parseYaml ( std::string filename, ROSEE::ActionType actionType){
     
     std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > parsedMap; 
+
+    //TODO check elsewhere if file exist or not?
+    std::ifstream ifile(dirPath + filename);
+    if (! ifile) {
+        std::cout << "YAMLPARSER: file" << dirPath + filename << "not found. " << 
+            "Is this action possible with this hand?" << std::endl;
+            return parsedMap;
+    }
+    
     YAML::Node node = YAML::LoadFile(dirPath + filename);
     
     for(YAML::const_iterator it4Action = node.begin(); it4Action != node.end(); ++it4Action) {

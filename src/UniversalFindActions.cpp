@@ -29,13 +29,14 @@ int main ( int argc, char **argv ) {
     actionsFinder.findPinch();
     actionsFinder.findTrig();
     
-    //HERE the yaml parser TODO hand name...
-    ROSEE::YamlWorker yamlWorker("svh");
+    //TODO getHandName should be in the parser
+    ROSEE::YamlWorker yamlWorker(actionsFinder.getHandName());
 
     //pinch     
     std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > pinchParsedMap = 
         yamlWorker.parseYaml("pinch.yaml", ROSEE::ActionType::Pinch);
     
+    std::cout << "PARSED MAP OF PINCHES FROM YAML FILE:" << std::endl;
     for (auto &i : pinchParsedMap) {
         i.second->printAction();
     }
@@ -44,6 +45,7 @@ int main ( int argc, char **argv ) {
     std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > trigParsedMap = 
         yamlWorker.parseYaml("trig.yaml", ROSEE::ActionType::Trig);
     
+    std::cout << "PARSED MAP OF TRIGS FROM YAML FILE:" << std::endl;
     for (auto &i : trigParsedMap) {
         i.second->printAction();
     }

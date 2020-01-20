@@ -35,6 +35,13 @@ namespace ROSEE {
  *  - Optional info not used
  * 
  * @todo instead of @tip , use the finger name (i.e. the defined srdf group) 
+ * 
+ * @note We have to understand the direction of joints to make the finger full close. Because full close position
+ * can be linked to both lower or upper bound of each joint involved. 
+ * The method to solve this is to go in the max range of the joint, because usually a finger has more motion
+ * towards the palm respect the opposite (like humans). We consider the default joint pos to 0.
+ * @warning so, take care of joint limits: they must include the 0. Has it sense to have joint limits both
+ * positive or both negative (not including the 0) ?
  */
 class ActionTrig : public ActionPrimitive 
 {
