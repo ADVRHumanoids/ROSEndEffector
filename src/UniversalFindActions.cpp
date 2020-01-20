@@ -25,7 +25,7 @@ int main ( int argc, char **argv ) {
     ros::init ( argc, argv, "FindActions" );
     
     ROSEE::FindActions actionsFinder ("robot_description");
-
+    
     actionsFinder.findPinch();
     actionsFinder.findTrig();
     

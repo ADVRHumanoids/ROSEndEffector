@@ -45,7 +45,7 @@ std::set < std::string > ROSEE::ActionPinch::getLinksInvolved() const {
 
 std::vector < ROSEE::JointStates > ROSEE::ActionPinch::getActionStates() const{
     
-    std::vector < JointStates> retVect;
+    std::vector < JointStates > retVect;
     retVect.reserve(statesInfoSet.size());
     
     for (auto it : statesInfoSet ) {
@@ -54,6 +54,21 @@ std::vector < ROSEE::JointStates > ROSEE::ActionPinch::getActionStates() const{
     
     return retVect;
 }
+
+
+std::vector < ROSEE::ActionPinch::StateWithContact > ROSEE::ActionPinch::getActionStatesWithContact() const {
+    
+    std::vector < ROSEE::ActionPinch::StateWithContact > retVect;
+    retVect.reserve ( statesInfoSet.size() );
+    
+    for (auto it : statesInfoSet ) {
+        retVect.push_back(it);
+    }
+    
+    return retVect;
+    
+}
+
 
 bool ROSEE::ActionPinch::setLinksInvolved (std::set < std::string > setTips) {
     

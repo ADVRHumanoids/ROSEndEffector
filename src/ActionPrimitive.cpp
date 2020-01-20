@@ -28,6 +28,10 @@ std::string ROSEE::ActionPrimitive::getName () const{
     return name;    
 }
 
+ROSEE::ActionType ROSEE::ActionPrimitive::getActionType() const {
+    return actionType;
+}
+
 unsigned int ROSEE::ActionPrimitive::getJointStatesSetMaxSize() const {
     return jointStateSetMaxSize;
 }

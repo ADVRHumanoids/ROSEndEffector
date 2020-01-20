@@ -24,7 +24,7 @@ std::string ROSEE::FindActions::getHandName() {
 }
 
 
-void ROSEE::FindActions::findPinch(){
+std::map < std::pair <std::string, std::string> , ROSEE::ActionPinch > ROSEE::FindActions::findPinch(){
     
     std::map < std::pair <std::string, std::string> , ActionPinch > mapOfPinches = checkCollisions();
     
@@ -33,7 +33,7 @@ void ROSEE::FindActions::findPinch(){
         std::cout << "WARNING: I found no collisions between tips. Are you sure your hand"
             << " has some fingertips that collide? If yes, check your urdf/srdf, or"
             << " set a bigger value in N_EXP_COLLISION." << std::endl;
-            return;
+            return mapOfPinches;
     }
         
     ROSEE::YamlWorker yamlWorker(kinematic_model->getName());
@@ -49,9 +49,11 @@ void ROSEE::FindActions::findPinch(){
     }
     
     yamlWorker.createYamlFile(mapForWorker);
+    
+    return mapOfPinches;
 }
 
-void ROSEE::FindActions::findTrig () {
+std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::findTrig () {
     
     std::map <std::string, ActionTrig> trigMap = trig();
 
@@ -68,6 +70,8 @@ void ROSEE::FindActions::findTrig () {
     
     ROSEE::YamlWorker yamlWorker(kinematic_model->getName());
     yamlWorker.createYamlFile(mapForWorker);
+    
+    return trigMap;
 }
     
 

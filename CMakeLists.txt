@@ -265,6 +265,14 @@ if(CATKIN_ENABLE_TESTING)
                                                 ROSEEParser
                                                 ROSEEInterface)
     endif()
+    
+    catkin_add_gtest(FindPinches-test test/test_find_pinches.cpp)
+    if(TARGET FindPinches-test)
+        target_link_libraries(FindPinches-test ${catkin_LIBRARIES}
+                                                 FindActions
+                                                 ActionPrimitive
+                                                 ActionPinch)
+    endif()
 
 endif()
 

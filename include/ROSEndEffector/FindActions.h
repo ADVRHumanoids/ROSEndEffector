@@ -34,8 +34,8 @@ class FindActions
 {
 public:
     FindActions ( std::string ) ;
-    void findPinch();
-    void findTrig();
+    std::map < std::pair <std::string, std::string> , ROSEE::ActionPinch > findPinch();
+    std::map <std::string, ROSEE::ActionTrig> findTrig();
     
     void printFingertipLinkNames();
     void printAllLinkNames();

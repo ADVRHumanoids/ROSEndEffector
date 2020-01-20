@@ -46,34 +46,11 @@ namespace ROSEE {
  */
 class ActionPinch : public ActionPrimitive 
 {
-private:
+    
+public:
     
     /* A pair to "link" the jointStates with infos about the collision among the two tips*/
     typedef std::pair <JointStates, collision_detection::Contact> StateWithContact; 
-    
-    /** struct to put in order the @statesInfoSet. The first elements are the ones 
-     * with greater depth
-     * @FIX, even if is almost impossible, two different contact with same depth will be considered equal
-     * with this definition of depthComp. Theoretically they are equal only if the joint status are equal 
-     * (of only joints that act for the collision). In fact, we should have the possibility to have two 
-     * contact with the same depth (if joint statuses are different), they will be equally good
-     * 
-     */
-    struct depthComp {
-        bool operator() (const StateWithContact& a, const StateWithContact& b) const
-        {return (std::abs(a.second.depth) > std::abs(b.second.depth) );}
-    };
-    
-    /** For each pair, we want a set of action because we want to store (in general) more possible way
-     * to do that action. The pinch among two tips can theoretically be done in infinite ways, we store 
-     * the best ways found (ordering them by the depth of fingertips compenetration)
-     */
-    std::set < StateWithContact, depthComp > statesInfoSet;
-    
-    bool emitYamlForContact ( collision_detection::Contact, YAML::Emitter& );
-
-    
-public:
     
     ActionPinch();
     ActionPinch(unsigned int);
@@ -84,6 +61,9 @@ public:
     std::vector < ROSEE::JointStates > getActionStates() const override;
     bool setLinksInvolved (std::set < std::string >) override;
     bool setActionStates (std::vector < ROSEE::JointStates > ) override;
+    
+    std::vector< ROSEE::ActionPinch::StateWithContact > getActionStatesWithContact() const;
+
     
     /** 
      * @brief function to insert a single action in the setActionStates of possible action. 
@@ -105,6 +85,29 @@ public:
 
     /* the two tips that are involved in the action */
     std::pair <std::string, std::string > tipsPair ;
+    
+private:
+    
+    /** struct to put in order the @statesInfoSet. The first elements are the ones 
+     * with greater depth
+     * @FIX, even if is almost impossible, two different contact with same depth will be considered equal
+     * with this definition of depthComp. Theoretically they are equal only if the joint status are equal 
+     * (of only joints that act for the collision). In fact, we should have the possibility to have two 
+     * contact with the same depth (if joint statuses are different), they will be equally good
+     * 
+     */
+    struct depthComp {
+        bool operator() (const StateWithContact& a, const StateWithContact& b) const
+        {return (std::abs(a.second.depth) > std::abs(b.second.depth) );}
+    };
+    
+    /** For each pair, we want a set of action because we want to store (in general) more possible way
+     * to do that action. The pinch among two tips can theoretically be done in infinite ways, we store 
+     * the best ways found (ordering them by the depth of fingertips compenetration)
+     */
+    std::set < StateWithContact, depthComp > statesInfoSet;
+    
+    bool emitYamlForContact ( collision_detection::Contact, YAML::Emitter& );
 
 };
 

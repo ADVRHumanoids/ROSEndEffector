@@ -86,6 +86,7 @@ public:
 
     /* virtual and not getters */
     std::string getName () const;
+    ROSEE::ActionType getActionType() const;
     unsigned int getJointStatesSetMaxSize() const;
     unsigned int getnLinksInvolved() const;
     virtual std::set < std::string > getLinksInvolved() const = 0;
