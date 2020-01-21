@@ -81,3 +81,9 @@ roslaunch ros_end_effector findActionsTwoFinger.launch
 roslaunch ros_end_effector test_ee_startup.launch inSlider:=true
 ```
 
+# How to check if things are good with google tests
+```bash
+roslaunch ros_end_effector googleTest_run_all.launch 
+```
+Check the googleTest_run_all.launch file to change the hand for which execute the tests
+
