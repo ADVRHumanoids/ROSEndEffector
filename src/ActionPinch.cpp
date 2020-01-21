@@ -33,39 +33,6 @@ ROSEE::ActionPinch::ActionPinch (std::pair <std::string, std::string> tipNames,
     statesInfoSet.insert (std::make_pair (js, cont) );
 }
 
-bool ROSEE::ActionPinch::operator == (const ROSEE::ActionPinch& other) const {
-    
-    if (this->name.compare (other.name) != 0) { return false; }
-    if (this->nLinksInvolved != other.nLinksInvolved ) { return false; }
-    if (this->jointStateSetMaxSize != other.jointStateSetMaxSize) { return false; }
-    if (this->actionType != other.actionType ) { return false; }
-    if (this->getLinksInvolved() != other.getLinksInvolved()) { return false; }
-    if (this->getActionStates() != other.getActionStates()) { return false; }
-    if (this->statesInfoSet.size() != other.getActionStatesWithContact().size()) { return false; }
-    
-    unsigned int i = 0;
-    for (auto it: statesInfoSet) {
-        collision_detection::Contact thisCont = it.second;
-        collision_detection::Contact otherCont = other.getActionStatesWithContact().at(i).second;
-        
-        if (thisCont.body_name_1.compare (otherCont.body_name_1) != 0 ) { return false; }
-        if (thisCont.body_name_2.compare (otherCont.body_name_2) != 0 ) { return false; }
-        if (thisCont.body_type_1 != otherCont.body_type_1 ) { return false; }
-        if (thisCont.body_type_2 != otherCont.body_type_2 ) { return false; }
-        if (thisCont.depth != otherCont.depth ) { return false; }
-        if (thisCont.body_name_1.compare (otherCont.body_name_1) != 0 ) { return false; }
-        if (thisCont.normal != otherCont.normal) { return false; }
-        if (thisCont.pos != otherCont.pos) { return false; }
-    }
-    
-    return true;
-    
-    
-    
-}
-
-
-
 std::set < std::string > ROSEE::ActionPinch::getLinksInvolved() const {
  
     std::set < std::string> tempSet;
@@ -267,6 +234,38 @@ bool ROSEE::ActionPinch::fillFromYaml ( YAML::const_iterator yamlIt ) {
                 YAML::Node cont =  asEl->second["MoveItContact"];
                 contact.body_name_1 = cont["body_name_1"].as < std::string >();
                 contact.body_name_2 = cont["body_name_2"].as < std::string >();
+                switch (cont["body_type_1"].as < int >())
+                {
+                case 0:
+                    contact.body_type_1 = collision_detection::BodyType::ROBOT_LINK;
+                    break;
+                case 1:
+                    contact.body_type_1 = collision_detection::BodyType::ROBOT_ATTACHED;
+                    break;
+                case 2:
+                    contact.body_type_1 = collision_detection::BodyType::WORLD_OBJECT;
+                    break;
+                default:
+                    std::cout << "some error, body_type_1" << cont["body_type_1"].as < int >()
+                        << "unknown" << std::endl;
+                    contact.body_type_1 = collision_detection::BodyType::WORLD_OBJECT;
+                }
+                switch (cont["body_type_2"].as < int >())
+                {
+                case 0:
+                    contact.body_type_2 = collision_detection::BodyType::ROBOT_LINK;
+                    break;
+                case 1:
+                    contact.body_type_2 = collision_detection::BodyType::ROBOT_ATTACHED;
+                    break;
+                case 2:
+                    contact.body_type_2 = collision_detection::BodyType::WORLD_OBJECT;
+                    break;
+                default:
+                    std::cout << "some error, body_type_2" << cont["body_type_2"].as < int >()
+                        << "unknown" << std::endl;
+                    contact.body_type_2 = collision_detection::BodyType::WORLD_OBJECT;
+                }
                 contact.depth = cont["depth"].as<double>();
                 std::vector < double > normVect = cont["normal"].as < std::vector <double> >();
                 std::vector < double > posVect = cont["pos"].as < std::vector <double> >();

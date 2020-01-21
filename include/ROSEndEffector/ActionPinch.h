@@ -56,13 +56,6 @@ public:
     ActionPinch(unsigned int);
     ActionPinch (std::pair <std::string, std::string>, JointStates, collision_detection::Contact );
     
-    /**
-     * @brief Comparison operator: two object must be IDENTICAL (name, same set, element in set with
-     * identical moveit contact, and so on)
-     * @return TRUE if the objects are identical, FALSE otherwise
-     */
-    bool operator == (const ROSEE::ActionPinch& other) const ;
-    
     /** Overriden set and get from the pure virtual functions of the base class @ActionPrimitive */
     std::set < std::string > getLinksInvolved() const override;
     std::vector < ROSEE::JointStates > getActionStates() const override;

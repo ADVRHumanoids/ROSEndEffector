@@ -22,6 +22,17 @@ ROSEE::YamlWorker::YamlWorker ( std::string handName)
         + "/" + handName + "/" ;
 }
 
+ROSEE::YamlWorker::YamlWorker ( std::string handName, std::string path2saveYaml)
+{
+    if ( path2saveYaml.compare("") == 0 ){
+        dirPath = ROSEE::Utils::getPackagePath() + COLLIDER_REL_PATH 
+            + "/" + handName + "/" ;
+    } else {
+        dirPath = ROSEE::Utils::getPackagePath() + path2saveYaml + "/" + handName + "/" ;
+    }
+
+}
+
 
 std::string ROSEE::YamlWorker::createYamlFile(
     std::map < std::set <std::string> , ActionPrimitive* > mapOfActions ) {
@@ -57,7 +68,7 @@ std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > RO
     //TODO check elsewhere if file exist or not?
     std::ifstream ifile(dirPath + filename);
     if (! ifile) {
-        std::cout << "YAMLPARSER: file" << dirPath + filename << "not found. " << 
+        std::cout << "YAMLPARSER: file " << dirPath + filename << " not found. " << 
             "Is this action possible with this hand?" << std::endl;
             return parsedMap;
     }

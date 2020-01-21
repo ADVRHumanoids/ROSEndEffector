@@ -48,6 +48,8 @@ public:
      * Default constructor
      */
     YamlWorker(std::string handName);
+    YamlWorker ( std::string handName, std::string path2saveYaml);
+
     
     std::string createYamlFile ( std::map < std::set <std::string> , ActionPrimitive* >  ) ;
     

@@ -24,7 +24,8 @@ std::string ROSEE::FindActions::getHandName() {
 }
 
 
-std::map < std::pair <std::string, std::string> , ROSEE::ActionPinch > ROSEE::FindActions::findPinch(){
+std::map < std::pair <std::string, std::string> , ROSEE::ActionPinch > ROSEE::FindActions::findPinch (
+    std::string path2saveYaml ){
     
     std::map < std::pair <std::string, std::string> , ActionPinch > mapOfPinches = checkCollisions();
     
@@ -36,7 +37,7 @@ std::map < std::pair <std::string, std::string> , ROSEE::ActionPinch > ROSEE::Fi
             return mapOfPinches;
     }
         
-    ROSEE::YamlWorker yamlWorker(kinematic_model->getName());
+    ROSEE::YamlWorker yamlWorker(kinematic_model->getName(), path2saveYaml);
     
     std::map < std::set <std::string> , ActionPrimitive* > mapForWorker;
     for (auto& it : mapOfPinches) {  // auto& and not auto alone!
@@ -53,7 +54,7 @@ std::map < std::pair <std::string, std::string> , ROSEE::ActionPinch > ROSEE::Fi
     return mapOfPinches;
 }
 
-std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::findTrig () {
+std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::findTrig ( std::string path2saveYaml ) {
     
     std::map <std::string, ActionTrig> trigMap = trig();
 
@@ -68,7 +69,7 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::findTrig () {
         mapForWorker.insert (std::make_pair ( keys, pointer ) );
     }
     
-    ROSEE::YamlWorker yamlWorker(kinematic_model->getName());
+    ROSEE::YamlWorker yamlWorker(kinematic_model->getName(), path2saveYaml);
     yamlWorker.createYamlFile(mapForWorker);
     
     return trigMap;
