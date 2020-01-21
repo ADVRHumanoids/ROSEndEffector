@@ -33,6 +33,38 @@ ROSEE::ActionPinch::ActionPinch (std::pair <std::string, std::string> tipNames,
     statesInfoSet.insert (std::make_pair (js, cont) );
 }
 
+bool ROSEE::ActionPinch::operator == (const ROSEE::ActionPinch& other) const {
+    
+    if (this->name.compare (other.name) != 0) { return false; }
+    if (this->nLinksInvolved != other.nLinksInvolved ) { return false; }
+    if (this->jointStateSetMaxSize != other.jointStateSetMaxSize) { return false; }
+    if (this->actionType != other.actionType ) { return false; }
+    if (this->getLinksInvolved() != other.getLinksInvolved()) { return false; }
+    if (this->getActionStates() != other.getActionStates()) { return false; }
+    if (this->statesInfoSet.size() != other.getActionStatesWithContact().size()) { return false; }
+    
+    unsigned int i = 0;
+    for (auto it: statesInfoSet) {
+        collision_detection::Contact thisCont = it.second;
+        collision_detection::Contact otherCont = other.getActionStatesWithContact().at(i).second;
+        
+        if (thisCont.body_name_1.compare (otherCont.body_name_1) != 0 ) { return false; }
+        if (thisCont.body_name_2.compare (otherCont.body_name_2) != 0 ) { return false; }
+        if (thisCont.body_type_1 != otherCont.body_type_1 ) { return false; }
+        if (thisCont.body_type_2 != otherCont.body_type_2 ) { return false; }
+        if (thisCont.depth != otherCont.depth ) { return false; }
+        if (thisCont.body_name_1.compare (otherCont.body_name_1) != 0 ) { return false; }
+        if (thisCont.normal != otherCont.normal) { return false; }
+        if (thisCont.pos != otherCont.pos) { return false; }
+    }
+    
+    return true;
+    
+    
+    
+}
+
+
 
 std::set < std::string > ROSEE::ActionPinch::getLinksInvolved() const {
  

@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-#include "../include/ROSEndEffector/ActionPrimitive.h"
+#include <ROSEndEffectorActionPrimitive.h>
 
 ROSEE::ActionPrimitive::ActionPrimitive( 
     std::string name, unsigned int nLinksInvolved, unsigned int jointStateSetMaxSize, 
