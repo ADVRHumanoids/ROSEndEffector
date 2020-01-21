@@ -259,24 +259,24 @@ install(DIRECTORY launch/
 if(CATKIN_ENABLE_TESTING)
 
     # Add gtest based cpp test target and link libraries
-    catkin_add_gtest(EEInterface-test test/test_ee_interface.cpp)
-    if(TARGET EEInterface-test)
-        target_link_libraries(EEInterface-test ${catkin_LIBRARIES}
+    catkin_add_gtest(EEInterface_test test/test_ee_interface.cpp)
+    if(TARGET EEInterface_test)
+        target_link_libraries(EEInterface_test ${catkin_LIBRARIES}
                                                 ROSEEParser
                                                 ROSEEInterface)
     endif()
     
-    catkin_add_gtest(FindPinches-test test/test_find_pinches.cpp)
-    if(TARGET FindPinches-test)
-        target_link_libraries(FindPinches-test ${catkin_LIBRARIES}
+    catkin_add_gtest(FindPinches_test test/test_find_pinches.cpp)
+    if(TARGET FindPinches_test)
+        target_link_libraries(FindPinches_test ${catkin_LIBRARIES}
                                                  FindActions
                                                  ActionPrimitive
                                                  ActionPinch)
     endif()
     
-    catkin_add_gtest(FindTrigs-test test/test_find_trigs.cpp)
-    if(TARGET FindTrigs-test)
-        target_link_libraries(FindTrigs-test ${catkin_LIBRARIES}
+    catkin_add_gtest(FindTrigs_test test/test_find_trigs.cpp)
+    if(TARGET FindTrigs_test)
+        target_link_libraries(FindTrigs_test ${catkin_LIBRARIES}
                                                  FindActions
                                                  ActionPrimitive
                                                  ActionTrig)

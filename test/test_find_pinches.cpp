@@ -28,26 +28,6 @@ protected:
         
         //is this cast correct?
         ros::init ( argc, (char**)argv, "testFindPinches" );
-        
-        //add here if want to try other hands. HOW to run all togheter?
-        std::string hand4Test = "svh-standalone"; // "svh-standalone", "two_finger", "test_ee"
-        
-        ///need to set param in this test, in non test they are setted with launch file
-        ros::NodeHandle nh;
-        // Parse the urdf file
-        std::string urdf_file_name = ROSEE::Utils::getPackagePath() + 
-            "/configs/urdf/" + hand4Test + ".urdf";
-        std::ifstream f1(urdf_file_name); 
-        std::stringstream ss1;
-        ss1 << f1.rdbuf();
-        nh.setParam("robot_description", ss1.str());
-        // Parse the srdf file
-        std::string srdf_file_name = ROSEE::Utils::getPackagePath() + 
-            "/configs/srdf/" + hand4Test + ".srdf";
-        std::ifstream f2 (srdf_file_name); 
-        std::stringstream ss2;
-        ss2 << f2.rdbuf();
-        nh.setParam("robot_description_semantic", ss2.str());
     
         ROSEE::FindActions actionsFinder ("robot_description");
         

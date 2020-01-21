@@ -1,47 +1,47 @@
 [left_fingertip, right_fingertip]:
   ActionState_1:
     JointStates:
-      base_to_left_finger: [0.4820965662365779]
-      base_to_right_finger: [-0.6327034697402268]
-      left_finger_to_left_fingertip: [0.7936083488166332]
-      right_finger_to_right_fingertip: [-0.7258360061561688]
+      base_to_left_finger: [0.6607697839848696]
+      base_to_right_finger: [-0.6733489376259967]
+      left_finger_to_left_fingertip: [0.6969327430939302]
+      right_finger_to_right_fingertip: [-0.4652947805821896]
     Optional:
       MoveItContact:
-        body_name_1: left_fingertip
-        body_name_2: right_fingertip
+        body_name_1: right_fingertip
+        body_name_2: left_fingertip
         body_type_1: 0
         body_type_2: 0
         depth: -0.1
-        normal: [0, 0, 1]
-        pos: [-0.1133609631275552, -0.9434009160857185, -0.05]
+        normal: [0, -0, 1]
+        pos: [0.09865399712410189, -1.043239283446872, -0.05]
   ActionState_2:
     JointStates:
-      base_to_left_finger: [0.626409105095081]
-      base_to_right_finger: [-0.6656049246899783]
-      left_finger_to_left_fingertip: [0.5305028463480994]
-      right_finger_to_right_fingertip: [-0.7215789986774326]
+      base_to_left_finger: [0.677722028689459]
+      base_to_right_finger: [-0.568127757194452]
+      left_finger_to_left_fingertip: [0.5526422517606989]
+      right_finger_to_right_fingertip: [-0.7448306340258568]
     Optional:
       MoveItContact:
         body_name_1: left_fingertip
         body_name_2: right_fingertip
         body_type_1: 0
         body_type_2: 0
-        depth: -0.0991032845229616
-        normal: [0.402168753365445, 0.9155655595403772, 0]
-        pos: [-0.1209885997168526, -1.035985213101884, -0.05]
+        depth: -0.09920347525625102
+        normal: [0.3338943747103456, 0.9426104956644538, 0]
+        pos: [-0.03730942739219184, -1.044631226406325, -0.05]
   ActionState_3:
     JointStates:
-      base_to_left_finger: [0.5854734533000737]
-      base_to_right_finger: [-0.6477852666284889]
-      left_finger_to_left_fingertip: [0.7758062589447946]
-      right_finger_to_right_fingertip: [-0.5922718099085614]
+      base_to_left_finger: [0.6622626525117083]
+      base_to_right_finger: [-0.6665201167110353]
+      left_finger_to_left_fingertip: [0.4204348216066137]
+      right_finger_to_right_fingertip: [-0.7040230320766568]
     Optional:
       MoveItContact:
         body_name_1: left_fingertip
         body_name_2: right_fingertip
         body_type_1: 0
         body_type_2: 0
-        depth: -0.09180222412772768
-        normal: [0.3247423018342698, -0.9458025361561365, -0]
-        pos: [0.02726789669965784, -0.9435563481966215, -0.05]
+        depth: -0.09565388395759689
+        normal: [0.4689475939234168, 0.8832259926844535, 0]
+        pos: [-0.1196012140044543, -1.042509506691875, -0.05]
 
