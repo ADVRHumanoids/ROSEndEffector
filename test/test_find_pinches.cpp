@@ -7,7 +7,6 @@
 #include <ROSEndEffector/FindActions.h>
 #include <ROSEndEffector/ActionPrimitive.h>
 #include <ROSEndEffector/ActionPinch.h>
-#include <ROSEndEffector/ActionTrig.h>
 
 namespace {
 
@@ -31,7 +30,7 @@ protected:
         ros::init ( argc, (char**)argv, "testFindPinches" );
         
         //add here if want to try other hands. HOW to run all togheter?
-        std::string hand4Test = "svh-standalone"; // "two_finger", "test_ee"
+        std::string hand4Test = "svh-standalone"; // "svh-standalone", "two_finger", "test_ee"
         
         ///need to set param in this test, in non test they are setted with launch file
         ros::NodeHandle nh;
@@ -56,14 +55,11 @@ protected:
 
         //TODO getHandName should be in the parser
         ROSEE::YamlWorker yamlWorker(actionsFinder.getHandName(), "/configs/actions/tests/");
-   
         pinchParsedMap = yamlWorker.parseYaml("pinch.yaml", ROSEE::ActionType::Pinch);
-
     }
 
     virtual void TearDown() {
     }
-    
 
     std::map < std::pair < std::string, std::string >, ROSEE::ActionPinch > pinchMap;
     std::map < std::set < std::string >, std::shared_ptr<ROSEE::ActionPrimitive> > pinchParsedMap;
@@ -184,8 +180,21 @@ TEST_F ( testFindPinches, checkEmitParse ) {
         EXPECT_EQ (pinchCasted->getLinksInvolved(), pinchMap.at(keyPair).getLinksInvolved());
 
         unsigned int i = 0;
-        for (auto it: pinchCasted->getActionStatesWithContact() ) {
-            collision_detection::Contact thisCont = it.second;
+        for (auto as: pinchCasted->getActionStatesWithContact() ) {
+            
+            //check equality of joint states (as.first)
+            for (auto joint : as.first) {
+                ASSERT_EQ ( joint.second.size(), 
+                            pinchMap.at(keyPair).getActionStates().at(i).at(joint.first).size() );
+                //loop the eventually multiple joint pos (when dofs > 1)
+                for (int j=0; j<joint.second.size(); ++j){
+                    EXPECT_DOUBLE_EQ ( joint.second.at(j),
+                        pinchMap.at(keyPair).getActionStates().at(i).at(joint.first).at(j) ); 
+                }
+            }   
+            
+            //check equality of contact (as.second)
+            collision_detection::Contact thisCont = as.second;
             collision_detection::Contact otherCont =
                 pinchMap.at(keyPair).getActionStatesWithContact().at(i).second;
             // Tricky here, body colliding names can be swapped.

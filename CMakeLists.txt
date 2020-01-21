@@ -273,6 +273,14 @@ if(CATKIN_ENABLE_TESTING)
                                                  ActionPrimitive
                                                  ActionPinch)
     endif()
+    
+    catkin_add_gtest(FindTrigs-test test/test_find_trigs.cpp)
+    if(TARGET FindTrigs-test)
+        target_link_libraries(FindTrigs-test ${catkin_LIBRARIES}
+                                                 FindActions
+                                                 ActionPrimitive
+                                                 ActionTrig)
+    endif()
 
 endif()
 
