@@ -57,9 +57,9 @@ private:
     std::vector<std::string> fingertipNames;
     
     /** The map with as key the name of the fingertip and as value all the joints (actuated) that can modify its pose*/
-    std::map<std::string, std::vector<std::string>> jointsOfFingertipsMap;
+    std::map<std::string, std::vector<std::string>> jointsOfFingertipMap;
     /** The map with as key the name of the actuated joint and as value all the fingertips which pose can be modified by the joint */
-    std::map<std::string, std::vector<std::string>> fingertipOfJointMap;
+    std::map<std::string, std::vector<std::string>> fingertipsOfJointMap;
 
     /**
      * @brief This function explore the kinematic_model (which was built from urdf and srdf files), 
@@ -99,14 +99,16 @@ private:
     //trig etc
     std::map <std::string, ActionTrig> trig();
     std::map <std::string, ROSEE::ActionTrig> tipFlex();
+    std::map <std::string, ROSEE::ActionTrig> fingFlex();
+
     
     //other utilities used by this class
     bool insertJointPosForTrigInMap ( std::map <std::string, ActionTrig>& trigMap, 
         ROSEE::ActionTrig action, std::string jointName, double trigValue);  
     bool checkIfContinuosJoint ( std::string jointName) ;
     bool checkIfContinuosJoint ( const moveit::core::JointModel* joint ) ;
-    double setPosForTrig (std::string jointName ) ;
-    double setPosForTrig ( const moveit::core::JointModel* joint ) ;
+    double getBiggestBound (std::string jointName ) ;
+    double getBiggestBound ( const moveit::core::JointModel* joint ) ;
     unsigned int getNExclusiveJointsOfTip (std::string tipName);
 
 

@@ -90,8 +90,12 @@ std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > RO
             ptr = std::make_shared <ActionTrig>("tipFlex", ActionType::TipFlex);
             break;
         }
+        case FingFlex: {
+            ptr = std::make_shared <ActionTrig>("fingFlex", ActionType::FingFlex);
+            break;
+        }
         default : {
-            //ERROR STOP ALL
+            std::cout << "YAML PARSER: " << actionType << " : type not found" << std::endl;
         }
         }
         

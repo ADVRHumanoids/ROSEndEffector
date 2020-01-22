@@ -31,13 +31,15 @@ int main ( int argc, char **argv ) {
     
     std::map <std::string, ROSEE::ActionTrig> trigMap =  actionsFinder.findTrig (ROSEE::ActionType::Trig) ;
     std::map <std::string, ROSEE::ActionTrig> tipFlexMap = actionsFinder.findTrig (ROSEE::ActionType::TipFlex);
+    std::map <std::string, ROSEE::ActionTrig> fingFlexMap = actionsFinder.findTrig (ROSEE::ActionType::FingFlex);
    
     
+
+    /// PARSING TEST and print... these things should not be here
+
     //TODO getHandName should be in the parser
     ROSEE::YamlWorker yamlWorker(actionsFinder.getHandName());
-
     
-    /// PARSING TEST and print... these things should not be here
     //pinch     
     std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > pinchParsedMap = 
         yamlWorker.parseYaml("pinch.yaml", ROSEE::ActionType::Pinch);
@@ -64,6 +66,16 @@ int main ( int argc, char **argv ) {
     for (auto &i : tipFlexParsedMap) {
         i.second->printAction();
     }
+    
+    //fingFlex
+    std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > fingFlexParsedMap = 
+        yamlWorker.parseYaml("fingFlex.yaml", ROSEE::ActionType::FingFlex);
+    
+    std::cout << "PARSED MAP OF FINGFLEX FROM YAML FILE:" << std::endl;
+    for (auto &i : fingFlexParsedMap) {
+        i.second->printAction();
+    }
+    
     
     return 0;
     
