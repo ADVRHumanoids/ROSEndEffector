@@ -18,11 +18,11 @@
 
 #include <ROSEndEffector/ActionTrig.h>
 
-ROSEE::ActionTrig::ActionTrig() :
-    ActionPrimitive ( "trig", 1, 1, Trig ) { }
+ROSEE::ActionTrig::ActionTrig (std::string actionName, ActionType actionType) :
+    ActionPrimitive ( actionName, 1, 1, actionType ) { }
 
-ROSEE::ActionTrig::ActionTrig (std::string tip, JointStates js) :
-    ActionPrimitive ( "trig", 1, 1, Trig ) {
+ROSEE::ActionTrig::ActionTrig (std::string actionName, ActionType actionType, std::string tip, JointStates js) :
+    ActionPrimitive ( actionName, 1, 1, actionType ) {
         
     this->tip = tip;
     jointStates = js;    
@@ -36,6 +36,11 @@ std::set < std::string > ROSEE::ActionTrig::getLinksInvolved() const {
     
     return tempSet;    
 }
+
+std::string ROSEE::ActionTrig::getLinkInvolved () const {
+    return tip;
+}
+
 
 std::vector < ROSEE::JointStates > ROSEE::ActionTrig::getActionStates() const{
     
@@ -57,6 +62,10 @@ bool ROSEE::ActionTrig::setLinksInvolved (std::set < std::string > setTips) {
         tip = *it;
     }
     return true;
+}
+
+void ROSEE::ActionTrig::setLinkInvolved (std::string linkName ) {
+    tip = linkName;
 }
 
 bool ROSEE::ActionTrig::setActionStates (std::vector < ROSEE::JointStates > jsVect) {

@@ -208,6 +208,8 @@ target_link_libraries(UniversalRosEndEffector
 
 target_link_libraries(UniversalFindActions
     FindActions
+    ActionPrimitive
+    ActionTrig
 )
 
 

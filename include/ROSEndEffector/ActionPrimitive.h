@@ -44,7 +44,7 @@ std::ostream& operator << (std::ostream& output, const JointStates js) {
     return output;
 }
 
-enum ActionType {Pinch, Trig, None};
+enum ActionType {Pinch, Trig, TipFlex, None};
 
 /**
  * @brief Virtual class, Base of all the primitive action. It has some implemented functions that a 

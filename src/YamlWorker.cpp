@@ -83,7 +83,11 @@ std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > RO
             break;
         }
         case Trig: {
-            ptr = std::make_shared <ActionTrig>();
+            ptr = std::make_shared <ActionTrig>("trig", ActionType::Trig);
+            break;
+        }
+        case TipFlex: {
+            ptr = std::make_shared <ActionTrig>("tipFlex", ActionType::TipFlex);
             break;
         }
         default : {

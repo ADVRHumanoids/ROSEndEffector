@@ -36,7 +36,9 @@ public:
     FindActions ( std::string ) ;
     std::map < std::pair <std::string, std::string> , ROSEE::ActionPinch > findPinch ( 
         std::string path2saveYaml = "" );
-    std::map <std::string, ROSEE::ActionTrig> findTrig ( std::string path2saveYaml = "" );
+    std::map <std::string, ROSEE::ActionTrig> findTrig (  ROSEE::ActionType actionType,
+        std::string path2saveYaml = "" );
+
     
     void printFingertipLinkNames();
     void printAllLinkNames();
@@ -96,6 +98,19 @@ private:
     
     //trig etc
     std::map <std::string, ActionTrig> trig();
+    std::map <std::string, ROSEE::ActionTrig> tipFlex();
+    
+    //other utilities used by this class
+    bool insertJointPosForTrigInMap ( std::map <std::string, ActionTrig>& trigMap, 
+        ROSEE::ActionTrig action, std::string jointName, double trigValue);  
+    bool checkIfContinuosJoint ( std::string jointName) ;
+    bool checkIfContinuosJoint ( const moveit::core::JointModel* joint ) ;
+    double setPosForTrig (std::string jointName ) ;
+    double setPosForTrig ( const moveit::core::JointModel* joint ) ;
+    unsigned int getNExclusiveJointsOfTip (std::string tipName);
+
+
+
 };
     
 }

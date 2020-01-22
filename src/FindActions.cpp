@@ -54,13 +54,27 @@ std::map < std::pair <std::string, std::string> , ROSEE::ActionPinch > ROSEE::Fi
     return mapOfPinches;
 }
 
-std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::findTrig ( std::string path2saveYaml ) {
+std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::findTrig ( ROSEE::ActionType actionType,
+    std::string path2saveYaml) {
     
-    std::map <std::string, ActionTrig> trigMap = trig();
+    std::map <std::string, ActionTrig> trigMap;
+    
+    switch (actionType) {
+    case ROSEE::ActionType::Trig : {
+        trigMap = trig();
+        break;
+    }
+    case ROSEE::ActionType::TipFlex : {
+        trigMap = tipFlex();
+        break;
+    } 
+    default: {
+        //errror
+    }
+    }
 
     std::map < std::set <std::string> , ActionPrimitive* > mapForWorker;
 
-    //TODO fare funza per sto for e metterla in action primitive? vedi anche per pinch
     for (auto& it : trigMap) {  // auto& and not auto alone!
 
         ActionPrimitive* pointer = &(it.second);
@@ -73,8 +87,7 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::findTrig ( std::st
     yamlWorker.createYamlFile(mapForWorker);
     
     return trigMap;
-}
-    
+}  
 
 
 void ROSEE::FindActions::printFingertipLinkNames(){
@@ -315,68 +328,193 @@ void ROSEE::FindActions::setOnlyDependentJoints(
 }
 
 
+
+
+
+
+
 /// trig is the action of closing a SINGLE finger towards the palm
 /// to know the joint direction, the position is set to the limit which is different from 0
-/// if no limit is 0? TODO think, now solution is to take user info.
-//TODO nikos easy solution: go in the direction of the max range. All hands have more range of motion
+// nikos easy solution: go in the direction of the max range. All hands have more range of motion
 // in the flexion respect to extension (as human finger). NOT valid for other motion, like finger spread or
 // thumb addition/abduction. PROBLEM IS: what is the default position????? WE have to assume 0?
-/// if a joint is continuos, it is excluded from the trig action. (because I cant think about a continuos joint
-/// that is useful for a trig action, but can be present in theory)
+/// if a joint is continuos, it is excluded from the trig action. (because I cant think about a continuos 
+/// joint that is useful for a trig action, but can be present in theory)
 std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::trig() {
 
     std::map <std::string, ActionTrig> trigMap;
+    
     for (auto mapEl : fingertipOfJointMap) {
         
-        if (mapEl.second.size() == 1) { //the joint must move ONLY a fingertip
+        if (mapEl.second.size() != 1) { //the joint must move ONLY a fingertip
+            continue;
+        }
+        
+        if ( checkIfContinuosJoint(mapEl.first) == true ) {
+            continue; //we dont want to use a continuos joint for the trig
+        }
                 
-            //TODO, better to set as name the name of the finger?
-            moveit::core::JointModel::Bounds limits = 
-                kinematic_model->getJointModel(mapEl.first)->getVariableBounds();
-
-            //HACK consider only 2 bounds now, because 1dof joint
-            // Except planar and full 6-dof, urdf (in 2020) does not permit to have more dofs joints
-            
-            //HACK referring to revolute joints here
-            if ( limits.at(0).max_position_ - limits.at(0).min_position_ >= 6.28 ) { //continuos joint
-                std::cout << limits.at(0).max_position_ - limits.at(0).min_position_ << std::endl;
-                break;
-            }
-
-            //Go in the max range, calculating default pos as 0.
-            double trigMax;
-            if ( std::abs(limits.at(0).max_position_) > std::abs(limits.at(0).min_position_)) {
-                trigMax = limits.at(0).max_position_ ;
-            } else {
-                trigMax = limits.at(0).min_position_ ;
-            }
-                         
-            auto itMap = trigMap.find(mapEl.second.at(0)); //sure to have only 1 element for the if before
-            if (itMap == trigMap.end() ) {
-                //still no action for this tip, we have to create the Object
-                
-                JointStates js;
-                for (auto it : kinematic_model->getActiveJointModels()){
-                    std::vector <double> jPos (it->getVariableCount());
-                    std::fill (jPos.begin(), jPos.end(), 0.0);
-                    js.insert ( std::make_pair ( it->getName(), jPos ));
-                }
-                
-                //HACK at(0) because 1dof joint
-                js.at ( mapEl.first ).at(0) = trigMax;
-                ActionTrig action(mapEl.second.at(0), js);
-                trigMap.insert ( std::make_pair ( mapEl.second.at(0), action ) );
-
-            } else {
-                //action already created, but we have to modify the position of a joint
-                //itMap->second is an iterator to the already present element
-                JointStates js = itMap->second.getActionState();
-                //HACK at(0) because 1dof joint
-                js.at (mapEl.first).at(0) = trigMax;
-                itMap->second.setActionState(js);
-            }
-        }  
+        /// Go in the max range 
+        double trigMax = setPosForTrig(mapEl.first) ;
+        
+        ActionTrig action ("trig", ActionType::Trig);
+        action.setLinkInvolved (mapEl.second.at(0)) ;
+        // mapEl.second.at(0) : sure to have only 1 element for the if before
+        insertJointPosForTrigInMap(trigMap, action, mapEl.first, trigMax); 
     }
     
     return trigMap;
 }
+
+/** We start from each tip. Given a tip, we look for all the joints that move this tip. If it has 2 
+ * or more joints that move exclusively that tip (we count this number with @nExclusiveJoints ), 
+ * we say that a tipFlex is possible. If not, we cant move the tip indepently from the rest of the 
+ * finger, so we have a trig action (if @nExclusiveJoints == 1 ) or nothing (if @nExclusiveJoints == 0) 
+ * If @nExclusiveJoints >= 2, starting from the tip, we explore the parents joints, 
+ * until we found the first actuated joint. This one will be @theInterestingJoint which pose of we must 
+ * set. All the other joints (actuated) will have the default position (if no strange errors).
+ */
+std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::tipFlex() {
+    
+    std::map <std::string, ROSEE::ActionTrig> tipFlexMap;
+    
+    for (auto mapEl : jointsOfFingertipsMap) {
+        
+        if (getNExclusiveJointsOfTip ( mapEl.first ) < 2 ) { 
+        //if so, we have a simple trig (or none if 0) and not also a tip/finger flex
+            continue;
+        }
+        
+        // starting from the tip, we explore the parents joint, until we found the first actuated. This ones
+        // will be the interesting joint 
+        // constant is the data pointed and not the pointer itself
+        const moveit::core::LinkModel* linkModel = kinematic_model->getLinkModel(mapEl.first);
+
+        while ( linkModel->getParentJointModel()->getMimic() != NULL|| 
+                linkModel->parentJointIsFixed() ||
+                linkModel->getParentJointModel()->isPassive() ) {
+            
+            //an active joint is not any of these condition.
+            //passive is an attribute of the joint in the srdf, so it may be not setted, so we
+            //need also the getMimic == NULL (ie: an actuated joint dont mimic anything)
+            //WARNING these three conditions should be enough I think
+            
+            linkModel = linkModel->getParentLinkModel();
+        }
+        
+        if (linkModel == NULL ) {
+            std::cout << "[FATAL ERROR] Strange Error, jointsOfFingertipsMap, " << 
+                "fingertipOfJointMap and/or other things may have been built badly" << std::endl;
+        }
+        
+        std::string theInterestingJoint = linkModel->getParentJointModel()->getName();
+        double tipFlexMax = setPosForTrig(linkModel->getParentJointModel()) ;
+        
+
+        ActionTrig action ("tipFlex", ActionType::TipFlex);
+        action.setLinkInvolved (mapEl.first) ;
+        if (! insertJointPosForTrigInMap(tipFlexMap, action, theInterestingJoint, tipFlexMax) ) {
+            //if here, we have updated the joint position for a action that was already present in the map.
+            //this is ok for normal trig because more joint are included in the action, but for the tipflex
+            //for definition only a joint is involved (the active one nearer to the tip)
+            std::cout << "[FATAL ERROR]: Inserting in tipFlexMap a tip already present??" << std::endl;
+        }
+    }
+    
+    return tipFlexMap;
+}
+
+bool ROSEE::FindActions::insertJointPosForTrigInMap ( std::map <std::string, ActionTrig>& trigMap, 
+    ROSEE::ActionTrig action, std::string jointName, double trigValue) {
+    
+    auto itMap = trigMap.find(action.getLinkInvolved());
+        if ( itMap == trigMap.end() ) {
+            //still no action for this tip in the map
+            
+            JointStates js;
+            for (auto it : kinematic_model->getActiveJointModels()){
+                std::vector <double> jPos (it->getVariableCount());
+                std::fill (jPos.begin(), jPos.end(), 0.0);
+                js.insert ( std::make_pair ( it->getName(), jPos ));
+            }
+            
+            //HACK at(0) because 1dof joint
+            js.at ( jointName ).at(0) = trigValue;
+            action.setActionState(js);
+            trigMap.insert ( std::make_pair ( action.getLinkInvolved(), action ) );
+    
+            return true;
+
+        } else {
+            //action already created, but we have to modify the position of a joint
+            //itMap->second is an iterator to the already present element
+            JointStates js = itMap->second.getActionState();
+            //HACK at(0) because 1dof joint
+            js.at (jointName).at(0) = trigValue;
+            itMap->second.setActionState(js);
+            
+            return false;
+        }
+}
+
+
+bool ROSEE::FindActions::checkIfContinuosJoint ( std::string jointName) {
+    return (ROSEE::FindActions::checkIfContinuosJoint(kinematic_model->getJointModel(jointName)));     
+}
+
+//HACK consider only 2 bounds now, because 1dof joint
+// Except planar and full 6-dof, urdf (in 2020) does not permit to have more dofs joints, so this Hack is ok
+bool ROSEE::FindActions::checkIfContinuosJoint ( const moveit::core::JointModel* joint ) {
+    
+    if (joint->getType() != moveit::core::JointModel::REVOLUTE ) {
+        return false;
+    }
+    
+    moveit::core::JointModel::Bounds limits = joint->getVariableBounds();
+                
+    if ( limits.at(0).max_position_ - limits.at(0).min_position_ >= 6.28 ) {
+        //std::cout << limits.at(0).max_position_ - limits.at(0).min_position_ << std::endl;
+        return true;
+    }
+    return false;
+}
+
+double ROSEE::FindActions::setPosForTrig (std::string jointName ) {
+    return ( ROSEE::FindActions::setPosForTrig (kinematic_model->getJointModel(jointName) ) );
+}
+
+// go in the position of the max range, 0 must be included between the bounds
+double ROSEE::FindActions::setPosForTrig ( const moveit::core::JointModel* joint ) {
+    
+    double trigMax;
+    moveit::core::JointModel::Bounds limits = joint->getVariableBounds();
+
+    if ( std::abs(limits.at(0).max_position_) > std::abs(limits.at(0).min_position_)) {
+        trigMax = limits.at(0).max_position_ ;
+    } else {
+        trigMax = limits.at(0).min_position_ ;
+    }
+    return trigMax;
+}
+
+unsigned int ROSEE::FindActions::getNExclusiveJointsOfTip (std::string tipName) {
+    
+    unsigned int nExclusiveJoints = 0;
+
+    for (auto jointOfTip : jointsOfFingertipsMap.find(tipName)->second ){ 
+        
+        //check if the joints of the tip move only that tip
+        if ( fingertipOfJointMap.find(jointOfTip)->second.size() == 1 &&
+                (fingertipOfJointMap.find(jointOfTip)->second.at(0).compare (tipName) == 0) ) {
+            // second condition should be always true if jointsOfFingertipsMap and fingertipOfJointMap 
+            // are built well
+            
+            nExclusiveJoints++;
+        }
+    }
+    
+    return nExclusiveJoints;    
+}
+
+
+
