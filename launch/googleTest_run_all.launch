@@ -9,7 +9,7 @@
   <!-- <param name="robot_description" textfile="$(find ros_end_effector)/configs/urdf/test_ee.urdf"/>
   <param name="robot_description_semantic" textfile="$(find ros_end_effector)/configs/srdf/test_ee.srdf" /> --> 
 
-    <node type="EEInterface_test" name="EEInterface_test" pkg="ros_end_effector" output="screen"/>
-    <node type="FindPinches_test" name="FindPinches_test" pkg="ros_end_effector" output="screen"/>
+    <!-- <node type="EEInterface_test" name="EEInterface_test" pkg="ros_end_effector" output="screen"/> -->
+    <!-- <node type="FindPinches_test" name="FindPinches_test" pkg="ros_end_effector" output="screen"/> -->
     <node type="FindTrigs_test" name="FindTrigs_test" pkg="ros_end_effector" output="screen"/>
 </launch>
