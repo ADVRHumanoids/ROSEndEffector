@@ -66,8 +66,7 @@ protected:
     /* Protected costructor: object creable only by derived classes. 
      No default costructo (without arguments) because we want to set always these three member */
     ActionPrimitive( std::string name, unsigned int nLinksInvolved, unsigned int jointStateSetMaxSize,
-        ActionType actionType
-    );
+        ActionType actionType );
     
     const std::string name;
     

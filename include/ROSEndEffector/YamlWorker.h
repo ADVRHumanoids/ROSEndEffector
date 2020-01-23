@@ -29,6 +29,7 @@
 
 #include <ROSEndEffector/ActionPrimitive.h>
 #include <ROSEndEffector/ActionPinch.h>
+#include <ROSEndEffector/ActionPinchWeak.h>
 #include <ROSEndEffector/ActionTrig.h>
 
 //TODO change folder to which file are stored

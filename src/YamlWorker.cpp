@@ -80,6 +80,7 @@ std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > RO
         switch (actionType) {
         case Pinch: {
             ptr = std::make_shared <ActionPinch>();
+            //ptr = std::make_shared <ActionPinchWeak> ();
             break;
         }
         case Trig: {

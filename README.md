@@ -83,7 +83,12 @@ roslaunch ros_end_effector test_ee_startup.launch inSlider:=true
 
 # How to check if things are good with google tests
 ```bash
+cd <pkg_path>/build
+make tests
 roslaunch ros_end_effector googleTest_run_all.launch 
+# make test ARGS="-V" to run the test is not good because before running the node 
+# we need to put some params in the ros server (the urdf and srdf files)
 ```
 Check the googleTest_run_all.launch file to change the hand for which execute the tests
+
 

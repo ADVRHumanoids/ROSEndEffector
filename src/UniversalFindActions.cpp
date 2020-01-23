@@ -26,9 +26,9 @@ int main ( int argc, char **argv ) {
     
     ROSEE::FindActions actionsFinder ("robot_description");
     
-    actionsFinder.findPinch();
-    //actionsFinder.findTrig();
     
+    actionsFinder.findPinch();
+    /*
     std::map <std::string, ROSEE::ActionTrig> trigMap =  actionsFinder.findTrig (ROSEE::ActionType::Trig) ;
     std::map <std::string, ROSEE::ActionTrig> tipFlexMap = actionsFinder.findTrig (ROSEE::ActionType::TipFlex);
     std::map <std::string, ROSEE::ActionTrig> fingFlexMap = actionsFinder.findTrig (ROSEE::ActionType::FingFlex);
@@ -76,6 +76,7 @@ int main ( int argc, char **argv ) {
         i.second->printAction();
     }
     
+    */
     
     return 0;
     

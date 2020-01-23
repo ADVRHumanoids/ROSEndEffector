@@ -10,11 +10,11 @@ ROSEE::FindActions::FindActions ( std::string robot_description ){
     lookForFingertips();
     lookJointsTipsCorrelation();
     
-    std::cout << "PARSING with MOVEIT PRINTS RESULT START ********************************************************************************" << std::endl;
+    std::cout << "PARSING with MOVEIT PRINTS RESULT START ***********************************************************************" << std::endl;
     printFingertipLinkNames();
     printJointsOfFingertips();
     printFingertipsOfJoints();
-    std::cout << "PARSING with MOVEIT PRINTS RESULT END ********************************************************************************" << std::endl << std::endl;
+    std::cout << "PARSING with MOVEIT PRINTS RESULT END ***********************************************************************" << std::endl << std::endl;
 
 }
 
@@ -28,6 +28,21 @@ std::map < std::pair <std::string, std::string> , ROSEE::ActionPinch > ROSEE::Fi
     std::string path2saveYaml ){
     
     std::map < std::pair <std::string, std::string> , ActionPinch > mapOfPinches = checkCollisions();
+    std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak > mapOfWeakPinches;
+
+    fillNotCollidingTips(&mapOfWeakPinches, &mapOfPinches);
+    
+    std::cout << "printing..." << std::endl;
+    for (auto boh : mapOfWeakPinches ) {
+        boh.second.printAction();
+    }
+
+    checkDistances (&mapOfWeakPinches) ;
+    
+    std::cout << "printing..." << std::endl;
+    for (auto boh : mapOfWeakPinches ) {
+        boh.second.printAction();
+    }
     
     if (mapOfPinches.size() == 0 ) {  //print if no collision at all
         //Remove here after checking pinches further with method said
@@ -246,14 +261,8 @@ std::map < std::pair <std::string, std::string> , ROSEE::ActionPinch > ROSEE::Fi
         if (collision_result.collision) { 
 
             //store joint states
-            JointStates jointStates;
-            for (auto actJ : kinematic_model->getActiveJointModels()){
-                //joint can have multiple pos, so double*, but we want to store in a vector 
-                const double* pos = kinematic_state.getJointPositions(actJ); 
-                unsigned posSize = sizeof(pos) / sizeof(double);
-                std::vector <double> vecPos(pos, pos + posSize);
-                jointStates.insert(std::make_pair(actJ->getName(), vecPos));
-            }
+            JointStates jointStates = getConvertedJointStates(&kinematic_state);
+
             //for each collision with this joints state...
             for (auto cont : collision_result.contacts){
 
@@ -269,36 +278,54 @@ std::map < std::pair <std::string, std::string> , ROSEE::ActionPinch > ROSEE::Fi
                 
                 //create the actionPinch
                 ActionPinch pinch (cont.first, jointStates, cont.second.at(0) );
-                std::pair <std::string, std::string> key4map = pinch.tipsPair;
-                auto itFind = mapOfPinches.find ( key4map );
+                auto itFind = mapOfPinches.find ( cont.first );
                 if ( itFind == mapOfPinches.end() ) {
-                    mapOfPinches.insert ( std::make_pair (key4map, pinch) );
+                    //if here, we have to create store the new created action
+                    mapOfPinches.insert ( std::make_pair (cont.first, pinch) );
                     logCollision << ", NEW INSERTION";
 
-                    
                 } else { //Check if it is the best depth among the found collision among that pair
-                    
                     if (itFind->second.insertActionState( jointStates, cont.second.at(0)) ) {
                          logCollision << ", NEW INSERTION";
                     }
-                    
                 }
                 logCollision << std::endl;
             }
             
-            //last print for joint states
-            for (auto actJ : jointStates){
-                logCollision << "\tJoint " << actJ.first << " : " ;
-                for (auto &jv : actJ.second){
-                    logCollision << jv << ", ";
-                }
-                logCollision << std::endl;                
-            }        
+            logCollision << jointStates;                  
             //std::cout << logCollision.str() << std::endl;
         }            
     }
     
     return mapOfPinches;
+}
+
+
+void ROSEE::FindActions::checkDistances (std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak >* mapOfWeakPinches) {
+        
+    robot_state::RobotState kinematic_state(kinematic_model);
+        
+    for (int i = 0; i < N_EXP_DISTANCES; i++){
+        
+        kinematic_state.setToRandomPositions();
+
+        //for each pair remaining in notCollidingTips, check if a new min distance is found
+        for (auto &mapEl : *mapOfWeakPinches) { 
+            
+                            // restore all joint pos
+            JointStates jointStatesWeak = getConvertedJointStates(&kinematic_state);
+            
+            setOnlyDependentJoints(mapEl.first, &jointStatesWeak);
+            
+            Eigen::Affine3d tip1Trasf = kinematic_state.getGlobalLinkTransform(mapEl.first.first);
+            Eigen::Affine3d tip2Trasf = kinematic_state.getGlobalLinkTransform(mapEl.first.second);
+            double distance = (tip1Trasf.translation() - tip2Trasf.translation() ) .norm() ;
+                                
+            mapEl.second.insertActionState( jointStatesWeak, distance ) ;
+        }
+            
+    }
+
 }
 
 
@@ -585,5 +612,43 @@ unsigned int ROSEE::FindActions::getNExclusiveJointsOfTip (std::string tipName) 
     return nExclusiveJoints;    
 }
 
+ROSEE::JointStates ROSEE::FindActions::getConvertedJointStates(const robot_state::RobotState* kinematic_state) {
+    
+    JointStates js;
+    for (auto actJ : kinematic_model->getActiveJointModels()){
+        //joint can have multiple pos, so double*, but we want to store in a vector 
+        const double* pos = kinematic_state->getJointPositions(actJ); 
+        unsigned posSize = sizeof(pos) / sizeof(double);
+        std::vector <double> vecPos(pos, pos + posSize);
+        js.insert(std::make_pair(actJ->getName(), vecPos));
+    }
+    return js;
+}
 
 
+void ROSEE::FindActions::fillNotCollidingTips ( 
+    std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak >* mapOfWeakPinches,
+    const std::map < std::pair <std::string, std::string> , ROSEE::ActionPinch >* mapOfPinches) {
+    
+
+    // first fill mapOfWeakPinches with all pairs ...
+    for (auto tip1 : fingertipNames) {
+        for (auto tip2 : fingertipNames) { 
+            
+            // important to put in order in the pair, then in the set thing are autoordered
+            if (tip1 < tip2) {
+                mapOfWeakPinches->insert (std::make_pair (std::make_pair (tip1, tip2), ActionPinchWeak(tip1, tip2)));
+                
+            } else if (tip1 > tip2) {
+                mapOfWeakPinches->insert (std::make_pair (std::make_pair (tip2, tip1), ActionPinchWeak(tip2, tip1)));
+            }    
+        }
+    }  
+    
+
+    
+    // ... then remove all the colliding tips
+    for (const auto mapEl : *mapOfPinches){
+        mapOfWeakPinches->erase(mapEl.first);
+    }
+}

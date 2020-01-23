@@ -128,6 +128,12 @@ add_library(ActionPrimitive
 add_library(ActionPinch
     src/ActionPinch.cpp
 )
+add_library(ActionPinchGeneric
+    src/ActionPinchGeneric.cpp
+)
+add_library(ActionPinchWeak
+    src/ActionPinchWeak.cpp
+)
 
 add_library(ActionTrig
     src/ActionTrig.cpp
@@ -183,9 +189,19 @@ target_link_libraries(YamlWorker
     ActionPrimitive
     ActionPinch
     ActionTrig
+    ActionPinchWeak
 )
 
 target_link_libraries(ActionPinch
+    ActionPrimitive
+)
+
+target_link_libraries(ActionPinchGeneric
+    ActionPrimitive
+)
+
+target_link_libraries(ActionPinchWeak
+    ActionPinchGeneric
     ActionPrimitive
 )
 
@@ -199,6 +215,7 @@ target_link_libraries(FindActions
     ActionPrimitive
     ActionPinch
     ActionTrig
+    ActionPinchWeak
     
 )
 

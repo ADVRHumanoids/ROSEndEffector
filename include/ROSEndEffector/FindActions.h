@@ -7,6 +7,10 @@
 #include <moveit/robot_model_loader/robot_model_loader.h>
 #include <moveit/planning_scene/planning_scene.h>
 
+//TEst distance
+#include <moveit/collision_detection_fcl/collision_robot_fcl.h>
+
+
 #include <ROSEndEffector/YamlWorker.h>
 #include <ROSEndEffector/ActionPrimitive.h>
 #include <ROSEndEffector/ActionPinch.h>
@@ -14,6 +18,7 @@
 
 
 #define N_EXP_COLLISION 5000 //5000 is ok
+#define N_EXP_DISTANCES 5000 //? is ok
 #define DEFAULT_JOINT_POS 0.0
 /** Max contact stored in the set for each pair */
 
@@ -50,7 +55,6 @@ public:
     //TODO should be in the parser
     std::string getHandName();
     
-    
 private:
     
     robot_model::RobotModelPtr kinematic_model;
@@ -60,7 +64,7 @@ private:
     std::map<std::string, std::vector<std::string>> jointsOfFingertipMap;
     /** The map with as key the name of the actuated joint and as value all the fingertips which pose can be modified by the joint */
     std::map<std::string, std::vector<std::string>> fingertipsOfJointMap;
-
+    
     /**
      * @brief This function explore the kinematic_model (which was built from urdf and srdf files), 
      *  and fills the fingerTipNames vector.
@@ -89,6 +93,7 @@ private:
         
     
     std::map < std::pair <std::string, std::string> , ROSEE::ActionPinch >  checkCollisions();
+    void checkDistances (std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak >* );
 
     /**
      * @brief Given the contact, we want to know the state of the joint to replicate it. But we want to know
@@ -111,6 +116,10 @@ private:
     double getBiggestBound ( const moveit::core::JointModel* joint ) ;
     unsigned int getNExclusiveJointsOfTip (std::string tipName);
 
+    
+    void fillNotCollidingTips ( std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak >*, 
+             const std::map < std::pair <std::string, std::string> , ROSEE::ActionPinch >* );
+    JointStates getConvertedJointStates(const robot_state::RobotState* kinematic_state);
 
 
 };

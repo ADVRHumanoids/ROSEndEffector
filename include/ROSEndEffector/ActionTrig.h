@@ -52,7 +52,7 @@ namespace ROSEE {
  *   The "sum" of TipFlex and "FingFlex" is equal to the Trig only if the number of actuated not continuos joint
  *   in the finger is 2
  * 
- * @todo instead of @tip , use the finger name (i.e. the defined srdf group). or not?
+ * @todo instead of @tip , use the finger name for the Trig (i.e. the defined srdf group). or not?
  * 
  * @note We have to understand the direction of joints to make the finger full close. Because full close position
  * can be linked to both lower or upper bound of each joint involved. 
