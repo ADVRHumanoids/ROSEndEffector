@@ -285,7 +285,29 @@ TEST_F ( testFindTrigs, checkJointPosFlexsAndTrig ) {
     }
 }
 
-//TODO test flexs if only a joint is setted
+/** For the tip and fing flex action, for definition, only one joint must be setted (ie position != 0).
+ */
+TEST_F ( testFindTrigs, checkFlexsSingleJoint ) {
+    
+    for (int k = 0; k< trigMap.size(); ++k) {
+        
+        if ( trigMap.at(k).begin()->second.getActionType() == ROSEE::ActionType::Trig ) {
+            continue;
+        }
+        
+        for (auto &mapFlexEl: trigMap.at(k) ) {    
+
+            unsigned int nJSetted = 0;            
+            for ( auto &flexJs : mapFlexEl.second.getActionState() ) { //iteration over the jointstates map
+                
+                if ( flexJs.second.at(0) != 0.0 ) {
+                    nJSetted++;
+                }                
+            }
+            EXPECT_EQ (1, nJSetted);
+        }
+    }
+}
 
 
 } //namespace
