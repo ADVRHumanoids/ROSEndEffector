@@ -26,15 +26,33 @@
 namespace ROSEE {
 
 /**
- * @brief The action of moving a finger in a full clousure position towards the palm. 
+ * @brief The action of moving some joints (see later) of a single finger in a full clousure position 
+ * towards the palm. 
  * The action is unique (joints involved in a certain position: the bound) so @jointStateSetMaxSize == 1
  * Described by:
  *  - a tip (@tip ): the tip of the finger that is involved in the action. So @nLinksInvolved == 1
  *  - JointStates position: which set the joints of the finger to a bound to make the finger closes, 
  *    and all the other non-involved joints to zero
- *  - Optional info not used
+ *  - Optional info @actionType (even if is a member of the base class, here is particular). The Trig, TipFlex
+ *    and FingFlex have indentical structure, so no necessity to create other class, but necessity of only
+ *    discriminate the objects using the actionType.
  * 
- * @todo instead of @tip , use the finger name (i.e. the defined srdf group) 
+ * Actually, there are 3 types of action for this class
+ * - Trig: The action of fully closing a finger towards the parlm 
+ *      (i.e. all joints of a finger set to respective bounds)
+ * - TipFlex: The action of fully closing the last part of finger, maintaining the proximal phalanges still
+ *      (i.e. the last actuated joint of a finger set to its bound)
+ * - FingFlex: The action of fully closing the first part of a finger, maintaing the distal phalanges still, 
+ *      like moving a human finger maintaining it right
+ *      (i.e. the first actuated joint of a finger set to its bound)
+ * For each tip:
+ *   note that having a Trig does not mean that we have also the tip and the fing flex, because for them at least
+ *   2 actuated joint (not continuos) in the finger must exist.
+ *   If exist a TipFlex, also a FingFlex exist, and viceversa. If they exist, also a trig exist
+ *   The "sum" of TipFlex and "FingFlex" is equal to the Trig only if the number of actuated not continuos joint
+ *   in the finger is 2
+ * 
+ * @todo instead of @tip , use the finger name (i.e. the defined srdf group). or not?
  * 
  * @note We have to understand the direction of joints to make the finger full close. Because full close position
  * can be linked to both lower or upper bound of each joint involved. 

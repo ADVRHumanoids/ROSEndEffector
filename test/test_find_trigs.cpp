@@ -240,6 +240,8 @@ TEST_F ( testFindTrigs, checkJointPosFlexsAndTrig ) {
     ASSERT_EQ ( trigMap.at(1).begin()->second.getActionType(), ROSEE::ActionType::TipFlex);
     ASSERT_EQ ( trigMap.at(2).begin()->second.getActionType(), ROSEE::ActionType::FingFlex);
     
+    
+   // If a tipFlex is present, the unique setted joint must be also setted (equal pos) in the trig action 
     for (auto &mapTipEl: trigMap.at(1) ) {                
         for ( auto &tipJs : mapTipEl.second.getActionState() ) {
             if (tipJs.second.at(0) != 0 ) {
@@ -252,6 +254,7 @@ TEST_F ( testFindTrigs, checkJointPosFlexsAndTrig ) {
         }
     }
     
+    // If a FingFlex is present, the unique setted joint must be also setted (equal pos) in the trig action 
     for (auto &mapFingEl: trigMap.at(2) ) {                
         for ( auto &fingJs : mapFingEl.second.getActionState() ) {
             if (fingJs.second.at(0) != 0 ) {
@@ -285,7 +288,8 @@ TEST_F ( testFindTrigs, checkJointPosFlexsAndTrig ) {
     }
 }
 
-/** For the tip and fing flex action, for definition, only one joint must be setted (ie position != 0).
+
+/** For the tip and fing flex action, for definition, only one joint must be set (ie position != 0).
  */
 TEST_F ( testFindTrigs, checkFlexsSingleJoint ) {
     
