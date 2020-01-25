@@ -24,49 +24,62 @@ std::string ROSEE::FindActions::getHandName() {
 }
 
 
-std::map < std::pair <std::string, std::string> , ROSEE::ActionPinch > ROSEE::FindActions::findPinch (
+std::pair <  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinch >, 
+             std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak > >
+             ROSEE::FindActions::findPinch (
     std::string path2saveYaml ){
     
     std::map < std::pair <std::string, std::string> , ActionPinch > mapOfPinches = checkCollisions();
-    std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak > mapOfWeakPinches;
-
-    fillNotCollidingTips(&mapOfWeakPinches, &mapOfPinches);
     
-    std::cout << "printing..." << std::endl;
-    for (auto boh : mapOfWeakPinches ) {
-        boh.second.printAction();
-    }
-
+    std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak > mapOfWeakPinches;
+    fillNotCollidingTips(&mapOfWeakPinches, &mapOfPinches);
     checkDistances (&mapOfWeakPinches) ;
     
-    std::cout << "printing..." << std::endl;
-    for (auto boh : mapOfWeakPinches ) {
-        boh.second.printAction();
-    }
     
+    /// EMITTING PART ................
     if (mapOfPinches.size() == 0 ) {  //print if no collision at all
         //Remove here after checking pinches further with method said
         std::cout << "WARNING: I found no collisions between tips. Are you sure your hand"
             << " has some fingertips that collide? If yes, check your urdf/srdf, or"
             << " set a bigger value in N_EXP_COLLISION." << std::endl;
-            return mapOfPinches;
-    }
-        
-    ROSEE::YamlWorker yamlWorker(kinematic_model->getName(), path2saveYaml);
+    } else {
+        ROSEE::YamlWorker yamlWorker(kinematic_model->getName(), path2saveYaml);
     
-    std::map < std::set <std::string> , ActionPrimitive* > mapForWorker;
-    for (auto& it : mapOfPinches) {  // auto& and not auto alone!
+        std::map < std::set <std::string> , ActionPrimitive* > mapForWorker;
+        for (auto& it : mapOfPinches) {  // auto& and not auto alone!
 
-        ActionPrimitive* pointer = &(it.second);
-        std::set < std::string > keys ;
-        keys.insert (it.first.first) ;
-        keys.insert (it.first.second) ;
-        mapForWorker.insert (std::make_pair ( keys, pointer ) );                
+            ActionPrimitive* pointer = &(it.second);
+            std::set < std::string > keys ;
+            keys.insert (it.first.first) ;
+            keys.insert (it.first.second) ;
+            mapForWorker.insert (std::make_pair ( keys, pointer ) );                
+        }
+    
+        yamlWorker.createYamlFile(mapForWorker);
     }
     
-    yamlWorker.createYamlFile(mapForWorker);
+    if (mapOfWeakPinches.size() == 0 ) { 
+        std::cout << "WARNING: I found no weak pinches. This mean that some error happened or that" <<
+        " all the tips collide each other for at least one hand configuration" << std::endl;
+        
+    } else {
+        
+        ROSEE::YamlWorker yamlWorker(kinematic_model->getName(), path2saveYaml);
     
-    return mapOfPinches;
+        std::map < std::set <std::string> , ActionPrimitive* > mapForWorker;
+        for (auto& it : mapOfWeakPinches) {  // auto& and not auto alone!
+
+            ActionPrimitive* pointer = &(it.second);
+            std::set < std::string > keys ;
+            keys.insert (it.first.first) ;
+            keys.insert (it.first.second) ;
+            mapForWorker.insert (std::make_pair ( keys, pointer ) );                
+        }
+    
+        yamlWorker.createYamlFile(mapForWorker);
+    }
+    
+    return std::make_pair(mapOfPinches, mapOfWeakPinches);
 }
 
 std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::findTrig ( ROSEE::ActionType actionType,

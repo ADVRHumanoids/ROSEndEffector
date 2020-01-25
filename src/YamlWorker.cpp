@@ -80,7 +80,10 @@ std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > RO
         switch (actionType) {
         case Pinch: {
             ptr = std::make_shared <ActionPinch>();
-            //ptr = std::make_shared <ActionPinchWeak> ();
+            break;
+        }
+        case PinchWeak: {
+            ptr = std::make_shared <ActionPinchWeak> ();
             break;
         }
         case Trig: {
@@ -95,6 +98,7 @@ std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > RO
             ptr = std::make_shared <ActionTrig>("fingFlex", ActionType::FingFlex);
             break;
         }
+
         default : {
             std::cout << "YAML PARSER: " << actionType << " : type not found" << std::endl;
         }

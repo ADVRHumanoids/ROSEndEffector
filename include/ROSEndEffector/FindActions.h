@@ -39,8 +39,9 @@ class FindActions
 {
 public:
     FindActions ( std::string ) ;
-    std::map < std::pair <std::string, std::string> , ROSEE::ActionPinch > findPinch ( 
-        std::string path2saveYaml = "" );
+    std::pair <  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinch >, 
+                 std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak >  > 
+                 findPinch ( std::string path2saveYaml = "" );
     std::map <std::string, ROSEE::ActionTrig> findTrig (  ROSEE::ActionType actionType,
         std::string path2saveYaml = "" );
 

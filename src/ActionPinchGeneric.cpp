@@ -16,6 +16,11 @@
  * limitations under the License.
  */
 
+/** @TODO KNOW the distance at a certain percentage? so se volgio prendere un oggetto largo 3 cm il programma
+ * sa quale è la percentage per avere una distanza di 3cm  
+ *
+ */
+
 #include <ROSEndEffector/ActionPinchGeneric.h>
 
 ROSEE::ActionPinchGeneric::ActionPinchGeneric() : 

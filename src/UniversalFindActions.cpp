@@ -26,9 +26,8 @@ int main ( int argc, char **argv ) {
     
     ROSEE::FindActions actionsFinder ("robot_description");
     
-    
     actionsFinder.findPinch();
-    /*
+    
     std::map <std::string, ROSEE::ActionTrig> trigMap =  actionsFinder.findTrig (ROSEE::ActionType::Trig) ;
     std::map <std::string, ROSEE::ActionTrig> tipFlexMap = actionsFinder.findTrig (ROSEE::ActionType::TipFlex);
     std::map <std::string, ROSEE::ActionTrig> fingFlexMap = actionsFinder.findTrig (ROSEE::ActionType::FingFlex);
@@ -49,6 +48,17 @@ int main ( int argc, char **argv ) {
         i.second->printAction();
     }
     
+    
+    //pinch Weak  
+    std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > pinchWeakParsedMap = 
+        yamlWorker.parseYaml("pinchWeak.yaml", ROSEE::ActionType::PinchWeak);
+    
+    std::cout << "PARSED MAP OF PINCHESWEAK FROM YAML FILE:" << std::endl;
+    for (auto &i : pinchWeakParsedMap) {
+        i.second->printAction();
+    }
+    
+    /*
     //trig
     std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > trigParsedMap = 
         yamlWorker.parseYaml("trig.yaml", ROSEE::ActionType::Trig);

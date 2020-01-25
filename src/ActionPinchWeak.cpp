@@ -128,10 +128,7 @@ void ROSEE::ActionPinchWeak::printAction () const {
 bool ROSEE::ActionPinchWeak::emitYamlForDistance (double distance, YAML::Emitter& out) {
 
     out << YAML::BeginMap;
-        out << YAML::Key << "Distance" << YAML::Value << YAML::BeginMap;
-            out << YAML::Key << "distance";
-            out << YAML::Value << distance;
-        out << YAML::EndMap;
+        out << YAML::Key << "distance" << YAML::Value << distance;
     out << YAML::EndMap;
     
     return true;
@@ -185,10 +182,9 @@ bool ROSEE::ActionPinchWeak::fillFromYaml ( YAML::const_iterator yamlIt ) {
             //asEl can be the map JointStates or the map Optional
             if (asEl->first.as<std::string>().compare ("JointStates") == 0 ) {
                 jointStates = asEl->second.as < JointStates >(); 
-            } else if (asEl->first.as<std::string>().compare ("Optional") == 0 ) {
                 
-                YAML::Node node =  asEl->second["Distance"];
-                distance = node["distance"].as < double >();
+            } else if (asEl->first.as<std::string>().compare ("Optional") == 0 ) {
+                distance = asEl->second["distance"].as < double >();
                 
             } else {
                 //ERRROr, only joinstates and optional at this level
