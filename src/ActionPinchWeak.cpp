@@ -19,20 +19,20 @@
 #include <ROSEndEffector/ActionPinchWeak.h>
 
 ROSEE::ActionPinchWeak::ActionPinchWeak() : 
-    ActionPinchGeneric ("pinchWeak", 2, 3, ActionType::Pinch) { }
+    ActionPinchGeneric ("pinchWeak", 2, 3, ActionType::PinchWeak) { }
 
 ROSEE::ActionPinchWeak::ActionPinchWeak (unsigned int jointStateSetMaxSize) : 
-    ActionPinchGeneric ("pinchWeak", 2, jointStateSetMaxSize, ActionType::Pinch) { }
+    ActionPinchGeneric ("pinchWeak", 2, jointStateSetMaxSize, ActionType::PinchWeak) { }
 
 ROSEE::ActionPinchWeak::ActionPinchWeak (std::string tip1, std::string tip2) : 
-    ActionPinchGeneric ("pinchWeak", 2, 3, ActionType::Pinch) {
+    ActionPinchGeneric ("pinchWeak", 2, 3, ActionType::PinchWeak) {
         this->tipsPair.first = tip1;
         this->tipsPair.second = tip2;
     }
     
 ROSEE::ActionPinchWeak::ActionPinchWeak (std::pair <std::string, std::string> tipNames, 
     JointStates js, double distance) :
-    ActionPinchGeneric ("pinchWeak", 2, 3, ActionType::Pinch )  {
+    ActionPinchGeneric ("pinchWeak", 2, 3, ActionType::PinchWeak )  {
 
     //different from insertState, here we are sure the set is empty (we are in costructor)
     this->tipsPair = tipNames;

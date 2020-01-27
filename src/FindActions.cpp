@@ -24,12 +24,12 @@ std::string ROSEE::FindActions::getHandName() {
 }
 
 
-std::pair <  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinch >, 
+std::pair <  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong >, 
              std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak > >
              ROSEE::FindActions::findPinch (
     std::string path2saveYaml ){
     
-    std::map < std::pair <std::string, std::string> , ActionPinch > mapOfPinches = checkCollisions();
+    std::map < std::pair <std::string, std::string> , ActionPinchStrong > mapOfPinches = checkCollisions();
     
     std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak > mapOfWeakPinches;
     fillNotCollidingTips(&mapOfWeakPinches, &mapOfPinches);
@@ -244,9 +244,9 @@ void ROSEE::FindActions::lookJointsTipsCorrelation(){
 }
 
 
-std::map < std::pair <std::string, std::string> , ROSEE::ActionPinch > ROSEE::FindActions::checkCollisions () {
+std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong > ROSEE::FindActions::checkCollisions () {
         
-    std::map < std::pair <std::string, std::string> , ROSEE::ActionPinch > mapOfPinches;
+    std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong > mapOfPinches;
     
     planning_scene::PlanningScene planning_scene(kinematic_model);
     collision_detection::CollisionRequest collision_request;
@@ -290,7 +290,7 @@ std::map < std::pair <std::string, std::string> , ROSEE::ActionPinch > ROSEE::Fi
                 setOnlyDependentJoints(cont.first, &jointStates);
                 
                 //create the actionPinch
-                ActionPinch pinch (cont.first, jointStates, cont.second.at(0) );
+                ActionPinchStrong pinch (cont.first, jointStates, cont.second.at(0) );
                 auto itFind = mapOfPinches.find ( cont.first );
                 if ( itFind == mapOfPinches.end() ) {
                     //if here, we have to create store the new created action
@@ -641,7 +641,7 @@ ROSEE::JointStates ROSEE::FindActions::getConvertedJointStates(const robot_state
 
 void ROSEE::FindActions::fillNotCollidingTips ( 
     std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak >* mapOfWeakPinches,
-    const std::map < std::pair <std::string, std::string> , ROSEE::ActionPinch >* mapOfPinches) {
+    const std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong >* mapOfPinches) {
     
 
     // first fill mapOfWeakPinches with all pairs ...

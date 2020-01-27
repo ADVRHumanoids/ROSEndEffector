@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 
-#ifndef ROSEE_ACTIONPINCH_H
-#define ROSEE_ACTIONPINCH_H
+#ifndef ROSEE_ACTIONPINCHSTRONG_H
+#define ROSEE_ACTIONPINCHSTRONG_H
 
-#include <ROSEndEffector/ActionPrimitive.h>
+#include <ROSEndEffector/ActionPinchGeneric.h>
 #include <moveit/planning_scene/planning_scene.h>
 #include <yaml-cpp/yaml.h>
 #include <iostream>
@@ -44,7 +44,7 @@ namespace ROSEE {
  * This because a pinch can exist also if no collision really happen.
  * 
  */
-class ActionPinch : public ActionPrimitive 
+class ActionPinchStrong : public ActionPinchGeneric
 {
     
 public:
@@ -52,17 +52,15 @@ public:
     /* A pair to "link" the jointStates with infos about the collision among the two tips*/
     typedef std::pair <JointStates, collision_detection::Contact> StateWithContact; 
     
-    ActionPinch();
-    ActionPinch(unsigned int);
-    ActionPinch (std::pair <std::string, std::string>, JointStates, collision_detection::Contact );
+    ActionPinchStrong();
+    ActionPinchStrong(unsigned int);
+    ActionPinchStrong (std::pair <std::string, std::string>, JointStates, collision_detection::Contact );
     
     /** Overriden set and get from the pure virtual functions of the base class @ActionPrimitive */
-    std::set < std::string > getLinksInvolved() const override;
     std::vector < ROSEE::JointStates > getActionStates() const override;
-    bool setLinksInvolved (std::set < std::string >) override;
     bool setActionStates (std::vector < ROSEE::JointStates > ) override;
     
-    std::vector< ROSEE::ActionPinch::StateWithContact > getActionStatesWithContact() const;
+    std::vector< ROSEE::ActionPinchStrong::StateWithContact > getActionStatesWithContact() const;
 
     
     /** 
@@ -82,9 +80,6 @@ public:
     void printAction () const override;
     void emitYaml ( YAML::Emitter&) override;
     bool fillFromYaml( YAML::const_iterator yamlIt ) override;
-
-    /* the two tips that are involved in the action */
-    std::pair <std::string, std::string > tipsPair ;
     
 private:
     
@@ -113,4 +108,4 @@ private:
 
 }
 
-#endif // ROSEE_ACTIONPINCH_H
+#endif // ROSEE_ACTIONPINCHSTRONG_H

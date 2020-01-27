@@ -41,9 +41,9 @@ int main ( int argc, char **argv ) {
     
     //pinch     
     std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > pinchParsedMap = 
-        yamlWorker.parseYaml("pinch.yaml", ROSEE::ActionType::Pinch);
+        yamlWorker.parseYaml("pinchStrong.yaml", ROSEE::ActionType::PinchStrong);
     
-    std::cout << "PARSED MAP OF PINCHES FROM YAML FILE:" << std::endl;
+    std::cout << "PARSED MAP OF PINCHESSTRONG FROM YAML FILE:" << std::endl;
     for (auto &i : pinchParsedMap) {
         i.second->printAction();
     }

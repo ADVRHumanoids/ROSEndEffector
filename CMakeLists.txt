@@ -125,8 +125,8 @@ add_library(ActionPrimitive
     src/ActionPrimitive.cpp
 )
 
-add_library(ActionPinch
-    src/ActionPinch.cpp
+add_library(ActionPinchStrong
+    src/ActionPinchStrong.cpp
 )
 add_library(ActionPinchGeneric
     src/ActionPinchGeneric.cpp
@@ -187,13 +187,13 @@ target_link_libraries(UniversalRosEndEffectorExecutor
 target_link_libraries(YamlWorker
     yaml-cpp
     ActionPrimitive
-    ActionPinch
+    ActionPinchStrong
     ActionTrig
     ActionPinchWeak
 )
 
-target_link_libraries(ActionPinch
-    ActionPrimitive
+target_link_libraries(ActionPinchStrong
+    ActionPinchGeneric
 )
 
 target_link_libraries(ActionPinchGeneric
@@ -202,7 +202,6 @@ target_link_libraries(ActionPinchGeneric
 
 target_link_libraries(ActionPinchWeak
     ActionPinchGeneric
-    ActionPrimitive
 )
 
 target_link_libraries(ActionTrig
@@ -212,8 +211,7 @@ target_link_libraries(ActionTrig
 target_link_libraries(FindActions
     ${catkin_LIBRARIES}
     YamlWorker
-    ActionPrimitive
-    ActionPinch
+    ActionPinchStrong
     ActionTrig
     ActionPinchWeak
     
@@ -290,7 +288,8 @@ if(CATKIN_ENABLE_TESTING)
         target_link_libraries(FindPinches_test ${catkin_LIBRARIES}
                                                  FindActions
                                                  ActionPrimitive
-                                                 ActionPinch)
+                                                 ActionPinchStrong
+                                                 ActionPinchWeak)
     endif()
     
     catkin_add_gtest(FindTrigs_test test/test_find_trigs.cpp)

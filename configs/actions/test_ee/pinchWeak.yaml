@@ -1,0 +1,96 @@
+[left_fingertip, right_fingertip1]:
+  ActionState_1:
+    JointStates:
+      base_to_left_finger: [0.6995831477222964]
+      base_to_right_finger1: [-0.6945900779915973]
+      base_to_right_finger2: [0]
+      left_finger_to_left_fingertip: [0.8251299206167459]
+      right_finger1_to_right_fingertip1: [-0.05057764404918996]
+      right_finger2_to_right_fingertip2: [0]
+    Optional:
+      distance: 0.539493055052967
+  ActionState_2:
+    JointStates:
+      base_to_left_finger: [0.69774291862268]
+      base_to_right_finger1: [-0.6931584283942356]
+      base_to_right_finger2: [0]
+      left_finger_to_left_fingertip: [0.6569413329474628]
+      right_finger1_to_right_fingertip1: [-0.3437735999235884]
+      right_finger2_to_right_fingertip2: [0]
+    Optional:
+      distance: 0.5417223419518965
+  ActionState_3:
+    JointStates:
+      base_to_left_finger: [0.6953484481200576]
+      base_to_right_finger1: [-0.6853823118610307]
+      base_to_right_finger2: [0]
+      left_finger_to_left_fingertip: [0.4276826260378584]
+      right_finger1_to_right_fingertip1: [-0.6838747840141878]
+      right_finger2_to_right_fingertip2: [0]
+    Optional:
+      distance: 0.5486623001177708
+
+[left_fingertip, right_fingertip2]:
+  ActionState_1:
+    JointStates:
+      base_to_left_finger: [0.6923365471651777]
+      base_to_right_finger1: [0]
+      base_to_right_finger2: [-0.692726106243208]
+      left_finger_to_left_fingertip: [0.6285975520731881]
+      right_finger1_to_right_fingertip1: [0]
+      right_finger2_to_right_fingertip2: [-0.4837191873695701]
+    Optional:
+      distance: 0.545705197169346
+  ActionState_2:
+    JointStates:
+      base_to_left_finger: [0.6896247356431559]
+      base_to_right_finger1: [0]
+      base_to_right_finger2: [-0.6849158472148701]
+      left_finger_to_left_fingertip: [0.08105533530469984]
+      right_finger1_to_right_fingertip1: [0]
+      right_finger2_to_right_fingertip2: [-0.8878796003758908]
+    Optional:
+      distance: 0.5528959563137332
+  ActionState_3:
+    JointStates:
+      base_to_left_finger: [0.6896964882267639]
+      base_to_right_finger1: [0]
+      base_to_right_finger2: [-0.6767515975283458]
+      left_finger_to_left_fingertip: [0.2733368172543124]
+      right_finger1_to_right_fingertip1: [0]
+      right_finger2_to_right_fingertip2: [-0.6366573177510872]
+    Optional:
+      distance: 0.55843615696922
+
+[right_fingertip1, right_fingertip2]:
+  ActionState_1:
+    JointStates:
+      base_to_left_finger: [0]
+      base_to_right_finger1: [-0.04802649326156827]
+      base_to_right_finger2: [-0.0478957624174654]
+      left_finger_to_left_fingertip: [0]
+      right_finger1_to_right_fingertip1: [-0.4725415963679552]
+      right_finger2_to_right_fingertip2: [-0.008643751940690003]
+    Optional:
+      distance: 0.5000000104252376
+  ActionState_2:
+    JointStates:
+      base_to_left_finger: [0]
+      base_to_right_finger1: [-0.6498349162982776]
+      base_to_right_finger2: [-0.6499968020245432]
+      left_finger_to_left_fingertip: [0]
+      right_finger1_to_right_fingertip1: [-0.3006227594101801]
+      right_finger2_to_right_fingertip2: [-0.6115629222476855]
+    Optional:
+      distance: 0.5000000159862626
+  ActionState_3:
+    JointStates:
+      base_to_left_finger: [0]
+      base_to_right_finger1: [-0.5065784683916718]
+      base_to_right_finger2: [-0.5063122688326984]
+      left_finger_to_left_fingertip: [0]
+      right_finger1_to_right_fingertip1: [-0.6617591848829761]
+      right_finger2_to_right_fingertip2: [-0.7412043249467388]
+    Optional:
+      distance: 0.500000043225943
+

@@ -28,7 +28,7 @@
 #include <ROSEndEffector/Utils.h>
 
 #include <ROSEndEffector/ActionPrimitive.h>
-#include <ROSEndEffector/ActionPinch.h>
+#include <ROSEndEffector/ActionPinchStrong.h>
 #include <ROSEndEffector/ActionPinchWeak.h>
 #include <ROSEndEffector/ActionTrig.h>
 

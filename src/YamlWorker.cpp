@@ -78,8 +78,8 @@ std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > RO
     for(YAML::const_iterator it4Action = node.begin(); it4Action != node.end(); ++it4Action) {
         std::shared_ptr <ActionPrimitive> ptr;
         switch (actionType) {
-        case Pinch: {
-            ptr = std::make_shared <ActionPinch>();
+        case PinchStrong: {
+            ptr = std::make_shared <ActionPinchStrong>();
             break;
         }
         case PinchWeak: {

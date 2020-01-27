@@ -16,33 +16,25 @@
  * limitations under the License.
  */
 
-#include <ROSEndEffector/ActionPinch.h>
+#include <ROSEndEffector/ActionPinchStrong.h>
 
-ROSEE::ActionPinch::ActionPinch() : 
-    ActionPrimitive ("pinch", 2, 3, Pinch) { }
+ROSEE::ActionPinchStrong::ActionPinchStrong() : 
+    ActionPinchGeneric ("pinchStrong", 2, 3, ActionType::PinchStrong) { }
 
-ROSEE::ActionPinch::ActionPinch(unsigned int jointStateSetMaxSize) : 
-    ActionPrimitive ("pinch", 2, jointStateSetMaxSize, Pinch) { }
+ROSEE::ActionPinchStrong::ActionPinchStrong(unsigned int jointStateSetMaxSize) : 
+    ActionPinchGeneric ("pinchStrong", 2, jointStateSetMaxSize, ActionType::PinchStrong) { }
 
-ROSEE::ActionPinch::ActionPinch (std::pair <std::string, std::string> tipNames, 
+ROSEE::ActionPinchStrong::ActionPinchStrong (std::pair <std::string, std::string> tipNames, 
     JointStates js, collision_detection::Contact cont) :
-    ActionPrimitive ("pinch", 2, 3, Pinch )  {
+    ActionPinchGeneric ("pinchStrong", 2, 3, ActionType::PinchStrong )  {
 
     //different from insertState, here we are sure the set is empty (we are in costructor)
     this->tipsPair = tipNames;
     statesInfoSet.insert (std::make_pair (js, cont) );
 }
 
-std::set < std::string > ROSEE::ActionPinch::getLinksInvolved() const {
- 
-    std::set < std::string> tempSet;
-    tempSet.insert (tipsPair.first);
-    tempSet.insert (tipsPair.second);
-    
-    return tempSet;    
-}
 
-std::vector < ROSEE::JointStates > ROSEE::ActionPinch::getActionStates() const{
+std::vector < ROSEE::JointStates > ROSEE::ActionPinchStrong::getActionStates() const{
     
     std::vector < JointStates > retVect;
     retVect.reserve(statesInfoSet.size());
@@ -55,9 +47,9 @@ std::vector < ROSEE::JointStates > ROSEE::ActionPinch::getActionStates() const{
 }
 
 
-std::vector < ROSEE::ActionPinch::StateWithContact > ROSEE::ActionPinch::getActionStatesWithContact() const {
+std::vector < ROSEE::ActionPinchStrong::StateWithContact > ROSEE::ActionPinchStrong::getActionStatesWithContact() const {
     
-    std::vector < ROSEE::ActionPinch::StateWithContact > retVect;
+    std::vector < ROSEE::ActionPinchStrong::StateWithContact > retVect;
     retVect.reserve ( statesInfoSet.size() );
     
     for (auto it : statesInfoSet ) {
@@ -69,21 +61,7 @@ std::vector < ROSEE::ActionPinch::StateWithContact > ROSEE::ActionPinch::getActi
 }
 
 
-bool ROSEE::ActionPinch::setLinksInvolved (std::set < std::string > setTips) {
-    
-    if (setTips.size() != 2 ) {
-        return false;
-    } else {
-        std::set<std::string>::iterator it = setTips.begin();
-        tipsPair.first = *it;
-        std::advance(it,1);
-        tipsPair.second = *it;
-    }
-    return true;
-    
-}
-
-bool ROSEE::ActionPinch::setActionStates (std::vector < ROSEE::JointStates > jsVect) {
+bool ROSEE::ActionPinchStrong::setActionStates (std::vector < ROSEE::JointStates > jsVect) {
     
     collision_detection::Contact cont;
     cont.depth = 0; //we need to initialize it because it is used in the set comparator
@@ -95,7 +73,7 @@ bool ROSEE::ActionPinch::setActionStates (std::vector < ROSEE::JointStates > jsV
     return true;
 }
 
-bool ROSEE::ActionPinch::insertActionState (ROSEE::JointStates js, collision_detection::Contact cont) {
+bool ROSEE::ActionPinchStrong::insertActionState (ROSEE::JointStates js, collision_detection::Contact cont) {
 
     auto pairRet = statesInfoSet.insert ( std::make_pair (js, cont) ) ;
     
@@ -124,7 +102,7 @@ bool ROSEE::ActionPinch::insertActionState (ROSEE::JointStates js, collision_det
 }
 
 
-void ROSEE::ActionPinch::printAction () const {
+void ROSEE::ActionPinchStrong::printAction () const {
     
     std::stringstream output;
     
@@ -155,7 +133,7 @@ void ROSEE::ActionPinch::printAction () const {
 
 }
 
-bool ROSEE::ActionPinch::emitYamlForContact (collision_detection::Contact moveitContact, YAML::Emitter& out) {
+bool ROSEE::ActionPinchStrong::emitYamlForContact (collision_detection::Contact moveitContact, YAML::Emitter& out) {
 
     out << YAML::BeginMap;
         out << YAML::Key << "MoveItContact" << YAML::Value << YAML::BeginMap;
@@ -181,7 +159,7 @@ bool ROSEE::ActionPinch::emitYamlForContact (collision_detection::Contact moveit
     return true;
 }
 
-void ROSEE::ActionPinch::emitYaml ( YAML::Emitter& out ) {
+void ROSEE::ActionPinchStrong::emitYaml ( YAML::Emitter& out ) {
     
     // YAML << not valid for pair, we have to "convert" into vector
     std::vector <std::string> vectKeys {tipsPair.first, tipsPair.second};
@@ -215,7 +193,7 @@ void ROSEE::ActionPinch::emitYaml ( YAML::Emitter& out ) {
 }
 
 
-bool ROSEE::ActionPinch::fillFromYaml ( YAML::const_iterator yamlIt ) {
+bool ROSEE::ActionPinchStrong::fillFromYaml ( YAML::const_iterator yamlIt ) {
         
     tipsPair = yamlIt->first.as<std::pair < std::string, std::string >> ();
 

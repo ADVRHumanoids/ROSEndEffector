@@ -6,7 +6,8 @@
 
 #include <ROSEndEffector/FindActions.h>
 #include <ROSEndEffector/ActionPrimitive.h>
-#include <ROSEndEffector/ActionPinch.h>
+#include <ROSEndEffector/ActionPinchStrong.h>
+#include <ROSEndEffector/ActionPinchWeak.h>
 
 namespace {
 
@@ -37,7 +38,7 @@ protected:
 
         //TODO getHandName should be in the parser
         ROSEE::YamlWorker yamlWorker(actionsFinder.getHandName(), "/configs/actions/tests/");
-        pinchParsedMap = yamlWorker.parseYaml("pinch.yaml", ROSEE::ActionType::Pinch);
+        pinchParsedMap = yamlWorker.parseYaml("pinchStrong.yaml", ROSEE::ActionType::PinchStrong);
         
         pinchWeakParsedMap = yamlWorker.parseYaml("pinchWeak.yaml", ROSEE::ActionType::PinchWeak);
     }
@@ -45,7 +46,7 @@ protected:
     virtual void TearDown() {
     }
 
-    std::map < std::pair < std::string, std::string >, ROSEE::ActionPinch > pinchMap;
+    std::map < std::pair < std::string, std::string >, ROSEE::ActionPinchStrong > pinchMap;
     std::map < std::set < std::string >, std::shared_ptr<ROSEE::ActionPrimitive> > pinchParsedMap;
     
     std::map < std::pair < std::string, std::string >, ROSEE::ActionPinchWeak > pinchWeakMap;
@@ -95,14 +96,14 @@ TEST_F ( testFindPinches, checkName ) {
     
     for (auto &mapEl: pinchMap ) {
         
-        EXPECT_TRUE (mapEl.second.getName().compare("pinch") == 0);
-        EXPECT_EQ (ROSEE::ActionType::Pinch, mapEl.second.getActionType() );
+        EXPECT_TRUE (mapEl.second.getName().compare("pinchStrong") == 0);
+        EXPECT_EQ (ROSEE::ActionType::PinchStrong, mapEl.second.getActionType() );
     }
     
     for (auto &mapEl: pinchParsedMap ) {
         
-        EXPECT_TRUE (mapEl.second->getName().compare("pinch") == 0);
-        EXPECT_EQ (ROSEE::ActionType::Pinch, mapEl.second->getActionType() );
+        EXPECT_TRUE (mapEl.second->getName().compare("pinchStrong") == 0);
+        EXPECT_EQ (ROSEE::ActionType::PinchStrong, mapEl.second->getActionType() );
     }
 }
 
@@ -111,7 +112,7 @@ TEST_F ( testFindPinches, checkOrderStatesInfoSet ) {
     
     for (auto &mapEl: pinchMap ) { 
         
-        std::vector < ROSEE::ActionPinch::StateWithContact> statesInfo = 
+        std::vector < ROSEE::ActionPinchStrong::StateWithContact> statesInfo = 
             mapEl.second.getActionStatesWithContact();
         
         double oldDepth = std::numeric_limits<double>::infinity();
@@ -125,11 +126,11 @@ TEST_F ( testFindPinches, checkOrderStatesInfoSet ) {
     
     for (auto &mapEl: pinchParsedMap ) { 
         
-        std::shared_ptr <ROSEE::ActionPinch> pinchCasted = 
-            std::dynamic_pointer_cast < ROSEE::ActionPinch > (mapEl.second);
+        std::shared_ptr <ROSEE::ActionPinchStrong> pinchCasted = 
+            std::dynamic_pointer_cast < ROSEE::ActionPinchStrong > (mapEl.second);
             
         ASSERT_FALSE (pinchCasted == nullptr);
-        std::vector < ROSEE::ActionPinch::StateWithContact> statesInfo = 
+        std::vector < ROSEE::ActionPinchStrong::StateWithContact> statesInfo = 
             pinchCasted->getActionStatesWithContact();
         
         double oldDepth = std::numeric_limits<double>::infinity();
@@ -148,8 +149,8 @@ TEST_F ( testFindPinches, checkEmitParse ) {
     
     for (auto &mapEl: pinchParsedMap ) { 
         
-        std::shared_ptr <ROSEE::ActionPinch> pinchCasted = 
-            std::dynamic_pointer_cast < ROSEE::ActionPinch > (mapEl.second);
+        std::shared_ptr <ROSEE::ActionPinchStrong> pinchCasted = 
+            std::dynamic_pointer_cast < ROSEE::ActionPinchStrong > (mapEl.second);
             
         ASSERT_FALSE (pinchCasted == nullptr);
         ASSERT_EQ (2, mapEl.first.size() );
@@ -266,13 +267,13 @@ TEST_F ( testFindPinches, checkNameWeak ) {
     for (auto &mapEl: pinchWeakMap ) {
         
         EXPECT_TRUE (mapEl.second.getName().compare("pinchWeak") == 0);
-        EXPECT_EQ (ROSEE::ActionType::Pinch, mapEl.second.getActionType() );
+        EXPECT_EQ (ROSEE::ActionType::PinchWeak, mapEl.second.getActionType() );
     }
     
     for (auto &mapEl: pinchWeakParsedMap ) {
         
         EXPECT_TRUE (mapEl.second->getName().compare("pinchWeak") == 0);
-        EXPECT_EQ (ROSEE::ActionType::Pinch, mapEl.second->getActionType() );
+        EXPECT_EQ (ROSEE::ActionType::PinchWeak, mapEl.second->getActionType() );
     }
 }
 

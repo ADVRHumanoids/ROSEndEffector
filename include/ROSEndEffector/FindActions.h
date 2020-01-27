@@ -1,5 +1,5 @@
-#ifndef __ROSEE_MOVEIT_COLLIDER_
-#define __ROSEE_MOVEIT_COLLIDER_
+#ifndef __ROSEE_FIND_ACTIONS_
+#define __ROSEE_FIND_ACTIONS_
 
 #include <ros/console.h>
 
@@ -7,20 +7,16 @@
 #include <moveit/robot_model_loader/robot_model_loader.h>
 #include <moveit/planning_scene/planning_scene.h>
 
-//TEst distance
-#include <moveit/collision_detection_fcl/collision_robot_fcl.h>
-
 
 #include <ROSEndEffector/YamlWorker.h>
-#include <ROSEndEffector/ActionPrimitive.h>
-#include <ROSEndEffector/ActionPinch.h>
+#include <ROSEndEffector/ActionPinchStrong.h>
+#include <ROSEndEffector/ActionPinchWeak.h>
 #include <ROSEndEffector/ActionTrig.h>
 
 
 #define N_EXP_COLLISION 5000 //5000 is ok
 #define N_EXP_DISTANCES 5000 //? is ok
 #define DEFAULT_JOINT_POS 0.0
-/** Max contact stored in the set for each pair */
 
 namespace ROSEE
 {
@@ -39,7 +35,7 @@ class FindActions
 {
 public:
     FindActions ( std::string ) ;
-    std::pair <  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinch >, 
+    std::pair <  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong >, 
                  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak >  > 
                  findPinch ( std::string path2saveYaml = "" );
     std::map <std::string, ROSEE::ActionTrig> findTrig (  ROSEE::ActionType actionType,
@@ -93,7 +89,7 @@ private:
     void lookJointsTipsCorrelation();
         
     
-    std::map < std::pair <std::string, std::string> , ROSEE::ActionPinch >  checkCollisions();
+    std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong >  checkCollisions();
     void checkDistances (std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak >* );
 
     /**
@@ -119,7 +115,7 @@ private:
 
     
     void fillNotCollidingTips ( std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak >*, 
-             const std::map < std::pair <std::string, std::string> , ROSEE::ActionPinch >* );
+             const std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong >* );
     JointStates getConvertedJointStates(const robot_state::RobotState* kinematic_state);
 
 
@@ -128,4 +124,4 @@ private:
 }
 
 
-#endif //__ROSEE_MOVEIT_COLLIDER_
+#endif //__ROSEE_FIND_ACTIONS_
