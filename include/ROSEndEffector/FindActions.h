@@ -62,6 +62,8 @@ private:
     /** The map with as key the name of the actuated joint and as value all the fingertips which pose can be modified by the joint */
     std::map<std::string, std::vector<std::string>> fingertipsOfJointMap;
     
+    std::string robot_description;
+    
     /**
      * @brief This function explore the kinematic_model (which was built from urdf and srdf files), 
      *  and fills the fingerTipNames vector.
@@ -113,10 +115,13 @@ private:
     double getBiggestBound ( const moveit::core::JointModel* joint ) ;
     unsigned int getNExclusiveJointsOfTip (std::string tipName);
 
-    
     void fillNotCollidingTips ( std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak >*, 
              const std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong >* );
     JointStates getConvertedJointStates(const robot_state::RobotState* kinematic_state);
+    void removeBoundsOfNotCollidingTips ( const std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak >*, robot_model::RobotModelPtr );
+    void checkWhichTipsCollideWithoutBounds (
+        std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak >*);
+
 
 
 };
