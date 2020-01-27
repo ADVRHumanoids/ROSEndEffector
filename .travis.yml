@@ -43,6 +43,7 @@ script:
 
 #tests
 - make tests
+- source /home/travis/devel/setup.bash
 - roslaunch ros_end_effector googleTest_run_all.launch
 
 deploy:
