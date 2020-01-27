@@ -52,7 +52,7 @@ public:
     YamlWorker ( std::string handName, std::string path2saveYaml);
 
     
-    std::string createYamlFile ( std::map < std::set <std::string> , ActionPrimitive* >  ) ;
+    std::string createYamlFile ( std::map < std::set <std::string> , ActionPrimitive* >, std::string actionName  ) ;
     
     std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > parseYaml ( std::string filename, ActionType actionType );
 

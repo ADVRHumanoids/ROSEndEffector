@@ -35,13 +35,14 @@ ROSEE::YamlWorker::YamlWorker ( std::string handName, std::string path2saveYaml)
 
 
 std::string ROSEE::YamlWorker::createYamlFile(
-    std::map < std::set <std::string> , ActionPrimitive* > mapOfActions ) {
+    std::map < std::set <std::string> , ActionPrimitive* > mapOfActions,
+    std::string actionName) {
+    
 
     ROSEE::Utils::create_directory ( dirPath );
     std::string output = emitYaml ( mapOfActions );
-
-    ROSEE::Utils::out2file(dirPath + mapOfActions.begin()->second->getName() + ".yaml", output);
-    return (dirPath + mapOfActions.begin()->second->getName() + ".yaml");
+    ROSEE::Utils::out2file(dirPath + actionName + ".yaml", output);
+    return (dirPath + actionName + ".yaml");
     
     
 }
@@ -68,8 +69,7 @@ std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > RO
     //TODO check elsewhere if file exist or not?
     std::ifstream ifile(dirPath + filename);
     if (! ifile) {
-        std::cout << "YAMLPARSER: file " << dirPath + filename << " not found. " << 
-            "Is this action possible with this hand?" << std::endl;
+        std::cout << "[ERROR YAMLPARSER]: file " << dirPath + filename << " not found. "  << std::endl;
             return parsedMap;
     }
     
@@ -100,7 +100,7 @@ std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > RO
         }
 
         default : {
-            std::cout << "YAML PARSER: " << actionType << " : type not found" << std::endl;
+            std::cout << "[ERROR YAMLPARSER]: " << actionType << " : type not found" << std::endl;
         }
         }
         
