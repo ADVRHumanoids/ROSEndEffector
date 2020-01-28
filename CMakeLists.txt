@@ -305,6 +305,15 @@ if(CATKIN_ENABLE_TESTING)
                                                  ActionPrimitive
                                                  ActionTrig)
     endif()
+    
+    catkin_add_gtest(ComposedAction_test test/test_composedAction.cpp)
+    if(TARGET ComposedAction_test)
+        target_link_libraries(ComposedAction_test ${catkin_LIBRARIES}
+                                                 FindActions
+                                                 ActionPrimitive
+                                                 ActionTrig
+                                                 ActionComposed)
+    endif()
 
 endif()
 

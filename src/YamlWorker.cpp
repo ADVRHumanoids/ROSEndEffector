@@ -129,9 +129,9 @@ std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > RO
     return parsedMap;
 }
 
-std::shared_ptr <ROSEE::ActionComposed> ROSEE::YamlWorker::parseYamlComposed (std::string filename){
+ROSEE::ActionComposed ROSEE::YamlWorker::parseYamlComposed (std::string filename){
     
-    std::shared_ptr < ROSEE::ActionComposed > parsedAction; 
+    ROSEE::ActionComposed parsedAction; 
 
     //TODO check elsewhere if file exist or not?
     std::ifstream ifile(dirPath + filename);
@@ -141,8 +141,7 @@ std::shared_ptr <ROSEE::ActionComposed> ROSEE::YamlWorker::parseYamlComposed (st
     }
     
     YAML::Node node = YAML::LoadFile(dirPath + filename);
-    parsedAction = std::make_shared <ActionComposed> (filename);
-    parsedAction->fillFromYaml(node);
+    parsedAction.fillFromYaml(node);
     
     return parsedAction;
     

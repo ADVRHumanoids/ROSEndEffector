@@ -164,7 +164,6 @@ TEST_F ( testFindTrigs, checkEmitParse ) {
             EXPECT_EQ (trigCasted->getActionType(), trigMap.at(k).at(key).getActionType() );
             EXPECT_EQ (trigCasted->getLinksInvolved(), trigMap.at(k).at(key).getLinksInvolved());
 
-            unsigned int i = 0;
             for (auto jointStates: trigCasted->getActionStates() ) {
                 
                 //loop the map "jointStates"
@@ -176,7 +175,7 @@ TEST_F ( testFindTrigs, checkEmitParse ) {
                             trigMap.at(k).at(key).getActionState().at(joint.first).at(j) ); 
                     }
                 }       
-                i++;
+
             }
         }
     }

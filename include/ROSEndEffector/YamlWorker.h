@@ -58,7 +58,7 @@ public:
     std::string createYamlFile ( const ActionComposed* ) ;
     
     std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > parseYaml ( std::string filename, ActionType actionType );
-    std::shared_ptr <ROSEE::ActionComposed> parseYamlComposed (std::string filename);
+    ROSEE::ActionComposed parseYamlComposed (std::string filename);
 
     std::string dirPath;
     

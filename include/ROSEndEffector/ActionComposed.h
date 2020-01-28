@@ -53,8 +53,12 @@ public:
     ActionComposed();
     ActionComposed(std::string name);
     ActionComposed(std::string name, bool independent);
+    // Copy constructor 
+    ActionComposed (const ActionComposed &other);
     
     std::string getName () const;
+    unsigned int getnPrimitives () const;
+    bool getIndependent () const;
     std::vector <std::string> getPrimitiveNames() const ;
     ROSEE::JointStates getJointStates() const;
     std::vector < std::shared_ptr <ROSEE::ActionPrimitive> > getPrimitiveObjects() const;

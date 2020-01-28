@@ -93,7 +93,7 @@ int main ( int argc, char **argv ) {
     //Parsing
     auto actionParsed = yamlWorker.parseYamlComposed ("grasp.yaml");
     std::cout << "parsed Composed" << std::endl;
-    actionParsed->printAction();
+    actionParsed.printAction();
     
     return 0;
     
