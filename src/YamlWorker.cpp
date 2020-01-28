@@ -33,10 +33,18 @@ ROSEE::YamlWorker::YamlWorker ( std::string handName, std::string path2saveYaml)
 
 }
 
+std::string ROSEE::YamlWorker::createYamlFile( const ROSEE::ActionComposed* action) {
+    
+    ROSEE::Utils::create_directory ( dirPath );
+    std::string output = emitYaml ( action );
+    ROSEE::Utils::out2file(dirPath + action->getName() + ".yaml", output);
+    return (dirPath + action->getName() + ".yaml");
+    
+}
 
 std::string ROSEE::YamlWorker::createYamlFile(
-    std::map < std::set <std::string> , ActionPrimitive* > mapOfActions,
-    std::string actionName) {
+    const std::map < std::set <std::string> , ActionPrimitive* > mapOfActions,
+    const std::string actionName) {
     
 
     ROSEE::Utils::create_directory ( dirPath );
@@ -49,7 +57,7 @@ std::string ROSEE::YamlWorker::createYamlFile(
 
 
 std::string ROSEE::YamlWorker::emitYaml ( 
-    std::map < std::set <std::string> , ActionPrimitive* > mapOfActions ) {
+    const std::map < std::set <std::string> , ActionPrimitive* > mapOfActions ) {
     
     YAML::Emitter out;
     out << YAML::BeginMap;
@@ -58,6 +66,15 @@ std::string ROSEE::YamlWorker::emitYaml (
         out << YAML::Newline << YAML::Newline; //double to insert a blanck line between tips pair
     }
     out << YAML::EndMap;
+    return out.c_str();
+    
+}
+
+std::string ROSEE::YamlWorker::emitYaml  ( const ROSEE::ActionComposed* action ) {
+    
+    YAML::Emitter out;
+    action->emitYaml(out);
+    out << YAML::Newline << YAML::Newline; //double to insert a blanck line
     return out.c_str();
     
 }
@@ -111,3 +128,23 @@ std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > RO
         
     return parsedMap;
 }
+
+std::shared_ptr <ROSEE::ActionComposed> ROSEE::YamlWorker::parseYamlComposed (std::string filename){
+    
+    std::shared_ptr < ROSEE::ActionComposed > parsedAction; 
+
+    //TODO check elsewhere if file exist or not?
+    std::ifstream ifile(dirPath + filename);
+    if (! ifile) {
+        std::cout << "[ERROR YAMLPARSER]: file " << dirPath + filename << " not found. "  << std::endl;
+            return parsedAction;
+    }
+    
+    YAML::Node node = YAML::LoadFile(dirPath + filename);
+    parsedAction = std::make_shared <ActionComposed> (filename);
+    parsedAction->fillFromYaml(node);
+    
+    return parsedAction;
+    
+}
+

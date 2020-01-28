@@ -19,6 +19,7 @@
 
 #include <ROSEndEffector/UniversalRosEndEffectorExecutor.h>
 #include <ROSEndEffector/FindActions.h>
+#include <ROSEndEffector/ActionComposed.h>
 
 int main ( int argc, char **argv ) {
 
@@ -32,61 +33,67 @@ int main ( int argc, char **argv ) {
     std::map <std::string, ROSEE::ActionTrig> tipFlexMap = actionsFinder.findTrig (ROSEE::ActionType::TipFlex);
     std::map <std::string, ROSEE::ActionTrig> fingFlexMap = actionsFinder.findTrig (ROSEE::ActionType::FingFlex);
    
-    /// PARSING TEST and print... these things should not be here
+    /** ********************* PARSING TEST and print... these things should not be here ****************/
 
     //TODO getHandName should be in the parser
-
     ROSEE::YamlWorker yamlWorker(actionsFinder.getHandName());
 
-    
     //pinch     
     std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > pinchParsedMap = 
         yamlWorker.parseYaml("pinchStrong.yaml", ROSEE::ActionType::PinchStrong);
             
-    std::cout << "PARSED MAP OF PINCHESSTRONG FROM YAML FILE:" << std::endl;
-    for (auto &i : pinchParsedMap) {
-        i.second->printAction();
-    }
-    
-    
     //pinch Weak  
     std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > pinchWeakParsedMap = 
         yamlWorker.parseYaml("pinchWeak.yaml", ROSEE::ActionType::PinchWeak);
-    
+        
+    //trig
+    std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > trigParsedMap = 
+        yamlWorker.parseYaml("trig.yaml", ROSEE::ActionType::Trig);
+        
+    //tipFlex
+    std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > tipFlexParsedMap = 
+        yamlWorker.parseYaml("tipFlex.yaml", ROSEE::ActionType::TipFlex);
+        
+    //fingFlex
+    std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > fingFlexParsedMap = 
+        yamlWorker.parseYaml("fingFlex.yaml", ROSEE::ActionType::FingFlex);
+        
+    /******************************* PRINTS OF PARSED PRIMITIVES *********************************************/
+    std::cout << "PARSED MAP OF PINCHESSTRONG FROM YAML FILE:" << std::endl;
+    for (auto &i : pinchParsedMap) {
+        i.second->printAction();
+    }    
     std::cout << "PARSED MAP OF PINCHESWEAK FROM YAML FILE:" << std::endl;
     for (auto &i : pinchWeakParsedMap) {
         i.second->printAction();
     }
-    
-    /*
-    //trig
-    std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > trigParsedMap = 
-        yamlWorker.parseYaml("trig.yaml", ROSEE::ActionType::Trig);
-    
     std::cout << "PARSED MAP OF TRIGS FROM YAML FILE:" << std::endl;
     for (auto &i : trigParsedMap) {
         i.second->printAction();
     }
-    
-    //tipFlex
-    std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > tipFlexParsedMap = 
-        yamlWorker.parseYaml("tipFlex.yaml", ROSEE::ActionType::TipFlex);
-    
     std::cout << "PARSED MAP OF TIPFLEX FROM YAML FILE:" << std::endl;
     for (auto &i : tipFlexParsedMap) {
         i.second->printAction();
     }
-    
-    //fingFlex
-    std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > fingFlexParsedMap = 
-        yamlWorker.parseYaml("fingFlex.yaml", ROSEE::ActionType::FingFlex);
-    
     std::cout << "PARSED MAP OF FINGFLEX FROM YAML FILE:" << std::endl;
     for (auto &i : fingFlexParsedMap) {
         i.second->printAction();
     }
     
-    */
+    /** **************************** COMPOSITE ACTION THINGS *************************************************/
+
+    ROSEE::ActionComposed grasp ("grasp", true);
+    for (auto trig : trigParsedMap) {
+        grasp.sumPrimitive ( (trig.second) );  
+    }
+    
+    grasp.printAction();
+    yamlWorker.createYamlFile (&grasp);
+    
+    //Parsing
+    auto actionParsed = yamlWorker.parseYamlComposed ("grasp.yaml");
+    std::cout << "parsed Composed" << std::endl;
+    actionParsed->printAction();
     
     return 0;
     

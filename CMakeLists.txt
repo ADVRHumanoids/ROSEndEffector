@@ -134,9 +134,11 @@ add_library(ActionPinchGeneric
 add_library(ActionPinchWeak
     src/ActionPinchWeak.cpp
 )
-
 add_library(ActionTrig
     src/ActionTrig.cpp
+)
+add_library(ActionComposed
+    src/ActionComposed.cpp 
 )
 
 ## Add cmake target dependencies of the library
@@ -190,6 +192,7 @@ target_link_libraries(YamlWorker
     ActionPinchStrong
     ActionTrig
     ActionPinchWeak
+    ActionComposed
 )
 
 target_link_libraries(ActionPinchStrong
@@ -205,6 +208,9 @@ target_link_libraries(ActionPinchWeak
 )
 
 target_link_libraries(ActionTrig
+    ActionPrimitive
+)
+target_link_libraries(ActionComposed
     ActionPrimitive
 )
 

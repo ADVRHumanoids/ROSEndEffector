@@ -31,6 +31,7 @@
 #include <ROSEndEffector/ActionPinchStrong.h>
 #include <ROSEndEffector/ActionPinchWeak.h>
 #include <ROSEndEffector/ActionTrig.h>
+#include <ROSEndEffector/ActionComposed.h>
 
 //TODO change folder to which file are stored
 
@@ -52,14 +53,18 @@ public:
     YamlWorker ( std::string handName, std::string path2saveYaml);
 
     
-    std::string createYamlFile ( std::map < std::set <std::string> , ActionPrimitive* >, std::string actionName  ) ;
+    std::string createYamlFile ( const std::map < std::set <std::string> , ActionPrimitive* >, 
+                                 const std::string actionName  ) ;
+    std::string createYamlFile ( const ActionComposed* ) ;
     
     std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > parseYaml ( std::string filename, ActionType actionType );
+    std::shared_ptr <ROSEE::ActionComposed> parseYamlComposed (std::string filename);
 
     std::string dirPath;
     
 private:
-    std::string emitYaml ( std::map < std::set <std::string> , ActionPrimitive* > ) ;
+    std::string emitYaml ( const std::map < std::set <std::string> , ActionPrimitive* > ) ;
+    std::string emitYaml  ( const ActionComposed* ) ;
 
     
     
