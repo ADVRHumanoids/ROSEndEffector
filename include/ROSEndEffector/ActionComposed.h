@@ -30,17 +30,24 @@
  * Now this is done check if a joint pos is zero; but also zero pos can be a setted pos.
  * idea is to add a boolJointStates in ActionPrimitive where each joint is true or false depend
  * if is setted or not.
+ * TODO independance: how to mean the jointvalues? we can mean always dividing per the number of 
+ * primitives (nPrimitives). But with this method, we add in the mean also a lot of zero values which
+ * should be the non setted state, so should not influence the mean. Possible solution is to introduce a vector
+ * of counter which says, for each joint, how much are the primitive that use that particular joint and
+ * so we can divide each joint for the right sum of primitive. DONEEEEEEEE write docs
  * 
  * TODO instead of use it as "Composed", use it as single action, that is a different structure respect to
  * action primitive, with a single joint state. Then can contain a single action, or more.
  * 
  * TODO add un member "fingerInvolved" ? set of string che contiene tutti i diti coinvolti
+ * 
+ * TODO una remove? non è così facile da implementare e non so se sia utile...
  */
 namespace ROSEE{
 
 class ActionComposed
 {
-protected:
+private:
     std::string name;
     std::vector < std::string > primitiveNames;
     ROSEE::JointStates jointStates;
@@ -48,6 +55,7 @@ protected:
     unsigned int nPrimitives;
     
     bool independent; //true if each primitive must set different joint states
+    std::vector <unsigned int> involvedJointsForPrimitives;
     
 public: 
     ActionComposed();
@@ -62,6 +70,7 @@ public:
     std::vector <std::string> getPrimitiveNames() const ;
     ROSEE::JointStates getJointStates() const;
     std::vector < std::shared_ptr <ROSEE::ActionPrimitive> > getPrimitiveObjects() const;
+    std::vector <unsigned int> getInvolvedJointsForPrimitives () const;
     
     void printAction () const ; 
     void emitYaml ( YAML::Emitter&) const;

@@ -84,16 +84,37 @@ int main ( int argc, char **argv ) {
 
     ROSEE::ActionComposed grasp ("grasp", true);
     for (auto trig : trigParsedMap) {
-        grasp.sumPrimitive ( (trig.second) );  
+        grasp.sumPrimitive ( (trig.second) ); 
+
     }
     
     grasp.printAction();
     yamlWorker.createYamlFile (&grasp);
     
     //Parsing
-    auto actionParsed = yamlWorker.parseYamlComposed ("grasp.yaml");
-    std::cout << "parsed Composed" << std::endl;
-    actionParsed.printAction();
+    //auto actionParsed = yamlWorker.parseYamlComposed ("grasp.yaml");
+    //std::cout << "parsed Composed" << std::endl;
+    //actionParsed.printAction();
+    
+    
+    std::cout << "the depenteddede " << std::endl;
+    
+    ROSEE::ActionComposed grasp2 ("grasp2", false);
+
+    for (auto trig : trigParsedMap) {
+        grasp2.sumPrimitive ( (trig.second) );  
+    }
+    
+    grasp2.sumPrimitive ( (pinchParsedMap.begin()->second)) );
+    grasp2.sumPrimitive ( ((++pinchParsedMap.begin())->second)) ;
+
+    grasp2.printAction();
+    yamlWorker.createYamlFile (&grasp);
+    
+    //Parsing
+    //auto actionParsed = yamlWorker.parseYamlComposed ("grasp.yaml");
+    //std::cout << "parsed Composed" << std::endl;
+    //actionParsed.printAction();
     
     return 0;
     

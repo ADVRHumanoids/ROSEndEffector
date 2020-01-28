@@ -34,6 +34,13 @@ research and innovation programme under grant agreement no. 732287.
 
 Welcome to the ROS End-Effector Action finder 
 
+## Warning
+From 28-01-2020 the use_gui param gives an error because it is deprecated. This causes the sliders of joint 
+state publisher not shown. To solve : 
+```bash
+sudo apt install ros-kinetic-joint-state-publisher-gui
+```
+
 # How to run for the Schunk Hand
 ```bash
 #usual source

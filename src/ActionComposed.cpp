@@ -42,6 +42,7 @@ ROSEE::ActionComposed::ActionComposed (const ActionComposed &other) {
     this->jointStates = other.jointStates;
     this->primitiveNames = other.primitiveNames;
     this->primitiveObjects = other.primitiveObjects;
+    this->involvedJointsForPrimitives = other.involvedJointsForPrimitives;
 }
 
 
@@ -68,33 +69,70 @@ std::vector < std::shared_ptr <ROSEE::ActionPrimitive> > ROSEE::ActionComposed::
 ROSEE::JointStates ROSEE::ActionComposed::getJointStates() const {
     return jointStates;
 }
+std::vector<unsigned int> ROSEE::ActionComposed::getInvolvedJointsForPrimitives() const {
+    return involvedJointsForPrimitives;
+}
+
 
 
 bool ROSEE::ActionComposed::sumPrimitive ( std::shared_ptr <ROSEE::ActionPrimitive> primitive, int as )
 {
-    
+
     if (nPrimitives == 0) { //first primitive inserted, add anyway
-        jointStates = primitive->getActionStates().at(as);
+        JointStates js = primitive->getActionStates().at(as);
+        unsigned int iJoint = 0;
+        for (auto joint : js ){
+            involvedJointsForPrimitives.push_back(0); //first primitive we insert, we have also to fill this
+            jointStates.insert ( std::make_pair (joint.first, joint.second) );
+
+            if ( joint.second.at(0) != 0.0 ){
+                involvedJointsForPrimitives.at(iJoint)++;
+            } 
+            iJoint++;
+        }
         
     } else {
-    
+        
         if (independent) {
+            
             JointStates js = primitive->getActionStates().at(as);
+
             for (auto joint : js ){
+                
                 //HACK single dof joint now
                 if ( joint.second.at(0) != 0.0 &&
                     jointStates.at(joint.first).at(0) != 0.0 ) {
+
                     return false; //both setted, cant add this primitive
                 }
+
+            }
+
+            unsigned int iJoint = 0;
+            for ( auto joint : js ){ 
+                if ( joint.second.at(0) != 0.0 ){
+
+                    jointStates.at(joint.first).at(0) = joint.second.at(0);
+                    involvedJointsForPrimitives.at(iJoint)++;
+                }
+                iJoint++;
             }
             
-            for (auto joint : js ){ 
-                if ( jointStates.at(joint.first).at(0) == 0.0 ){
-                    jointStates.at(joint.first).at(0) = joint.second.at(0);
-                }       
-            }
         } else {
-            //TODO, or not?
+            // for each joint, add the value to the mean (element in mean given by involvedJointsForPrimitives)
+            JointStates js = primitive->getActionStates().at(as);
+
+            unsigned int iJoint = 0;            
+            for (auto joint : js ){ 
+                if ( joint.second.at(0) != 0.0 ){
+                    involvedJointsForPrimitives.at(iJoint)++;
+                    double mean = jointStates.at(joint.first).at(0) + 
+                        ( (joint.second.at(0) - jointStates.at(joint.first).at(0)) / 
+                            involvedJointsForPrimitives.at(iJoint) );
+                    jointStates.at(joint.first).at(0) = mean;
+                }
+                iJoint++;
+            }
         }
     }
     
@@ -105,6 +143,7 @@ bool ROSEE::ActionComposed::sumPrimitive ( std::shared_ptr <ROSEE::ActionPrimiti
     
     return true;
 }
+
 
 void ROSEE::ActionComposed::printAction() const {
     
