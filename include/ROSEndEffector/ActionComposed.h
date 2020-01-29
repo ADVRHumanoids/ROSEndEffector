@@ -72,7 +72,7 @@ public:
     std::set <std::string> getLinksInvolved() const ;
     ROSEE::JointStates getJointStates() const;
     std::vector < std::shared_ptr <ROSEE::ActionPrimitive> > getPrimitiveObjects() const;
-    std::vector <unsigned int> getInvolvedJointsForPrimitives () const;
+    std::vector <unsigned int> getInvolvedJointsCount () const;
     
     void printAction () const ; 
     void emitYaml ( YAML::Emitter&) const;

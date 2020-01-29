@@ -2,6 +2,8 @@ Name: grasp
 Independent: true
 nPrimitives: 5
 Primitives: [trig, trig, trig, trig, trig]
+LinksInvolved: [left_hand_c, left_hand_q, left_hand_r, left_hand_s, left_hand_t]
+InvolvedJointsCount: [0, 1, 1, 1, 1, 1, 1, 1, 0]
 JointStates:
   left_hand_Finger_Spread: [0]
   left_hand_Index_Finger_Distal: [1.334]

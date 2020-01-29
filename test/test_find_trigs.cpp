@@ -163,6 +163,7 @@ TEST_F ( testFindTrigs, checkEmitParse ) {
             EXPECT_EQ (trigCasted->getJointStatesSetMaxSize(), trigMap.at(k).at(key).getJointStatesSetMaxSize());
             EXPECT_EQ (trigCasted->getActionType(), trigMap.at(k).at(key).getActionType() );
             EXPECT_EQ (trigCasted->getLinksInvolved(), trigMap.at(k).at(key).getLinksInvolved());
+            EXPECT_EQ (trigCasted->getIfJointsInvolved(), trigMap.at(k).at(key).getIfJointsInvolved());
 
             for (auto jointStates: trigCasted->getActionStates() ) {
                 
@@ -300,14 +301,24 @@ TEST_F ( testFindTrigs, checkFlexsSingleJoint ) {
         
         for (auto &mapFlexEl: trigMap.at(k) ) {    
 
-            unsigned int nJSetted = 0;            
+            unsigned int nJSet = 0;  
+          
             for ( auto &flexJs : mapFlexEl.second.getActionState() ) { //iteration over the jointstates map
                 
                 if ( flexJs.second.at(0) != 0.0 ) {
-                    nJSetted++;
+                    nJSet++;
                 }                
             }
-            EXPECT_EQ (1, nJSetted);
+            EXPECT_EQ (1, nJSet);
+            
+            //test also the jointInvolvedBool vector
+            unsigned int nJBoolSet = 0;
+            for ( auto flexJs : mapFlexEl.second.getIfJointsInvolved() ) { //iteration over the jointstates map
+                
+                nJBoolSet += (unsigned int)flexJs;               
+            }
+            EXPECT_EQ (1, nJBoolSet);   
+            
         }
     }
 }

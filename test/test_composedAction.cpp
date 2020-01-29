@@ -30,15 +30,15 @@ protected:
         ros::init ( argc, (char**)argv, "testComposedAction" );
     
         ROSEE::FindActions actionsFinder ("robot_description");
-        
-        trigMap = actionsFinder.findTrig(ROSEE::ActionType::Trig, "/configs/actions/tests/") ;
-        
+
+        trigMap = actionsFinder.findTrig(ROSEE::ActionType::Trig, "/configs/actions/tests/") ;  
+
         for (auto trig : trigMap) {
             std::shared_ptr <ROSEE::ActionPrimitive> pointer = 
                 std::make_shared <ROSEE::ActionTrig> ( trig.second );
             grasp.sumPrimitive ( pointer );  
         }
-        
+
         
         ROSEE::YamlWorker yamlWorker(actionsFinder.getHandName(), "/configs/actions/tests/");
         yamlWorker.createYamlFile (&grasp);
@@ -73,8 +73,8 @@ TEST_F ( testComposedAction, checkEmitParse ) {
     EXPECT_EQ (grasp.getName(), graspParsed.getName() );
     EXPECT_EQ (grasp.getnPrimitives(), graspParsed.getnPrimitives() );
     EXPECT_EQ (grasp.getIndependent(), graspParsed.getIndependent() );
+    EXPECT_EQ (grasp.getLinksInvolved(), graspParsed.getLinksInvolved() );
     
-    unsigned int i = 0;
     for (auto joint: grasp.getJointStates() ) {
         
         //compare size of joint (number of dofs)
@@ -84,7 +84,15 @@ TEST_F ( testComposedAction, checkEmitParse ) {
             EXPECT_DOUBLE_EQ ( joint.second.at(j), graspParsed.getJointStates().at(joint.first).at(j) ); 
         }     
     }
-    
+}
+
+// if independent, at maximum only one primitive can influence each joint
+TEST_F ( testComposedAction, checkIndependence ) { 
+    if (grasp.getIndependent()) {
+        for (auto it : grasp.getInvolvedJointsCount() ) {
+            EXPECT_LE ( it, 1);
+        }
+    }
 }
 
 } //namespace

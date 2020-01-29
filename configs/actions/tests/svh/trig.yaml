@@ -1,4 +1,5 @@
 [left_hand_c]:
+  JointsInvolved: [false, false, false, false, false, false, false, true, false]
   ActionState_1:
     JointStates:
       left_hand_Finger_Spread: [0]
@@ -12,6 +13,7 @@
       left_hand_Thumb_Opposition: [0]
 
 [left_hand_q]:
+  JointsInvolved: [false, false, false, false, false, true, false, false, false]
   ActionState_1:
     JointStates:
       left_hand_Finger_Spread: [0]
@@ -25,6 +27,7 @@
       left_hand_Thumb_Opposition: [0]
 
 [left_hand_r]:
+  JointsInvolved: [false, false, false, false, false, false, true, false, false]
   ActionState_1:
     JointStates:
       left_hand_Finger_Spread: [0]
@@ -38,6 +41,7 @@
       left_hand_Thumb_Opposition: [0]
 
 [left_hand_s]:
+  JointsInvolved: [false, false, false, true, true, false, false, false, false]
   ActionState_1:
     JointStates:
       left_hand_Finger_Spread: [0]
@@ -51,6 +55,7 @@
       left_hand_Thumb_Opposition: [0]
 
 [left_hand_t]:
+  JointsInvolved: [false, true, true, false, false, false, false, false, false]
   ActionState_1:
     JointStates:
       left_hand_Finger_Spread: [0]

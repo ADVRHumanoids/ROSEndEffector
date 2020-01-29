@@ -74,7 +74,7 @@ std::vector < std::shared_ptr <ROSEE::ActionPrimitive> > ROSEE::ActionComposed::
 ROSEE::JointStates ROSEE::ActionComposed::getJointStates() const {
     return jointStates;
 }
-std::vector<unsigned int> ROSEE::ActionComposed::getInvolvedJointsForPrimitives() const {
+std::vector<unsigned int> ROSEE::ActionComposed::getInvolvedJointsCount() const {
     return involvedJointsCount;
 }
 
@@ -232,7 +232,7 @@ bool ROSEE::ActionComposed::fillFromYaml ( YAML::Node node ) {
             auto tempVect = keyValue->second.as <std::vector <std::string> > ();
             linksInvolved.insert ( tempVect.begin(), tempVect.end() );
             
-        } else if ( key.compare ("JointsInvolvedCount") == 0 ) {
+        } else if ( key.compare ("InvolvedJointsCount") == 0 ) {
             involvedJointsCount = keyValue->second.as < std::vector <unsigned int> >(); 
             
         } else if ( key.compare ("JointStates") == 0 ) {
