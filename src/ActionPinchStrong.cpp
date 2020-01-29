@@ -107,6 +107,7 @@ void ROSEE::ActionPinchStrong::printAction () const {
     std::stringstream output;
     
     output << tipsPair.first << ", " << tipsPair.second << std::endl ;
+    streamJointsInvolved ( output );
     
     unsigned int nActState = 1;
     for (auto itemSet : statesInfoSet) {  //the element in the set
@@ -167,6 +168,7 @@ void ROSEE::ActionPinchStrong::emitYaml ( YAML::Emitter& out ) {
     
     unsigned int nCont = 1;
     out << YAML::Value << YAML::BeginMap;
+    ActionPrimitive::emitYamlForJointsInvolved(out);
     for (const auto & actionState : statesInfoSet) { //.second is the set of ActionState
         
         std::string contSeq = "ActionState_" + std::to_string(nCont);
@@ -198,64 +200,70 @@ bool ROSEE::ActionPinchStrong::fillFromYaml ( YAML::const_iterator yamlIt ) {
     tipsPair = yamlIt->first.as<std::pair < std::string, std::string >> ();
 
     for ( YAML::const_iterator actionState = yamlIt->second.begin(); actionState != yamlIt->second.end(); ++actionState) {        
-        // actionState->first == ActionState_x
+        // actionState->first == ActionState_x OR JointsInvolved
+        
+        if (actionState->first.as<std::string>().compare("JointsInvolved") == 0) {
+            ActionPrimitive::fillYamlJointsInvolved(actionState);
+            
+        } else {
 
-        JointStates jointStates;
-        collision_detection::Contact contact;
-        for(YAML::const_iterator asEl = actionState->second.begin(); asEl != actionState->second.end(); ++asEl) {
+            JointStates jointStates;
+            collision_detection::Contact contact;
+            for(YAML::const_iterator asEl = actionState->second.begin(); asEl != actionState->second.end(); ++asEl) {
 
-            //asEl can be the map JointStates or the map Optional
-            if (asEl->first.as<std::string>().compare ("JointStates") == 0 ) {
-                jointStates = asEl->second.as < JointStates >(); 
-            } else if (asEl->first.as<std::string>().compare ("Optional") == 0 ) {
-                
-                YAML::Node cont =  asEl->second["MoveItContact"];
-                contact.body_name_1 = cont["body_name_1"].as < std::string >();
-                contact.body_name_2 = cont["body_name_2"].as < std::string >();
-                switch (cont["body_type_1"].as < int >())
-                {
-                case 0:
-                    contact.body_type_1 = collision_detection::BodyType::ROBOT_LINK;
-                    break;
-                case 1:
-                    contact.body_type_1 = collision_detection::BodyType::ROBOT_ATTACHED;
-                    break;
-                case 2:
-                    contact.body_type_1 = collision_detection::BodyType::WORLD_OBJECT;
-                    break;
-                default:
-                    std::cout << "some error, body_type_1" << cont["body_type_1"].as < int >()
-                        << "unknown" << std::endl;
-                    contact.body_type_1 = collision_detection::BodyType::WORLD_OBJECT;
+                //asEl can be the map JointStates or the map Optional
+                if (asEl->first.as<std::string>().compare ("JointStates") == 0 ) {
+                    jointStates = asEl->second.as < JointStates >(); 
+                } else if (asEl->first.as<std::string>().compare ("Optional") == 0 ) {
+                    
+                    YAML::Node cont =  asEl->second["MoveItContact"];
+                    contact.body_name_1 = cont["body_name_1"].as < std::string >();
+                    contact.body_name_2 = cont["body_name_2"].as < std::string >();
+                    switch (cont["body_type_1"].as < int >())
+                    {
+                    case 0:
+                        contact.body_type_1 = collision_detection::BodyType::ROBOT_LINK;
+                        break;
+                    case 1:
+                        contact.body_type_1 = collision_detection::BodyType::ROBOT_ATTACHED;
+                        break;
+                    case 2:
+                        contact.body_type_1 = collision_detection::BodyType::WORLD_OBJECT;
+                        break;
+                    default:
+                        std::cout << "some error, body_type_1" << cont["body_type_1"].as < int >()
+                            << "unknown" << std::endl;
+                        contact.body_type_1 = collision_detection::BodyType::WORLD_OBJECT;
+                    }
+                    switch (cont["body_type_2"].as < int >())
+                    {
+                    case 0:
+                        contact.body_type_2 = collision_detection::BodyType::ROBOT_LINK;
+                        break;
+                    case 1:
+                        contact.body_type_2 = collision_detection::BodyType::ROBOT_ATTACHED;
+                        break;
+                    case 2:
+                        contact.body_type_2 = collision_detection::BodyType::WORLD_OBJECT;
+                        break;
+                    default:
+                        std::cout << "some error, body_type_2" << cont["body_type_2"].as < int >()
+                            << "unknown" << std::endl;
+                        contact.body_type_2 = collision_detection::BodyType::WORLD_OBJECT;
+                    }
+                    contact.depth = cont["depth"].as<double>();
+                    std::vector < double > normVect = cont["normal"].as < std::vector <double> >();
+                    std::vector < double > posVect = cont["pos"].as < std::vector <double> >();
+                    contact.normal = Eigen::Vector3d (normVect.data() );
+                    contact.pos = Eigen::Vector3d (posVect.data() );
+                    
+                } else {
+                    //ERRROr, only joinstates and optional at this level
+                    return false;
                 }
-                switch (cont["body_type_2"].as < int >())
-                {
-                case 0:
-                    contact.body_type_2 = collision_detection::BodyType::ROBOT_LINK;
-                    break;
-                case 1:
-                    contact.body_type_2 = collision_detection::BodyType::ROBOT_ATTACHED;
-                    break;
-                case 2:
-                    contact.body_type_2 = collision_detection::BodyType::WORLD_OBJECT;
-                    break;
-                default:
-                    std::cout << "some error, body_type_2" << cont["body_type_2"].as < int >()
-                        << "unknown" << std::endl;
-                    contact.body_type_2 = collision_detection::BodyType::WORLD_OBJECT;
-                }
-                contact.depth = cont["depth"].as<double>();
-                std::vector < double > normVect = cont["normal"].as < std::vector <double> >();
-                std::vector < double > posVect = cont["pos"].as < std::vector <double> >();
-                contact.normal = Eigen::Vector3d (normVect.data() );
-                contact.pos = Eigen::Vector3d (posVect.data() );
-                
-            } else {
-                //ERRROr, only joinstates and optional at this level
-                return false;
-            }
-        }  
-        statesInfoSet.insert ( std::make_pair (jointStates, contact));
+            }  
+            statesInfoSet.insert ( std::make_pair (jointStates, contact));
+        }
     }
     
     return true;

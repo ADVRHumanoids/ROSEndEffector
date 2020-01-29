@@ -107,6 +107,8 @@ void ROSEE::ActionPinchWeak::printAction () const {
     std::stringstream output;
     
     output << tipsPair.first << ", " << tipsPair.second << std::endl ;
+    streamJointsInvolved ( output );
+
     
     unsigned int nActState = 1;
     for (auto itemSet : statesInfoSet) {  //the element in the set
@@ -142,6 +144,7 @@ void ROSEE::ActionPinchWeak::emitYaml ( YAML::Emitter& out ) {
     
     unsigned int nCont = 1;
     out << YAML::Value << YAML::BeginMap;
+    ActionPrimitive::emitYamlForJointsInvolved(out);
     for (const auto & actionState : statesInfoSet) { //.second is the set of ActionState
         
         std::string contSeq = "ActionState_" + std::to_string(nCont);
@@ -173,25 +176,31 @@ bool ROSEE::ActionPinchWeak::fillFromYaml ( YAML::const_iterator yamlIt ) {
     tipsPair = yamlIt->first.as<std::pair < std::string, std::string >> ();
 
     for ( YAML::const_iterator actionState = yamlIt->second.begin(); actionState != yamlIt->second.end(); ++actionState) {        
-        // actionState->first is the key ActionState_x
+        // actionState->first is the key ActionState_x OR JointsInvolved
+        
+        if (actionState->first.as<std::string>().compare("JointsInvolved") == 0) {
+            ActionPrimitive::fillYamlJointsInvolved(actionState);
+            
+        } else {
 
-        JointStates jointStates;
-        double distance;
-        for(YAML::const_iterator asEl = actionState->second.begin(); asEl != actionState->second.end(); ++asEl) {
+            JointStates jointStates;
+            double distance;
+            for(YAML::const_iterator asEl = actionState->second.begin(); asEl != actionState->second.end(); ++asEl) {
 
-            //asEl can be the map JointStates or the map Optional
-            if (asEl->first.as<std::string>().compare ("JointStates") == 0 ) {
-                jointStates = asEl->second.as < JointStates >(); 
-                
-            } else if (asEl->first.as<std::string>().compare ("Optional") == 0 ) {
-                distance = asEl->second["distance"].as < double >();
-                
-            } else {
-                //ERRROr, only joinstates and optional at this level
-                return false;
-            }
-        }  
-        statesInfoSet.insert ( std::make_pair (jointStates, distance));
+                //asEl can be the map JointStates or the map Optional
+                if (asEl->first.as<std::string>().compare ("JointStates") == 0 ) {
+                    jointStates = asEl->second.as < JointStates >(); 
+                    
+                } else if (asEl->first.as<std::string>().compare ("Optional") == 0 ) {
+                    distance = asEl->second["distance"].as < double >();
+                    
+                } else {
+                    //ERRROr, only joinstates and optional at this level
+                    return false;
+                }
+            }  
+            statesInfoSet.insert ( std::make_pair (jointStates, distance));
+        }
     }
     
     return true;

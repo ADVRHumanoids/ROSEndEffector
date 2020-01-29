@@ -78,6 +78,8 @@ protected:
     
     const ActionType actionType;
     
+    std::vector < bool > jointsInvolved ;
+    
 public:
     
     /* destructor of base must be virtual */
@@ -88,17 +90,24 @@ public:
     ROSEE::ActionType getActionType() const;
     unsigned int getJointStatesSetMaxSize() const;
     unsigned int getnLinksInvolved() const;
+    std::vector < bool > getJointsInvolved() const;
     virtual std::set < std::string > getLinksInvolved() const = 0;
     virtual std::vector < ROSEE::JointStates > getActionStates() const = 0;
     
-    /* virtual setters */
+    /* virtual and not setters */
+    void setJointsInvolved ( std::vector < bool > );
     virtual bool setLinksInvolved (std::set < std::string >) = 0;
     virtual bool setActionStates (std::vector < ROSEE::JointStates > ) = 0;
     
     /* overridable functions, if we want to make them more action-specific*/
     virtual void printAction () const ;
+    std::stringstream streamJointsInvolved ( std::stringstream & output) const;
+
     virtual void emitYaml ( YAML::Emitter& ) ;
+    void emitYamlForJointsInvolved ( YAML::Emitter& );
     virtual bool fillFromYaml( YAML::const_iterator yamlIt );
+    void fillYamlJointsInvolved ( YAML::const_iterator yamlIt );
+
     
 };
 }

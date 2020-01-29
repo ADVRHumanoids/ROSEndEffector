@@ -27,12 +27,17 @@ int main ( int argc, char **argv ) {
     
     ROSEE::FindActions actionsFinder ("robot_description");
     
-    actionsFinder.findPinch();
+    auto maps = actionsFinder.findPinch();
+    
+    //DEBUGGGG
+
+    ///
 
     std::map <std::string, ROSEE::ActionTrig> trigMap =  actionsFinder.findTrig (ROSEE::ActionType::Trig) ;
     std::map <std::string, ROSEE::ActionTrig> tipFlexMap = actionsFinder.findTrig (ROSEE::ActionType::TipFlex);
     std::map <std::string, ROSEE::ActionTrig> fingFlexMap = actionsFinder.findTrig (ROSEE::ActionType::FingFlex);
-   
+    
+
     /** ********************* PARSING TEST and print... these things should not be here ****************/
 
     //TODO getHandName should be in the parser
@@ -105,7 +110,7 @@ int main ( int argc, char **argv ) {
         grasp2.sumPrimitive ( (trig.second) );  
     }
     
-    grasp2.sumPrimitive ( (pinchParsedMap.begin()->second)) );
+    grasp2.sumPrimitive ( (pinchParsedMap.begin()->second) ) ;
     grasp2.sumPrimitive ( ((++pinchParsedMap.begin())->second)) ;
 
     grasp2.printAction();

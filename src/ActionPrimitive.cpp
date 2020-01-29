@@ -40,14 +40,26 @@ unsigned int ROSEE::ActionPrimitive::getnLinksInvolved() const {
     return nLinksInvolved;
 }
 
+std::vector<bool> ROSEE::ActionPrimitive::getJointsInvolved() const {
+    return jointsInvolved;
+}
+
+void ROSEE::ActionPrimitive::setJointsInvolved(std::vector<bool> jointsInvolved ) {
+    this->jointsInvolved = jointsInvolved;
+}
+
+
+
 void ROSEE::ActionPrimitive::printAction () const {
 
     std::stringstream output;
     for (auto names : getLinksInvolved()){
         output << names << ", " ;
     }
-
+    output.seekp (-2, output.cur); //to remove the last comma (and space)
     output << std::endl;
+    
+    streamJointsInvolved ( output );
 
     unsigned int nActState = 1;
     for (auto item : getActionStates()) {  //the element in the vector
@@ -62,6 +74,18 @@ void ROSEE::ActionPrimitive::printAction () const {
     std::cout << output.str();
 }
 
+std::stringstream ROSEE::ActionPrimitive::streamJointsInvolved ( std::stringstream & output) const {
+    std::stringstream outputTemp;
+    outputTemp << "\tJointsInvolved: [" ;
+    for (auto it : jointsInvolved) {
+        outputTemp << it << ", "; 
+    }
+    outputTemp.seekp (-2, output.cur); //to remove the last comma (and space)
+    outputTemp << "]" << std::endl;
+    output << outputTemp.str();
+    return outputTemp;
+}
+
 void ROSEE::ActionPrimitive::emitYaml ( YAML::Emitter& out )
 {
 
@@ -70,6 +94,7 @@ void ROSEE::ActionPrimitive::emitYaml ( YAML::Emitter& out )
 
     unsigned int nCont = 1;
     out << YAML::Value << YAML::BeginMap;
+    emitYamlForJointsInvolved ( out);
     for (const auto & actionState : getActionStates()) {
 
         std::string contSeq = "ActionState_" + std::to_string(nCont);
@@ -88,8 +113,15 @@ void ROSEE::ActionPrimitive::emitYaml ( YAML::Emitter& out )
         nCont++;
     }
     out << YAML::EndMap;
-
 }
+
+void ROSEE::ActionPrimitive::emitYamlForJointsInvolved ( YAML::Emitter& out) {
+    
+    out << YAML::Key << "JointsInvolved" 
+        << YAML::Value << YAML::Flow << jointsInvolved ;
+    
+}
+
 
 bool ROSEE::ActionPrimitive::fillFromYaml ( YAML::const_iterator yamlIt ) {
 
@@ -102,27 +134,40 @@ bool ROSEE::ActionPrimitive::fillFromYaml ( YAML::const_iterator yamlIt ) {
 
     std::vector < ROSEE::JointStates > jointStateVect;
     for ( YAML::const_iterator actionState = yamlIt->second.begin(); actionState != yamlIt->second.end(); ++actionState) {
+                
+        if (actionState->first.as<std::string>().compare("JointsInvolved") == 0) {
+            fillYamlJointsInvolved(actionState);
+            
+        } else {
 
-        JointStates jointStates;
-        for(YAML::const_iterator asEl = actionState->second.begin(); asEl != actionState->second.end(); ++asEl) {
-            //asEl can be the map JointStates or the map Optional
+            JointStates jointStates;
+            for(YAML::const_iterator asEl = actionState->second.begin(); asEl != actionState->second.end(); ++asEl) {
+                //asEl can be the map JointStates or the map Optional
 
-            if (asEl->first.as<std::string>().compare ("JointStates") == 0 ) {
-                jointStates = asEl->second.as < JointStates >();
-            } else if (asEl->first.as<std::string>().compare ("Optional") == 0 ) {
+                if (asEl->first.as<std::string>().compare ("JointStates") == 0 ) {
+                    jointStates = asEl->second.as < JointStates >();
+                } else if (asEl->first.as<std::string>().compare ("Optional") == 0 ) {
 
-                //an optional is present, override for your class!
+                    //an optional is present, override for your class!
 
-            } else {
-                //ERRROr
-                return false;
+                } else {
+                    //ERRROr
+                    return false;
+                }
             }
+            jointStateVect.push_back ( jointStates) ;
         }
-        jointStateVect.push_back ( jointStates) ;
     }
 
     setActionStates(jointStateVect);
     return true;
+}
 
+void ROSEE::ActionPrimitive::fillYamlJointsInvolved ( YAML::const_iterator yamlIt ) {
+    
+    if (yamlIt->first.as<std::string>().compare("JointsInvolved") == 0) {
+        jointsInvolved = yamlIt->second.as<std::vector <bool> > ();
+    } 
+    
 }
 

@@ -97,8 +97,10 @@ private:
     /**
      * @brief Given the contact, we want to know the state of the joint to replicate it. But we want to know
      * only the state of the joints that effectively act on the contact, that are the ones which moves one of the two tips (or both). So the other joints are put to the DEFAULT_JOINT_POS value
+     * @return a vector of bool, where each element is relative at one joint (joint order is assured being
+     * JointStates a map). True means that the joint is used in the action, otherwise there is false
      */
-    void setOnlyDependentJoints(std::pair < std::string, std::string > tipsNames, JointStates *Jstates);
+    std::vector<bool> setOnlyDependentJoints(std::pair < std::string, std::string > tipsNames, JointStates *Jstates);
     
     //trig etc
     std::map <std::string, ActionTrig> trig();

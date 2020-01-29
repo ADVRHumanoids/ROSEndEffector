@@ -111,6 +111,23 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::findTrig ( ROSEE::
     }
     }
     
+    //for involvedJoints. Ok here because I know that for the trigs, a non setted joint is 
+    //a joint which is in a default position
+    for (auto & mapEl : trigMap) {
+        unsigned int iJoint = 0;
+        std::vector <bool> jointsInvolved;
+        for ( auto joint : mapEl.second.getActionState() ) {
+            jointsInvolved.push_back(false);
+            for (auto dof : joint.second) {
+                if (dof != DEFAULT_JOINT_POS){
+                    jointsInvolved.at(iJoint) = true;
+                    break;
+                }
+            }            
+            iJoint++;
+        }
+        mapEl.second.setJointsInvolved (jointsInvolved);
+    }
 
     std::map < std::set <std::string> , ActionPrimitive* > mapForWorker;
 
@@ -280,11 +297,11 @@ std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong > ROS
         
         if (collision_result.collision) { 
 
-            //store joint states
-            JointStates jointStates = getConvertedJointStates(&kinematic_state);
-
             //for each collision with this joints state...
             for (auto cont : collision_result.contacts){
+                
+                //store joint states
+                JointStates jointStates = getConvertedJointStates(&kinematic_state);
 
                 //moveit contacts is a map between a pair (2 strings with link names) and a vector of Contact object ?? I don't know why the contact is a vector, I have always find only one element            
                 logCollision << "Collision between " << cont.first.first << " and " << 
@@ -293,11 +310,12 @@ std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong > ROS
                 for (auto contInfo : cont.second){ 
                     logCollision << "\tWith a depth of contact: " << contInfo.depth;
                 }
-                
-                setOnlyDependentJoints(cont.first, &jointStates);
+
+                std::vector<bool> jointsInvolved = setOnlyDependentJoints(cont.first, &jointStates);
                 
                 //create the actionPinch
                 ActionPinchStrong pinch (cont.first, jointStates, cont.second.at(0) );
+                pinch.setJointsInvolved(jointsInvolved);
                 auto itFind = mapOfPinches.find ( cont.first );
                 if ( itFind == mapOfPinches.end() ) {
                     //if here, we have to create store the new created action
@@ -310,10 +328,9 @@ std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong > ROS
                     }
                 }
                 logCollision << std::endl;
+                logCollision << jointStates;
             }
-            
-            logCollision << jointStates;                  
-            //std::cout << logCollision.str() << std::endl;
+           // std::cout << logCollision.str() << std::endl;
         }            
     }
     
@@ -335,13 +352,14 @@ void ROSEE::FindActions::checkDistances (std::map < std::pair <std::string, std:
                             // restore all joint pos
             JointStates jointStatesWeak = getConvertedJointStates(&kinematic_state);
             
-            setOnlyDependentJoints(mapEl.first, &jointStatesWeak);
+            std::vector<bool> jointsInvolved = setOnlyDependentJoints(mapEl.first, &jointStatesWeak);
             
             Eigen::Affine3d tip1Trasf = kinematic_state.getGlobalLinkTransform(mapEl.first.first);
             Eigen::Affine3d tip2Trasf = kinematic_state.getGlobalLinkTransform(mapEl.first.second);
             double distance = (tip1Trasf.translation() - tip2Trasf.translation() ) .norm() ;
                                 
             mapEl.second.insertActionState( jointStatesWeak, distance ) ;
+            mapEl.second.setJointsInvolved(jointsInvolved);
         }
             
     }
@@ -349,11 +367,14 @@ void ROSEE::FindActions::checkDistances (std::map < std::pair <std::string, std:
 }
 
 
-void ROSEE::FindActions::setOnlyDependentJoints(
+std::vector<bool> ROSEE::FindActions::setOnlyDependentJoints(
     std::pair < std::string, std::string > tipsNames, JointStates *jStates) {
     
+    std::vector<bool> jointsInvolved (jStates->size(), true); 
+    
+    unsigned int iJoint = 0;
     for (auto &js : *jStates) { //for each among ALL joints
-        
+         
         /** other way around, second is better?
         std::vector <std::string> jointOfTips1 = jointsOfFingertipMap.at(tipsNames.first);
         std::vector <std::string> jointOfTips2 = jointsOfFingertipMap.at(tipsNames.second);
@@ -362,7 +383,9 @@ void ROSEE::FindActions::setOnlyDependentJoints(
         if ( std::find( jointOfTips1.begin(), jointOfTips1.end(), js.first) == jointOfTips1.end() &&
              std::find( jointOfTips2.begin(), jointOfTips2.end(), js.first) == jointOfTips2.end() ) {
               
-            std::fill ( js.second.begin(), js.second.end(), DEFAULT_JOINT_POS);                     
+            std::fill ( js.second.begin(), js.second.end(), DEFAULT_JOINT_POS);   
+        
+            IF USE THIS JOINTINVOLVED REMEMBER
         }
         */
         
@@ -371,10 +394,15 @@ void ROSEE::FindActions::setOnlyDependentJoints(
         //check if the two tips that collide are among the ones that the joint moves
         if (std::find (tips.begin(), tips.end(), tipsNames.first) == tips.end() &&
             std::find (tips.begin(), tips.end(), tipsNames.second) == tips.end() ) {
-            // not dependant, set to zero the position
+            // not dependant, set to default the position
             std::fill ( js.second.begin(), js.second.end(), DEFAULT_JOINT_POS); 
+            jointsInvolved.at(iJoint) = false;
         }
+        
+        iJoint ++;
     } 
+    
+    return jointsInvolved;
     
 }
 

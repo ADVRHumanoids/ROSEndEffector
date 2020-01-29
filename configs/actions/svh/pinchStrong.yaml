@@ -1,434 +1,441 @@
 [left_hand_c, left_hand_q]:
+  JointsInvolved: [true, false, false, false, false, true, false, true, true]
   ActionState_1:
     JointStates:
-      left_hand_Finger_Spread: [0.1113492890115827]
+      left_hand_Finger_Spread: [0.03321658087985124]
       left_hand_Index_Finger_Distal: [0]
       left_hand_Index_Finger_Proximal: [0]
       left_hand_Middle_Finger_Distal: [0]
       left_hand_Middle_Finger_Proximal: [0]
-      left_hand_Pinky: [0.5865552176543861]
+      left_hand_Pinky: [0.952963613847911]
       left_hand_Ring_Finger: [0]
-      left_hand_Thumb_Flexion: [0.6867907511571423]
-      left_hand_Thumb_Opposition: [0.9273616910785669]
+      left_hand_Thumb_Flexion: [0.6779528791692108]
+      left_hand_Thumb_Opposition: [0.9568780398810748]
     Optional:
       MoveItContact:
-        body_name_1: left_hand_c
-        body_name_2: left_hand_q
+        body_name_1: left_hand_q
+        body_name_2: left_hand_c
         body_type_1: 0
         body_type_2: 0
-        depth: 0.002372090623614129
-        normal: [-0.225137060983442, 0.3649413809883137, -0.9033997410969744]
-        pos: [0.01291746892848937, 0.04917315826612375, 0.1231084926353582]
+        depth: 0.002411831818008522
+        normal: [0.4036231411959737, 0.06235763006385864, 0.9127978340596097]
+        pos: [0.01128250337859687, 0.04301468908753082, 0.1100001299998448]
   ActionState_2:
     JointStates:
-      left_hand_Finger_Spread: [0.1669923827119404]
+      left_hand_Finger_Spread: [0.1029772111651255]
       left_hand_Index_Finger_Distal: [0]
       left_hand_Index_Finger_Proximal: [0]
       left_hand_Middle_Finger_Distal: [0]
       left_hand_Middle_Finger_Proximal: [0]
-      left_hand_Pinky: [0.6723252109918977]
+      left_hand_Pinky: [0.6299129131754162]
       left_hand_Ring_Finger: [0]
-      left_hand_Thumb_Flexion: [0.5540557849908248]
-      left_hand_Thumb_Opposition: [0.9396320993910078]
+      left_hand_Thumb_Flexion: [0.6776956818977371]
+      left_hand_Thumb_Opposition: [0.8628924673038768]
     Optional:
       MoveItContact:
         body_name_1: left_hand_q
         body_name_2: left_hand_c
         body_type_1: 0
         body_type_2: 0
-        depth: 0.002283320636937573
-        normal: [0.496387579747083, 0.8280707827702156, 0.2605727334069244]
-        pos: [0.01015484454826171, 0.04685017512592253, 0.1187378679832177]
+        depth: 0.002248626897184965
+        normal: [0.2029394939507656, -0.3570407914969291, 0.9117770752778631]
+        pos: [0.01026779885278866, 0.04737751456197748, 0.1224581029655851]
   ActionState_3:
     JointStates:
-      left_hand_Finger_Spread: [0.2413367110248422]
+      left_hand_Finger_Spread: [0.07234145468340721]
       left_hand_Index_Finger_Distal: [0]
       left_hand_Index_Finger_Proximal: [0]
       left_hand_Middle_Finger_Distal: [0]
       left_hand_Middle_Finger_Proximal: [0]
-      left_hand_Pinky: [0.5845160113734892]
+      left_hand_Pinky: [0.7901922435534653]
       left_hand_Ring_Finger: [0]
-      left_hand_Thumb_Flexion: [0.6394281647035852]
-      left_hand_Thumb_Opposition: [0.9796273953555151]
+      left_hand_Thumb_Flexion: [0.8014863450923935]
+      left_hand_Thumb_Opposition: [0.9871489996019053]
     Optional:
       MoveItContact:
         body_name_1: left_hand_q
         body_name_2: left_hand_c
         body_type_1: 0
         body_type_2: 0
-        depth: 0.001980963408313535
-        normal: [0.8514414766792685, 0.2177378946537722, -0.4771138449279899]
-        pos: [0.01014992392975285, 0.05088069294949033, 0.1210466063743513]
+        depth: 0.002086450780691631
+        normal: [-0.3388520286293858, -0.6998514089061316, -0.6287983048210708]
+        pos: [0.005849780865593518, 0.03369535330817383, 0.11221545122768]
 
 [left_hand_c, left_hand_r]:
+  JointsInvolved: [true, false, false, false, false, false, true, true, true]
   ActionState_1:
     JointStates:
-      left_hand_Finger_Spread: [0.3889689434041036]
+      left_hand_Finger_Spread: [0.1126576184987789]
       left_hand_Index_Finger_Distal: [0]
       left_hand_Index_Finger_Proximal: [0]
       left_hand_Middle_Finger_Distal: [0]
       left_hand_Middle_Finger_Proximal: [0]
       left_hand_Pinky: [0]
-      left_hand_Ring_Finger: [0.7428775986426627]
-      left_hand_Thumb_Flexion: [0.6680556831367314]
-      left_hand_Thumb_Opposition: [0.5140762880325085]
+      left_hand_Ring_Finger: [0.7559306137897074]
+      left_hand_Thumb_Flexion: [0.689626614356041]
+      left_hand_Thumb_Opposition: [0.7620836486332119]
     Optional:
       MoveItContact:
         body_name_1: left_hand_c
         body_name_2: left_hand_r
         body_type_1: 0
         body_type_2: 0
-        depth: 0.00338006954806994
-        normal: [-0.01525146296171048, 0.3751196827350589, -0.9268509138487573]
-        pos: [0.01389532086511, 0.04998912015062385, 0.1231302749146653]
+        depth: 0.003615164244723033
+        normal: [-0.6844859585864707, 0.7058637411184419, -0.182305653977701]
+        pos: [0.02553722916011056, 0.04594865342267019, 0.1209062094565413]
   ActionState_2:
     JointStates:
-      left_hand_Finger_Spread: [0.07583320237293373]
+      left_hand_Finger_Spread: [0.5765656693473458]
       left_hand_Index_Finger_Distal: [0]
       left_hand_Index_Finger_Proximal: [0]
       left_hand_Middle_Finger_Distal: [0]
       left_hand_Middle_Finger_Proximal: [0]
       left_hand_Pinky: [0]
-      left_hand_Ring_Finger: [0.7760787156948354]
-      left_hand_Thumb_Flexion: [0.5766579219380394]
-      left_hand_Thumb_Opposition: [0.4830658548047533]
+      left_hand_Ring_Finger: [0.7798598566646687]
+      left_hand_Thumb_Flexion: [0.6851853491637856]
+      left_hand_Thumb_Opposition: [0.8310579807344125]
     Optional:
       MoveItContact:
         body_name_1: left_hand_c
         body_name_2: left_hand_r
         body_type_1: 0
         body_type_2: 0
-        depth: 0.003087968287168152
-        normal: [-0.9180938956769102, -0.3509141864033174, -0.1842900770570479]
-        pos: [0.01047173971244077, 0.05235275294762629, 0.1188689401178434]
+        depth: 0.003403531237295971
+        normal: [0.71492643634037, -0.3034522761427578, -0.6299181746270208]
+        pos: [0.02257167255706628, 0.04139627929296064, 0.1215971649731516]
   ActionState_3:
     JointStates:
-      left_hand_Finger_Spread: [0.1424522928695893]
+      left_hand_Finger_Spread: [0.2806798004996963]
       left_hand_Index_Finger_Distal: [0]
       left_hand_Index_Finger_Proximal: [0]
       left_hand_Middle_Finger_Distal: [0]
       left_hand_Middle_Finger_Proximal: [0]
       left_hand_Pinky: [0]
-      left_hand_Ring_Finger: [0.7707740793600096]
-      left_hand_Thumb_Flexion: [0.6294117448033765]
-      left_hand_Thumb_Opposition: [0.487964451642707]
+      left_hand_Ring_Finger: [0.7267423829881009]
+      left_hand_Thumb_Flexion: [0.5581329250883311]
+      left_hand_Thumb_Opposition: [0.6472288523549913]
     Optional:
       MoveItContact:
         body_name_1: left_hand_r
         body_name_2: left_hand_c
         body_type_1: 0
         body_type_2: 0
-        depth: 0.003005551949647592
-        normal: [-0.2495745028299462, -0.7643629527025071, 0.5945265713768313]
-        pos: [0.01443308093951056, 0.04889308277756929, 0.1188967111676902]
+        depth: 0.003105900882621707
+        normal: [0.8535684052341215, -0.2641612032272304, 0.4490432454626402]
+        pos: [0.01678366494817576, 0.05284468144773547, 0.1159414405119966]
 
 [left_hand_c, left_hand_s]:
+  JointsInvolved: [false, false, false, true, true, false, false, true, true]
   ActionState_1:
     JointStates:
       left_hand_Finger_Spread: [0]
       left_hand_Index_Finger_Distal: [0]
       left_hand_Index_Finger_Proximal: [0]
-      left_hand_Middle_Finger_Distal: [1.297564099806827]
-      left_hand_Middle_Finger_Proximal: [0.690783448503355]
+      left_hand_Middle_Finger_Distal: [1.328272292433772]
+      left_hand_Middle_Finger_Proximal: [0.5870347648795554]
       left_hand_Pinky: [0]
       left_hand_Ring_Finger: [0]
-      left_hand_Thumb_Flexion: [0.644606063320674]
-      left_hand_Thumb_Opposition: [0.165414460628503]
+      left_hand_Thumb_Flexion: [0.6516024669753387]
+      left_hand_Thumb_Opposition: [0.2517921852076426]
     Optional:
       MoveItContact:
         body_name_1: left_hand_c
         body_name_2: left_hand_s
         body_type_1: 0
         body_type_2: 0
-        depth: 0.002988468019760703
-        normal: [0.2745908515838633, 0.2637342413763404, 0.9246859543391447]
-        pos: [0.008262936156231313, 0.04602123642578072, 0.1240477466899587]
+        depth: 0.003576362365028354
+        normal: [0.2428262055647913, 0.3108621823831155, 0.9189124754050365]
+        pos: [0.005545586935977294, 0.04640467962154843, 0.1232246365898408]
   ActionState_2:
     JointStates:
       left_hand_Finger_Spread: [0]
       left_hand_Index_Finger_Distal: [0]
       left_hand_Index_Finger_Proximal: [0]
-      left_hand_Middle_Finger_Distal: [0]
-      left_hand_Middle_Finger_Proximal: [0]
+      left_hand_Middle_Finger_Distal: [1.290878463617526]
+      left_hand_Middle_Finger_Proximal: [0.7068835872471821]
       left_hand_Pinky: [0]
       left_hand_Ring_Finger: [0]
-      left_hand_Thumb_Flexion: [0.6765350423511118]
-      left_hand_Thumb_Opposition: [0.2989633842595853]
-    Optional:
-      MoveItContact:
-        body_name_1: left_hand_c
-        body_name_2: left_hand_s
-        body_type_1: 0
-        body_type_2: 0
-        depth: 0.002455555052512048
-        normal: [-0.5862257210487692, 0.02967968909462379, 0.8096039278783773]
-        pos: [-0.002419382894105239, 0.04129233199018235, 0.1248852333343341]
-  ActionState_3:
-    JointStates:
-      left_hand_Finger_Spread: [0]
-      left_hand_Index_Finger_Distal: [0]
-      left_hand_Index_Finger_Proximal: [0]
-      left_hand_Middle_Finger_Distal: [0]
-      left_hand_Middle_Finger_Proximal: [0]
-      left_hand_Pinky: [0]
-      left_hand_Ring_Finger: [0]
-      left_hand_Thumb_Flexion: [0.7212897394936532]
-      left_hand_Thumb_Opposition: [0.2202387543030549]
-    Optional:
-      MoveItContact:
-        body_name_1: left_hand_c
-        body_name_2: left_hand_s
-        body_type_1: 0
-        body_type_2: 0
-        depth: 0.002373085640706089
-        normal: [-0.9668382332412919, -0.08434888820766118, 0.2410582829960179]
-        pos: [0.00504958082576787, 0.04598253346467565, 0.1246353756905654]
-
-[left_hand_c, left_hand_t]:
-  ActionState_1:
-    JointStates:
-      left_hand_Finger_Spread: [0.2663653583883075]
-      left_hand_Index_Finger_Distal: [1.170177841078956]
-      left_hand_Index_Finger_Proximal: [0.7878975142753217]
-      left_hand_Middle_Finger_Distal: [0]
-      left_hand_Middle_Finger_Proximal: [0]
-      left_hand_Pinky: [0]
-      left_hand_Ring_Finger: [0]
-      left_hand_Thumb_Flexion: [0.6221451797315851]
-      left_hand_Thumb_Opposition: [0.4111912658918649]
-    Optional:
-      MoveItContact:
-        body_name_1: left_hand_c
-        body_name_2: left_hand_t
-        body_type_1: 0
-        body_type_2: 0
-        depth: 0.00308378878991684
-        normal: [-0.8415337565677746, -0.3821815116109947, 0.3817829602531583]
-        pos: [0.02843264177382667, 0.04707222478807076, 0.1157151548350465]
-  ActionState_2:
-    JointStates:
-      left_hand_Finger_Spread: [0.4058272121071117]
-      left_hand_Index_Finger_Distal: [1.271017503282521]
-      left_hand_Index_Finger_Proximal: [0.7702687338921056]
-      left_hand_Middle_Finger_Distal: [0]
-      left_hand_Middle_Finger_Proximal: [0]
-      left_hand_Pinky: [0]
-      left_hand_Ring_Finger: [0]
-      left_hand_Thumb_Flexion: [0.6674807826198638]
-      left_hand_Thumb_Opposition: [0.9791689303607214]
-    Optional:
-      MoveItContact:
-        body_name_1: left_hand_c
-        body_name_2: left_hand_t
-        body_type_1: 0
-        body_type_2: 0
-        depth: 0.003055500885862268
-        normal: [0.6804840810440692, -0.7319551957038227, 0.03439486775358687]
-        pos: [0.02466280557070468, 0.04418684836214195, 0.119748801557223]
-  ActionState_3:
-    JointStates:
-      left_hand_Finger_Spread: [0.002403740608342923]
-      left_hand_Index_Finger_Distal: [0.8212474431116135]
-      left_hand_Index_Finger_Proximal: [0.778955581485387]
-      left_hand_Middle_Finger_Distal: [0]
-      left_hand_Middle_Finger_Proximal: [0]
-      left_hand_Pinky: [0]
-      left_hand_Ring_Finger: [0]
-      left_hand_Thumb_Flexion: [0.4651224997695536]
-      left_hand_Thumb_Opposition: [0.3879772122896975]
-    Optional:
-      MoveItContact:
-        body_name_1: left_hand_c
-        body_name_2: left_hand_t
-        body_type_1: 0
-        body_type_2: 0
-        depth: 0.003041333669727975
-        normal: [-0.009774093951375906, -0.7808798066459919, 0.6246048308010013]
-        pos: [0.02977023842092227, 0.04822150752022428, 0.1305164791530834]
-
-[left_hand_q, left_hand_s]:
-  ActionState_1:
-    JointStates:
-      left_hand_Finger_Spread: [0.5034308028715895]
-      left_hand_Index_Finger_Distal: [0]
-      left_hand_Index_Finger_Proximal: [0]
-      left_hand_Middle_Finger_Distal: [1.074624165705871]
-      left_hand_Middle_Finger_Proximal: [0.6015185259490414]
-      left_hand_Pinky: [0.4861392995511414]
-      left_hand_Ring_Finger: [0]
-      left_hand_Thumb_Flexion: [0]
-      left_hand_Thumb_Opposition: [0.9650409083560109]
-    Optional:
-      MoveItContact:
-        body_name_1: left_hand_q
-        body_name_2: left_hand_s
-        body_type_1: 0
-        body_type_2: 0
-        depth: 0.002240682109275968
-        normal: [0.866031483964714, -0.4712605350641423, -0.1670418416832566]
-        pos: [-0.006091449359025674, 0.05111333290834127, 0.139203581969047]
-  ActionState_2:
-    JointStates:
-      left_hand_Finger_Spread: [0.3508312133134575]
-      left_hand_Index_Finger_Distal: [0]
-      left_hand_Index_Finger_Proximal: [0]
-      left_hand_Middle_Finger_Distal: [1.082110807129648]
-      left_hand_Middle_Finger_Proximal: [0.6907424915107038]
-      left_hand_Pinky: [0.7289951515783906]
-      left_hand_Ring_Finger: [0]
-      left_hand_Thumb_Flexion: [0]
-      left_hand_Thumb_Opposition: [0.8058521273067919]
-    Optional:
-      MoveItContact:
-        body_name_1: left_hand_q
-        body_name_2: left_hand_s
-        body_type_1: 0
-        body_type_2: 0
-        depth: 0.002042565046604171
-        normal: [0.5745143068758404, -0.2612150832085589, 0.7756932328564679]
-        pos: [-0.003971728519856383, 0.05440444040521926, 0.1242843114881486]
-  ActionState_3:
-    JointStates:
-      left_hand_Finger_Spread: [0.08859524632645771]
-      left_hand_Index_Finger_Distal: [0]
-      left_hand_Index_Finger_Proximal: [0]
-      left_hand_Middle_Finger_Distal: [0]
-      left_hand_Middle_Finger_Proximal: [0]
-      left_hand_Pinky: [0.6448790209410363]
-      left_hand_Ring_Finger: [0]
-      left_hand_Thumb_Flexion: [0]
-      left_hand_Thumb_Opposition: [0.857335996280238]
-    Optional:
-      MoveItContact:
-        body_name_1: left_hand_q
-        body_name_2: left_hand_s
-        body_type_1: 0
-        body_type_2: 0
-        depth: 0.001973998319735951
-        normal: [0.7539394880207229, 0.1947556607725308, 0.6274117316404799]
-        pos: [0.001999985152966668, 0.04498629892350327, 0.1306854945507911]
-
-[left_hand_r, left_hand_s]:
-  ActionState_1:
-    JointStates:
-      left_hand_Finger_Spread: [0.1657608135284157]
-      left_hand_Index_Finger_Distal: [0]
-      left_hand_Index_Finger_Proximal: [0]
-      left_hand_Middle_Finger_Distal: [0.8115425465465523]
-      left_hand_Middle_Finger_Proximal: [0.6173261293793633]
-      left_hand_Pinky: [0]
-      left_hand_Ring_Finger: [0.6197475496343686]
-      left_hand_Thumb_Flexion: [0]
-      left_hand_Thumb_Opposition: [0.3779874111489393]
-    Optional:
-      MoveItContact:
-        body_name_1: left_hand_r
-        body_name_2: left_hand_s
-        body_type_1: 0
-        body_type_2: 0
-        depth: 0.003023518139067954
-        normal: [0.4963079377231234, 0.7534470129701009, -0.4312725699594787]
-        pos: [0.001756227161728411, 0.05276581384079227, 0.1489736080650626]
-  ActionState_2:
-    JointStates:
-      left_hand_Finger_Spread: [0.3438251908153994]
-      left_hand_Index_Finger_Distal: [0]
-      left_hand_Index_Finger_Proximal: [0]
-      left_hand_Middle_Finger_Distal: [0.9919058325942607]
-      left_hand_Middle_Finger_Proximal: [0.3640402987445053]
-      left_hand_Pinky: [0]
-      left_hand_Ring_Finger: [0.3726350838344079]
-      left_hand_Thumb_Flexion: [0]
-      left_hand_Thumb_Opposition: [0.7396445713351714]
+      left_hand_Thumb_Flexion: [0.6546308680377901]
+      left_hand_Thumb_Opposition: [0.0586616988830734]
     Optional:
       MoveItContact:
         body_name_1: left_hand_s
-        body_name_2: left_hand_r
+        body_name_2: left_hand_c
         body_type_1: 0
         body_type_2: 0
-        depth: 0.002620737060306198
-        normal: [0.1489224529121758, 0.9666357068821434, 0.2084166816717886]
-        pos: [-0.002003234247675457, 0.03702179594772015, 0.170721881988601]
+        depth: 0.002760073126067583
+        normal: [-0.2411836419986093, -0.2357829264341192, -0.9414015415509205]
+        pos: [0.008262936148917077, 0.04648651291072191, 0.1232594545514033]
   ActionState_3:
     JointStates:
-      left_hand_Finger_Spread: [0.3969689631869551]
+      left_hand_Finger_Spread: [0]
       left_hand_Index_Finger_Distal: [0]
       left_hand_Index_Finger_Proximal: [0]
-      left_hand_Middle_Finger_Distal: [1.001797057610471]
-      left_hand_Middle_Finger_Proximal: [0.1225419349163468]
+      left_hand_Middle_Finger_Distal: [1.263040438415483]
+      left_hand_Middle_Finger_Proximal: [0.7697475892438251]
       left_hand_Pinky: [0]
-      left_hand_Ring_Finger: [0.4841405211059027]
+      left_hand_Ring_Finger: [0]
+      left_hand_Thumb_Flexion: [0.6561279276046902]
+      left_hand_Thumb_Opposition: [0.3559428238406545]
+    Optional:
+      MoveItContact:
+        body_name_1: left_hand_c
+        body_name_2: left_hand_s
+        body_type_1: 0
+        body_type_2: 0
+        depth: 0.002733849743386165
+        normal: [-0.4769243306151943, 0.8124134823499, -0.335451213387815]
+        pos: [0.007716305163086468, 0.04946660010486163, 0.1180620605598413]
+
+[left_hand_c, left_hand_t]:
+  JointsInvolved: [true, true, true, false, false, false, false, true, true]
+  ActionState_1:
+    JointStates:
+      left_hand_Finger_Spread: [0.3499479249854106]
+      left_hand_Index_Finger_Distal: [1.195573725100141]
+      left_hand_Index_Finger_Proximal: [0.6445112420613901]
+      left_hand_Middle_Finger_Distal: [0]
+      left_hand_Middle_Finger_Proximal: [0]
+      left_hand_Pinky: [0]
+      left_hand_Ring_Finger: [0]
+      left_hand_Thumb_Flexion: [0.495222394175455]
+      left_hand_Thumb_Opposition: [0.4036445195715409]
+    Optional:
+      MoveItContact:
+        body_name_1: left_hand_c
+        body_name_2: left_hand_t
+        body_type_1: 0
+        body_type_2: 0
+        depth: 0.003309053216694412
+        normal: [0.6710160683367242, -0.5565464456111179, 0.4898913041803816]
+        pos: [0.03301766915384289, 0.04619406892379787, 0.1234104023956449]
+  ActionState_2:
+    JointStates:
+      left_hand_Finger_Spread: [0.3371620612086262]
+      left_hand_Index_Finger_Distal: [1.271275098935701]
+      left_hand_Index_Finger_Proximal: [0.7549543286768254]
+      left_hand_Middle_Finger_Distal: [0]
+      left_hand_Middle_Finger_Proximal: [0]
+      left_hand_Pinky: [0]
+      left_hand_Ring_Finger: [0]
+      left_hand_Thumb_Flexion: [0.6426879818323999]
+      left_hand_Thumb_Opposition: [0.5892851386676542]
+    Optional:
+      MoveItContact:
+        body_name_1: left_hand_c
+        body_name_2: left_hand_t
+        body_type_1: 0
+        body_type_2: 0
+        depth: 0.002938371236148822
+        normal: [0.8278210622628758, 0.5114148005122361, -0.230580117726993]
+        pos: [0.01905632098425655, 0.04221037751252048, 0.1210947740817164]
+  ActionState_3:
+    JointStates:
+      left_hand_Finger_Spread: [0.1748204359138152]
+      left_hand_Index_Finger_Distal: [0.876348224231042]
+      left_hand_Index_Finger_Proximal: [0.760835491762606]
+      left_hand_Middle_Finger_Distal: [0]
+      left_hand_Middle_Finger_Proximal: [0]
+      left_hand_Pinky: [0]
+      left_hand_Ring_Finger: [0]
+      left_hand_Thumb_Flexion: [0.4228776593275368]
+      left_hand_Thumb_Opposition: [0.3346605869413353]
+    Optional:
+      MoveItContact:
+        body_name_1: left_hand_c
+        body_name_2: left_hand_t
+        body_type_1: 0
+        body_type_2: 0
+        depth: 0.002507317303848847
+        normal: [-0.8494597941761377, 0.3389867380728969, 0.4043588127998825]
+        pos: [0.03207407133391952, 0.04836392338135715, 0.1334147099105267]
+
+[left_hand_q, left_hand_s]:
+  JointsInvolved: [true, false, false, true, true, true, false, false, true]
+  ActionState_1:
+    JointStates:
+      left_hand_Finger_Spread: [0.09246391400475985]
+      left_hand_Index_Finger_Distal: [0]
+      left_hand_Index_Finger_Proximal: [0]
+      left_hand_Middle_Finger_Distal: [0.9782963625299745]
+      left_hand_Middle_Finger_Proximal: [0.3902698228157568]
+      left_hand_Pinky: [0.4024221857817611]
+      left_hand_Ring_Finger: [0]
       left_hand_Thumb_Flexion: [0]
-      left_hand_Thumb_Opposition: [0.5943283120337873]
+      left_hand_Thumb_Opposition: [0.8284914064218756]
+    Optional:
+      MoveItContact:
+        body_name_1: left_hand_q
+        body_name_2: left_hand_s
+        body_type_1: 0
+        body_type_2: 0
+        depth: 0.003159816437259279
+        normal: [0.3626447712655676, -0.4585685575003629, 0.8112975088990357]
+        pos: [-0.007973580224899229, 0.04340949592922728, 0.1527055471638421]
+  ActionState_2:
+    JointStates:
+      left_hand_Finger_Spread: [0.2411630429600598]
+      left_hand_Index_Finger_Distal: [0]
+      left_hand_Index_Finger_Proximal: [0]
+      left_hand_Middle_Finger_Distal: [1.164760346936993]
+      left_hand_Middle_Finger_Proximal: [0.4094888768373174]
+      left_hand_Pinky: [0.5812481421265402]
+      left_hand_Ring_Finger: [0]
+      left_hand_Thumb_Flexion: [0]
+      left_hand_Thumb_Opposition: [0.9861183254593984]
+    Optional:
+      MoveItContact:
+        body_name_1: left_hand_q
+        body_name_2: left_hand_s
+        body_type_1: 0
+        body_type_2: 0
+        depth: 0.003041871318251079
+        normal: [-0.1519531985346536, -0.7308444506142311, 0.6654146184609041]
+        pos: [-0.0001710145838524409, 0.04583044886042407, 0.1374803150429519]
+  ActionState_3:
+    JointStates:
+      left_hand_Finger_Spread: [0.2972202331949724]
+      left_hand_Index_Finger_Distal: [0]
+      left_hand_Index_Finger_Proximal: [0]
+      left_hand_Middle_Finger_Distal: [0.7261702103205026]
+      left_hand_Middle_Finger_Proximal: [0.7160794280330302]
+      left_hand_Pinky: [0.465239572351682]
+      left_hand_Ring_Finger: [0]
+      left_hand_Thumb_Flexion: [0]
+      left_hand_Thumb_Opposition: [0.9329392715813359]
+    Optional:
+      MoveItContact:
+        body_name_1: left_hand_q
+        body_name_2: left_hand_s
+        body_type_1: 0
+        body_type_2: 0
+        depth: 0.002572713238395355
+        normal: [-0.2699218492431028, 0.3084213090156048, 0.9121504763175236]
+        pos: [3.029037853874428e-10, 0.05287149382095184, 0.1426413554197197]
+
+[left_hand_r, left_hand_s]:
+  JointsInvolved: [true, false, false, true, true, false, true, false, true]
+  ActionState_1:
+    JointStates:
+      left_hand_Finger_Spread: [0.5446565732521936]
+      left_hand_Index_Finger_Distal: [0]
+      left_hand_Index_Finger_Proximal: [0]
+      left_hand_Middle_Finger_Distal: [0.8639721355433576]
+      left_hand_Middle_Finger_Proximal: [0.6050446234733914]
+      left_hand_Pinky: [0]
+      left_hand_Ring_Finger: [0.6197934846837306]
+      left_hand_Thumb_Flexion: [0]
+      left_hand_Thumb_Opposition: [0.4923792093284196]
     Optional:
       MoveItContact:
         body_name_1: left_hand_r
         body_name_2: left_hand_s
         body_type_1: 0
         body_type_2: 0
-        depth: 0.002601964737102836
-        normal: [-0.1828485805574902, -0.9731314281632686, 0.1399343421359752]
-        pos: [0.0003103149921086833, 0.03897496733406759, 0.1655122183011016]
-
-[left_hand_r, left_hand_t]:
-  ActionState_1:
-    JointStates:
-      left_hand_Finger_Spread: [0.1342867624268867]
-      left_hand_Index_Finger_Distal: [0.6635021411948838]
-      left_hand_Index_Finger_Proximal: [0.6925321664453694]
-      left_hand_Middle_Finger_Distal: [0]
-      left_hand_Middle_Finger_Proximal: [0]
-      left_hand_Pinky: [0]
-      left_hand_Ring_Finger: [0.4991947920643143]
-      left_hand_Thumb_Flexion: [0]
-      left_hand_Thumb_Opposition: [0.9394224808256607]
-    Optional:
-      MoveItContact:
-        body_name_1: left_hand_r
-        body_name_2: left_hand_t
-        body_type_1: 0
-        body_type_2: 0
-        depth: 0.002910150092181402
-        normal: [-0.2396410231495398, 0.9429178716105637, 0.2312532538608848]
-        pos: [0.02623799980545972, 0.03860602843628722, 0.1582822239909242]
+        depth: 0.003512893304887911
+        normal: [0.496307937078266, 0.7091613903114427, -0.5007679643154677]
+        pos: [0.002037437529565311, 0.05235244550906978, 0.1476763379406548]
   ActionState_2:
     JointStates:
-      left_hand_Finger_Spread: [0.006339206149522215]
-      left_hand_Index_Finger_Distal: [1.294328403970227]
-      left_hand_Index_Finger_Proximal: [0.2343757747036102]
-      left_hand_Middle_Finger_Distal: [0]
-      left_hand_Middle_Finger_Proximal: [0]
+      left_hand_Finger_Spread: [0.3199553401038749]
+      left_hand_Index_Finger_Distal: [0]
+      left_hand_Index_Finger_Proximal: [0]
+      left_hand_Middle_Finger_Distal: [0.9431475529191085]
+      left_hand_Middle_Finger_Proximal: [0.7768850387615455]
       left_hand_Pinky: [0]
-      left_hand_Ring_Finger: [0.4156751795549062]
+      left_hand_Ring_Finger: [0.7309605587269762]
       left_hand_Thumb_Flexion: [0]
-      left_hand_Thumb_Opposition: [0.9048113077695714]
+      left_hand_Thumb_Opposition: [0.3815947903138585]
     Optional:
       MoveItContact:
-        body_name_1: left_hand_t
-        body_name_2: left_hand_r
+        body_name_1: left_hand_r
+        body_name_2: left_hand_s
         body_type_1: 0
         body_type_2: 0
-        depth: 0.002337497430334783
-        normal: [-0.4607679485058879, 0.4539614008423947, 0.7626348694984295]
-        pos: [0.02316862736920958, 0.02210703079566742, 0.1647921970925742]
+        depth: 0.00342007851845257
+        normal: [0.4963079351788028, 0.5059592027178903, -0.7054670216697801]
+        pos: [0.002469190887658344, 0.05688538375227861, 0.1337294699777463]
   ActionState_3:
     JointStates:
-      left_hand_Finger_Spread: [0.2210530632223701]
-      left_hand_Index_Finger_Distal: [1.263151541428175]
-      left_hand_Index_Finger_Proximal: [0.2589160259378818]
+      left_hand_Finger_Spread: [0.5144385706062661]
+      left_hand_Index_Finger_Distal: [0]
+      left_hand_Index_Finger_Proximal: [0]
+      left_hand_Middle_Finger_Distal: [0.517137074008584]
+      left_hand_Middle_Finger_Proximal: [0.4568632318949094]
+      left_hand_Pinky: [0]
+      left_hand_Ring_Finger: [0.2710466474064742]
+      left_hand_Thumb_Flexion: [0]
+      left_hand_Thumb_Opposition: [0.9824401576027041]
+    Optional:
+      MoveItContact:
+        body_name_1: left_hand_r
+        body_name_2: left_hand_s
+        body_type_1: 0
+        body_type_2: 0
+        depth: 0.003407949061798605
+        normal: [-0.7205250002334496, -0.07954263646749787, -0.6888517206354262]
+        pos: [-0.002003234177657582, 0.03060137161246821, 0.1782681554548355]
+
+[left_hand_r, left_hand_t]:
+  JointsInvolved: [true, true, true, false, false, false, true, false, true]
+  ActionState_1:
+    JointStates:
+      left_hand_Finger_Spread: [0.198885164947249]
+      left_hand_Index_Finger_Distal: [1.217618610702455]
+      left_hand_Index_Finger_Proximal: [0.5061097339831176]
       left_hand_Middle_Finger_Distal: [0]
       left_hand_Middle_Finger_Proximal: [0]
       left_hand_Pinky: [0]
-      left_hand_Ring_Finger: [0.7328731902966974]
+      left_hand_Ring_Finger: [0.8486853233155561]
       left_hand_Thumb_Flexion: [0]
-      left_hand_Thumb_Opposition: [0.8920094293615082]
+      left_hand_Thumb_Opposition: [0.8861340015261434]
     Optional:
       MoveItContact:
         body_name_1: left_hand_r
         body_name_2: left_hand_t
         body_type_1: 0
         body_type_2: 0
-        depth: 0.002072111207157979
-        normal: [-0.1033187981823754, -0.6724837948592532, 0.7328647703320493]
-        pos: [0.02783969521690557, 0.03244267338378961, 0.138665565357463]
+        depth: 0.002881696671853314
+        normal: [-0.5075257717743333, 0.1238155804595919, 0.8526941380238999]
+        pos: [0.02850869329392488, 0.03688723591039063, 0.1290703512077057]
+  ActionState_2:
+    JointStates:
+      left_hand_Finger_Spread: [0.1651592454262543]
+      left_hand_Index_Finger_Distal: [1.046545825795271]
+      left_hand_Index_Finger_Proximal: [0.5510640329630511]
+      left_hand_Middle_Finger_Distal: [0]
+      left_hand_Middle_Finger_Proximal: [0]
+      left_hand_Pinky: [0]
+      left_hand_Ring_Finger: [0.5252301742218551]
+      left_hand_Thumb_Flexion: [0]
+      left_hand_Thumb_Opposition: [0.9790591182867531]
+    Optional:
+      MoveItContact:
+        body_name_1: left_hand_r
+        body_name_2: left_hand_t
+        body_type_1: 0
+        body_type_2: 0
+        depth: 0.002668036819657472
+        normal: [0.2723258102370257, 0.6466862487105215, 0.7124854726992415]
+        pos: [0.03151802543134116, 0.03489305506342674, 0.1523289049523911]
+  ActionState_3:
+    JointStates:
+      left_hand_Finger_Spread: [0.007353876930777914]
+      left_hand_Index_Finger_Distal: [1.207183840685058]
+      left_hand_Index_Finger_Proximal: [0.3087816882076371]
+      left_hand_Middle_Finger_Distal: [0]
+      left_hand_Middle_Finger_Proximal: [0]
+      left_hand_Pinky: [0]
+      left_hand_Ring_Finger: [0.5892265322003514]
+      left_hand_Thumb_Flexion: [0]
+      left_hand_Thumb_Opposition: [0.7984797154973494]
+    Optional:
+      MoveItContact:
+        body_name_1: left_hand_r
+        body_name_2: left_hand_t
+        body_type_1: 0
+        body_type_2: 0
+        depth: 0.002392317498981355
+        normal: [0.99999425663004, -0.0002088541519485732, -0.003382763201345396]
+        pos: [0.02156079913682831, 0.03201196674583696, 0.1561444120226753]
 
