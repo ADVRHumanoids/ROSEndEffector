@@ -35,16 +35,6 @@ ROSEE::ActionComposed::ActionComposed(std::string name, bool independent) {
     this->independent = independent;
     nPrimitives = 0;
 }
-ROSEE::ActionComposed::ActionComposed (const ActionComposed &other) {
-    this->name = other.name;
-    this->independent = other.independent;
-    this->nPrimitives = other.nPrimitives;
-    this->jointStates = other.jointStates;
-    this->primitiveNames = other.primitiveNames;
-    this->primitiveObjects = other.primitiveObjects;
-    this->involvedJointsCount = other.involvedJointsCount;
-}
-
 
 std::string ROSEE::ActionComposed::getName() const {
     return name;

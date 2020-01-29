@@ -28,15 +28,15 @@ namespace ROSEE {
 
 /**
  * @brief The action of pinch with two tips. The two tips must collide for some hand 
- * configuration to mark this configuration as a tip. All the non involved fingers are set in the 
+ * configuration to mark this configuration as a pinchStrong. All the non involved fingers are set in the 
  * default state.
  * A pinchStrong is defined by:
- *  - 2 tips (@tipsPair ), so @nLinksInvolved == 2
+ *  - 2 tips (@tipsPair ), so @nLinksInvolved == 2 (members of base class @PinchGeneric )
  *  - JointStates position: where the collision happens (inside @statesInfoSet)
  *  - Optional info (inside @statesInfoSet ): the contact of moveit. Now only the member depth is used. 
  *    It is used to order, for each pair of tips, the actions in the statesInfoSet 
  *    (make sense if @jointStateSetMaxSize > 1 ): 
- *    the more the depth of compenetration is, the more we say the pinch is good
+ *    the more the depth of compenetration is, the more we say the pinchStrong is good
  * 
  */
 class ActionPinchStrong : public ActionPinchGeneric
@@ -55,6 +55,7 @@ public:
     std::vector < ROSEE::JointStates > getActionStates() const override;
     bool setActionStates (std::vector < ROSEE::JointStates > ) override;
     
+    /** Specific get for this action to return the state with contact info */
     std::vector< ROSEE::ActionPinchStrong::StateWithContact > getActionStatesWithContact() const;
 
     
@@ -70,7 +71,7 @@ public:
      */
     bool insertActionState (JointStates, collision_detection::Contact);
 
-    /* For the pinch, we override these function to print, emit and parse the optional info Contact,
+    /** For the pinch, we override these function to print, emit and parse the optional info Contact,
      which is specific of the pinch */
     void printAction () const override;
     void emitYaml ( YAML::Emitter&) override;
@@ -78,13 +79,16 @@ public:
     
 private:
     
+    /** private function to called by the emitYaml */
+    bool emitYamlForContact ( collision_detection::Contact, YAML::Emitter& );
+
+    
     /** struct to put in order the @statesInfoSet. The first elements are the ones 
      * with greater depth
      * @FIX, even if is almost impossible, two different contact with same depth will be considered equal
      * with this definition of depthComp. Theoretically they are equal only if the joint status are equal 
      * (of only joints that act for the collision). In fact, we should have the possibility to have two 
      * contact with the same depth (if joint statuses are different), they will be equally good
-     * 
      */
     struct depthComp {
         bool operator() (const StateWithContact& a, const StateWithContact& b) const
@@ -97,8 +101,6 @@ private:
      */
     std::set < StateWithContact, depthComp > statesInfoSet;
     
-    bool emitYamlForContact ( collision_detection::Contact, YAML::Emitter& );
-
 };
 
 }

@@ -26,25 +26,21 @@
 #include <memory>
 
 /** 
- * TODO, for the independance of primitives, now we check if they have setter same joints.
- * Now this is done check if a joint pos is zero; but also zero pos can be a setted pos.
- * idea is to add a boolJointStates in ActionPrimitive where each joint is true or false depend
- * if is setted or not.
- * TODO independance: how to mean the jointvalues? we can mean always dividing per the number of 
- * primitives (nPrimitives). But with this method, we add in the mean also a lot of zero values which
- * should be the non setted state, so should not influence the mean. Possible solution is to introduce a vector
- * of counter which says, for each joint, how much are the primitive that use that particular joint and
- * so we can divide each joint for the right sum of primitive. DONEEEEEEEE write docs
  * 
  * TODO instead of use it as "Composed", use it as single action, that is a different structure respect to
  * action primitive, with a single joint state. Then can contain a single action, or more.
- * 
- * TODO add un member "fingerInvolved" ? set of string che contiene tutti i diti coinvolti
  * 
  * TODO una remove? non è così facile da implementare e non so se sia utile...
  */
 namespace ROSEE{
 
+/**
+ * If the action has @independent primitives, each joint position is set by ONLY ONE of the primitives inside, or nothing
+ * (set at a default state, i.e. not used)
+ * If the action has not @independent primitives, each joint position is calculated as the mean among all the joint 
+ * position of the contained primitives that uses that joint. So each mean can include different primitives, so we need
+ * a @involvedJointsCount vector
+ */
 class ActionComposed
 {
 private:
@@ -65,6 +61,7 @@ public:
     // Copy constructor 
     ActionComposed (const ActionComposed &other);
     
+    /* getters and setters */
     std::string getName () const;
     unsigned int getnPrimitives () const;
     bool getIndependent () const;
@@ -78,7 +75,15 @@ public:
     void emitYaml ( YAML::Emitter&) const;
     bool fillFromYaml( YAML::Node node );
     
-    bool sumPrimitive ( std::shared_ptr <ROSEE::ActionPrimitive>, int as = 0 );
+    /** 
+     * @brief function to add another primitive to the composed action. 
+     * @param std::shared_ptr <ROSEE::ActionPrimitive> primitive
+     * @param int as : the index of the actionState that we want to insert in the composed action. 
+     *  the default is the best one. This is due to the fact that a primitive can have different actionState inside 
+     *  (e.g. for the pinchStrong among two tips we can choose among different Jointstates configuration to make the two
+     *  tips collide)
+     */
+    bool sumPrimitive ( std::shared_ptr <ROSEE::ActionPrimitive> primitive, int as = 0 );
     
 };
 }

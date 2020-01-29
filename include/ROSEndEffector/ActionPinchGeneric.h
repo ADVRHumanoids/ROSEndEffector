@@ -25,7 +25,8 @@
 
 namespace ROSEE {
 /**
- * 
+ * @brief A base virtual class for the PinchStrong and PinchWeak classes. It includes member and method that are
+ * in common between the two type of pinches. It derives the more generic @ActionPrimitive
  */
 class ActionPinchGeneric : public ActionPrimitive
 {
@@ -39,15 +40,10 @@ public:
     
     /** Overriden set and get from the pure virtual functions of the base class @ActionPrimitive */
     std::set < std::string > getLinksInvolved() const override;
-//    std::vector < ROSEE::JointStates > getActionStates() const override;
-    bool setLinksInvolved (std::set < std::string >) override;
-//    bool setActionStates (std::vector < ROSEE::JointStates > ) override;
-    
+    bool setLinksInvolved (std::set < std::string >) override;    
 
-    /* the two tips that are involved in the action */
+    /** the two tips that are involved in the action */
     std::pair <std::string, std::string > tipsPair ;
-    
-private:
 
 };
 
