@@ -89,8 +89,8 @@ int main ( int argc, char **argv ) {
 
     ROSEE::ActionComposed grasp ("grasp", true);
     for (auto trig : trigParsedMap) {
-        grasp.sumPrimitive ( (trig.second) ); 
 
+        grasp.sumPrimitive ( (trig.second) ); 
     }
     
     grasp.printAction();

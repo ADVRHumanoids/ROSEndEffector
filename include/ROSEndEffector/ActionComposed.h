@@ -50,12 +50,13 @@ class ActionComposed
 private:
     std::string name;
     std::vector < std::string > primitiveNames;
+    std::set < std::string > linksInvolved;
     ROSEE::JointStates jointStates;
     std::vector < std::shared_ptr <ROSEE::ActionPrimitive> > primitiveObjects;
     unsigned int nPrimitives;
     
     bool independent; //true if each primitive must set different joint states
-    std::vector <unsigned int> involvedJointsForPrimitives;
+    std::vector <unsigned int> involvedJointsCount;
     
 public: 
     ActionComposed();
@@ -68,6 +69,7 @@ public:
     unsigned int getnPrimitives () const;
     bool getIndependent () const;
     std::vector <std::string> getPrimitiveNames() const ;
+    std::set <std::string> getLinksInvolved() const ;
     ROSEE::JointStates getJointStates() const;
     std::vector < std::shared_ptr <ROSEE::ActionPrimitive> > getPrimitiveObjects() const;
     std::vector <unsigned int> getInvolvedJointsForPrimitives () const;

@@ -40,7 +40,7 @@ unsigned int ROSEE::ActionPrimitive::getnLinksInvolved() const {
     return nLinksInvolved;
 }
 
-std::vector<bool> ROSEE::ActionPrimitive::getJointsInvolved() const {
+std::vector<bool> ROSEE::ActionPrimitive::getIfJointsInvolved() const {
     return jointsInvolved;
 }
 

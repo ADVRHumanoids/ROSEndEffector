@@ -42,7 +42,7 @@ ROSEE::ActionComposed::ActionComposed (const ActionComposed &other) {
     this->jointStates = other.jointStates;
     this->primitiveNames = other.primitiveNames;
     this->primitiveObjects = other.primitiveObjects;
-    this->involvedJointsForPrimitives = other.involvedJointsForPrimitives;
+    this->involvedJointsCount = other.involvedJointsCount;
 }
 
 
@@ -62,6 +62,11 @@ std::vector<std::string> ROSEE::ActionComposed::getPrimitiveNames() const {
     return primitiveNames;
 }
 
+std::set<std::string> ROSEE::ActionComposed::getLinksInvolved() const {
+    return linksInvolved;
+}
+
+
 std::vector < std::shared_ptr <ROSEE::ActionPrimitive> > ROSEE::ActionComposed::getPrimitiveObjects() const {
     return primitiveObjects;
 }
@@ -70,7 +75,7 @@ ROSEE::JointStates ROSEE::ActionComposed::getJointStates() const {
     return jointStates;
 }
 std::vector<unsigned int> ROSEE::ActionComposed::getInvolvedJointsForPrimitives() const {
-    return involvedJointsForPrimitives;
+    return involvedJointsCount;
 }
 
 
@@ -79,14 +84,17 @@ bool ROSEE::ActionComposed::sumPrimitive ( std::shared_ptr <ROSEE::ActionPrimiti
 {
 
     if (nPrimitives == 0) { //first primitive inserted, add anyway
+
         JointStates js = primitive->getActionStates().at(as);
         unsigned int iJoint = 0;
         for (auto joint : js ){
-            involvedJointsForPrimitives.push_back(0); //first primitive we insert, we have also to fill this
+
+            involvedJointsCount.push_back(0); //first primitive we insert, we have also to fill this
             jointStates.insert ( std::make_pair (joint.first, joint.second) );
 
-            if ( joint.second.at(0) != 0.0 ){
-                involvedJointsForPrimitives.at(iJoint)++;
+            if ( primitive->getIfJointsInvolved().at ( iJoint ) ) {
+
+                involvedJointsCount.at(iJoint)++;
             } 
             iJoint++;
         }
@@ -96,39 +104,38 @@ bool ROSEE::ActionComposed::sumPrimitive ( std::shared_ptr <ROSEE::ActionPrimiti
         if (independent) {
             
             JointStates js = primitive->getActionStates().at(as);
-
-            for (auto joint : js ){
-                
-                //HACK single dof joint now
-                if ( joint.second.at(0) != 0.0 &&
-                    jointStates.at(joint.first).at(0) != 0.0 ) {
-
+            
+            //first we check if the primitive is independent from all the other inserted
+            for (unsigned int iJoint = 0; iJoint < jointStates.size(); iJoint++){
+                if ( primitive->getIfJointsInvolved().at(iJoint) && 
+                     (involvedJointsCount.at(iJoint) > 0) ) {
                     return false; //both setted, cant add this primitive
                 }
-
             }
 
+            //if here, primitive is independent, we can add the joints states
             unsigned int iJoint = 0;
             for ( auto joint : js ){ 
-                if ( joint.second.at(0) != 0.0 ){
+                if ( primitive->getIfJointsInvolved().at(iJoint) ){
 
                     jointStates.at(joint.first).at(0) = joint.second.at(0);
-                    involvedJointsForPrimitives.at(iJoint)++;
+                    involvedJointsCount.at(iJoint)++;
                 }
                 iJoint++;
             }
             
         } else {
-            // for each joint, add the value to the mean (element in mean given by involvedJointsForPrimitives)
+            // for each joint, add the state's value to the mean 
+            // (number of element in the previous mean is given by involvedJointsCount.at(x))
             JointStates js = primitive->getActionStates().at(as);
 
             unsigned int iJoint = 0;            
             for (auto joint : js ){ 
-                if ( joint.second.at(0) != 0.0 ){
-                    involvedJointsForPrimitives.at(iJoint)++;
+                if ( primitive->getIfJointsInvolved().at(iJoint) ){
+                    involvedJointsCount.at(iJoint)++;
                     double mean = jointStates.at(joint.first).at(0) + 
                         ( (joint.second.at(0) - jointStates.at(joint.first).at(0)) / 
-                            involvedJointsForPrimitives.at(iJoint) );
+                            involvedJointsCount.at(iJoint) );
                     jointStates.at(joint.first).at(0) = mean;
                 }
                 iJoint++;
@@ -137,9 +144,12 @@ bool ROSEE::ActionComposed::sumPrimitive ( std::shared_ptr <ROSEE::ActionPrimiti
     }
     
     primitiveNames.push_back ( primitive->getName() );
+    for (auto it: primitive->getLinksInvolved()) {
+         linksInvolved.insert ( it );
+    }
+
     primitiveObjects.push_back ( primitive );
     nPrimitives ++;
-    
     
     return true;
 }
@@ -149,13 +159,28 @@ void ROSEE::ActionComposed::printAction() const {
     
     std::stringstream output;
     
-    output << "Composed Action " << name;
-    independent ? output << " (independent)" : output << " (not independent)" ;
+    output << "Composed Action '" << name;
+    independent ? output << "' (independent):" : output << "' (not independent):" ;
     output << std::endl;
-    output << "Composed by " << nPrimitives << " primitives: [" ;
+    
+    output << "\tComposed by " << nPrimitives << " primitives: [" ;
     for (auto it : primitiveNames) {
         output << it << ", ";
     }
+    output.seekp (-2, output.cur); //to remove the last comma (and space)
+    output << "]" << std::endl;
+    
+    output << "\tLinks involved: [" ;
+    for (auto it : linksInvolved) {
+        output << it << ", ";
+    }
+    output.seekp (-2, output.cur); //to remove the last comma (and space)
+    output << "]" << std::endl;
+    
+    output << "\tEach joint influenced by x primitives: [";
+    for (auto it : involvedJointsCount) {
+        output << it << ", ";
+    } 
     output.seekp (-2, output.cur); //to remove the last comma (and space)
     output << "]" << std::endl;
     
@@ -174,6 +199,8 @@ void ROSEE::ActionComposed::emitYaml ( YAML::Emitter& out) const {
         out << YAML::Key << "Independent" << YAML::Value << independent;
         out << YAML::Key << "nPrimitives" << YAML::Value << nPrimitives;
         out << YAML::Key << "Primitives" << YAML::Value << YAML::Flow << primitiveNames;
+        out << YAML::Key << "LinksInvolved" << YAML::Value << YAML::Flow << linksInvolved;
+        out << YAML::Key << "InvolvedJointsCount" << YAML::Value << YAML::Flow << involvedJointsCount;
         out << YAML::Key << "JointStates" << YAML::Value << YAML::BeginMap;
             for (const auto &joint : jointStates) {
                 out << YAML::Key << joint.first;
@@ -200,6 +227,13 @@ bool ROSEE::ActionComposed::fillFromYaml ( YAML::Node node ) {
             
         } else if ( key.compare ("Primitives") == 0 ) {
             primitiveNames = keyValue->second.as <std::vector <std::string> >();
+        
+        } else if ( key.compare ("LinksInvolved") == 0 ) { 
+            auto tempVect = keyValue->second.as <std::vector <std::string> > ();
+            linksInvolved.insert ( tempVect.begin(), tempVect.end() );
+            
+        } else if ( key.compare ("JointsInvolvedCount") == 0 ) {
+            involvedJointsCount = keyValue->second.as < std::vector <unsigned int> >(); 
             
         } else if ( key.compare ("JointStates") == 0 ) {
             jointStates = keyValue->second.as < JointStates >();

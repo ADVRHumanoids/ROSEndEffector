@@ -90,7 +90,7 @@ public:
     ROSEE::ActionType getActionType() const;
     unsigned int getJointStatesSetMaxSize() const;
     unsigned int getnLinksInvolved() const;
-    std::vector < bool > getJointsInvolved() const;
+    std::vector < bool > getIfJointsInvolved() const;
     virtual std::set < std::string > getLinksInvolved() const = 0;
     virtual std::vector < ROSEE::JointStates > getActionStates() const = 0;
     

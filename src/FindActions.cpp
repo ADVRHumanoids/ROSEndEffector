@@ -573,8 +573,7 @@ bool ROSEE::FindActions::insertJointPosForTrigInMap ( std::map <std::string, Act
             
             JointStates js;
             for (auto it : kinematic_model->getActiveJointModels()){
-                std::vector <double> jPos (it->getVariableCount());
-                std::fill (jPos.begin(), jPos.end(), 0.0);
+                std::vector <double> jPos (it->getVariableCount(), DEFAULT_JOINT_POS);
                 js.insert ( std::make_pair ( it->getName(), jPos ));
             }
             
