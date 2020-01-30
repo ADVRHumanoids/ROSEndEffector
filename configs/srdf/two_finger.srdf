@@ -8,6 +8,7 @@
     <group name="finger_2">
         <chain base_link="base" tip_link="right_fingertip"/>
     </group>
+
    
    <group name="end_effector_fingers">
       <group name="finger_1" />

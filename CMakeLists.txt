@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS srdfdom
                                         kdl_parser
                                         roscpp
                                         message_generation 
+                                        moveit_ros_planning_interface
                                         )
                                                                                
 # find_package(matlogger2 REQUIRED)
@@ -112,13 +113,47 @@ add_library(UniversalRosEndEffectorExecutor
     src/UniversalRosEndEffectorExecutor.cpp
 )
 
+add_library(FindActions 
+    src/FindActions.cpp
+)
+
+add_library(ParserMoveIt
+    src/ParserMoveIt.cpp
+)
+
+add_library(YamlWorker
+    src/YamlWorker.cpp
+)
+
+add_library(ActionPrimitive 
+    src/ActionPrimitive.cpp
+)
+
+add_library(ActionPinchStrong
+    src/ActionPinchStrong.cpp
+)
+add_library(ActionPinchGeneric
+    src/ActionPinchGeneric.cpp
+)
+add_library(ActionPinchWeak
+    src/ActionPinchWeak.cpp
+)
+add_library(ActionTrig
+    src/ActionTrig.cpp
+)
+add_library(ActionComposed
+    src/ActionComposed.cpp 
+)
+
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
 # add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 add_executable(UniversalRosEndEffector src/UniversalRosEndEffector.cpp)
+add_executable(UniversalFindActions src/UniversalFindActions.cpp)
 add_dependencies(UniversalRosEndEffector ros_end_effector_generate_messages_cpp)
+
 
 
 ## Rename C++ executable without prefix
@@ -156,9 +191,60 @@ target_link_libraries(UniversalRosEndEffectorExecutor
     
 )
 
+target_link_libraries(YamlWorker
+    yaml-cpp
+    ActionPrimitive
+    ActionPinchStrong
+    ActionTrig
+    ActionPinchWeak
+    ActionComposed
+)
+
+target_link_libraries(ActionPinchStrong
+    ActionPinchGeneric
+)
+
+target_link_libraries(ActionPinchGeneric
+    ActionPrimitive
+)
+
+target_link_libraries(ActionPinchWeak
+    ActionPinchGeneric
+)
+
+target_link_libraries(ActionTrig
+    ActionPrimitive
+)
+target_link_libraries(ActionComposed
+    ActionPrimitive
+)
+
+target_link_libraries(FindActions
+    ${catkin_LIBRARIES}
+    ParserMoveIt
+    YamlWorker
+    ActionPinchStrong
+    ActionTrig
+    ActionPinchWeak
+    
+)
+
+target_link_libraries(ParserMoveIt
+    ${catkin_LIBRARIES}
+)
+
 target_link_libraries(UniversalRosEndEffector
     UniversalRosEndEffectorExecutor
 )
+
+target_link_libraries(UniversalFindActions
+    FindActions
+    ActionPrimitive
+    ActionTrig
+    ParserMoveIt
+)
+
+
 
 #############
 ## Install ##
@@ -207,11 +293,37 @@ install(DIRECTORY launch/
 if(CATKIN_ENABLE_TESTING)
 
     # Add gtest based cpp test target and link libraries
-    catkin_add_gtest(EEInterface-test test/test_ee_interface.cpp)
-    if(TARGET EEInterface-test)
-        target_link_libraries(EEInterface-test ${catkin_LIBRARIES}
+    catkin_add_gtest(EEInterface_test test/test_ee_interface.cpp)
+    if(TARGET EEInterface_test)
+        target_link_libraries(EEInterface_test ${catkin_LIBRARIES}
                                                 ROSEEParser
                                                 ROSEEInterface)
+    endif()
+    
+    catkin_add_gtest(FindPinches_test test/test_find_pinches.cpp)
+    if(TARGET FindPinches_test)
+        target_link_libraries(FindPinches_test ${catkin_LIBRARIES}
+                                                 FindActions
+                                                 ActionPrimitive
+                                                 ActionPinchStrong
+                                                 ActionPinchWeak)
+    endif()
+    
+    catkin_add_gtest(FindTrigs_test test/test_find_trigs.cpp)
+    if(TARGET FindTrigs_test)
+        target_link_libraries(FindTrigs_test ${catkin_LIBRARIES}
+                                                 FindActions
+                                                 ActionPrimitive
+                                                 ActionTrig)
+    endif()
+    
+    catkin_add_gtest(ComposedAction_test test/test_composedAction.cpp)
+    if(TARGET ComposedAction_test)
+        target_link_libraries(ComposedAction_test ${catkin_LIBRARIES}
+                                                 FindActions
+                                                 ActionPrimitive
+                                                 ActionTrig
+                                                 ActionComposed)
     endif()
 
 endif()
