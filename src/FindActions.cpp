@@ -6,6 +6,7 @@ ROSEE::FindActions::FindActions ( std::string robot_description ){
 
     //it is a ros param in the launch, take care that also sdrf is read (param: robot_description_semantic)
     robot_model_loader::RobotModelLoader robot_model_loader(robot_description); 
+    std::cout << "AAAAAAAAAAAAAAAAA \n " << robot_description << "BBBBBBBBBBb" << std::endl;
     kinematic_model = robot_model_loader.getModel();
     
     std::cout << "look for fingertips... " << std::endl;
@@ -144,129 +145,6 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::findTrig ( ROSEE::
 
     return trigMap;
 }  
-
-
-void ROSEE::FindActions::printFingertipLinkNames(){
-
-    std::cout << "Fingertips list:" << std::endl;
-    for (const auto &it: fingertipNames) {
-        std::cout << it << std::endl;
-    }
-    std::cout << std::endl;
-    
-}
-
-void ROSEE::FindActions::printAllLinkNames(){
-
-    std::cout << "All Links  list:" << std::endl;
-    for (const auto &it: kinematic_model->getLinkModelNames()) {
-        std::cout << it << std::endl;
-    }
-    std::cout << std::endl;    
-}
-
-void ROSEE::FindActions::printActuatedJoints(){
-
-    for (const auto &it: kinematic_model->getActiveJointModels()){
-        std::cout << "jointname: " << it->getName() << std::endl;
-    }  
-    std::cout << std::endl;
-
-}
-
-void ROSEE::FindActions::printJointsOfFingertips(){
-
-    std::stringstream logInfo;
-
-    logInfo << "Tip and joints that influence its position" << std::endl;
-    for (const auto &it : jointsOfFingertipMap) {
-        logInfo << it.first << " parent joints: \n";
-        for (const auto jointName : it.second) {
-            logInfo << "\t" << jointName << std::endl;
-        }
-    }
-    std::cout << logInfo.str() << std::endl;
-}
-
-void ROSEE::FindActions::printFingertipsOfJoints(){
-
-    std::stringstream logInfo;
-    logInfo << "Joint and the tips that it moves" << std::endl;
-
-    for (const auto &it : fingertipsOfJointMap) {
-        logInfo << it.first << " child fingertips: \n";
-        for (const auto linkName : it.second) {
-            logInfo << "\t" << linkName << std::endl;
-        }
-    }
-    std::cout << logInfo.str() << std::endl;
-}
-
-
-///TODO move i look for in Parser
-void ROSEE::FindActions::lookForFingertips(){
-
-    for (auto it: kinematic_model->getJointModelGroups()) {
-        
-        std::string logGroupInfo;
-        logGroupInfo = "Found Group '" + it->getName() + "', " ;
-        
-        if (it->getSubgroupNames().size() != 0 ) {
-            logGroupInfo.append("but it has some subgroups \n");
-            
-        } else {
-            if (! it->isChain()) {
-                logGroupInfo.append("but it is not a chain \n");
-                
-            } else {
-                logGroupInfo.append("with links: \n");
-                for (auto itt : it->getLinkModels()) {
-                   
-                    logGroupInfo.append("\t'" + itt->getName() + "' ");
-                    if (itt->getChildJointModels().size() != 0) {
-                       
-                       logGroupInfo.append("not a leaf link (not a fingertip)\n");
-                       
-                    } else {
-                       logGroupInfo.append("a leaf link (a fingertip)\n");
-                       fingertipNames.push_back(itt->getName());
-                    }
-                }
-            }
-        }
-        std::cout << logGroupInfo << std::endl; 
-    }
-
-    if (fingertipNames.size() <= 1){
-        //TODO no pinch with only one fingertip, print some message and exit pinch program
-    }
-}
-
-
-void ROSEE::FindActions::lookJointsTipsCorrelation(){
-    
-    //initialize the map with all tips and with empty vectors of its joints
-    for (const auto &it: fingertipNames) { 
-        jointsOfFingertipMap.insert ( std::make_pair (it, std::vector<std::string>() ) );
-        
-    }
-    
-    //initialize the map with all the actuated joints and an empty vector for the tips that the joint move
-    for (const auto &it: kinematic_model->getActiveJointModels()) { 
-        fingertipsOfJointMap.insert ( std::make_pair (it->getName(), std::vector<std::string>() ) );
-    }
-    
-    for ( const auto &joint: kinematic_model->getActiveJointModels()){ //for each actuated joint        
-        for (const auto &link : joint->getDescendantLinkModels()) { //for each descendand link
-            
-            if (std::find(fingertipNames.begin(), fingertipNames.end(), link->getName()) != fingertipNames.end()){
-                jointsOfFingertipMap.at ( link->getName() ).push_back( joint->getName() );
-                fingertipsOfJointMap.at ( joint->getName() ).push_back( link->getName() );
-            }
-        }
-    }      
-}
-
 
 std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong > ROSEE::FindActions::checkCollisions () {
         
@@ -598,69 +476,7 @@ bool ROSEE::FindActions::insertJointPosForTrigInMap ( std::map <std::string, Act
 }
 
 
-bool ROSEE::FindActions::checkIfContinuosJoint ( std::string jointName) {
-    return (ROSEE::FindActions::checkIfContinuosJoint(kinematic_model->getJointModel(jointName)));     
-}
 
-//HACK consider only 2 bounds now, because 1dof joint
-// Except planar and full 6-dof, urdf (in 2020) does not permit to have more dofs joints, so this Hack is ok
-bool ROSEE::FindActions::checkIfContinuosJoint ( const moveit::core::JointModel* joint ) {
-    
-    if (joint->getType() != moveit::core::JointModel::REVOLUTE ) {
-        return false;
-    }
-    
-    moveit::core::JointModel::Bounds limits = joint->getVariableBounds();
-                
-    if ( limits.at(0).max_position_ - limits.at(0).min_position_ >= (2*EIGEN_PI) ) {
-        //std::cout << limits.at(0).max_position_ - limits.at(0).min_position_ << std::endl;
-        return true;
-    }
-    return false;
-}
-
-double ROSEE::FindActions::getBiggestBound(std::string jointName ) {
-    return ( ROSEE::FindActions::getBiggestBound (kinematic_model->getJointModel(jointName) ) );
-}
-
-// go in the position of the max range, 0 must be included between the bounds
-double ROSEE::FindActions::getBiggestBound ( const moveit::core::JointModel* joint ) {
-    
-    double trigMax;
-    moveit::core::JointModel::Bounds limits = joint->getVariableBounds();
-
-    if ( std::abs(limits.at(0).max_position_) > std::abs(limits.at(0).min_position_)) {
-        trigMax = limits.at(0).max_position_ ;
-    } else {
-        trigMax = limits.at(0).min_position_ ;
-    }
-    return trigMax;
-}
-
-//WARNING: continuos joint are not counted because... TODO explain
-unsigned int ROSEE::FindActions::getNExclusiveJointsOfTip (std::string tipName) {
-    
-    unsigned int nExclusiveJoints = 0;
-
-    for (auto jointOfTip : jointsOfFingertipMap.find(tipName)->second ){ 
-        
-        if ( checkIfContinuosJoint(jointOfTip) == true ) {
-            continue; //we dont want to use a continuos joint for the trig
-        }
-        
-        //check if the joints of the tip move only that tip
-        if ( fingertipsOfJointMap.find(jointOfTip)->second.size() == 1 &&
-             (fingertipsOfJointMap.find(jointOfTip)->second.at(0).compare (tipName) == 0) ) {
-            // second condition should be always true if jointsOfFingertipMap and fingertipsOfJointMap 
-            // are built well
-            
-
-            nExclusiveJoints++;
-        }
-    }
-    
-    return nExclusiveJoints;    
-}
 
 ROSEE::JointStates ROSEE::FindActions::getConvertedJointStates(const robot_state::RobotState* kinematic_state) {
     

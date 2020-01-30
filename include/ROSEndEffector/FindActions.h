@@ -40,56 +40,10 @@ public:
                  findPinch ( std::string path2saveYaml = "" );
     std::map <std::string, ROSEE::ActionTrig> findTrig (  ROSEE::ActionType actionType,
         std::string path2saveYaml = "" );
-
-    
-    void printFingertipLinkNames();
-    void printAllLinkNames();
-    void printActuatedJoints();
-    void printBestCollisions();
-    void printJointsOfFingertips();
-    void printFingertipsOfJoints();
-    
-    //TODO should be in the parser
-    std::string getHandName();
     
 private:
-    
-    robot_model::RobotModelPtr kinematic_model;
-    std::vector<std::string> fingertipNames;
-    
-    /** The map with as key the name of the fingertip and as value all the joints (actuated) that can modify its pose*/
-    std::map<std::string, std::vector<std::string>> jointsOfFingertipMap;
-    /** The map with as key the name of the actuated joint and as value all the fingertips which pose can be modified by the joint */
-    std::map<std::string, std::vector<std::string>> fingertipsOfJointMap;
-    
-    std::string robot_description;
-    
-    /**
-     * @brief This function explore the kinematic_model (which was built from urdf and srdf files), 
-     *  and fills the fingerTipNames vector.
-     *  In particular, the function explores only the groups specified in the srdf, and prints infos
-     *  about each link it finds (eg. not a fingertin, not a chain group, and so on).
-     *  A fingertip is a link with the following conditions:
-     *  - It is part of a group (defined in the srdf)
-     *  - The group which the tip is part of is a chain (not a tree)
-     *  - It is a "leaf" link, ie it has not children joints/links
-     * @todo Check also if it is unique in the group?
-     * @warning Only link belonging to a group are explored (and printed), so other links (if present) 
-     *  are not considered 
-     */
-    void lookForFingertips();
-    
-    /** 
-     * @brief Here, we find for each tip, which are all the joints (active) that can modifies its position
-     * It is easier to start from each joint and see which tips has as its descendands, because there is the
-     * getDescendantLinkModels() function in moveit that gives ALL the child links.
-     * There is not a function like getNonFixedParentJointModels from the tip, there is only the one to take the 
-     * FIRST parent joint (getParentJointModel())
-     * Meanwhile, we find also, for each joint, all the tips that are influenced by the joint movement. This map, 
-     * fingertipOfJointMap, is used in setOnlyDependentJoints()
-     */
-    void lookJointsTipsCorrelation();
         
+    std::string robot_description;
     
     std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong >  checkCollisions();
     void checkDistances (std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak >* );
@@ -111,11 +65,6 @@ private:
     //other utilities used by this class
     bool insertJointPosForTrigInMap ( std::map <std::string, ActionTrig>& trigMap, 
         ROSEE::ActionTrig action, std::string jointName, double trigValue);  
-    bool checkIfContinuosJoint ( std::string jointName) ;
-    bool checkIfContinuosJoint ( const moveit::core::JointModel* joint ) ;
-    double getBiggestBound (std::string jointName ) ;
-    double getBiggestBound ( const moveit::core::JointModel* joint ) ;
-    unsigned int getNExclusiveJointsOfTip (std::string tipName);
 
     void fillNotCollidingTips ( std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak >*, 
              const std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong >* );
@@ -123,8 +72,6 @@ private:
     void removeBoundsOfNotCollidingTips ( const std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak >*, robot_model::RobotModelPtr );
     void checkWhichTipsCollideWithoutBounds (
         std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak >*);
-
-
 
 };
     
