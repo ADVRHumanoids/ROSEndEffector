@@ -5,6 +5,7 @@
 
 
 #include <ROSEndEffector/FindActions.h>
+#include <ROSEndEffector/ParserMoveIt.h>
 #include <ROSEndEffector/ActionPrimitive.h>
 #include <ROSEndEffector/ActionPinchStrong.h>
 #include <ROSEndEffector/ActionPinchWeak.h>
@@ -30,14 +31,15 @@ protected:
         //is this cast correct?
         ros::init ( argc, (char**)argv, "testFindPinches" );
     
-        ROSEE::FindActions actionsFinder ("robot_description");
+        std::shared_ptr <ROSEE::ParserMoveIt> parserMoveIt = std::make_shared <ROSEE::ParserMoveIt> ();
+        parserMoveIt->init ("robot_description") ;
+        ROSEE::FindActions actionsFinder (parserMoveIt);
         
         auto theTwoMaps = actionsFinder.findPinch("/configs/actions/tests/");
         pinchMap = theTwoMaps.first;
         pinchWeakMap = theTwoMaps.second;
 
-        //TODO getHandName should be in the parser
-        ROSEE::YamlWorker yamlWorker(actionsFinder.getHandName(), "/configs/actions/tests/");
+        ROSEE::YamlWorker yamlWorker(parserMoveIt->getHandName(), "/configs/actions/tests/");
         pinchParsedMap = yamlWorker.parseYaml("pinchStrong.yaml", ROSEE::ActionType::PinchStrong);
         
         pinchWeakParsedMap = yamlWorker.parseYaml("pinchWeak.yaml", ROSEE::ActionType::PinchWeak);

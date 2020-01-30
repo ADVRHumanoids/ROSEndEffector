@@ -16,8 +16,8 @@
  * limitations under the License.
  */
 
-#ifndef ROSEE_ACTIONTRIG_H
-#define ROSEE_ACTIONTRIG_H
+#ifndef __ROSEE_ACTIONTRIG_H
+#define __ROSEE_ACTIONTRIG_H
 
 #include <ROSEndEffector/ActionPrimitive.h>
 #include <yaml-cpp/yaml.h>
@@ -95,4 +95,4 @@ public:
 
 }
 
-#endif // ROSEE_ACTIONTRIG_H
+#endif // __ROSEE_ACTIONTRIG_H

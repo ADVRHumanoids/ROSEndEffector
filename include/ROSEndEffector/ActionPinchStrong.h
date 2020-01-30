@@ -16,8 +16,8 @@
  * limitations under the License.
  */
 
-#ifndef ROSEE_ACTIONPINCHSTRONG_H
-#define ROSEE_ACTIONPINCHSTRONG_H
+#ifndef __ROSEE_ACTIONPINCHSTRONG_H
+#define __ROSEE_ACTIONPINCHSTRONG_H
 
 #include <ROSEndEffector/ActionPinchGeneric.h>
 #include <moveit/planning_scene/planning_scene.h>
@@ -105,4 +105,4 @@ private:
 
 }
 
-#endif // ROSEE_ACTIONPINCHSTRONG_H
+#endif // __ROSEE_ACTIONPINCHSTRONG_H

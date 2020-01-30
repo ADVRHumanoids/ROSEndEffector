@@ -32,7 +32,7 @@ research and innovation programme under grant agreement no. 732287.
 
 
 
-Welcome to the ROS End-Effector Action finder 
+# Welcome to the ROS End-Effector Action finder
 
 ## Warning
 From 28-01-2020 the use_gui param gives an error because it is deprecated. This causes the sliders of joint 
@@ -41,7 +41,12 @@ state publisher not shown. To solve :
 sudo apt install ros-kinetic-joint-state-publisher-gui
 ```
 
-# How to run for the Schunk Hand
+## Install Dependencies
+```bash
+sudo apt-get install ros-kinetic-moveit #moveit
+```
+
+## How to run for the Schunk Hand
 ```bash
 #usual source
 roslaunch ros_end_effector findActionsSchunk.launch
@@ -68,7 +73,7 @@ roslaunch schunk_svh_driver svh_controller.launch standalone:=true gui:=true sim
 ```
 Be sure to put in rviz as fixed frame __base_link__
 
-# How to run for the TestEE Example
+## How to run for the TestEE Example
 ```bash
 #usual source
 roslaunch ros_end_effector findActionsTestEE.launch
@@ -78,7 +83,7 @@ roslaunch ros_end_effector findActionsTestEE.launch
 roslaunch ros_end_effector two_finger_ee_startup.launch inSlider:=true
 ```
 
-# How to run for the 2 Finger example
+## How to run for the 2 Finger example
 ```bash
 #usual source
 roslaunch ros_end_effector findActionsTwoFinger.launch
@@ -88,7 +93,7 @@ roslaunch ros_end_effector findActionsTwoFinger.launch
 roslaunch ros_end_effector test_ee_startup.launch inSlider:=true
 ```
 
-# How to check if things are good with google tests
+## How to check if things are good with google tests
 ```bash
 cd <pkg_path>/build
 make tests

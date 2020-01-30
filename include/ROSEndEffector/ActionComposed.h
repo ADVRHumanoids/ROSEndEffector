@@ -16,8 +16,8 @@
  * limitations under the License.
  */
 
-#ifndef ACTIONCOMPOSED_H
-#define ACTIONCOMPOSED_H
+#ifndef __ROSEE_ACTIONCOMPOSED_H
+#define __ROSEE_ACTIONCOMPOSED_H
 
 #include <vector>
 #include <string>
@@ -88,4 +88,4 @@ public:
 };
 }
 
-#endif // ACTIONCOMPOSED_H
+#endif // __ROSEE_ACTIONCOMPOSED_H

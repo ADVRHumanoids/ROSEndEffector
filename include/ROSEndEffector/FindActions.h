@@ -1,14 +1,10 @@
 #ifndef __ROSEE_FIND_ACTIONS_
 #define __ROSEE_FIND_ACTIONS_
 
-#include <ros/console.h>
-
-// MoveIt!
-#include <moveit/robot_model_loader/robot_model_loader.h>
 #include <moveit/planning_scene/planning_scene.h>
 
-
 #include <ROSEndEffector/YamlWorker.h>
+#include <ROSEndEffector/ParserMoveIt.h>
 #include <ROSEndEffector/ActionPinchStrong.h>
 #include <ROSEndEffector/ActionPinchWeak.h>
 #include <ROSEndEffector/ActionTrig.h>
@@ -34,7 +30,7 @@ namespace ROSEE
 class FindActions
 {
 public:
-    FindActions ( std::string ) ;
+    FindActions ( std::shared_ptr < ROSEE::ParserMoveIt > parserMoveit ) ;
     std::pair <  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong >, 
                  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak >  > 
                  findPinch ( std::string path2saveYaml = "" );
@@ -42,8 +38,8 @@ public:
         std::string path2saveYaml = "" );
     
 private:
-        
-    std::string robot_description;
+    
+    std::shared_ptr < ROSEE::ParserMoveIt > parserMoveIt;
     
     std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong >  checkCollisions();
     void checkDistances (std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak >* );

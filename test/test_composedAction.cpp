@@ -4,6 +4,7 @@
 #include <ros/console.h>
 
 #include <ROSEndEffector/FindActions.h>
+#include <ROSEndEffector/ParserMoveIt.h>
 #include <ROSEndEffector/ActionComposed.h>
 #include <ROSEndEffector/ActionPrimitive.h>
 #include <ROSEndEffector/ActionTrig.h>
@@ -29,7 +30,9 @@ protected:
         //is this cast correct?
         ros::init ( argc, (char**)argv, "testComposedAction" );
     
-        ROSEE::FindActions actionsFinder ("robot_description");
+        std::shared_ptr <ROSEE::ParserMoveIt> parserMoveIt = std::make_shared <ROSEE::ParserMoveIt> ();
+        parserMoveIt->init ("robot_description") ;
+        ROSEE::FindActions actionsFinder (parserMoveIt);
 
         trigMap = actionsFinder.findTrig(ROSEE::ActionType::Trig, "/configs/actions/tests/") ;  
 
@@ -40,7 +43,7 @@ protected:
         }
 
         
-        ROSEE::YamlWorker yamlWorker(actionsFinder.getHandName(), "/configs/actions/tests/");
+        ROSEE::YamlWorker yamlWorker(parserMoveIt->getHandName(), "/configs/actions/tests/");
         yamlWorker.createYamlFile (&grasp);
         
         //Parsing

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef YAMLWORKER_H
-#define YAMLWORKER_H
+#ifndef __ROSEE_YAMLWORKER_H
+#define __ROSEE_YAMLWORKER_H
 
 #define COLLIDER_REL_PATH "/configs/actions/"
 
@@ -73,4 +73,4 @@ private:
 
 } //namespace ROSEE
 
-#endif // YAMLWORKER_H
+#endif // __ROSEE_YAMLWORKER_H

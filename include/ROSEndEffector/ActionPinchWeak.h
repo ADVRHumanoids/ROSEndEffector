@@ -16,8 +16,8 @@
  * limitations under the License.
  */
 
-#ifndef ROSEE_ACTIONPINCHWEAK_H
-#define ROSEE_ACTIONPINCHWEAK_H
+#ifndef __ROSEE_ACTIONPINCHWEAK_H
+#define __ROSEE_ACTIONPINCHWEAK_H
 
 #include <ROSEndEffector/ActionPrimitive.h>
 #include <ROSEndEffector/ActionPinchGeneric.h>
@@ -100,4 +100,4 @@ private:
 
 }
 
-#endif // ROSEE_ACTIONPINCHWEAK_H
+#endif // __ROSEE_ACTIONPINCHWEAK_H

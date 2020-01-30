@@ -20,18 +20,16 @@
 #include <ROSEndEffector/UniversalRosEndEffectorExecutor.h>
 #include <ROSEndEffector/FindActions.h>
 #include <ROSEndEffector/ActionComposed.h>
+#include <ROSEndEffector/ParserMoveIt.h>
 
 int main ( int argc, char **argv ) {
 
     ros::init ( argc, argv, "FindActions" );
-    
-    ROSEE::FindActions actionsFinder ("robot_description");
-    
-    auto maps = actionsFinder.findPinch();
-    
-    //DEBUGGGG
+    std::shared_ptr <ROSEE::ParserMoveIt> parserMoveIt = std::make_shared <ROSEE::ParserMoveIt> ();
+    parserMoveIt->init ("robot_description") ;
+    ROSEE::FindActions actionsFinder (parserMoveIt);
 
-    ///
+    auto maps = actionsFinder.findPinch();
 
     std::map <std::string, ROSEE::ActionTrig> trigMap =  actionsFinder.findTrig (ROSEE::ActionType::Trig) ;
     std::map <std::string, ROSEE::ActionTrig> tipFlexMap = actionsFinder.findTrig (ROSEE::ActionType::TipFlex);
@@ -41,7 +39,7 @@ int main ( int argc, char **argv ) {
     /** ********************* PARSING TEST and print... these things should not be here ****************/
 
     //TODO getHandName should be in the parser
-    ROSEE::YamlWorker yamlWorker(actionsFinder.getHandName());
+    ROSEE::YamlWorker yamlWorker ( parserMoveIt->getHandName() ); 
 
     //pinch     
     std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > pinchParsedMap = 

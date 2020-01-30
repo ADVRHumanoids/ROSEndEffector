@@ -16,8 +16,8 @@
  * limitations under the License.
  */
 
-#ifndef ROSEE_ACTIONPINCHGENERIC_H
-#define ROSEE_ACTIONPINCHGENERIC_H
+#ifndef __ROSEE_ACTIONPINCHGENERIC_H
+#define __ROSEE_ACTIONPINCHGENERIC_H
 
 #include <ROSEndEffector/ActionPrimitive.h>
 #include <yaml-cpp/yaml.h>
@@ -49,4 +49,4 @@ public:
 
 }
 
-#endif // ROSEE_ACTIONPINCHGENERIC_H
+#endif // __ROSEE_ACTIONPINCHGENERIC_H

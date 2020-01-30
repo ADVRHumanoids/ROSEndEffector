@@ -5,6 +5,7 @@
 
 
 #include <ROSEndEffector/FindActions.h>
+#include <ROSEndEffector/ParserMoveIt.h>
 #include <ROSEndEffector/ActionPrimitive.h>
 #include <ROSEndEffector/ActionTrig.h>
 
@@ -29,14 +30,15 @@ protected:
         //is this cast correct?
         ros::init ( argc, (char**)argv, "testFindTrigs" );
     
-        ROSEE::FindActions actionsFinder ("robot_description");
+        std::shared_ptr <ROSEE::ParserMoveIt> parserMoveIt = std::make_shared <ROSEE::ParserMoveIt> ();
+        parserMoveIt->init ("robot_description") ;
+        ROSEE::FindActions actionsFinder (parserMoveIt);
         
         trigMap.push_back( actionsFinder.findTrig(ROSEE::ActionType::Trig, "/configs/actions/tests/") );
         trigMap.push_back( actionsFinder.findTrig(ROSEE::ActionType::TipFlex, "/configs/actions/tests/") );
         trigMap.push_back( actionsFinder.findTrig(ROSEE::ActionType::FingFlex, "/configs/actions/tests/") );
 
-        //TODO getHandName should be in the parser
-        ROSEE::YamlWorker yamlWorker(actionsFinder.getHandName(), "/configs/actions/tests/");
+        ROSEE::YamlWorker yamlWorker(parserMoveIt->getHandName(), "/configs/actions/tests/");
         trigParsedMap.push_back( yamlWorker.parseYaml("trig.yaml", ROSEE::ActionType::Trig) );
         trigParsedMap.push_back( yamlWorker.parseYaml("tipFlex.yaml", ROSEE::ActionType::TipFlex) );
         trigParsedMap.push_back( yamlWorker.parseYaml("fingFlex.yaml", ROSEE::ActionType::FingFlex) );

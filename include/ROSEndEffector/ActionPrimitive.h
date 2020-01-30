@@ -16,8 +16,8 @@
  * limitations under the License.
  */
 
-#ifndef ACTIONPRIMITIVE_H
-#define ACTIONPRIMITIVE_H
+#ifndef __ROSEE_ACTIONPRIMITIVE_H
+#define __ROSEE_ACTIONPRIMITIVE_H
 
 #include <set>
 #include <string>
@@ -115,4 +115,4 @@ public:
 };
 }
 
-#endif // ACTIONPRIMITIVE_H
+#endif // __ROSEE_ACTIONPRIMITIVE_H

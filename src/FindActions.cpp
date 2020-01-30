@@ -1,29 +1,8 @@
 #include <ROSEndEffector/FindActions.h>
 
-ROSEE::FindActions::FindActions ( std::string robot_description ){
-    
-    this->robot_description = robot_description;
+ROSEE::FindActions::FindActions ( std::shared_ptr < ROSEE::ParserMoveIt > parserMoveIt ){
 
-    //it is a ros param in the launch, take care that also sdrf is read (param: robot_description_semantic)
-    robot_model_loader::RobotModelLoader robot_model_loader(robot_description); 
-    std::cout << "AAAAAAAAAAAAAAAAA \n " << robot_description << "BBBBBBBBBBb" << std::endl;
-    kinematic_model = robot_model_loader.getModel();
-    
-    std::cout << "look for fingertips... " << std::endl;
-    lookForFingertips();
-    lookJointsTipsCorrelation();
-    
-    std::cout << "PARSING with MOVEIT PRINTS RESULT START ***********************************************************************" << std::endl;
-    printFingertipLinkNames();
-    printJointsOfFingertips();
-    printFingertipsOfJoints();
-    std::cout << "PARSING with MOVEIT PRINTS RESULT END ***********************************************************************" << std::endl << std::endl;
-
-}
-
-//TODO shoudl be in parser
-std::string ROSEE::FindActions::getHandName() {      
-    return kinematic_model->getName();
+    this->parserMoveIt = parserMoveIt;
 }
 
 
@@ -32,17 +11,16 @@ std::pair <  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinc
              ROSEE::FindActions::findPinch ( std::string path2saveYaml ){
     
     std::map < std::pair <std::string, std::string> , ActionPinchStrong > mapOfPinches = checkCollisions();
-    
     std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak > mapOfWeakPinches;
     fillNotCollidingTips(&mapOfWeakPinches, &mapOfPinches);
-    
+
     checkWhichTipsCollideWithoutBounds ( &mapOfWeakPinches ) ;
 
     if (mapOfWeakPinches.size() != 0 ){
         checkDistances (&mapOfWeakPinches) ;
     }
     
-    
+
     /// EMITTING PART ................
     if (mapOfPinches.size() == 0 ) {  //print if no collision at all
         //Remove here after checking pinches further with method said
@@ -51,7 +29,7 @@ std::pair <  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinc
             << " set a bigger value in N_EXP_COLLISION. I am creating a empty file" << std::endl;
     } 
     
-    ROSEE::YamlWorker yamlWorker(kinematic_model->getName(), path2saveYaml);
+    ROSEE::YamlWorker yamlWorker(parserMoveIt->getHandName(), path2saveYaml);
     
     std::map < std::set <std::string> , ActionPrimitive* > mapForWorker;
     for (auto& it : mapOfPinches) {  // auto& and not auto alone!
@@ -63,7 +41,6 @@ std::pair <  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinc
         mapForWorker.insert (std::make_pair ( keys, pointer ) );                
     }
 
-    
     yamlWorker.createYamlFile(mapForWorker, "pinchStrong");
     
     if (mapOfWeakPinches.size() == 0 ) { 
@@ -83,7 +60,6 @@ std::pair <  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinc
     }
 
     yamlWorker.createYamlFile(mapForWorker, "pinchWeak");
-    
     
     return std::make_pair(mapOfPinches, mapOfWeakPinches);
 }
@@ -140,7 +116,7 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::findTrig ( ROSEE::
         mapForWorker.insert (std::make_pair ( keys, pointer ) );
     }
     
-    ROSEE::YamlWorker yamlWorker(kinematic_model->getName(), path2saveYaml);
+    ROSEE::YamlWorker yamlWorker(parserMoveIt->getHandName(), path2saveYaml);
     yamlWorker.createYamlFile(mapForWorker, trigMap.begin()->second.getName());
 
     return trigMap;
@@ -150,7 +126,7 @@ std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong > ROS
         
     std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong > mapOfPinches;
     
-    planning_scene::PlanningScene planning_scene(kinematic_model);
+    planning_scene::PlanningScene planning_scene ( parserMoveIt->getRobotModel() );
     collision_detection::CollisionRequest collision_request;
     collision_detection::CollisionResult collision_result;
     collision_request.contacts = true;  //set to compute collisions
@@ -161,10 +137,12 @@ std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong > ROS
     // objects is no tolerated. So we must fill it with all the nonFingertips
     
     collision_detection::AllowedCollisionMatrix acm;
-    acm.setEntry(kinematic_model->getLinkModelNames(), kinematic_model->getLinkModelNames(), true); //true==not considered collisions
-    acm.setEntry(fingertipNames, fingertipNames, false); //true==not considered collisions
+    acm.setEntry(parserMoveIt->getRobotModel()->getLinkModelNames(), 
+                 parserMoveIt->getRobotModel()->getLinkModelNames(), true); //true==not considered collisions
+    acm.setEntry(parserMoveIt->getFingertipNames(), 
+                 parserMoveIt->getFingertipNames(), false); //false== considered collisions
 
-    robot_state::RobotState kinematic_state(kinematic_model);
+    robot_state::RobotState kinematic_state(parserMoveIt->getRobotModel());
         
     for (int i = 0; i < N_EXP_COLLISION; i++){
         
@@ -218,7 +196,7 @@ std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong > ROS
 
 void ROSEE::FindActions::checkDistances (std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak >* mapOfWeakPinches) {
         
-    robot_state::RobotState kinematic_state(kinematic_model);
+    robot_state::RobotState kinematic_state(parserMoveIt->getRobotModel());
         
     for (int i = 0; i < N_EXP_DISTANCES; i++){
         
@@ -239,9 +217,7 @@ void ROSEE::FindActions::checkDistances (std::map < std::pair <std::string, std:
             mapEl.second.insertActionState( jointStatesWeak, distance ) ;
             mapEl.second.setJointsInvolved(jointsInvolved);
         }
-            
     }
-
 }
 
 
@@ -267,7 +243,8 @@ std::vector<bool> ROSEE::FindActions::setOnlyDependentJoints(
         }
         */
         
-        std::vector < std::string> tips = fingertipsOfJointMap.at(js.first); //the tips of the joint
+        //the tips of the joint
+        std::vector < std::string> tips = parserMoveIt->getFingertipsOfJointMap().at(js.first); 
         
         //check if the two tips that collide are among the ones that the joint moves
         if (std::find (tips.begin(), tips.end(), tipsNames.first) == tips.end() &&
@@ -280,8 +257,7 @@ std::vector<bool> ROSEE::FindActions::setOnlyDependentJoints(
         iJoint ++;
     } 
     
-    return jointsInvolved;
-    
+    return jointsInvolved;    
 }
 
 
@@ -301,25 +277,24 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::trig() {
 
     std::map <std::string, ActionTrig> trigMap;
 
-    for (auto mapEl : fingertipsOfJointMap) {
+    for (auto mapEl : parserMoveIt->getFingertipsOfJointMap()) {
         
         if (mapEl.second.size() != 1) { //the joint must move ONLY a fingertip
             continue;
         }
         
-        if ( checkIfContinuosJoint(mapEl.first) == true ) {
+        if ( parserMoveIt->checkIfContinuosJoint(mapEl.first) == true ) {
             continue; //we dont want to use a continuos joint for the trig
         }
 
         /// Go in the max range 
-        double trigMax = getBiggestBound(mapEl.first) ;
+        double trigMax = parserMoveIt->getBiggerBoundFromZero(mapEl.first).at(0) ;
 
         ActionTrig action ("trig", ActionType::Trig);
         action.setLinkInvolved (mapEl.second.at(0)) ;
 
         // mapEl.second.at(0) : sure to have only 1 element for the if before
         insertJointPosForTrigInMap(trigMap, action, mapEl.first, trigMax); 
-
     }
     
     return trigMap;
@@ -338,40 +313,16 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::tipFlex() {
     
     std::map <std::string, ROSEE::ActionTrig> tipFlexMap;
     
-    for (auto mapEl : jointsOfFingertipMap) {
+    for (auto mapEl : parserMoveIt->getJointsOfFingertipMap() ) {
         
-        if (getNExclusiveJointsOfTip ( mapEl.first ) < 2 ) { 
+        if (parserMoveIt->getNExclusiveJointsOfTip ( mapEl.first, false ) < 2 ) { 
         //if so, we have a simple trig (or none if 0) and not also a tip/finger flex
             continue;
         }
         
-        // starting from the tip, we explore the parents joint, until we found the first actuated (and
-        // not continuos). This ones will be the interesting joint 
-        // constant is the data pointed and not the pointer itself
-        const moveit::core::LinkModel* linkModel = kinematic_model->getLinkModel(mapEl.first);
-
-        while ( linkModel->getParentJointModel()->getMimic() != NULL || 
-                linkModel->parentJointIsFixed() ||
-                linkModel->getParentJointModel()->isPassive() || 
-                checkIfContinuosJoint(linkModel->getParentJointModel()) ) {
-            
-            //an active and not continuos joint is not any of these condition.
-            //passive is an attribute of the joint in the srdf, so it may be not setted (default is not passive)
-            //, so we need also the getMimic == NULL (ie: an actuated joint dont mimic anything)
-            //WARNING these 4 conditions should be enough I think
-            
-            linkModel = linkModel->getParentLinkModel();
-        }
+        std::string theInterestingJoint = parserMoveIt->getFirstActuatedParentJoint ( mapEl.first, false );
+        double tipFlexMax = parserMoveIt->getBiggerBoundFromZero ( theInterestingJoint ).at(0) ;
         
-        if (linkModel == NULL ) {
-            std::cout << "[FATAL ERROR] Strange Error, jointsOfFingertipMap, " << 
-                "fingertipsOfJointMap and/or other things may have been built badly" << std::endl;
-        }
-        
-        std::string theInterestingJoint = linkModel->getParentJointModel()->getName();
-        double tipFlexMax = getBiggestBound(linkModel->getParentJointModel()) ;
-        
-
         ActionTrig action ("tipFlex", ActionType::TipFlex);
         action.setLinkInvolved (mapEl.first) ;
         if (! insertJointPosForTrigInMap(tipFlexMap, action, theInterestingJoint, tipFlexMax) ) {
@@ -381,7 +332,6 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::tipFlex() {
             std::cout << "[FATAL ERROR]: Inserting in tipFlexMap a tip already present??" << std::endl;
         }
     }
-    
     return tipFlexMap;
 }
 
@@ -396,36 +346,15 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::fingFlex() {
     
     std::map <std::string, ROSEE::ActionTrig> fingFlexMap;
     
-    for (auto mapEl : jointsOfFingertipMap) {
+    for (auto mapEl : parserMoveIt->getJointsOfFingertipMap()) {
         
-        if (getNExclusiveJointsOfTip ( mapEl.first ) < 2 ) { 
+        if (parserMoveIt->getNExclusiveJointsOfTip ( mapEl.first, false ) < 2 ) { 
         //if so, we have a simple trig (or none if 0) and not also a tip/finger flex
             continue;
         }
-        
-        //explore parent links until we found a link with more than 1 child joint
-        const moveit::core::LinkModel* linkModel = kinematic_model->getLinkModel(mapEl.first);
-        const moveit::core::JointModel* joint;
 
-        // we stop when the link has more than 1 joint: so linkModel will be the parent of the first 
-        // link of the finger group and in joint we have stored the actuated (not continuos) 
-        // child joint most near to linkModel
-        while ( (linkModel != NULL) && (linkModel->getChildJointModels().size() < 2) ) {
-            
-            //if the parent joint is an actuated (not cont) joint, store it (or overwrite the previous stored)
-            if ( linkModel->getParentJointModel()->getMimic() == NULL && 
-                 (!linkModel->parentJointIsFixed()) &&
-                 (!linkModel->getParentJointModel()->isPassive()) &&
-                 (!checkIfContinuosJoint(linkModel->getParentJointModel() ))  ) {
-                
-                joint = linkModel->getParentJointModel();
-            }
-            
-            linkModel = linkModel->getParentLinkModel();
-        }
-        
-        std::string theInterestingJoint = joint->getName();
-        double fingFlexMax = getBiggestBound(joint) ;
+        std::string theInterestingJoint = parserMoveIt->getFirstActuatedJointInFinger ( mapEl.first );
+        double fingFlexMax = parserMoveIt->getBiggerBoundFromZero ( theInterestingJoint ).at(0) ;
 
         ActionTrig action ("fingFlex", ActionType::FingFlex);
         action.setLinkInvolved (mapEl.first) ;
@@ -446,33 +375,33 @@ bool ROSEE::FindActions::insertJointPosForTrigInMap ( std::map <std::string, Act
     ROSEE::ActionTrig action, std::string jointName, double trigValue) {
     
     auto itMap = trigMap.find(action.getLinkInvolved());
-        if ( itMap == trigMap.end() ) {
-            //still no action for this tip in the map
-            
-            JointStates js;
-            for (auto it : kinematic_model->getActiveJointModels()){
-                std::vector <double> jPos (it->getVariableCount(), DEFAULT_JOINT_POS);
-                js.insert ( std::make_pair ( it->getName(), jPos ));
-            }
-            
-            //HACK at(0) because 1dof joint
-            js.at ( jointName ).at(0) = trigValue;
-
-            action.setActionState(js);
-            trigMap.insert ( std::make_pair ( action.getLinkInvolved(), action ) );
-    
-            return true;
-
-        } else {
-            //action already created, but we have to modify the position of a joint
-            //itMap->second is an iterator to the already present element
-            JointStates js = itMap->second.getActionState();
-            //HACK at(0) because 1dof joint
-            js.at (jointName).at(0) = trigValue;
-            itMap->second.setActionState(js);
-            
-            return false;
+    if ( itMap == trigMap.end() ) {
+        //still no action for this tip in the map
+        
+        JointStates js;
+        for (auto it : parserMoveIt->getRobotModel()->getActiveJointModels()){
+            std::vector <double> jPos (it->getVariableCount(), DEFAULT_JOINT_POS);
+            js.insert ( std::make_pair ( it->getName(), jPos ));
         }
+        
+        //HACK at(0) because 1dof joint
+        js.at ( jointName ).at(0) = trigValue;
+
+        action.setActionState(js);
+        trigMap.insert ( std::make_pair ( action.getLinkInvolved(), action ) );
+
+        return true;
+
+    } else {
+        //action already created, but we have to modify the position of a joint
+        //itMap->second is an iterator to the already present element
+        JointStates js = itMap->second.getActionState();
+        //HACK at(0) because 1dof joint
+        js.at (jointName).at(0) = trigValue;
+        itMap->second.setActionState(js);
+        
+        return false;
+    }
 }
 
 
@@ -481,7 +410,7 @@ bool ROSEE::FindActions::insertJointPosForTrigInMap ( std::map <std::string, Act
 ROSEE::JointStates ROSEE::FindActions::getConvertedJointStates(const robot_state::RobotState* kinematic_state) {
     
     JointStates js;
-    for (auto actJ : kinematic_model->getActiveJointModels()){
+    for ( auto actJ : parserMoveIt->getRobotModel()->getActiveJointModels() ) {
         //joint can have multiple pos, so double*, but we want to store in a vector 
         const double* pos = kinematic_state->getJointPositions(actJ); 
         unsigned posSize = sizeof(pos) / sizeof(double);
@@ -496,10 +425,9 @@ void ROSEE::FindActions::fillNotCollidingTips (
     std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak >* mapOfWeakPinches,
     const std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong >* mapOfPinches) {
     
-
     // first fill mapOfWeakPinches with all pairs ...
-    for (auto tip1 : fingertipNames) {
-        for (auto tip2 : fingertipNames) { 
+    for ( auto tip1 : parserMoveIt->getFingertipNames() )  {
+        for ( auto tip2 : parserMoveIt->getFingertipNames() ) { 
             
             // important to put in order in the pair, then in the set thing are autoordered
             if (tip1 < tip2) {
@@ -517,13 +445,53 @@ void ROSEE::FindActions::fillNotCollidingTips (
     }
 }
 
+
 void ROSEE::FindActions::removeBoundsOfNotCollidingTips ( 
     const std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak >* mapOfWeakPinches,
     robot_model::RobotModelPtr kinematic_model_noBound) {
 
     for (auto mapEl : *mapOfWeakPinches ) {
         
-        for ( auto &joint : jointsOfFingertipMap.at (mapEl.first.first) ) { //for each joint of first tip...
+        //for each joint of first tip...
+        /// C++ Question: WHY if I use directly parser....at() in the for the string joint is corrupted?
+        auto joints = parserMoveIt->getJointsOfFingertipMap().at (mapEl.first.first);
+        for ( std::string joint : joints ) { 
+            auto jointModel = kinematic_model_noBound ->getJointModel(joint);
+
+            auto type = jointModel->getType() ;
+            if (type == moveit::core::JointModel::REVOLUTE ) {
+                //at(0) because we are sure to have 1 dof being revolute
+                auto bound = jointModel->getVariableBounds().at(0);
+                bound.max_position_ = EIGEN_PI;
+                bound.min_position_ = -EIGEN_PI;
+                //at(0) because we are sure to have 1 dof being revolute
+                jointModel->setVariableBounds ( jointModel->getVariableNames().at(0), bound );
+                
+            } else if ( type == moveit::core::JointModel::PRISMATIC ) {
+                // we cant set infinite here... lets double the limits?
+                std::cout << "[WARNING FINDACTIONS WEAKPINCHES] Im doubling the bounds for your prismatic joint " 
+                    << "but I am not sure it is enough to make the tips colliding to find the weak pinches " <<
+                    std::endl;
+                auto bound = jointModel->getVariableBounds().at(0);
+                bound.max_position_ *= 2;
+                bound.min_position_ *= 2;
+                //at(0) because we are sure to have 1 dof being prismatic
+                jointModel->setVariableBounds ( jointModel->getVariableNames().at(0), bound );
+                
+            } else {
+                    
+                std::cout << "[WARNING] Why are you using a type " 
+                    << kinematic_model_noBound ->getJointModel(joint)->getType()
+                    << " joint? Code not ready to temporarily delete the multiple dof bounds"
+                    << " in the working done to find the weak pinches " << std::endl << std::endl;
+                
+                continue;
+            }
+        }
+        
+        //for each joint of second tip...
+        auto joints2 = parserMoveIt->getJointsOfFingertipMap().at (mapEl.first.second);
+        for ( auto joint : joints2 ) { 
             
             auto jointModel = kinematic_model_noBound ->getJointModel(joint);
             auto type = jointModel->getType() ;
@@ -555,41 +523,6 @@ void ROSEE::FindActions::removeBoundsOfNotCollidingTips (
                 continue;
             }
         }
-        
-        for ( auto joint : jointsOfFingertipMap.at (mapEl.first.second) ) { //for each joint of second tip...
-            
-            auto jointModel = kinematic_model_noBound ->getJointModel(joint);
-            auto type = jointModel->getType() ;
-            if (type == moveit::core::JointModel::REVOLUTE ) {
-                //at(0) because we are sure to have 1 dof being revolute
-                auto bound = jointModel->getVariableBounds().at(0);
-                bound.max_position_ = EIGEN_PI;
-                bound.min_position_ = -EIGEN_PI;
-                //at(0) because we are sure to have 1 dof being revolute
-                jointModel->setVariableBounds ( jointModel->getVariableNames().at(0), bound );
-                
-            } else if ( type == moveit::core::JointModel::PRISMATIC ) {
-                // we cant set infinite here... lets double the limits?
-                std::cout << "[WARNING FINDACTIONS WEAKPINCHES] Im doubling the bounds for your prismatic joint " 
-                    << "but I am not sure it is enough to make the tips colliding to find the weak pinches " << std::endl;
-                auto bound = jointModel->getVariableBounds().at(0);
-                bound.max_position_ *= 2;
-                bound.min_position_ *= 2;
-                //at(0) because we are sure to have 1 dof being revolute
-                jointModel->setVariableBounds ( jointModel->getVariableNames().at(0), bound );
-                
-            } else {
-                    
-                std::cout << "[WARNING] Why are you using a type " 
-                    << kinematic_model_noBound ->getJointModel(joint)->getType()
-                    << " joint? Code not ready to temporarily delete the multiple dof bounds"
-                    << " in the working done to find the weak pinches " << std::endl << std::endl;
-                
-                continue;
-            }
-            
-        }
-        
     }
 }
 
@@ -603,14 +536,13 @@ void ROSEE::FindActions::checkWhichTipsCollideWithoutBounds (
     // this means that they never go towards each other, so this is not a pinch at AllowedCollisionMatrix
     // create new object so we dont modify the original kinematic_model
     
-    //it is a ros param in the launch, take care that also sdrf is read (param: robot_description_semantic)
-    robot_model_loader::RobotModelLoader robot_model_loader(robot_description); 
-    robot_model::RobotModelPtr kinematic_model_noBound = robot_model_loader.getModel();
-    removeBoundsOfNotCollidingTips (mapOfWeakPinches, kinematic_model_noBound );
+    robot_model::RobotModelPtr kinematic_model_noBound = parserMoveIt->getCopyModel();
     
-        collision_detection::AllowedCollisionMatrix acm;
-    acm.setEntry(kinematic_model_noBound->getLinkModelNames(), kinematic_model_noBound->getLinkModelNames(), true); 
-    //true==not considered collisions
+    removeBoundsOfNotCollidingTips (mapOfWeakPinches, kinematic_model_noBound );
+
+    collision_detection::AllowedCollisionMatrix acm;
+    acm.setEntry(kinematic_model_noBound->getLinkModelNames(), 
+                 kinematic_model_noBound->getLinkModelNames(), true); //true == not considered collisions
     for( auto  it : *mapOfWeakPinches) {
         //we want to look for collision only on the pair inside the map
         acm.setEntry(it.first.first, it.first.second, false); //false == considered collisions   
