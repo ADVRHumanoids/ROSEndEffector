@@ -67,6 +67,8 @@ cd ..
 catkin_make_isolated
 source devel_isolated/setup.bash
 ```
+
+#### todo be sure same folder, for the meshes...
 #### Finally launch the hand simulation
 ```bash
 roslaunch schunk_svh_driver svh_controller.launch standalone:=true gui:=true simulation:=true
