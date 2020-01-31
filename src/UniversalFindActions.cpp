@@ -84,6 +84,9 @@ int main ( int argc, char **argv ) {
     }
     
     /** **************************** COMPOSITE ACTION THINGS *************************************************/
+    
+    std::cout << "A composed action with Independent primitives: " << std::endl;
+
 
     ROSEE::ActionComposed grasp ("grasp", true);
     for (auto trig : trigParsedMap) {
@@ -99,7 +102,7 @@ int main ( int argc, char **argv ) {
     //actionParsed.printAction();
     
     
-    std::cout << "the depenteddede " << std::endl;
+    std::cout << "A composed action with dependent primitives: " << std::endl;
     
     ROSEE::ActionComposed grasp2 ("grasp2", false);
 
@@ -115,7 +118,7 @@ int main ( int argc, char **argv ) {
     
     //Parsing
     auto actionParsed = yamlWorker.parseYamlComposed ("grasp.yaml");
-    std::cout << "parsed Composed" << std::endl;
+    std::cout << "The composed action with dependent primitives (parsed from generated yaml file):" << std::endl;
     actionParsed.printAction();
     
     return 0;
