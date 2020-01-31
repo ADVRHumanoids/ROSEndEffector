@@ -25,8 +25,10 @@
 int main ( int argc, char **argv ) {
 
     ros::init ( argc, argv, "FindActions" );
+    
     std::shared_ptr <ROSEE::ParserMoveIt> parserMoveIt = std::make_shared <ROSEE::ParserMoveIt> ();
     parserMoveIt->init ("robot_description") ;
+    
     ROSEE::FindActions actionsFinder (parserMoveIt);
 
     auto maps = actionsFinder.findPinch();

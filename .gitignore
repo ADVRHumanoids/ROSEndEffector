@@ -35,9 +35,8 @@
 *.kate-swp
 build/
 
-
 # yaml generated files
-configs/actions/tests/
+configs/actions/
 
 #pdf generated from urdf
 configs/urdf/*.pdf
