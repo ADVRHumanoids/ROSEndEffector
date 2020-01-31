@@ -64,8 +64,7 @@ Run the node **UniversalFindActions** after filling the two ROS parameters *robo
 ```
 This will generate yaml files in the *config/action* folder. The same yaml files are also parsed by the same node to test (and print) the correctness. 
 **WARNING** old action *yaml* files will be ovewritten every time you run again the node.
-
-TODO... take care to generate correctly the srdf see later
+Also, take care to generate correctly the srdf (see later).
 ## Examples 
 #### TestEE Example (a simple 3 fingers model without pinch)
 ```bash
@@ -109,6 +108,10 @@ roslaunch schunk_svh_driver svh_controller.launch standalone:=true gui:=true sim
 ```
 Be sure to put in rviz as __fixed frame__ the  __base_link__
 
+## Creating srdf files
+Both *moveit* and this *ROSEE node* refers to srdf file to explore your hand. So it is important to provide a right srdf file. The convention used is that each finger is a *group* (from the base of the finger to the tip).
+Even for very complicated hand like schunk hand, this file is easy to create (see the one for the schunk [here](configs/srdf/svh-groupsForROSEE.srdf)). 
+If you don't want to create this by hand, you can use the [moveit assistant](http://docs.ros.org/kinetic/api/moveit_tutorials/html/doc/setup_assistant/setup_assistant_tutorial.html), which will help to create srdf files (among the other things) through a GUI
 
 ## How to check if things are good with google tests
 ```bash
