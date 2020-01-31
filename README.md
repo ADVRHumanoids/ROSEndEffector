@@ -35,7 +35,7 @@ research and innovation programme under grant agreement no. 732287.
 # Actions Finder Node
 * This node will explore your robot model (i.e. *urdf* and *srdf* files) in order to find some primitive actions (e.g. __pinch__, __trig__ ) that your hand can do. 
 * MoveIt library is used to parse the models and to find collisions (to find the **pinches**)
-* Information about each action are stored in some *yaml* files, that can be parsed afterwards. The main information in the *yaml* files is the necessary position of the joints to perform that action (TODO see example here?).
+* Information about each action are stored in some *yaml* files, that can be parsed afterwards. The main information in the *yaml* files is the necessary position of the joints to perform that action (see some examples [here](configs/actionExamples)).
 * Additional primitive actions can be added, deriving the c++ class or creating directly by hand the *yaml* file.
 
 For more complicated action, there is the possibility to define them as **composed** action, that is, an action *composed* by different others. In this case the joint positions of the composed action will consider all the action included in it.
