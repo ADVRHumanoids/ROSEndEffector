@@ -20,7 +20,7 @@ namespace ROSEE
 /**
  * @brief Class to check which fingertips collide (for the pinch action at the moment)
  * 
- * @warning there is a problem with collisions: with the schunk hand, if we only the middle (base phalange)
+ * @warning there is a problem with collisions: with the schunk hand, if we move only the middle (base phalange)
  * toward the hand, a collision between index tip, middle tip and ring tip is detected. Easy reproducible with the 
  * moveit assistant, in the set pose section (it find a collision when visually is not present, when we move the 
  * middle). There are some caotic printing in bugmoveit branch, to replicate the problem also with this code.
