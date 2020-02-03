@@ -30,46 +30,11 @@ namespace ROSEE {
  * @todo merge this with Parser class?
  */
 class ParserMoveIt {
-private:
     
-    std::string handName;
-    robot_model::RobotModelPtr robot_model;
-    std::vector<std::string> fingertipNames;
-    std::string robot_description;
-    
-    /** The map with as key the name of the fingertip and as value all the joints (actuated) that can modify its pose*/
-    std::map<std::string, std::vector<std::string>> jointsOfFingertipMap;
-    
-    /** The map with as key the name of the actuated joint and as value all the fingertips which pose can be modified by the joint */
-    std::map<std::string, std::vector<std::string>> fingertipsOfJointMap;
-    
-    /**
-     * @brief This function explore the kinematic_model (which was built from urdf and srdf files), 
-     *  and fills the fingerTipNames vector.
-     *  In particular, the function explores only the groups specified in the srdf, and prints infos
-     *  about each link it finds (eg. not a fingertin, not a chain group, and so on).
-     *  A fingertip is a link with the following conditions:
-     *  - It is part of a group (defined in the srdf)
-     *  - The group which the tip is part of is a chain (not a tree)
-     *  - It is a "leaf" link, ie it has not children joints/links
-     * @todo Check also if it is unique in the group?
-     * @warning Only link belonging to a group are explored (and printed), so other links (if present) 
-     *  are not considered 
-     */
-    void lookForFingertips();
-    
-    /** 
-     * @brief Here, we find for each tip, which are all the joints (active) that can modifies its position
-     * It is easier to start from each joint and see which tips has as its descendands, because there is the
-     * getDescendantLinkModels() function in moveit that gives ALL the child links.
-     * There is not a function like getNonFixedParentJointModels from the tip, there is only the one to take the 
-     * FIRST parent joint (getParentJointModel())
-     * Meanwhile, we find also, for each joint, all the tips that are influenced by the joint movement. This map, 
-     * fingertipOfJointMap, is used in setOnlyDependentJoints()
-     */
-    void lookJointsTipsCorrelation();
-        
 public:
+    
+    typedef std::shared_ptr<ParserMoveIt> Ptr;
+    typedef std::shared_ptr<const ParserMoveIt> ConstPtr;
 
     ParserMoveIt();
     ~ParserMoveIt();
@@ -156,6 +121,47 @@ public:
      * @return std::string the name of the wanted joint
      */
     std::string getFirstActuatedJointInFinger (std::string linkName) const ;
+    
+private:
+    
+    std::string handName;
+    robot_model::RobotModelPtr robot_model;
+    std::vector<std::string> fingertipNames;
+    std::string robot_description;
+    
+    /** The map with as key the name of the fingertip and as value all the joints (actuated) that can modify its pose*/
+    std::map<std::string, std::vector<std::string>> jointsOfFingertipMap;
+    
+    /** The map with as key the name of the actuated joint and as value all the fingertips which pose can be modified by the joint */
+    std::map<std::string, std::vector<std::string>> fingertipsOfJointMap;
+    
+    /**
+     * @brief This function explore the kinematic_model (which was built from urdf and srdf files), 
+     *  and fills the fingerTipNames vector.
+     *  In particular, the function explores only the groups specified in the srdf, and prints infos
+     *  about each link it finds (eg. not a fingertin, not a chain group, and so on).
+     *  A fingertip is a link with the following conditions:
+     *  - It is part of a group (defined in the srdf)
+     *  - The group which the tip is part of is a chain (not a tree)
+     *  - It is a "leaf" link, ie it has not children joints/links
+     * @todo Check also if it is unique in the group?
+     * @warning Only link belonging to a group are explored (and printed), so other links (if present) 
+     *  are not considered 
+     */
+    void lookForFingertips();
+    
+    /** 
+     * @brief Here, we find for each tip, which are all the joints (active) that can modifies its position
+     * It is easier to start from each joint and see which tips has as its descendands, because there is the
+     * getDescendantLinkModels() function in moveit that gives ALL the child links.
+     * There is not a function like getNonFixedParentJointModels from the tip, there is only the one to take the 
+     * FIRST parent joint (getParentJointModel())
+     * Meanwhile, we find also, for each joint, all the tips that are influenced by the joint movement. This map, 
+     * fingertipOfJointMap, is used in setOnlyDependentJoints()
+     */
+    void lookJointsTipsCorrelation();
+        
+
 
 };
 

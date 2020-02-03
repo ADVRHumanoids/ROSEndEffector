@@ -48,8 +48,6 @@ void ROSEE::ActionPrimitive::setJointsInvolved(std::vector<bool> jointsInvolved 
     this->jointsInvolved = jointsInvolved;
 }
 
-
-
 void ROSEE::ActionPrimitive::printAction () const {
 
     std::stringstream output;

@@ -45,6 +45,12 @@ FILES
 EEPinchControl.msg
 )
 
+add_message_files(
+DIRECTORY msgs
+FILES
+EETriggerControl.msg
+)
+
 generate_messages(
 DEPENDENCIES
 std_msgs
@@ -185,6 +191,7 @@ target_link_libraries(UniversalRosEndEffectorExecutor
     ${catkin_LIBRARIES}
     ROSEEParser
     ROSEEInterface
+    YamlWorker
     
     # do it automatically
     DummyHal

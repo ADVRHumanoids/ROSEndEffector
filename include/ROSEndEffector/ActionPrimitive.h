@@ -64,26 +64,12 @@ enum ActionType {Pinch, PinchStrong, PinchWeak, Trig, TipFlex, FingFlex, None};
  */
 class ActionPrimitive
 {
-protected:
- 
-    /* Protected costructor: object creable only by derived classes. 
-     No default costructo (without arguments) because we want to set always these three member */
-    ActionPrimitive( std::string name, unsigned int nLinksInvolved, unsigned int jointStateSetMaxSize,
-        ActionType actionType );
-    
-    const std::string name;
-    
-    /* e.g. two tips for the pinch*/
-    const unsigned int nLinksInvolved;
-    
-    /* the max number of action for each linksInvolved set that we want to store */
-    const unsigned int jointStateSetMaxSize;
-    
-    const ActionType actionType;
-    
-    std::vector < bool > jointsInvolved ;
     
 public:
+    
+    typedef std::shared_ptr<ActionPrimitive> Ptr;
+    typedef std::shared_ptr<const ActionPrimitive> ConstPtr;
+
     
     /* destructor of base must be virtual */
     virtual ~ActionPrimitive() {};
@@ -110,6 +96,25 @@ public:
     void emitYamlForJointsInvolved ( YAML::Emitter& );
     virtual bool fillFromYaml( YAML::const_iterator yamlIt );
     void fillYamlJointsInvolved ( YAML::const_iterator yamlIt );
+    
+protected:
+ 
+    /* Protected costructor: object creable only by derived classes. 
+     No default costructo (without arguments) because we want to set always these three member */
+    ActionPrimitive( std::string name, unsigned int nLinksInvolved, unsigned int jointStateSetMaxSize,
+        ActionType actionType );
+    
+    const std::string name;
+    
+    /* e.g. two tips for the pinch*/
+    const unsigned int nLinksInvolved;
+    
+    /* the max number of action for each linksInvolved set that we want to store */
+    const unsigned int jointStateSetMaxSize;
+    
+    const ActionType actionType;
+    
+    std::vector < bool > jointsInvolved;
 
     
 };
