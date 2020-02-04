@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+
+
+
+
+
 #include <ROSEndEffector/ParserMoveIt.h>
 
 ROSEE::ParserMoveIt::ParserMoveIt() {
@@ -79,6 +84,13 @@ std::map<std::string, std::vector<std::string> > ROSEE::ParserMoveIt::getJointsO
 robot_model::RobotModelPtr ROSEE::ParserMoveIt::getCopyModel() const {
     robot_model_loader::RobotModelLoader robot_model_loader(robot_description); 
     return robot_model_loader.getModel();
+}
+
+std::string ROSEE::ParserMoveIt::getGroupOfLink ( std::string linkName ) { 
+    
+//// TODO
+    
+    
 }
 
 

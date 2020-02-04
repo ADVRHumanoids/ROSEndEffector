@@ -29,6 +29,24 @@ int main ( int argc, char **argv ) {
     std::shared_ptr <ROSEE::ParserMoveIt> parserMoveIt = std::make_shared <ROSEE::ParserMoveIt> ();
     parserMoveIt->init ("robot_description") ;
     
+    std::cout << "ahia " << std::endl;
+    for (auto group : parserMoveIt->getRobotModel()->getJointModelGroups() ) {
+        std::cout << "gorp:   " << group->getName() << std::endl;
+        for (auto joint : group->getActiveJointModelNames() ) {
+            std::cout << "\t " << joint << std::endl;
+        }
+        std::cout << std::endl;
+    }
+    
+    std::cout << "nononono" << std::endl;
+    for (auto link : parserMoveIt->getRobotModel()->getLinkModels() ) {
+
+        
+        std::cout << "link " << link->getName() << " is part of group: " <<
+        parserMoveIt->getGroupOfLink ( link->getName() ) << std::endl;
+        
+    }
+    
     ROSEE::FindActions actionsFinder (parserMoveIt);
 
     auto maps = actionsFinder.findPinch();

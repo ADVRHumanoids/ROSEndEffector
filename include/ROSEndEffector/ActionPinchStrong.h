@@ -56,7 +56,7 @@ public:
     bool setActionStates (std::vector < ROSEE::JointStates > ) override;
     
     /** Specific get for this action to return the state with contact info */
-    std::vector< ROSEE::ActionPinchStrong::StateWithContact > getActionStatesWithContact() const;
+    std::vector< ROSEE::ActionPinchStrong::StateWithContact > getActionStatesWithContact() const; //leva with..dal nome, quelle sopra diventano getJointState
 
     
     /** 
@@ -99,7 +99,7 @@ private:
      * to do that action. The pinch among two tips can theoretically be done in infinite ways, we store 
      * the best ways found (ordering them by the depth of fingertips compenetration)
      */
-    std::set < StateWithContact, depthComp > statesInfoSet;
+    std::set < StateWithContact, depthComp > statesInfoSet;  //cambia nome in actionState?
     
 };
 

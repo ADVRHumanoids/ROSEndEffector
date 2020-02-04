@@ -47,6 +47,7 @@ std::ostream& operator << (std::ostream& output, const JointStates js) {
 }
 
 /** Enum useful to discriminate each action when, for example, we want to parse a file */
+//TODO check because Pinch is still here
 enum ActionType {Pinch, PinchStrong, PinchWeak, Trig, TipFlex, FingFlex, None};
 
 /**
@@ -77,7 +78,7 @@ protected:
     const unsigned int nLinksInvolved;
     
     /* the max number of action for each linksInvolved set that we want to store */
-    const unsigned int jointStateSetMaxSize;
+    const unsigned int jointStateSetMaxSize; //cambia nome in actionstate o tipo nmaxActionState
     
     const ActionType actionType;
     
@@ -91,16 +92,16 @@ public:
     /* virtual and not getters */
     std::string getName () const;
     ROSEE::ActionType getActionType() const;
-    unsigned int getJointStatesSetMaxSize() const;
+    unsigned int getJointStatesSetMaxSize() const; //cambia nome in actionStatesSet
     unsigned int getnLinksInvolved() const;
     std::vector < bool > getIfJointsInvolved() const;
     virtual std::set < std::string > getLinksInvolved() const = 0;
-    virtual std::vector < ROSEE::JointStates > getActionStates() const = 0;
+    virtual std::vector < ROSEE::JointStates > getActionStates() const = 0; //cambia nome in getJointStates
     
     /* virtual and not setters */
     void setJointsInvolved ( std::vector < bool > );
     virtual bool setLinksInvolved (std::set < std::string >) = 0;
-    virtual bool setActionStates (std::vector < ROSEE::JointStates > ) = 0;
+    virtual bool setActionStates (std::vector < ROSEE::JointStates > ) = 0;//cambia nome in setJointStates
     
     /* overridable functions, if we want to make them more action-specific*/
     virtual void printAction () const ;

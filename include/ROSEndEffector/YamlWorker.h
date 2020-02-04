@@ -52,7 +52,6 @@ public:
     YamlWorker(std::string handName);
     YamlWorker ( std::string handName, std::string path2saveYaml);
 
-    
     std::string createYamlFile ( const std::map < std::set <std::string> , ActionPrimitive* >, 
                                  const std::string actionName  ) ;
     std::string createYamlFile ( const ActionComposed* ) ;
@@ -66,8 +65,6 @@ private:
     std::string emitYaml ( const std::map < std::set <std::string> , ActionPrimitive* > ) ;
     std::string emitYaml  ( const ActionComposed* ) ;
 
-    
-    
 
 };
 
