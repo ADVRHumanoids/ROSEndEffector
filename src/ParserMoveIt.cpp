@@ -86,11 +86,24 @@ robot_model::RobotModelPtr ROSEE::ParserMoveIt::getCopyModel() const {
     return robot_model_loader.getModel();
 }
 
-std::string ROSEE::ParserMoveIt::getGroupOfLink ( std::string linkName ) { 
+std::vector < std::string > ROSEE::ParserMoveIt::getGroupOfLink ( std::string linkName ) { 
     
-//// TODO
+    std::vector < std::string > groupsReturn;
+
+    if (robot_model == nullptr) {
+        std::cerr << " [PARSER::" << __func__ << 
+            "]: robot_model is null. Have you called init() before?"  << std::endl;
+        return groupsReturn;
+    }
     
-    
+    for (auto group : robot_model->getJointModelGroups() ) {
+        
+        if ( group->hasLinkModel(linkName) ) {
+                
+            groupsReturn.push_back ( group->getName() ) ;
+        }
+    }
+    return groupsReturn;
 }
 
 

@@ -100,8 +100,12 @@ public:
     robot_model::RobotModelPtr getCopyModel ( ) const;
     
     /**
+     * @brief This function explores all groups of srdf and says to which ones the linkName
+     * belongs to. Returns a vector because a link can be part of more group.
+     * @param linkName the name on the link for which look the group
+     * @return std::vector < std::string > a vector containing the name of all the groups which contain the linkName
      */
-    std::string getGroupOfLink ( std::string linkName );
+    std::vector < std::string > getGroupOfLink ( std::string linkName );
     
     /**
      * @brief check if the passed joint is continuos (i.e. a revolute one with sum of bounds greater than 2*PI)

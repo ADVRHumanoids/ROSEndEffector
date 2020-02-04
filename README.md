@@ -95,6 +95,7 @@ git clone https://github.com/fzi-forschungszentrum-informatik/fzi_icl_comm.git #
 git clone https://github.com/fzi-forschungszentrum-informatik/schunk_svh_driver.git #the main schunk repo
 cd ..
 catkin_make_isolated
+source devel_isolated/setup.bash 
 ```
 Similar to the other examples, launch the node:
 
