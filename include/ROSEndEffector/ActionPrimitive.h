@@ -49,9 +49,10 @@ class ActionPrimitive : public Action
 {
     
 public:
+    
     typedef std::shared_ptr<ActionPrimitive> Ptr;
     typedef std::shared_ptr<const ActionPrimitive> ConstPtr;
-    
+
     /** Enum useful to discriminate each primitive action when, for example, we want to parse a file */
     enum Type {PinchStrong, PinchWeak, Trig, TipFlex, FingFlex, None};
     /* destructor of base must be virtual */

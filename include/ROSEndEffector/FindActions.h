@@ -32,6 +32,7 @@ class FindActions
 {
 public:
     FindActions ( std::shared_ptr < ROSEE::ParserMoveIt > parserMoveit ) ;
+    
     std::pair <  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong >, 
                  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak >  > 
                  findPinch ( std::string path2saveYaml = "" );
