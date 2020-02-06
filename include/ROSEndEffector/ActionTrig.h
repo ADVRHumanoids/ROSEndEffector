@@ -63,33 +63,30 @@ namespace ROSEE {
  */
 class ActionTrig : public ActionPrimitive 
 {
-private:
-    
-    JointStates jointStates;
-    /** the tip involved in the action. @TODO it should be the finger?*/
-    std::string tip;
-    
+
 public:
     
-    ActionTrig (std::string actionName, ActionType);
-    ActionTrig (std::string actionName, ActionType, std::string, JointStates);
+    ActionTrig (std::string actionName, ActionPrimitive::Type);
+    ActionTrig (std::string actionName, ActionPrimitive::Type, std::string tip, JointPos);
     
     /** Overriden set and get from the pure virtual functions of the base class @ActionPrimitive 
      The signature must be equal, even if here we have set and vector of only one element */
-    std::set < std::string > getLinksInvolved() const override;
-    std::vector < JointStates > getActionStates() const override;
-    bool setLinksInvolved (std::set < std::string >) override;
-    bool setActionStates (std::vector < JointStates > ) override;
+    std::vector < JointPos > getAllJointPos() const override;
+    
+    JointPos getJointPos () const override;
+    void setJointPos (JointPos);
 
-    JointStates getActionState() const;
-    bool setActionState (JointStates);
-    std::string getLinkInvolved () const;
-    void setLinkInvolved ( std::string );
+    /* Specific method of trig, here we use a single string and not the set of string of the grandfather class Action*/
+    std::string getFingerInvolved () const;
+    void setFingerInvolved ( std::string );
 
     // we are ok with the default functions of the base class ActionPrimitive
     //void printAction () const override;
     //void emitYaml ( YAML::Emitter&) override;
-    //bool fillFromYaml( YAML::const_iterator yamlIt ) override;
+    bool fillFromYaml( YAML::const_iterator yamlIt ) override;
+    
+private:
+    JointPos jointPos;
 
 };
 

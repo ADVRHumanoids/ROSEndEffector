@@ -48,29 +48,38 @@ class ActionPinchWeak : public ActionPinchGeneric
 public:
     
     /* A pair to "link" the jointStates with the optional info 'distance' */
-    typedef std::pair <JointStates, double> StateWithDistance; 
+    typedef std::pair <JointPos, double> StateWithDistance; 
     
     ActionPinchWeak();
-    ActionPinchWeak(unsigned int);
-    ActionPinchWeak(std::string, std::string);
-    ActionPinchWeak (std::pair <std::string, std::string>, JointStates, double distance );
+    ActionPinchWeak ( unsigned int maxStoredActionStates );
+    ActionPinchWeak ( std::string tip1, std::string tip2);
+    ActionPinchWeak ( std::pair <std::string, std::string>, JointPos, double distance );
     
-    /** Overriden set and get from the pure virtual functions of the base class @ActionPrimitive */
-    std::vector < ROSEE::JointStates > getActionStates() const override;
-    bool setActionStates (std::vector < ROSEE::JointStates > ) override;
+    JointPos getJointPos () const override;
+    JointPos getJointPos (unsigned int index) const;
+    
+    std::vector < ROSEE::JointPos > getAllJointPos () const override;    
     
     /** Specific get for this action to return the state with distance info */
-    std::vector< ROSEE::ActionPinchWeak::StateWithDistance > getActionStatesWithDistance() const;
+    std::vector < ROSEE::ActionPinchWeak::StateWithDistance > getActionStates() const;
 
     
     /** 
+     * @brief function to insert a single action in the setActionStates of possible action. 
+     * If the action is not so good (based on distance) the action is not inserted and 
+     * the function return false 
+     * @param JointPos The hand configuration
+     * @param collision_detection::Contact the contact associated with the action
+     * @return TRUE if the action is good and is inserted in the setActionStates
+     *         FALSE if the action given as param was not good as the others in the setActionStates
+     *           and the set was already full (maxStoredActionStates )
      */
-    bool insertActionState (JointStates, double distance);
+    bool insertActionState (JointPos, double distance);
 
     /* For the pinch, we override these function to print, emit and parse the optional info Contact,
      which is specific of the pinch */
-    void printAction () const override;
-    void emitYaml ( YAML::Emitter&) override;
+    void print () const override;
+    void emitYaml ( YAML::Emitter&) const override;
     bool fillFromYaml( YAML::const_iterator yamlIt ) override;
     
 private:
@@ -82,17 +91,8 @@ private:
         {return (std::abs(a.second) < std::abs(b.second) );}
     };
     
-    /** 
-     * @brief function to insert a single action in the setActionStates of possible action. 
-     * If the action is not so good (based on distance) the action is not inserted and 
-     * the function return false 
-     * @param JointStates The hand configuration
-     * @param collision_detection::Contact the contact associated with the action
-     * @return TRUE if the action is good and is inserted in the setActionStates
-     *         FALSE if the action given as param was not good as the others in the setActionStates
-     *           and the set was already full (@jointStateSetMaxSize )
-     */
-    std::set < StateWithDistance, distComp > statesInfoSet;
+
+    std::set < StateWithDistance, distComp > actionStates;
     
     bool emitYamlForDistance ( double distance, YAML::Emitter& );
 

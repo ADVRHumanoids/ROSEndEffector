@@ -64,22 +64,22 @@ std::pair <  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinc
     return std::make_pair(mapOfPinches, mapOfWeakPinches);
 }
 
-std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::findTrig ( ROSEE::ActionType actionType,
+std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::findTrig ( ROSEE::ActionPrimitive::Type actionType,
     std::string path2saveYaml) {
     
 
     std::map <std::string, ActionTrig> trigMap;
     
     switch (actionType) {
-    case ROSEE::ActionType::Trig : {
+    case ROSEE::ActionPrimitive::Type::Trig : {
         trigMap = trig();
         break;
     }
-    case ROSEE::ActionType::TipFlex : {
+    case ROSEE::ActionPrimitive::Type::TipFlex : {
         trigMap = tipFlex();
         break;
     }
-    case ROSEE::ActionType::FingFlex : {
+    case ROSEE::ActionPrimitive::Type::FingFlex : {
         trigMap = fingFlex();
         break;
     }
@@ -91,19 +91,18 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::findTrig ( ROSEE::
     //for involvedJoints. Ok here because I know that for the trigs, a non setted joint is 
     //a joint which is in a default position
     for (auto & mapEl : trigMap) {
-        unsigned int iJoint = 0;
-        std::vector <bool> jointsInvolved;
-        for ( auto joint : mapEl.second.getActionState() ) {
-            jointsInvolved.push_back(false);
+
+        ROSEE::JointsInvolvedCount jointsInvolvedCount;
+        for ( auto joint : mapEl.second.getJointPos() ) {
+            jointsInvolvedCount.insert (std::make_pair(joint.first, 0));
             for (auto dof : joint.second) {
                 if (dof != DEFAULT_JOINT_POS){
-                    jointsInvolved.at(iJoint) = true;
+                    jointsInvolvedCount.at(joint.first) = 1;
                     break;
                 }
             }            
-            iJoint++;
         }
-        mapEl.second.setJointsInvolved (jointsInvolved);
+        mapEl.second.setJointsInvolvedCount (jointsInvolvedCount);
     }
 
     std::map < std::set <std::string> , ActionPrimitive* > mapForWorker;
@@ -157,7 +156,7 @@ std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong > ROS
             for (auto cont : collision_result.contacts){
                 
                 //store joint states
-                JointStates jointStates = getConvertedJointStates(&kinematic_state);
+                JointPos jointPos = getConvertedJointPos(&kinematic_state);
 
                 //moveit contacts is a map between a pair (2 strings with link names) and a vector of Contact object ?? I don't know why the contact is a vector, I have always find only one element            
                 logCollision << "Collision between " << cont.first.first << " and " << 
@@ -167,11 +166,11 @@ std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong > ROS
                     logCollision << "\tWith a depth of contact: " << contInfo.depth;
                 }
 
-                std::vector<bool> jointsInvolved = setOnlyDependentJoints(cont.first, &jointStates);
+                JointsInvolvedCount jointsInvolvedCount = setOnlyDependentJoints(cont.first, &jointPos);
                 
                 //create the actionPinch
-                ActionPinchStrong pinch (cont.first, jointStates, cont.second.at(0) );
-                pinch.setJointsInvolved(jointsInvolved);
+                ActionPinchStrong pinch (cont.first, jointPos, cont.second.at(0) );
+                pinch.setJointsInvolvedCount ( jointsInvolvedCount );
                 auto itFind = mapOfPinches.find ( cont.first );
                 if ( itFind == mapOfPinches.end() ) {
                     //if here, we have to create store the new created action
@@ -179,12 +178,12 @@ std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong > ROS
                     logCollision << ", NEW INSERTION";
 
                 } else { //Check if it is the best depth among the found collision among that pair
-                    if (itFind->second.insertActionState( jointStates, cont.second.at(0)) ) {
+                    if (itFind->second.insertActionState( jointPos, cont.second.at(0)) ) {
                          logCollision << ", NEW INSERTION";
                     }
                 }
                 logCollision << std::endl;
-                logCollision << jointStates;
+                logCollision << jointPos;
             }
            // std::cout << logCollision.str() << std::endl;
         }            
@@ -206,58 +205,57 @@ void ROSEE::FindActions::checkDistances (std::map < std::pair <std::string, std:
         for (auto &mapEl : *mapOfWeakPinches) { 
             
                             // restore all joint pos
-            JointStates jointStatesWeak = getConvertedJointStates(&kinematic_state);
+            JointPos jointPosWeak = getConvertedJointPos(&kinematic_state);
             
-            std::vector<bool> jointsInvolved = setOnlyDependentJoints(mapEl.first, &jointStatesWeak);
+            JointsInvolvedCount jointsInvolvedCount = setOnlyDependentJoints(mapEl.first, &jointPosWeak);
             
             Eigen::Affine3d tip1Trasf = kinematic_state.getGlobalLinkTransform(mapEl.first.first);
             Eigen::Affine3d tip2Trasf = kinematic_state.getGlobalLinkTransform(mapEl.first.second);
             double distance = (tip1Trasf.translation() - tip2Trasf.translation() ) .norm() ;
                                 
-            mapEl.second.insertActionState( jointStatesWeak, distance ) ;
-            mapEl.second.setJointsInvolved(jointsInvolved);
+            mapEl.second.insertActionState( jointPosWeak, distance ) ;
+            mapEl.second.setJointsInvolvedCount ( jointsInvolvedCount );
         }
     }
 }
 
 
-std::vector<bool> ROSEE::FindActions::setOnlyDependentJoints(
-    std::pair < std::string, std::string > tipsNames, JointStates *jStates) {
+ROSEE::JointsInvolvedCount ROSEE::FindActions::setOnlyDependentJoints(
+    std::pair < std::string, std::string > tipsNames, JointPos *jPos) {
     
-    std::vector<bool> jointsInvolved (jStates->size(), true); 
+    JointsInvolvedCount jointsInvolvedCount;
     
-    unsigned int iJoint = 0;
-    for (auto &js : *jStates) { //for each among ALL joints
-         
+    for (auto &jp : *jPos) { //for each among ALL joints
+        
+        jointsInvolvedCount.insert ( std::make_pair (jp.first, 1) );
+        
         /** other way around, second is better?
         std::vector <std::string> jointOfTips1 = jointsOfFingertipMap.at(tipsNames.first);
         std::vector <std::string> jointOfTips2 = jointsOfFingertipMap.at(tipsNames.second);
         
         // if the joint is not linked with neither of the two colliding tips...
-        if ( std::find( jointOfTips1.begin(), jointOfTips1.end(), js.first) == jointOfTips1.end() &&
-             std::find( jointOfTips2.begin(), jointOfTips2.end(), js.first) == jointOfTips2.end() ) {
+        if ( std::find( jointOfTips1.begin(), jointOfTips1.end(), jp.first) == jointOfTips1.end() &&
+             std::find( jointOfTips2.begin(), jointOfTips2.end(), jp.first) == jointOfTips2.end() ) {
               
-            std::fill ( js.second.begin(), js.second.end(), DEFAULT_JOINT_POS);   
+            std::fill ( jp.second.begin(), jp.second.end(), DEFAULT_JOINT_POS);   
         
-            IF USE THIS JOINTINVOLVED REMEMBER
+            IF USE THIS JOINTINVOLVEDCOUNT REMEMBER
         }
         */
         
         //the tips of the joint
-        std::vector < std::string> tips = parserMoveIt->getFingertipsOfJointMap().at(js.first); 
+        std::vector < std::string> tips = parserMoveIt->getFingertipsOfJointMap().at(jp.first); 
         
         //check if the two tips that collide are among the ones that the joint moves
         if (std::find (tips.begin(), tips.end(), tipsNames.first) == tips.end() &&
             std::find (tips.begin(), tips.end(), tipsNames.second) == tips.end() ) {
             // not dependant, set to default the position
-            std::fill ( js.second.begin(), js.second.end(), DEFAULT_JOINT_POS); 
-            jointsInvolved.at(iJoint) = false;
+            std::fill ( jp.second.begin(), jp.second.end(), DEFAULT_JOINT_POS); 
+            jointsInvolvedCount.at ( jp.first ) = 0;
         }
-        
-        iJoint ++;
     } 
     
-    return jointsInvolved;    
+    return jointsInvolvedCount;    
 }
 
 
@@ -290,8 +288,8 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::trig() {
         /// Go in the max range 
         double trigMax = parserMoveIt->getBiggerBoundFromZero(mapEl.first).at(0) ;
 
-        ActionTrig action ("trig", ActionType::Trig);
-        action.setLinkInvolved (mapEl.second.at(0)) ;
+        ActionTrig action ("trig", ActionPrimitive::Type::Trig);
+        action.setFingerInvolved (mapEl.second.at(0)) ;
 
         // mapEl.second.at(0) : sure to have only 1 element for the if before
         insertJointPosForTrigInMap(trigMap, action, mapEl.first, trigMax); 
@@ -323,8 +321,8 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::tipFlex() {
         std::string theInterestingJoint = parserMoveIt->getFirstActuatedParentJoint ( mapEl.first, false );
         double tipFlexMax = parserMoveIt->getBiggerBoundFromZero ( theInterestingJoint ).at(0) ;
         
-        ActionTrig action ("tipFlex", ActionType::TipFlex);
-        action.setLinkInvolved (mapEl.first) ;
+        ActionTrig action ("tipFlex", ActionPrimitive::Type::TipFlex);
+        action.setFingerInvolved (mapEl.first) ;
         if (! insertJointPosForTrigInMap(tipFlexMap, action, theInterestingJoint, tipFlexMax) ) {
             //if here, we have updated the joint position for a action that was already present in the map.
             //this is ok for normal trig because more joints are included in the action, but for the
@@ -356,8 +354,8 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::fingFlex() {
         std::string theInterestingJoint = parserMoveIt->getFirstActuatedJointInFinger ( mapEl.first );
         double fingFlexMax = parserMoveIt->getBiggerBoundFromZero ( theInterestingJoint ).at(0) ;
 
-        ActionTrig action ("fingFlex", ActionType::FingFlex);
-        action.setLinkInvolved (mapEl.first) ;
+        ActionTrig action ("fingFlex", ActionPrimitive::Type::FingFlex);
+        action.setFingerInvolved (mapEl.first) ;
         if (! insertJointPosForTrigInMap(fingFlexMap, action, theInterestingJoint, fingFlexMax) ) {
             //if here, we have updated the joint position for a action that was already present in the map.
             //this is ok for normal trig because more joints are included in the action, but for the
@@ -374,31 +372,31 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::fingFlex() {
 bool ROSEE::FindActions::insertJointPosForTrigInMap ( std::map <std::string, ActionTrig>& trigMap, 
     ROSEE::ActionTrig action, std::string jointName, double trigValue) {
     
-    auto itMap = trigMap.find(action.getLinkInvolved());
+    auto itMap = trigMap.find ( action.getFingerInvolved() );
     if ( itMap == trigMap.end() ) {
         //still no action for this tip in the map
         
-        JointStates js;
+        JointPos jp;
         for (auto it : parserMoveIt->getRobotModel()->getActiveJointModels()){
             std::vector <double> jPos (it->getVariableCount(), DEFAULT_JOINT_POS);
-            js.insert ( std::make_pair ( it->getName(), jPos ));
+            jp.insert ( std::make_pair ( it->getName(), jPos ));
         }
         
         //HACK at(0) because 1dof joint
-        js.at ( jointName ).at(0) = trigValue;
+        jp.at ( jointName ).at(0) = trigValue;
 
-        action.setActionState(js);
-        trigMap.insert ( std::make_pair ( action.getLinkInvolved(), action ) );
+        action.setJointPos(jp);
+        trigMap.insert ( std::make_pair ( action.getFingerInvolved(), action ) );
 
         return true;
 
     } else {
         //action already created, but we have to modify the position of a joint
         //itMap->second is an iterator to the already present element
-        JointStates js = itMap->second.getActionState();
+        JointPos jp = itMap->second.getJointPos();
         //HACK at(0) because 1dof joint
-        js.at (jointName).at(0) = trigValue;
-        itMap->second.setActionState(js);
+        jp.at (jointName).at(0) = trigValue;
+        itMap->second.setJointPos(jp);
         
         return false;
     }
@@ -407,17 +405,17 @@ bool ROSEE::FindActions::insertJointPosForTrigInMap ( std::map <std::string, Act
 
 
 
-ROSEE::JointStates ROSEE::FindActions::getConvertedJointStates(const robot_state::RobotState* kinematic_state) {
+ROSEE::JointPos ROSEE::FindActions::getConvertedJointPos(const robot_state::RobotState* kinematic_state) {
     
-    JointStates js;
+    JointPos jp;
     for ( auto actJ : parserMoveIt->getRobotModel()->getActiveJointModels() ) {
         //joint can have multiple pos, so double*, but we want to store in a vector 
         const double* pos = kinematic_state->getJointPositions(actJ); 
         unsigned posSize = sizeof(pos) / sizeof(double);
         std::vector <double> vecPos(pos, pos + posSize);
-        js.insert(std::make_pair(actJ->getName(), vecPos));
+        jp.insert(std::make_pair(actJ->getName(), vecPos));
     }
-    return js;
+    return jp;
 }
 
 

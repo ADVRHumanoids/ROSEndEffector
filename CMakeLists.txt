@@ -125,6 +125,10 @@ add_library(YamlWorker
     src/YamlWorker.cpp
 )
 
+add_library(Action 
+    src/Action.cpp 
+)
+
 add_library(ActionPrimitive 
     src/ActionPrimitive.cpp
 )
@@ -222,6 +226,7 @@ target_link_libraries(FindActions
     ${catkin_LIBRARIES}
     ParserMoveIt
     YamlWorker
+    Action
     ActionPinchStrong
     ActionTrig
     ActionPinchWeak
@@ -238,6 +243,7 @@ target_link_libraries(UniversalRosEndEffector
 
 target_link_libraries(UniversalFindActions
     FindActions
+    Action
     ActionPrimitive
     ActionTrig
     ParserMoveIt

@@ -33,17 +33,10 @@ class ActionPinchGeneric : public ActionPrimitive
     
 public:
     
-    ActionPinchGeneric();
-    ActionPinchGeneric(unsigned int);
-    ActionPinchGeneric(std::string name, unsigned int nLinksInvolved, unsigned int jointStateSetMaxSize,
-        ActionType actionType);
+    ActionPinchGeneric(std::string name, ActionPrimitive::Type type);
+    ActionPinchGeneric(std::string name, unsigned int maxStoredActionStates, ActionPrimitive::Type type);
+    ActionPinchGeneric(std::string name, unsigned int nFingerInvolved, unsigned int maxStoredActionStates, ActionPrimitive::Type type);
     
-    /** Overriden set and get from the pure virtual functions of the base class @ActionPrimitive */
-    std::set < std::string > getLinksInvolved() const override;
-    bool setLinksInvolved (std::set < std::string >) override;    
-
-    /** the two tips that are involved in the action */
-    std::pair <std::string, std::string > tipsPair ;
 
 };
 
