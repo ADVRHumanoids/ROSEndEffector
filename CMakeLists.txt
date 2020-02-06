@@ -326,6 +326,7 @@ if(CATKIN_ENABLE_TESTING)
     if(TARGET ComposedAction_test)
         target_link_libraries(ComposedAction_test ${catkin_LIBRARIES}
                                                  FindActions
+                                                 Action
                                                  ActionPrimitive
                                                  ActionTrig
                                                  ActionComposed)
