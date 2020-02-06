@@ -37,7 +37,7 @@ namespace ROSEE {
  */
 typedef std::map <std::string, std::vector <double> > JointPos;
 
-/** operator overload for JointPos so it is easy to print */
+/** operator overload for JointPos so it is easier to print */
 std::ostream& operator << (std::ostream& output, const JointPos js) {
     for (const auto &jsEl : js) {
         output << "\t\t"<<jsEl.first << " : "; //joint name
@@ -50,6 +50,13 @@ std::ostream& operator << (std::ostream& output, const JointPos js) {
     return output;
 }
 
+/** 
+ * @brief The map to describe, how many times a joint is set by the action. 
+ *  An \ref ActionPrimitive and an \ref ActionComposed (indipendent) have as values only 0 or 1.
+ *  \ref ActionComposed (not independet) can have values > 1.
+ *  This map is also useful to understand if a joint is used or not by the action (0 == not used) so
+ *  we can control only the necessary joints.
+ */
 typedef std::map <std::string, unsigned int> JointsInvolvedCount;
 
 std::ostream& operator << (std::ostream& output, const JointsInvolvedCount jic) {
@@ -74,19 +81,51 @@ public:
     /* destructor of base must be virtual */
     virtual ~Action() {};
     
+    /**
+     * @brief  get the name of the action
+     * @return std::string the name of the action
+     */
     std::string getName () const ;
+    
+    /**
+     * @brief  get for \ref fingersInvolved
+     * @return std::set<std::string> the set containing all the hand's fingers involvec in the action
+     */
     std::set <std::string> getFingersInvolved () const ;
+    
+    /**
+     * @brief  get for \ref jointsInvolvedCount
+     * @return JointsInvolvedCount the map indicating how many times the joint is set by the action
+     */
     JointsInvolvedCount getJointsInvolvedCount () const ;
     
+    /**
+     * @brief  get the position related to this action. Pure Virtual function: the derived class
+     * store this info differently so they are in charge of providing the read.
+     * @return JointsPos the map indicating how the position of the joint
+     */
     virtual JointPos getJointPos () const = 0;
     
     /* overridable functions, if we want to make them more action-specific*/
     virtual void print () const ;
-    virtual void emitYaml ( YAML::Emitter& ) const = 0;
+    
+    /**
+     * @brief Function to fill the argument passed with info about the action. Pure virtual because each derived
+     * class has different infos and stored differently.
+     * check \ref YamlParser to correctly emit and parse the file
+     * @param out the yaml-cpp emitter which store infos about the action
+     * @note this function does not print in a file, but simply fill a YAML::Emitter.
+     */
+    virtual void emitYaml ( YAML::Emitter& out ) const = 0;
+    /**
+     * @brief function to fill members of the Action with infos taken from yaml files
+     * @param yamlIt a YAML::const_iterator to the node that is loaded with YAML::LoadFile(dirPath + filename).
+     * check \ref YamlParser to correctly parse and emit the file
+     */
     virtual bool fillFromYaml ( YAML::const_iterator yamlIt ) = 0;
     
 protected:
-    //Only derived class can create this one
+    // Only derived class can create this class
     Action();
     Action(std::string);
     
