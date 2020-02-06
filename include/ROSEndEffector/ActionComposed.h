@@ -21,7 +21,7 @@
 
 #include <vector>
 #include <string>
-#include <ROSEndEffector/ActionPrimitive.h>
+#include <ROSEndEffector/Action.h>
 #include <yaml-cpp/yaml.h>
 #include <memory>
 

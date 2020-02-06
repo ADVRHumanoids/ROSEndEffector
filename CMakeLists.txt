@@ -188,6 +188,7 @@ target_link_libraries(UniversalRosEndEffectorExecutor
     ${catkin_LIBRARIES}
     ROSEEParser
     ROSEEInterface
+    YamlWorker
     
     # do it automatically
     DummyHal
@@ -196,6 +197,7 @@ target_link_libraries(UniversalRosEndEffectorExecutor
 
 target_link_libraries(YamlWorker
     yaml-cpp
+    Action
     ActionPrimitive
     ActionPinchStrong
     ActionTrig
@@ -219,7 +221,7 @@ target_link_libraries(ActionTrig
     ActionPrimitive
 )
 target_link_libraries(ActionComposed
-    ActionPrimitive
+    Action
 )
 
 target_link_libraries(FindActions

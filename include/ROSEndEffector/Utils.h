@@ -58,6 +58,15 @@ static std::string getPackagePath() {
     return path.string() + "/../../";
 }
 
+template <class T>
+static std::vector<std::string> extract_keys(std::map<std::string, T> const& input_map) {
+  std::vector<std::string> retval;
+  for (auto const& element : input_map) {
+    retval.push_back(element.first);
+  }
+  return retval;
+}
+
 
 template <typename SignalType>
 class SecondOrderFilter

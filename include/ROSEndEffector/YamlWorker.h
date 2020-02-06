@@ -27,6 +27,7 @@
 //to create directories
 #include <ROSEndEffector/Utils.h>
 
+#include <ROSEndEffector/Action.h>
 #include <ROSEndEffector/ActionPrimitive.h>
 #include <ROSEndEffector/ActionPinchStrong.h>
 #include <ROSEndEffector/ActionPinchWeak.h>

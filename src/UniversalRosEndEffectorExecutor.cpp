@@ -16,12 +16,15 @@
 */
 
 #include <ROSEndEffector/UniversalRosEndEffectorExecutor.h>
+#include <ROSEndEffector/YamlWorker.h>
 
 
 ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::string ns ) : _nh ( ns ) {
 
-    // TBD rate from config
-    _rate = 100.0;
+    if (! _nh.getParam("/rate", _rate)){
+        ROS_INFO_STREAM ("Ros parameter for rate not found, I'm setting the default rate of 100 Hz");
+        _rate = 100.0;
+    }
     _period = 1.0 / _rate;
     _loop_timer = _nh.createTimer ( ros::Duration ( _period ),
                                     &UniversalRosEndEffectorExecutor::timer_callback,
@@ -29,7 +32,7 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
     _time = 0.0;
 
     ROSEE::Parser p ( _nh );
-    p.init ();
+    p.init (); //TBD check return
     p.printEndEffectorFingerJointsMap();
 
     // retrieve the ee interface
@@ -73,7 +76,7 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
     _filt_q.reset ( _qref );
 
     // primitives
-    init_primitive_subscribers();
+    init_grapsing_primitive_subscribers();
 
 }
 
@@ -126,48 +129,99 @@ void ROSEE::UniversalRosEndEffectorExecutor::pinchCallback ( const ros_end_effec
 
     std::vector<int> ids;
 
-    if ( _ee->isFinger ( msg->finger_pinch_1 ) && _ee->isFinger ( msg->finger_pinch_2 ) ) {
-
-        Eigen::VectorXd pos_ref_upper, pos_ref_lower;
-        pos_ref_upper.resize ( _ee->getActuatedJointsNum() );
-        pos_ref_lower.resize ( _ee->getActuatedJointsNum() );
-
-        pos_ref_upper = _ee->getUpperPositionLimits() * msg->percentage;
-        pos_ref_lower = _ee->getLowerPositionLimits() * msg->percentage;
-
-        // set references for finger_pinch_1
-        _ee->getInternalIdsForFinger ( msg->finger_pinch_1, ids );
-
-        for ( const auto& id : ids ) {
-
-            move_joint_in_finger(pos_ref_upper[id], pos_ref_lower[id], id);
-        }
+//     if ( _ee->isFinger ( msg->finger_pinch_1 ) && _ee->isFinger ( msg->finger_pinch_2 ) ) {
         
-        // set references for finger_pinch_2
-        _ee->getInternalIdsForFinger ( msg->finger_pinch_2, ids );
+        std::set<std::string> pinch_set;
+        pinch_set.insert(msg->finger_pinch_1);
+        pinch_set.insert(msg->finger_pinch_2);
+        
+        if ( _pinchParsedMap.count(pinch_set) ) {
+            
+            
+            ROSEE::ActionPrimitive::Ptr p = _pinchParsedMap.at(pinch_set);
+            // NOTE take the best pinch for now
+            ROSEE::JointPos pinch_js = p->getAllJointPos().at(0);
 
-        for ( const auto& id : ids ) {
-
-            move_joint_in_finger(pos_ref_upper[id], pos_ref_lower[id], id);
+            // get the joints involved bool vector
+            JointsInvolvedCount pinch_joint_involved_mask = p->getJointsInvolvedCount();
+            
+            for( auto it : pinch_joint_involved_mask ) {
+                
+                if( it.second  != 0) {
+                    int id = -1;
+                    _ee->getInternalIdForJoint ( it.first, id );
+                    // NOTE assume single joint
+                    _qref[id] = pinch_js.at(it.first).at(0) * msg->percentage;
+                }
+                
+            }
+            
+        }
+        else {
+            ROS_ERROR_STREAM ( "finger_pinch_1 :" << msg->finger_pinch_1 << " and finger_pinch_2 :" << msg->finger_pinch_2 << " is not a feasible couple for the Pinch Grasping Action" );
         }
 
-    }
-    else {
-        ROS_ERROR_STREAM ( "finger_pinch_1 :" << msg->finger_pinch_1 << " or finger_pinch_2 :" << msg->finger_pinch_2 << " not defined in current End-Effector" );
-    }
+//     }
+//     else {
+//         ROS_ERROR_STREAM ( "finger_pinch_1 :" << msg->finger_pinch_1 << " or finger_pinch_2 :" << msg->finger_pinch_2 << " not defined in current End-Effector" );
+//     }
 }
 
 
 
-bool ROSEE::UniversalRosEndEffectorExecutor::init_primitive_subscribers() {
+bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive_subscribers() {
 
-    _sub_grasp = _nh.subscribe<ros_end_effector::EEGraspControl> ( "grasp",
-                 1,
-                 &ROSEE::UniversalRosEndEffectorExecutor::graspCallback,
-                 this
-                                                                 );
+    // parse YAML for End-Effector cconfiguration
+    ROSEE::YamlWorker yamlWorker ( _ee->getName() ); 
 
-    if( _ee->getFingersNumber() > 1 ) {
+    //pinch     
+    _pinchParsedMap = yamlWorker.parseYamlPrimitive("pinchStrong.yaml", ROSEE::ActionPrimitive::Type::PinchStrong);
+            
+    //pinch Weak  
+    _pinchWeakParsedMap = yamlWorker.parseYamlPrimitive("pinchWeak.yaml", ROSEE::ActionPrimitive::Type::PinchWeak);
+        
+    //trig
+    _trigParsedMap = yamlWorker.parseYamlPrimitive("trig.yaml", ROSEE::ActionPrimitive::Type::Trig);
+        
+    //tipFlex
+    _tipFlexParsedMap = yamlWorker.parseYamlPrimitive("tipFlex.yaml", ROSEE::ActionPrimitive::Type::TipFlex);
+        
+    //fingFlex
+    _fingFlexParsedMap = yamlWorker.parseYamlPrimitive("fingFlex.yaml", ROSEE::ActionPrimitive::Type::FingFlex);
+        
+    ROS_INFO_STREAM ("PINCHES-STRONG:");
+    for (auto &i : _pinchParsedMap) {
+        i.second->print();
+    }    
+    ROS_INFO_STREAM ("PINCHES-WEAK:");
+    for (auto &i : _pinchWeakParsedMap) {
+        i.second->print();
+    }
+    ROS_INFO_STREAM ("TRIGGERS:");
+    for (auto &i : _trigParsedMap) {
+        i.second->print();
+    }
+    ROS_INFO_STREAM ("TIP FLEX:");
+    for (auto &i : _tipFlexParsedMap) {
+        i.second->print();
+    }
+    ROS_INFO_STREAM ("FINGER FLEX:");
+    for (auto &i : _fingFlexParsedMap) {
+        i.second->print();
+    }
+    
+    // generate the subscribers and services
+    
+    if( !_fingFlexParsedMap.empty() || !_tipFlexParsedMap.empty() ) {
+        
+        _sub_grasp = _nh.subscribe<ros_end_effector::EEGraspControl> ( "grasp",
+                    1,
+                    &ROSEE::UniversalRosEndEffectorExecutor::graspCallback,
+                    this
+                    );
+    }
+
+    if( !_pinchParsedMap.empty() ) {
         
         _sub_pinch = _nh.subscribe<ros_end_effector::EEPinchControl> ( "pinch",
                     1,
@@ -175,6 +229,9 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_primitive_subscribers() {
                     this
                                                                     );
     }
+    
+    
+    return true;
 }
 
 

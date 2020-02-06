@@ -325,8 +325,6 @@ int ROSEE::Parser::getActuatedJointsNumber() const {
     return _joints_num;
 }
 
-
-
 std::map< std::string, std::vector< std::string > > ROSEE::Parser::getFingerJointMap() const {
 
     return _finger_joint_map;
@@ -341,6 +339,12 @@ void ROSEE::Parser::getActuatedJointsMap ( std::map< std::string, std::vector< s
 
     finger_joint_map = _finger_joint_map;
 }
+
+std::string ROSEE::Parser::getEndEffectorName() const {
+
+    return _urdf_model->getName();
+}
+
 
 
 
