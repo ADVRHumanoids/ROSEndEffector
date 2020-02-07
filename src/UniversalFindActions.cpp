@@ -29,15 +29,18 @@ int main ( int argc, char **argv ) {
     
     std::shared_ptr <ROSEE::ParserMoveIt> parserMoveIt = std::make_shared <ROSEE::ParserMoveIt> ();
     parserMoveIt->init ("robot_description") ;
+    
 
     ROSEE::FindActions actionsFinder (parserMoveIt);
 
     auto maps = actionsFinder.findPinch();
 
     std::map <std::string, ROSEE::ActionTrig> trigMap =  actionsFinder.findTrig (ROSEE::ActionPrimitive::Type::Trig) ;
+
     std::map <std::string, ROSEE::ActionTrig> tipFlexMap = actionsFinder.findTrig (ROSEE::ActionPrimitive::Type::TipFlex);
+
     std::map <std::string, ROSEE::ActionTrig> fingFlexMap = actionsFinder.findTrig (ROSEE::ActionPrimitive::Type::FingFlex);
-    
+
 
     /** ********************* PARSING TEST and print... these things should not be here ****************/
 

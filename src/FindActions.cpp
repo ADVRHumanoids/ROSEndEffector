@@ -88,6 +88,10 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::findTrig ( ROSEE::
     }
     }
     
+    if (trigMap.size() == 0 ) { //is so, no sense to continue
+        return trigMap;
+    }
+    
     //for involvedJoints. Ok here because I know that for the trigs, a non setted joint is 
     //a joint which is in a default position
     for (auto & mapEl : trigMap) {
@@ -104,7 +108,7 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::findTrig ( ROSEE::
         }
         mapEl.second.setJointsInvolvedCount (jointsInvolvedCount);
     }
-
+        
     std::map < std::set <std::string> , ActionPrimitive* > mapForWorker;
 
     for (auto& it : trigMap) {  // auto& and not auto alone!
@@ -311,12 +315,18 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::tipFlex() {
     
     std::map <std::string, ROSEE::ActionTrig> tipFlexMap;
     
+
     for (auto mapEl : parserMoveIt->getJointsOfFingertipMap() ) {
+        for ( auto bogh : mapEl.second ) {
+            std::cout << "mapEl  "  << bogh << std::endl;
+        }
+
         
         if (parserMoveIt->getNExclusiveJointsOfTip ( mapEl.first, false ) < 2 ) { 
         //if so, we have a simple trig (or none if 0) and not also a tip/finger flex
             continue;
         }
+        
         
         std::string theInterestingJoint = parserMoveIt->getFirstActuatedParentJoint ( mapEl.first, false );
         double tipFlexMax = parserMoveIt->getBiggerBoundFromZero ( theInterestingJoint ).at(0) ;

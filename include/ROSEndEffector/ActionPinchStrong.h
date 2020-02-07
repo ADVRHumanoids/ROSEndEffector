@@ -50,6 +50,7 @@ public:
     ActionPinchStrong();
     ActionPinchStrong(unsigned int maxStoredActionStates);
     ActionPinchStrong (std::pair <std::string, std::string>, JointPos, collision_detection::Contact );
+    ActionPinchStrong (std::string finger1, std::string finger2, JointPos, collision_detection::Contact );
     
     JointPos getJointPos () const override;
     JointPos getJointPos (unsigned int index) const;
