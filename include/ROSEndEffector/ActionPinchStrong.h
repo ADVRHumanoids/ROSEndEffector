@@ -31,7 +31,7 @@ namespace ROSEE {
  * configuration to mark this configuration as a pinchStrong. All the non involved fingers are set in the 
  * default state.
  * A pinchStrong is defined by:
- *  - 2 tips (@tipsPair ), so @nLinksInvolved == 2 (members of base class @PinchGeneric )
+ *  - 2 tips ( that are inside \ref fingersInvolved ), so \ref nFingersInvolved == 2 ( members of base class \ref Action )
  *  - JointStates position: where the collision happens (inside @statesInfoSet)
  *  - Optional info (inside @statesInfoSet ): the contact of moveit. Now only the member depth is used. 
  *    It is used to order, for each pair of tips, the actions in the statesInfoSet 
