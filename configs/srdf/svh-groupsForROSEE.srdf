@@ -13,10 +13,8 @@
         <joint name="left_hand_Thumb_Flexion" />
         <joint name="left_hand_j3" />
         <joint name="left_hand_j4" />
-        <joint name="left_hand_Thumb_Helper" />
     </group>
     <group name="index">
-        <joint name="left_hand_f1" />
         <joint name="left_hand_index_spread" />
         <joint name="left_hand_Index_Finger_Proximal" />
         <joint name="left_hand_Index_Finger_Distal" />
@@ -39,7 +37,6 @@
         <joint name="left_hand_Ring_Finger" />
         <joint name="left_hand_j12" />
         <joint name="left_hand_j16" />
-        <joint name="left_hand_f8" />
     </group>
     <group name="pinky">
         <joint name="left_hand_Pinky" />

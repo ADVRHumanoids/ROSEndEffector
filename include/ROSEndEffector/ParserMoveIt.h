@@ -108,6 +108,24 @@ public:
     std::vector < std::string > getGroupOfLink ( std::string linkName );
     
     /**
+     * @brief check if a group (defined in srdf file) is a chain. See \ref groupIsChain ( \ref moveit::core::JointModelGroup* group )
+     * @param groupName the name of the group
+     * @return bool : true is group is chain, false othwerwise (also false if some errors happened)
+     */
+    bool groupIsChain ( const std::string groupName ) const;
+    
+    /**
+     * @brief check if a group (defined in srdf file) is a chain. This is done simply exploring all the links of the group:
+     * if no links have more than 1 children, the group is a chain.
+     * Moveit has a function isChain() but I don't understand how it works,
+     * in fact also if there is a link with more children joint sometimes the group is considered a chain anyway. I can't find where 
+     * the moveit _is_chain member is set.
+     * @param group pointer to moveit::core::JointModelGroup object
+     * @return bool : true is group is chain, false othwerwise (also false if some errors happened)
+     */
+    bool groupIsChain ( const moveit::core::JointModelGroup* group ) const;
+    
+    /**
      * @brief check if the passed joint is continuos (i.e. a revolute one with sum of bounds greater than 2*PI)
      * @param jointName the name of the joint
      * @return bool true if joint is continuos

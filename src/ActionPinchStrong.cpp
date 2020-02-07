@@ -34,6 +34,16 @@ ROSEE::ActionPinchStrong::ActionPinchStrong (std::pair <std::string, std::string
     actionStates.insert (std::make_pair (jp, cont) );
 }
 
+ROSEE::ActionPinchStrong::ActionPinchStrong (std::string finger1, std::string finger2, 
+    JointPos jp, collision_detection::Contact cont) :
+    ActionPinchGeneric ("pinchStrong", 2, 3, ActionPrimitive::Type::PinchStrong )  {
+
+    //different from insertState, here we are sure the set is empty (we are in costructor)
+    fingersInvolved.insert(finger1);
+    fingersInvolved.insert(finger2);
+    actionStates.insert (std::make_pair (jp, cont) );
+}
+
 ROSEE::JointPos ROSEE::ActionPinchStrong::getJointPos() const {
     return (actionStates.begin()->first);
 }
