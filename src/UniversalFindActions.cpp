@@ -120,8 +120,9 @@ int main ( int argc, char **argv ) {
         }
 
         grasp2.sumAction ( (pinchParsedMap.begin()->second) ) ; 
-        grasp2.sumAction ( ((++pinchParsedMap.begin())->second) ) ;
-
+        if (pinchParsedMap.size() > 1) {
+            grasp2.sumAction ( ((++pinchParsedMap.begin())->second) ) ;
+        }
         grasp2.print();
         yamlWorker.createYamlFile (&grasp2);
         
