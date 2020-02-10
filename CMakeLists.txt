@@ -131,6 +131,10 @@ add_library(YamlWorker
     src/YamlWorker.cpp
 )
 
+add_library(Action 
+    src/Action.cpp 
+)
+
 add_library(ActionPrimitive 
     src/ActionPrimitive.cpp
 )
@@ -200,6 +204,7 @@ target_link_libraries(UniversalRosEndEffectorExecutor
 
 target_link_libraries(YamlWorker
     yaml-cpp
+    Action
     ActionPrimitive
     ActionPinchStrong
     ActionTrig
@@ -223,13 +228,14 @@ target_link_libraries(ActionTrig
     ActionPrimitive
 )
 target_link_libraries(ActionComposed
-    ActionPrimitive
+    Action
 )
 
 target_link_libraries(FindActions
     ${catkin_LIBRARIES}
     ParserMoveIt
     YamlWorker
+    Action
     ActionPinchStrong
     ActionTrig
     ActionPinchWeak
@@ -246,6 +252,7 @@ target_link_libraries(UniversalRosEndEffector
 
 target_link_libraries(UniversalFindActions
     FindActions
+    Action
     ActionPrimitive
     ActionTrig
     ParserMoveIt
@@ -328,6 +335,7 @@ if(CATKIN_ENABLE_TESTING)
     if(TARGET ComposedAction_test)
         target_link_libraries(ComposedAction_test ${catkin_LIBRARIES}
                                                  FindActions
+                                                 Action
                                                  ActionPrimitive
                                                  ActionTrig
                                                  ActionComposed)

@@ -23,39 +23,13 @@
 
 #include <ROSEndEffector/ActionPinchGeneric.h>
 
-ROSEE::ActionPinchGeneric::ActionPinchGeneric() : 
-    ActionPrimitive ("pinch", 2, 3, ActionType::Pinch) { }
+ROSEE::ActionPinchGeneric::ActionPinchGeneric(std::string name, ActionPrimitive::Type type) : 
+    ActionPrimitive (name, 2, 3, type) { }
 
-ROSEE::ActionPinchGeneric::ActionPinchGeneric(unsigned int jointStateSetMaxSize) : 
-    ActionPrimitive ("pinch", 2, jointStateSetMaxSize, ActionType::Pinch) { }
+ROSEE::ActionPinchGeneric::ActionPinchGeneric(std::string name, unsigned int maxStoredActionStates, ActionPrimitive::Type type) : 
+    ActionPrimitive (name, 2, maxStoredActionStates, type) { }
     
 ROSEE::ActionPinchGeneric::ActionPinchGeneric(
-    std::string name, unsigned int nLinksInvolved, unsigned int jointStateSetMaxSize, ROSEE::ActionType actionType) :
-        ActionPrimitive (name, nLinksInvolved, jointStateSetMaxSize, actionType) { }
-
-
-std::set < std::string > ROSEE::ActionPinchGeneric::getLinksInvolved() const {
- 
-    std::set < std::string> tempSet;
-    tempSet.insert (tipsPair.first);
-    tempSet.insert (tipsPair.second);
-    
-    return tempSet;    
-}
-
-
-bool ROSEE::ActionPinchGeneric::setLinksInvolved (std::set < std::string > setTips) {
-    
-    if (setTips.size() != 2 ) {
-        return false;
-    } else {
-        std::set<std::string>::iterator it = setTips.begin();
-        tipsPair.first = *it;
-        std::advance(it,1);
-        tipsPair.second = *it;
-    }
-    return true;
-    
-}
-
+    std::string name, unsigned int nFingerInvolved, unsigned int maxStoredActionStates, ActionPrimitive::Type type) :
+        ActionPrimitive (name, nFingerInvolved, maxStoredActionStates, type) { }
 

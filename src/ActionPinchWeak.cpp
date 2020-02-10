@@ -19,105 +19,114 @@
 #include <ROSEndEffector/ActionPinchWeak.h>
 
 ROSEE::ActionPinchWeak::ActionPinchWeak() : 
-    ActionPinchGeneric ("pinchWeak", 2, 3, ActionType::PinchWeak) { }
+    ActionPinchGeneric ("pinchWeak", 2, 3, ActionPrimitive::Type::PinchWeak) { }
 
-ROSEE::ActionPinchWeak::ActionPinchWeak (unsigned int jointStateSetMaxSize) : 
-    ActionPinchGeneric ("pinchWeak", 2, jointStateSetMaxSize, ActionType::PinchWeak) { }
+ROSEE::ActionPinchWeak::ActionPinchWeak (unsigned int maxStoredActionStates) : 
+    ActionPinchGeneric ("pinchWeak", 2, maxStoredActionStates, ActionPrimitive::Type::PinchWeak) { }
 
 ROSEE::ActionPinchWeak::ActionPinchWeak (std::string tip1, std::string tip2) : 
-    ActionPinchGeneric ("pinchWeak", 2, 3, ActionType::PinchWeak) {
-        this->tipsPair.first = tip1;
-        this->tipsPair.second = tip2;
-    }
+    ActionPinchGeneric ("pinchWeak", 2, 3, ActionPrimitive::Type::PinchWeak) {
+        fingersInvolved.insert (tip1);
+        fingersInvolved.insert (tip2);
+}
     
 ROSEE::ActionPinchWeak::ActionPinchWeak (std::pair <std::string, std::string> tipNames, 
-    JointStates js, double distance) :
-    ActionPinchGeneric ("pinchWeak", 2, 3, ActionType::PinchWeak )  {
+    JointPos jp, double distance) :
+    ActionPinchGeneric ("pinchWeak", 2, 3, ActionPrimitive::Type::PinchWeak )  {
 
+    fingersInvolved.insert (tipNames.first);
+    fingersInvolved.insert (tipNames.second);
+    
     //different from insertState, here we are sure the set is empty (we are in costructor)
-    this->tipsPair = tipNames;
-    statesInfoSet.insert (std::make_pair (js, distance) );
+    actionStates.insert (std::make_pair (jp, distance) );
 }
 
+std::vector < ROSEE::ActionPinchWeak::StateWithDistance > ROSEE::ActionPinchWeak::getActionStates() const {
+    
+    std::vector < ROSEE::ActionPinchWeak::StateWithDistance > retVect;
+    retVect.reserve ( actionStates.size() );
+    
+    for (auto it : actionStates ) {
+        retVect.push_back(it);
+    }
+    
+    return retVect;
+}
 
-std::vector < ROSEE::JointStates > ROSEE::ActionPinchWeak::getActionStates() const{
+ROSEE::JointPos ROSEE::ActionPinchWeak::getJointPos() const {
+    return (actionStates.begin()->first);
+}
+
+ROSEE::JointPos ROSEE::ActionPinchWeak::getJointPos(unsigned int index) const {
+    auto it = actionStates.begin();
+    unsigned int i = 1;
+    while (i < index ) {
+        ++ it;
+        ++ i;
+    }
+    return (it->first);
+}
+
+std::vector < ROSEE::JointPos > ROSEE::ActionPinchWeak::getAllJointPos() const {
     
-    std::vector < JointStates > retVect;
-    retVect.reserve(statesInfoSet.size());
+    std::vector < JointPos > retVect;
+    retVect.reserve(actionStates.size());
     
-    for (auto it : statesInfoSet ) {
+    for (auto it : actionStates ) {
         retVect.push_back(it.first);
     }
     
     return retVect;
 }
 
+bool ROSEE::ActionPinchWeak::insertActionState (ROSEE::JointPos jp, double dist) {
 
-std::vector < ROSEE::ActionPinchWeak::StateWithDistance > ROSEE::ActionPinchWeak::getActionStatesWithDistance() const {
+    auto pairRet = actionStates.insert ( std::make_pair (jp, dist) ) ;
     
-    std::vector < ROSEE::ActionPinchWeak::StateWithDistance > retVect;
-    retVect.reserve ( statesInfoSet.size() );
-    
-    for (auto it : statesInfoSet ) {
-        retVect.push_back(it);
-    }
-    
-    return retVect;
-    
-}
-
-
-bool ROSEE::ActionPinchWeak::setActionStates (std::vector < ROSEE::JointStates > jsVect) {
-    
-    double dist = 0.0; //we need to initialize it because it is used in the set comparator
-    for (auto it : jsVect) {
-        if (! insertActionState (it, dist)) {
-            return false;
-        }
-    }
-    return true;
-}
-
-bool ROSEE::ActionPinchWeak::insertActionState (ROSEE::JointStates js, double dist) {
-
-    auto pairRet = statesInfoSet.insert ( std::make_pair (js, dist) ) ;
-    
-    if (statesInfoSet.size() > jointStateSetMaxSize) { 
+    if (actionStates.size() > maxStoredActionStates) { 
         //max capacity reached, we have to delete the last one
         auto it = pairRet.first;        
         
-        if (++(it) == statesInfoSet.end() ){
+        if (++(it) == actionStates.end() ){
            // the new inserted is the last one and has to be erased
-            statesInfoSet.erase(pairRet.first);
+            actionStates.erase(pairRet.first);
             return false;
         }
         
         // the new inserted is not the last one that has to be erased
-        auto lastElem = statesInfoSet.end();
+        auto lastElem = actionStates.end();
         --lastElem;
-        statesInfoSet.erase(lastElem);
+        actionStates.erase(lastElem);
     }
     
     return true;
 }
 
 
-void ROSEE::ActionPinchWeak::printAction () const {
+void ROSEE::ActionPinchWeak::print () const {
     
     std::stringstream output;
     
-    output << tipsPair.first << ", " << tipsPair.second << std::endl ;
-    streamJointsInvolved ( output );
-
+    output << "ActionName: " << name << std::endl;
     
-    unsigned int nActState = 1;
-    for (auto itemSet : statesInfoSet) {  //the element in the set
-        output << "\tAction_State_" << nActState << " :" << std::endl;
+    output << "FingersInvolved: [";
+    for (auto fingName : fingersInvolved){
+        output << fingName << ", " ;
+    }
+    output.seekp (-2, output.cur); //to remove the last comma (and space)
+    output << "]" << std::endl;
+    
+    output << "JointsInvolvedCount: " << std::endl;;
+    output << jointsInvolvedCount << std::endl;
 
-        output << "\t\t" << "JointStates:" << std::endl;
+    unsigned int nActState = 1;
+    for (auto itemSet : actionStates) {  //the element in the set
+        output << "Action_State_" << nActState << " :" << std::endl;
+
+        output << "\t" << "JointStates:" << std::endl;
         output << itemSet.first;
-        output << "\t\t" << "Distance:" << std::endl;
-        output << "\t\t\tdistance " << itemSet.second << std::endl;
+        output << "\t" << "Distance:" << std::endl;
+        output << "\t\tdistance " << itemSet.second << std::endl;
             
         nActState++;
     }
@@ -127,25 +136,22 @@ void ROSEE::ActionPinchWeak::printAction () const {
 
 }
 
-bool ROSEE::ActionPinchWeak::emitYamlForDistance (double distance, YAML::Emitter& out) {
 
-    out << YAML::BeginMap;
-        out << YAML::Key << "distance" << YAML::Value << distance;
-    out << YAML::EndMap;
+void ROSEE::ActionPinchWeak::emitYaml ( YAML::Emitter& out ) const {
     
-    return true;
-}
+    out << YAML::Key << YAML::Flow << fingersInvolved;
 
-void ROSEE::ActionPinchWeak::emitYaml ( YAML::Emitter& out ) {
-    
-    // YAML << not valid for pair, we have to "convert" into vector
-    std::vector <std::string> vectKeys {tipsPair.first, tipsPair.second};
-    out << YAML::Key << YAML::Flow << vectKeys;
-    
     unsigned int nCont = 1;
     out << YAML::Value << YAML::BeginMap;
-    ActionPrimitive::emitYamlForJointsInvolved(out);
-    for (const auto & actionState : statesInfoSet) { //.second is the set of ActionState
+    out << YAML::Key << "ActionName" << YAML::Value << name;
+    out << YAML::Key << "JointsInvolvedCount" << YAML::Value << YAML::BeginMap;
+    for (const auto &jointCount : jointsInvolvedCount ) {
+        out << YAML::Key << jointCount.first;
+        out << YAML::Value << jointCount.second;
+    }
+    out << YAML::EndMap;
+    
+    for (const auto & actionState : actionStates) { //.second is the set of ActionState
         
         std::string contSeq = "ActionState_" + std::to_string(nCont);
         out << YAML::Key << contSeq; 
@@ -160,8 +166,9 @@ void ROSEE::ActionPinchWeak::emitYaml ( YAML::Emitter& out ) {
             out << YAML::EndMap;
             
             //actionState.second, the optional
-            out << YAML::Key << "Optional" << YAML::Value;
-            emitYamlForDistance(actionState.second, out);
+            out << YAML::Key << "Optional" << YAML::Value << YAML::BeginMap;
+                out << YAML::Key << "distance" << YAML::Value << actionState.second;
+            out << YAML::EndMap;
             
         out << YAML::EndMap;
         nCont++;
@@ -173,23 +180,30 @@ void ROSEE::ActionPinchWeak::emitYaml ( YAML::Emitter& out ) {
 
 bool ROSEE::ActionPinchWeak::fillFromYaml ( YAML::const_iterator yamlIt ) {
         
-    tipsPair = yamlIt->first.as<std::pair < std::string, std::string >> ();
+    std::vector <std::string> fingInvolvedVect = yamlIt->first.as <std::vector < std::string >> ();
+    for (const auto &it : fingInvolvedVect) {
+        fingersInvolved.insert(it);
+    }
 
     for ( YAML::const_iterator actionState = yamlIt->second.begin(); actionState != yamlIt->second.end(); ++actionState) {        
         // actionState->first is the key ActionState_x OR JointsInvolved
         
-        if (actionState->first.as<std::string>().compare("JointsInvolved") == 0) {
-            ActionPrimitive::fillYamlJointsInvolved(actionState);
+        std::string key = actionState->first.as<std::string>();
+        if ( key.compare("JointsInvolvedCount") == 0 ) {
+            jointsInvolvedCount = actionState->second.as < JointsInvolvedCount > ();
             
-        } else {
+        } else if (key.compare ("ActionName") == 0 ) {
+            name = actionState->second.as <std::string> ();
+            
+        } else if (key.compare(0, 12, "ActionState_") == 0) { //compare 12 caracters from index 0 of key
 
-            JointStates jointStates;
+            JointPos jointPos;
             double distance;
             for(YAML::const_iterator asEl = actionState->second.begin(); asEl != actionState->second.end(); ++asEl) {
 
                 //asEl can be the map JointStates or the map Optional
                 if (asEl->first.as<std::string>().compare ("JointStates") == 0 ) {
-                    jointStates = asEl->second.as < JointStates >(); 
+                    jointPos = asEl->second.as < JointPos >(); 
                     
                 } else if (asEl->first.as<std::string>().compare ("Optional") == 0 ) {
                     distance = asEl->second["distance"].as < double >();
@@ -199,7 +213,10 @@ bool ROSEE::ActionPinchWeak::fillFromYaml ( YAML::const_iterator yamlIt ) {
                     return false;
                 }
             }  
-            statesInfoSet.insert ( std::make_pair (jointStates, distance));
+            actionStates.insert ( std::make_pair (jointPos, distance));
+            
+        } else {
+            //TODO print errorrr
         }
     }
     

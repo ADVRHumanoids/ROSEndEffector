@@ -27,6 +27,7 @@
 //to create directories
 #include <ROSEndEffector/Utils.h>
 
+#include <ROSEndEffector/Action.h>
 #include <ROSEndEffector/ActionPrimitive.h>
 #include <ROSEndEffector/ActionPinchStrong.h>
 #include <ROSEndEffector/ActionPinchWeak.h>
@@ -52,12 +53,13 @@ public:
     YamlWorker(std::string handName);
     YamlWorker ( std::string handName, std::string path2saveYaml);
 
-    
     std::string createYamlFile ( const std::map < std::set <std::string> , ActionPrimitive* >, 
                                  const std::string actionName  ) ;
     std::string createYamlFile ( const ActionComposed* ) ;
     
-    std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > parseYaml ( std::string filename, ActionType actionType );
+    std::map < std::set < std::string>, ROSEE::ActionPrimitive::Ptr > parseYamlPrimitive ( 
+                                                    std::string filename, ROSEE::ActionPrimitive::Type actionType);
+    
     ROSEE::ActionComposed parseYamlComposed (std::string filename);
 
     std::string dirPath;
@@ -66,8 +68,6 @@ private:
     std::string emitYaml ( const std::map < std::set <std::string> , ActionPrimitive* > ) ;
     std::string emitYaml  ( const ActionComposed* ) ;
 
-    
-    
 
 };
 

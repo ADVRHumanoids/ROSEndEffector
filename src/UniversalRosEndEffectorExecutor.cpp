@@ -140,20 +140,18 @@ void ROSEE::UniversalRosEndEffectorExecutor::pinchCallback ( const ros_end_effec
             
             ROSEE::ActionPrimitive::Ptr p = _pinchParsedMap.at(pinch_set);
             // NOTE take the best pinch for now
-            ROSEE::JointStates pinch_js = p->getActionStates().at(0);
-            // TBD refactor of JointStates
-            std::vector<std::string> ordered_joints_names = ROSEE::Utils::extract_keys<std::vector<double>>(pinch_js);
+            ROSEE::JointPos pinch_js = p->getAllJointPos().at(0);
 
             // get the joints involved bool vector
-            std::vector<bool> pinch_joint_involved_mask = p->getIfJointsInvolved();
+            JointsInvolvedCount pinch_joint_involved_mask = p->getJointsInvolvedCount();
             
-            for( int i = 0; i < pinch_joint_involved_mask.size(); i++ ) {
+            for( auto it : pinch_joint_involved_mask ) {
                 
-                if( pinch_joint_involved_mask.at(i) ) {
+                if( it.second  != 0) {
                     int id = -1;
-                    _ee->getInternalIdForJoint ( ordered_joints_names.at(i), id );
+                    _ee->getInternalIdForJoint ( it.first, id );
                     // NOTE assume single joint
-                    _qref[id] = pinch_js.at(ordered_joints_names.at(i)).at(0) * msg->percentage;
+                    _qref[id] = pinch_js.at(it.first).at(0) * msg->percentage;
                 }
                 
             }
@@ -177,39 +175,39 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive_subscribers
     ROSEE::YamlWorker yamlWorker ( _ee->getName() ); 
 
     //pinch     
-    _pinchParsedMap = yamlWorker.parseYaml("pinchStrong.yaml", ROSEE::ActionType::PinchStrong);
+    _pinchParsedMap = yamlWorker.parseYamlPrimitive("pinchStrong.yaml", ROSEE::ActionPrimitive::Type::PinchStrong);
             
     //pinch Weak  
-    _pinchWeakParsedMap = yamlWorker.parseYaml("pinchWeak.yaml", ROSEE::ActionType::PinchWeak);
+    _pinchWeakParsedMap = yamlWorker.parseYamlPrimitive("pinchWeak.yaml", ROSEE::ActionPrimitive::Type::PinchWeak);
         
     //trig
-    _trigParsedMap = yamlWorker.parseYaml("trig.yaml", ROSEE::ActionType::Trig);
+    _trigParsedMap = yamlWorker.parseYamlPrimitive("trig.yaml", ROSEE::ActionPrimitive::Type::Trig);
         
     //tipFlex
-    _tipFlexParsedMap = yamlWorker.parseYaml("tipFlex.yaml", ROSEE::ActionType::TipFlex);
+    _tipFlexParsedMap = yamlWorker.parseYamlPrimitive("tipFlex.yaml", ROSEE::ActionPrimitive::Type::TipFlex);
         
     //fingFlex
-    _fingFlexParsedMap = yamlWorker.parseYaml("fingFlex.yaml", ROSEE::ActionType::FingFlex);
+    _fingFlexParsedMap = yamlWorker.parseYamlPrimitive("fingFlex.yaml", ROSEE::ActionPrimitive::Type::FingFlex);
         
     ROS_INFO_STREAM ("PINCHES-STRONG:");
     for (auto &i : _pinchParsedMap) {
-        i.second->printAction();
+        i.second->print();
     }    
     ROS_INFO_STREAM ("PINCHES-WEAK:");
     for (auto &i : _pinchWeakParsedMap) {
-        i.second->printAction();
+        i.second->print();
     }
     ROS_INFO_STREAM ("TRIGGERS:");
     for (auto &i : _trigParsedMap) {
-        i.second->printAction();
+        i.second->print();
     }
     ROS_INFO_STREAM ("TIP FLEX:");
     for (auto &i : _tipFlexParsedMap) {
-        i.second->printAction();
+        i.second->print();
     }
     ROS_INFO_STREAM ("FINGER FLEX:");
     for (auto &i : _fingFlexParsedMap) {
-        i.second->printAction();
+        i.second->print();
     }
     
     // generate the subscribers and services

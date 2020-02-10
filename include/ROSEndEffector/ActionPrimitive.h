@@ -25,6 +25,8 @@
 #include <vector>
 #include <iostream>
 
+#include <ROSEndEffector/Action.h>
+
 #include <yaml-cpp/yaml.h>
 
 
@@ -62,7 +64,7 @@ enum ActionType {Pinch, PinchStrong, PinchWeak, Trig, TipFlex, FingFlex, None};
  *  - Optional info about the action (e.g. a moveit Contact class for the pinch). Being optional, 
  *    we don't have a member for this in this base class
  */
-class ActionPrimitive
+class ActionPrimitive : public Action
 {
     
 public:
@@ -70,51 +72,36 @@ public:
     typedef std::shared_ptr<ActionPrimitive> Ptr;
     typedef std::shared_ptr<const ActionPrimitive> ConstPtr;
 
-    
+    /** Enum useful to discriminate each primitive action when, for example, we want to parse a file */
+    enum Type {PinchStrong, PinchWeak, Trig, TipFlex, FingFlex, None};
     /* destructor of base must be virtual */
     virtual ~ActionPrimitive() {};
 
     /* virtual and not getters */
-    std::string getName () const;
-    ROSEE::ActionType getActionType() const;
-    unsigned int getJointStatesSetMaxSize() const;
-    unsigned int getnLinksInvolved() const;
-    std::vector < bool > getIfJointsInvolved() const;
-    virtual std::set < std::string > getLinksInvolved() const = 0;
-    virtual std::vector < ROSEE::JointStates > getActionStates() const = 0;
+    Type getType() const;
+    unsigned int getMaxStoredActionStates() const;
+    unsigned int getnFingersInvolved() const;
+    virtual std::vector < ROSEE::JointPos > getAllJointPos () const = 0;
     
-    /* virtual and not setters */
-    void setJointsInvolved ( std::vector < bool > );
-    virtual bool setLinksInvolved (std::set < std::string >) = 0;
-    virtual bool setActionStates (std::vector < ROSEE::JointStates > ) = 0;
-    
+    void setJointsInvolvedCount (ROSEE::JointsInvolvedCount jointsInvolvedCount ) ;    
     /* overridable functions, if we want to make them more action-specific*/
-    virtual void printAction () const ;
-    std::stringstream streamJointsInvolved ( std::stringstream & output) const;
+    virtual void emitYaml ( YAML::Emitter& ) const override;
 
-    virtual void emitYaml ( YAML::Emitter& ) ;
-    void emitYamlForJointsInvolved ( YAML::Emitter& );
-    virtual bool fillFromYaml( YAML::const_iterator yamlIt );
-    void fillYamlJointsInvolved ( YAML::const_iterator yamlIt );
-    
 protected:
  
     /* Protected costructor: object creable only by derived classes. 
      No default costructo (without arguments) because we want to set always these three member */
-    ActionPrimitive( std::string name, unsigned int nLinksInvolved, unsigned int jointStateSetMaxSize,
-        ActionType actionType );
-    
-    const std::string name;
+    ActionPrimitive( std::string name, unsigned int nFingersInvolved, unsigned int maxStoredActionStates,
+        Type type );
     
     /* e.g. two tips for the pinch*/
-    const unsigned int nLinksInvolved;
+    const unsigned int nFingersInvolved;
     
     /* the max number of action for each linksInvolved set that we want to store */
-    const unsigned int jointStateSetMaxSize;
+    const unsigned int maxStoredActionStates;
     
-    const ActionType actionType;
-    
-    std::vector < bool > jointsInvolved;
+    const Type type;
+        
 
     
 };

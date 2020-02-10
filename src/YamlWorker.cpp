@@ -79,9 +79,10 @@ std::string ROSEE::YamlWorker::emitYaml  ( const ROSEE::ActionComposed* action )
     
 }
 
-std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > ROSEE::YamlWorker::parseYaml ( std::string filename, ROSEE::ActionType actionType){
+std::map < std::set < std::string>, ROSEE::ActionPrimitive::Ptr > ROSEE::YamlWorker::parseYamlPrimitive ( 
+                                                    std::string filename, ROSEE::ActionPrimitive::Type actionType){
     
-    std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > parsedMap; 
+    std::map < std::set < std::string>, ROSEE::ActionPrimitive::Ptr > parsedMap; 
 
     //TODO check elsewhere if file exist or not?
     std::ifstream ifile(dirPath + filename);
@@ -93,26 +94,26 @@ std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > RO
     YAML::Node node = YAML::LoadFile(dirPath + filename);
     
     for(YAML::const_iterator it4Action = node.begin(); it4Action != node.end(); ++it4Action) {
-        std::shared_ptr <ActionPrimitive> ptr;
+        ActionPrimitive::Ptr ptr;
         switch (actionType) {
-        case PinchStrong: {
+        case ActionPrimitive::Type::PinchStrong: {
             ptr = std::make_shared <ActionPinchStrong>();
             break;
         }
-        case PinchWeak: {
+        case ActionPrimitive::Type::PinchWeak: {
             ptr = std::make_shared <ActionPinchWeak> ();
             break;
         }
-        case Trig: {
-            ptr = std::make_shared <ActionTrig>("trig", ActionType::Trig);
+        case ActionPrimitive::Type::Trig: {
+            ptr = std::make_shared <ActionTrig>("trig", ActionPrimitive::Type::Trig);
             break;
         }
-        case TipFlex: {
-            ptr = std::make_shared <ActionTrig>("tipFlex", ActionType::TipFlex);
+        case ActionPrimitive::Type::TipFlex: {
+            ptr = std::make_shared <ActionTrig>("tipFlex", ActionPrimitive::Type::TipFlex);
             break;
         }
-        case FingFlex: {
-            ptr = std::make_shared <ActionTrig>("fingFlex", ActionType::FingFlex);
+        case ActionPrimitive::Type::FingFlex: {
+            ptr = std::make_shared <ActionTrig>("fingFlex", ActionPrimitive::Type::FingFlex);
             break;
         }
 
@@ -123,7 +124,7 @@ std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > RO
         
         ptr->fillFromYaml ( it4Action );
         
-        parsedMap.insert ( std::make_pair ( ptr->getLinksInvolved(), ptr) );
+        parsedMap.insert ( std::make_pair ( ptr->getFingersInvolved(), ptr) );
     }
         
     return parsedMap;
@@ -141,7 +142,9 @@ ROSEE::ActionComposed ROSEE::YamlWorker::parseYamlComposed (std::string filename
     }
     
     YAML::Node node = YAML::LoadFile(dirPath + filename);
-    parsedAction.fillFromYaml(node);
+    YAML::const_iterator yamlIt = node.begin();
+
+    parsedAction.fillFromYaml ( yamlIt );
     
     return parsedAction;
     

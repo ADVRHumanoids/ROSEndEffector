@@ -18,134 +18,121 @@
 
 #include <ROSEndEffector/ActionComposed.h>
 
-ROSEE::ActionComposed::ActionComposed(){
-    name = "ComposedGeneric";
+ROSEE::ActionComposed::ActionComposed() : Action() {
     independent = true;
-    nPrimitives = 0;
+    nInnerActions = 0;
 }
 
-ROSEE::ActionComposed::ActionComposed(std::string name) {
-    this->name = name;
-    this->independent = true;
-    nPrimitives = 0;
+ROSEE::ActionComposed::ActionComposed(std::string name) : Action(name) {
+    independent = true;
+    nInnerActions = 0;
 }
 
-ROSEE::ActionComposed::ActionComposed(std::string name, bool independent) {
-    this->name = name;
+ROSEE::ActionComposed::ActionComposed(std::string name, bool independent) : Action(name) {
     this->independent = independent;
-    nPrimitives = 0;
+    nInnerActions = 0;
 }
 
-std::string ROSEE::ActionComposed::getName() const {
-    return name;
+unsigned int ROSEE::ActionComposed::numberOfInnerActions() const {
+    return nInnerActions;
 }
 
-unsigned int ROSEE::ActionComposed::getnPrimitives() const {
-    return nPrimitives;
-}
-
-bool ROSEE::ActionComposed::getIndependent() const {
+bool ROSEE::ActionComposed::isIndependent() const {
     return independent;
 }
 
-std::vector<std::string> ROSEE::ActionComposed::getPrimitiveNames() const {
-    return primitiveNames;
+std::vector<std::string> ROSEE::ActionComposed::getInnerActionsNames() const {
+    return innerActionsNames;
 }
 
-std::set<std::string> ROSEE::ActionComposed::getLinksInvolved() const {
-    return linksInvolved;
-}
-
-
-std::vector < std::shared_ptr <ROSEE::ActionPrimitive> > ROSEE::ActionComposed::getPrimitiveObjects() const {
-    return primitiveObjects;
-}
-
-ROSEE::JointStates ROSEE::ActionComposed::getJointStates() const {
-    return jointStates;
-}
-std::vector<unsigned int> ROSEE::ActionComposed::getInvolvedJointsCount() const {
-    return involvedJointsCount;
+ROSEE::JointPos ROSEE::ActionComposed::getJointPos() const {
+    return jointPos;
 }
 
 
 
-bool ROSEE::ActionComposed::sumPrimitive ( std::shared_ptr <ROSEE::ActionPrimitive> primitive, int as )
+bool ROSEE::ActionComposed::sumAction ( ROSEE::Action::Ptr action )
 {
 
-    if (nPrimitives == 0) { //first primitive inserted, add anyway
+    JointPos actionJP = action->getJointPos();
+    JointsInvolvedCount actionJIC = action->getJointsInvolvedCount();
+        
+    if (nInnerActions == 0) { //first primitive inserted
+        
+        for ( auto jic : actionJIC ){
+            if ( jic.second  > 1  ) {
+                // if action is dependent we check that all its joints are setted only once
+                return false; //cant add this primitive
+            }
+        }
 
-        JointStates js = primitive->getActionStates().at(as);
-        unsigned int iJoint = 0;
-        for (auto joint : js ){
 
-            involvedJointsCount.push_back(0); //first primitive we insert, we have also to fill this
-            jointStates.insert ( std::make_pair (joint.first, joint.second) );
-
-            if ( primitive->getIfJointsInvolved().at ( iJoint ) ) {
-
-                involvedJointsCount.at(iJoint)++;
-            } 
-            iJoint++;
+        for (auto joint : actionJP ){
+            jointsInvolvedCount.insert ( std::make_pair (joint.first, actionJIC.at(joint.first) ) );
+            jointPos.insert ( std::make_pair (joint.first, joint.second) );
         }
         
     } else {
         
         if (independent) {
-            
-            JointStates js = primitive->getActionStates().at(as);
-            
-            //first we check if the primitive is independent from all the other inserted
-            for (unsigned int iJoint = 0; iJoint < jointStates.size(); iJoint++){
-                if ( primitive->getIfJointsInvolved().at(iJoint) && 
-                     (involvedJointsCount.at(iJoint) > 0) ) {
-                    return false; //both setted, cant add this primitive
+                        
+            //first we check if the action is independent from all the other inserted
+            for ( auto jic : actionJIC ){
+                if ( jic.second + jointsInvolvedCount.at(jic.first) > 1  ) {
+                    // we use the sum so also if action is dependent we check that all its joints are setted once
+                    return false; //cant add this primitive
                 }
             }
 
-            //if here, primitive is independent, we can add the joints states
-            unsigned int iJoint = 0;
-            for ( auto joint : js ){ 
-                if ( primitive->getIfJointsInvolved().at(iJoint) ){
-
-                    jointStates.at(joint.first).at(0) = joint.second.at(0);
-                    involvedJointsCount.at(iJoint)++;
-                }
-                iJoint++;
+            //if here, action is independent, we can add the joints states
+            for ( auto joint : actionJP ){ 
+                
+                if ( actionJIC.at (joint.first ) > 0 ) {
+                    
+                    jointPos.at(joint.first) = joint.second;
+                    jointsInvolvedCount.at(joint.first) += actionJIC.at (joint.first );
+                    //+= or = is the same for the checks done before 
+                } 
             }
             
         } else {
             // for each joint, add the state's value to the mean 
-            // (number of element in the previous mean is given by involvedJointsCount.at(x))
-            JointStates js = primitive->getActionStates().at(as);
+            // (number of element in the previous mean is given by jointsInvolvedCount.at(x))
 
-            unsigned int iJoint = 0;            
-            for (auto joint : js ){ 
-                if ( primitive->getIfJointsInvolved().at(iJoint) ){
-                    involvedJointsCount.at(iJoint)++;
-                    double mean = jointStates.at(joint.first).at(0) + 
-                        ( (joint.second.at(0) - jointStates.at(joint.first).at(0)) / 
-                            involvedJointsCount.at(iJoint) );
-                    jointStates.at(joint.first).at(0) = mean;
+            for ( auto joint : actionJP ) { 
+                if ( actionJIC.at( joint.first ) == 0 ) {
+                    continue; //if the action that is being added has this joint not setted, not consider it
                 }
-                iJoint++;
+                
+                //update the count 
+                jointsInvolvedCount.at(joint.first) += actionJIC.at (joint.first ); 
+                
+                //iterate all dofs of jointPos
+                for (unsigned int dof = 0; dof < joint.second.size(); dof++ ) {
+                    
+                    double mean = jointPos.at( joint.first ).at(dof) + 
+                        ( (joint.second.at(dof) - jointPos.at(joint.first).at(dof)) / 
+                            jointsInvolvedCount.at(joint.first) );
+                        
+                    jointPos.at(joint.first).at(dof) = mean;     
+                }
+
             }
         }
     }
     
-    primitiveNames.push_back ( primitive->getName() );
-    for (auto it: primitive->getLinksInvolved()) {
-         linksInvolved.insert ( it );
+    innerActionsNames.push_back ( action->getName() );
+    for ( auto it: action->getFingersInvolved() ) {
+         fingersInvolved.insert ( it );
     }
 
-    primitiveObjects.push_back ( primitive );
-    nPrimitives ++;
+    nInnerActions ++;
     
     return true;
 }
 
 
-void ROSEE::ActionComposed::printAction() const {
+void ROSEE::ActionComposed::print () const {
     
     std::stringstream output;
     
@@ -153,80 +140,81 @@ void ROSEE::ActionComposed::printAction() const {
     independent ? output << "' (independent):" : output << "' (not independent):" ;
     output << std::endl;
     
-    output << "\tComposed by " << nPrimitives << " primitives: [" ;
-    for (auto it : primitiveNames) {
+    output << "Composed by " << nInnerActions << " inner action: [" ;
+    for (auto it : innerActionsNames) {
         output << it << ", ";
     }
     output.seekp (-2, output.cur); //to remove the last comma (and space)
     output << "]" << std::endl;
     
-    output << "\tLinks involved: [" ;
-    for (auto it : linksInvolved) {
+    output << "Fingers involved: [" ;
+    for (auto it : fingersInvolved) {
         output << it << ", ";
     }
     output.seekp (-2, output.cur); //to remove the last comma (and space)
     output << "]" << std::endl;
     
-    output << "\tEach joint influenced by x primitives: [";
-    for (auto it : involvedJointsCount) {
-        output << it << ", ";
-    } 
-    output.seekp (-2, output.cur); //to remove the last comma (and space)
-    output << "]" << std::endl;
-    
-    output << "\t" << "JointStates:" << std::endl;
-    output << jointStates << std::endl;
+    output << "Each joint influenced by x inner action:" << std::endl;
+    output << jointsInvolvedCount;
+
+    output << "JointPos:" << std::endl;
+    output << jointPos << std::endl;
     
     std::cout << output.str();
-    
 }
 
 
 void ROSEE::ActionComposed::emitYaml ( YAML::Emitter& out) const {
     
-    out << YAML::BeginMap;
-        out << YAML::Key << "Name" << YAML::Value << name;
+    out << YAML::BeginMap << YAML::Key << name << YAML::Value << YAML::BeginMap ;
         out << YAML::Key << "Independent" << YAML::Value << independent;
-        out << YAML::Key << "nPrimitives" << YAML::Value << nPrimitives;
-        out << YAML::Key << "Primitives" << YAML::Value << YAML::Flow << primitiveNames;
-        out << YAML::Key << "LinksInvolved" << YAML::Value << YAML::Flow << linksInvolved;
-        out << YAML::Key << "InvolvedJointsCount" << YAML::Value << YAML::Flow << involvedJointsCount;
-        out << YAML::Key << "JointStates" << YAML::Value << YAML::BeginMap;
-            for (const auto &joint : jointStates) {
+        out << YAML::Key << "NInnerActions" << YAML::Value << nInnerActions;
+        out << YAML::Key << "InnerActionsNames" << YAML::Value << YAML::Flow << innerActionsNames;
+        out << YAML::Key << "FingersInvolved" << YAML::Value << YAML::Flow << fingersInvolved;
+        out << YAML::Key << "JointsInvolvedCount" << YAML::Value << YAML::BeginMap;
+        for (const auto &jointCount : jointsInvolvedCount ) {
+            out << YAML::Key << jointCount.first;
+            out << YAML::Value << jointCount.second;
+        } 
+        out << YAML::EndMap;
+
+        out << YAML::Key << "JointPos" << YAML::Value << YAML::BeginMap;
+            for (const auto &joint : jointPos) {
                 out << YAML::Key << joint.first;
                 out << YAML::Value << YAML::Flow << joint.second; //vector of double is emitted like Seq
             }
         out << YAML::EndMap;
     out << YAML::EndMap;
+    out << YAML::EndMap;
 }
 
 // if parsed, we dont have the link with the primitives... so primitiveObjects is empty
-bool ROSEE::ActionComposed::fillFromYaml ( YAML::Node node ) {
+bool ROSEE::ActionComposed::fillFromYaml ( YAML::const_iterator yamlIt ) {
     
-    for (auto keyValue = node.begin(); keyValue != node.end(); ++keyValue ){
+    name = yamlIt->first.as<std::string>();
+            
+    for (auto keyValue = yamlIt->second.begin(); keyValue != yamlIt->second.end(); ++keyValue ) {
 
         std::string key = keyValue->first.as<std::string>();
-        if ( key.compare ("Name") == 0 ) {
-            name = keyValue->second.as<std::string>();
-            
-        } else if ( key.compare ("Independent") == 0 ) {
+
+        if ( key.compare ("Independent") == 0 ) {
             independent = keyValue->second.as<bool>();
             
-        } else if ( key.compare ("nPrimitives") == 0 ) {
-            nPrimitives = keyValue->second.as <unsigned int>();
+        } else if ( key.compare ("NInnerActions") == 0 ) {
+            nInnerActions = keyValue->second.as <unsigned int>();
             
-        } else if ( key.compare ("Primitives") == 0 ) {
-            primitiveNames = keyValue->second.as <std::vector <std::string> >();
+        } else if ( key.compare ("InnerActionsNames") == 0 ) {
+            innerActionsNames = keyValue->second.as <std::vector <std::string> >();
         
-        } else if ( key.compare ("LinksInvolved") == 0 ) { 
+        } else if ( key.compare ("FingersInvolved") == 0 ) { 
             auto tempVect = keyValue->second.as <std::vector <std::string> > ();
-            linksInvolved.insert ( tempVect.begin(), tempVect.end() );
+            fingersInvolved.insert ( tempVect.begin(), tempVect.end() );
             
-        } else if ( key.compare ("InvolvedJointsCount") == 0 ) {
-            involvedJointsCount = keyValue->second.as < std::vector <unsigned int> >(); 
+        } else if ( key.compare ("JointsInvolvedCount") == 0 ) {
+            jointsInvolvedCount = keyValue->second.as < JointsInvolvedCount >(); 
             
-        } else if ( key.compare ("JointStates") == 0 ) {
-            jointStates = keyValue->second.as < JointStates >();
+        } else if ( key.compare ("JointPos") == 0 ) {
+            jointPos = keyValue->second.as < JointPos >();
             
         } else {
             std::cout << "[COMPOSED ACTION PARSER] Error, not known key " << key << std::endl;

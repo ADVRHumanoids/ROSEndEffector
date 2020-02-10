@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+
+
+
+
+
 #include <ROSEndEffector/ParserMoveIt.h>
 
 ROSEE::ParserMoveIt::ParserMoveIt() {
@@ -80,6 +85,57 @@ robot_model::RobotModelPtr ROSEE::ParserMoveIt::getCopyModel() const {
     robot_model_loader::RobotModelLoader robot_model_loader(robot_description); 
     return robot_model_loader.getModel();
 }
+
+std::vector < std::string > ROSEE::ParserMoveIt::getGroupOfLink ( std::string linkName ) { 
+    
+    std::vector < std::string > groupsReturn;
+
+    if (robot_model == nullptr) {
+        std::cerr << " [PARSER::" << __func__ << 
+            "]: robot_model is null. Have you called init() before?"  << std::endl;
+        return groupsReturn;
+    }
+    
+    for (auto group : robot_model->getJointModelGroups() ) {
+        
+        if ( group->hasLinkModel(linkName) ) {
+                
+            groupsReturn.push_back ( group->getName() ) ;
+        }
+    }
+    return groupsReturn;
+}
+
+bool ROSEE::ParserMoveIt::groupIsChain(const std::string groupName) const {
+    
+    if (robot_model == nullptr) {
+        std::cerr << " [PARSER::" << __func__ << 
+            "]: robot_model is null. Have you called init() before?"  << std::endl;
+        return false;
+    }
+    
+    if (! robot_model->hasJointModelGroup(groupName) ) {
+        std::cerr << " [PARSER::" << __func__ << 
+            "]: " << groupName << " is not a group "  << std::endl;
+        return false;
+    }
+    return groupIsChain(robot_model->getJointModelGroup(groupName));
+}
+
+bool ROSEE::ParserMoveIt::groupIsChain(const moveit::core::JointModelGroup* group) const {
+    
+    std::stringstream log;
+    log << "Checking if " << group->getName() << " is a chain ..." << std::endl;
+    for (auto link : group->getLinkModels() ){
+        if (link->getChildJointModels().size() > 1 ) {
+            log << "... no because " << link->getName() << " has " << link->getChildJointModels().size() << " children " << std::endl;
+           // std::cout << log.str() << std::endl;
+            return false;
+        }
+    }
+    return true;
+}
+
 
 
 bool ROSEE::ParserMoveIt::checkIfContinuosJoint ( std::string jointName) const {
@@ -158,20 +214,17 @@ unsigned int ROSEE::ParserMoveIt::getNExclusiveJointsOfTip ( std::string tipName
         return 0;
     }
     
-    
     unsigned int nExclusiveJoints = 0;
 
     for (auto jointOfTip : jointsOfFingertipMap.find(tipName)->second ) { 
-        
+
         if ( !continuosIncluded && checkIfContinuosJoint(jointOfTip) == true ) {
             continue; //we dont want to count a continuos joint
         }
-        
-        
-        
+    
         //check if the joints of the tip move only that tip
         if ( fingertipsOfJointMap.find(jointOfTip)->second.size() == 1 ) {
-            
+
             if (fingertipsOfJointMap.find(jointOfTip)->second.at(0).compare (tipName) != 0) {
                 //  this condition is false if jointsOfFingertipMap and fingertipsOfJointMap are built well
                 std::cerr << " [PARSER::" << __func__ << 
@@ -186,7 +239,6 @@ unsigned int ROSEE::ParserMoveIt::getNExclusiveJointsOfTip ( std::string tipName
             nExclusiveJoints++;
         }
     }
-    
     return nExclusiveJoints;  
 }
 
@@ -257,25 +309,24 @@ void ROSEE::ParserMoveIt::lookForFingertips() {
         if (it->getSubgroupNames().size() != 0 ) {
             logGroupInfo.append("but it has some subgroups \n");
             
-        } else {
-            if (! it->isChain()) {
-                logGroupInfo.append("but it is not a chain \n");
+        } else if (! groupIsChain ( it ) ) { 
+            logGroupInfo.append("but it is not a chain \n");
+        } 
+        
+        else {
+            logGroupInfo.append("with links: \n");
+            for (auto itt : it->getLinkModels()) {
                 
-            } else {
-                logGroupInfo.append("with links: \n");
-                for (auto itt : it->getLinkModels()) {
-                   
-                    logGroupInfo.append("\t'" + itt->getName() + "' ");
-                    if (itt->getChildJointModels().size() != 0) {
-                       
-                       logGroupInfo.append("not a leaf link (not a fingertip)\n");
-                       
-                    } else {
-                       logGroupInfo.append("a leaf link (a fingertip)\n");
-                       fingertipNames.push_back(itt->getName());
-                    }
+                logGroupInfo.append("\t'" + itt->getName() + "' ");
+                if (itt->getChildJointModels().size() != 0) {
+                    
+                    logGroupInfo.append("not a leaf link (not a fingertip)\n");
+                    
+                } else {
+                    logGroupInfo.append("a leaf link (a fingertip)\n");
+                    fingertipNames.push_back(itt->getName());
                 }
-            }
+            }            
         }
         std::cout << logGroupInfo << std::endl;
     }
@@ -293,13 +344,15 @@ void ROSEE::ParserMoveIt::lookJointsTipsCorrelation() {
         fingertipsOfJointMap.insert ( std::make_pair (it->getName(), std::vector<std::string>() ) );
     }
     
-    for ( const auto &joint: robot_model->getActiveJointModels()){ //for each actuated joint        
-        for (const auto &link : joint->getDescendantLinkModels()) { //for each descendand link
-            
+    for ( const auto &joint: robot_model->getActiveJointModels()){ //for each actuated joint   
+
+        for (const auto &link : joint->getDescendantLinkModels()) { //for each descendant link
+
             if (std::find(fingertipNames.begin(), fingertipNames.end(), link->getName()) != fingertipNames.end()){
-                jointsOfFingertipMap.at ( link->getName() ).push_back( joint->getName() );
-                fingertipsOfJointMap.at ( joint->getName() ).push_back( link->getName() );
+                jointsOfFingertipMap.at ( link->getName() ) .push_back( joint->getName() );
+                fingertipsOfJointMap.at ( joint->getName() ) .push_back( link->getName() );
             }
         }
     }
+
 }

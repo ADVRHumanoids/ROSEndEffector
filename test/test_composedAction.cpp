@@ -34,12 +34,12 @@ protected:
         parserMoveIt->init ("robot_description") ;
         ROSEE::FindActions actionsFinder (parserMoveIt);
 
-        trigMap = actionsFinder.findTrig(ROSEE::ActionType::Trig, "/configs/actions/tests/") ;  
+        trigMap = actionsFinder.findTrig(ROSEE::ActionPrimitive::Type::Trig, "/configs/actions/tests/") ;  
 
         for (auto trig : trigMap) {
             std::shared_ptr <ROSEE::ActionPrimitive> pointer = 
                 std::make_shared <ROSEE::ActionTrig> ( trig.second );
-            grasp.sumPrimitive ( pointer );  
+            grasp.sumAction ( pointer );  
         }
 
         
@@ -64,36 +64,35 @@ protected:
 
 TEST_F ( testComposedAction, checkNumberPrimitives ) {
     
-    EXPECT_EQ ( grasp.getnPrimitives(), grasp.getPrimitiveNames().size() );
-    EXPECT_EQ ( grasp.getnPrimitives(), grasp.getPrimitiveObjects().size() );
+    EXPECT_EQ ( grasp.numberOfInnerActions(), grasp.getInnerActionsNames().size() );
     
-    EXPECT_EQ ( graspParsed.getnPrimitives(), graspParsed.getPrimitiveNames().size() );    
+    EXPECT_EQ ( graspParsed.numberOfInnerActions(), graspParsed.getInnerActionsNames().size() );    
     
 }
 
 TEST_F ( testComposedAction, checkEmitParse ) {
     
     EXPECT_EQ (grasp.getName(), graspParsed.getName() );
-    EXPECT_EQ (grasp.getnPrimitives(), graspParsed.getnPrimitives() );
-    EXPECT_EQ (grasp.getIndependent(), graspParsed.getIndependent() );
-    EXPECT_EQ (grasp.getLinksInvolved(), graspParsed.getLinksInvolved() );
+    EXPECT_EQ (grasp.numberOfInnerActions(), graspParsed.numberOfInnerActions() );
+    EXPECT_EQ (grasp.isIndependent(), graspParsed.isIndependent() );
+    EXPECT_EQ (grasp.getFingersInvolved(), graspParsed.getFingersInvolved() );
     
-    for (auto joint: grasp.getJointStates() ) {
+    for (auto joint: grasp.getJointPos() ) {
         
         //compare size of joint (number of dofs)
-        ASSERT_EQ (joint.second.size(), graspParsed.getJointStates().at(joint.first).size() );
+        ASSERT_EQ (joint.second.size(), graspParsed.getJointPos().at(joint.first).size() );
         //loop the eventually multiple joint pos (when dofs > 1)
         for (int j = 0; j < joint.second.size(); ++j ){
-            EXPECT_DOUBLE_EQ ( joint.second.at(j), graspParsed.getJointStates().at(joint.first).at(j) ); 
+            EXPECT_DOUBLE_EQ ( joint.second.at(j), graspParsed.getJointPos().at(joint.first).at(j) ); 
         }     
     }
 }
 
 // if independent, at maximum only one primitive can influence each joint
 TEST_F ( testComposedAction, checkIndependence ) { 
-    if (grasp.getIndependent()) {
-        for (auto it : grasp.getInvolvedJointsCount() ) {
-            EXPECT_LE ( it, 1);
+    if (grasp.isIndependent()) {
+        for (auto it : grasp.getJointsInvolvedCount() ) {
+            EXPECT_LE ( it.second, 1 );
         }
     }
 }

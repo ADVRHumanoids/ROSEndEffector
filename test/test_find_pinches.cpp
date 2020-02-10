@@ -40,9 +40,8 @@ protected:
         pinchWeakMap = theTwoMaps.second;
 
         ROSEE::YamlWorker yamlWorker(parserMoveIt->getHandName(), "/configs/actions/tests/");
-        pinchParsedMap = yamlWorker.parseYaml("pinchStrong.yaml", ROSEE::ActionType::PinchStrong);
-        
-        pinchWeakParsedMap = yamlWorker.parseYaml("pinchWeak.yaml", ROSEE::ActionType::PinchWeak);
+        pinchParsedMap = yamlWorker.parseYamlPrimitive("pinchStrong.yaml", ROSEE::ActionPrimitive::Type::PinchStrong);
+        pinchWeakParsedMap = yamlWorker.parseYamlPrimitive("pinchWeak.yaml", ROSEE::ActionPrimitive::Type::PinchWeak);
     }
 
     virtual void TearDown() {
@@ -61,15 +60,15 @@ TEST_F ( testFindPinches, checkNumberLinks ) {
     for (auto &mapEl: pinchMap ) {
         
         //being a pair the .first has always dimension 2
-        EXPECT_EQ (2, mapEl.second.getLinksInvolved().size() ); //the names inside the action
-        EXPECT_EQ (2, mapEl.second.getnLinksInvolved() ); //the int nLinkInvolved member of action
+        EXPECT_EQ (2, mapEl.second.getFingersInvolved().size() ); //the names inside the action
+        EXPECT_EQ (2, mapEl.second.getnFingersInvolved() ); //the int nLinkInvolved member of action
     }
     
     for (auto &mapEl: pinchParsedMap ) {
         
         EXPECT_EQ (2, mapEl.first.size()); // the key
-        EXPECT_EQ (2, mapEl.second->getLinksInvolved().size()); //the names inside the action
-        EXPECT_EQ (2, mapEl.second->getnLinksInvolved()); //the int nLinkInvolved member of action
+        EXPECT_EQ (2, mapEl.second->getFingersInvolved().size()); //the names inside the action
+        EXPECT_EQ (2, mapEl.second->getnFingersInvolved()); //the int nLinkInvolved member of action
     }
 }
 
@@ -78,19 +77,19 @@ TEST_F ( testFindPinches, checkSizeStatesInfoSet ) {
     for (auto &mapEl: pinchMap ) {
         
         //get the member which is set in costructor
-        unsigned int size = mapEl.second.getJointStatesSetMaxSize(); 
+        unsigned int size = mapEl.second.getMaxStoredActionStates(); 
         
-        //it must be equal to the real size of the statesInfoSet
+        //it must be equal to the real size of the actionState set
         EXPECT_EQ ( size, mapEl.second.getActionStates().size() );
+        EXPECT_EQ ( size, mapEl.second.getAllJointPos().size() );
     }
     
     for (auto &mapEl: pinchParsedMap ) {
         
         //get the member which is set in costructor
-        unsigned int size = mapEl.second->getJointStatesSetMaxSize(); 
+        unsigned int size = mapEl.second->getMaxStoredActionStates(); 
         
-        //it must be equal to the real size of the statesInfoSet
-        EXPECT_EQ (size, mapEl.second->getActionStates().size());
+        EXPECT_EQ (size, mapEl.second->getAllJointPos().size());
     }
 }
 
@@ -99,13 +98,13 @@ TEST_F ( testFindPinches, checkName ) {
     for (auto &mapEl: pinchMap ) {
         
         EXPECT_TRUE (mapEl.second.getName().compare("pinchStrong") == 0);
-        EXPECT_EQ (ROSEE::ActionType::PinchStrong, mapEl.second.getActionType() );
+        EXPECT_EQ (ROSEE::ActionPrimitive::Type::PinchStrong, mapEl.second.getType() );
     }
     
     for (auto &mapEl: pinchParsedMap ) {
         
         EXPECT_TRUE (mapEl.second->getName().compare("pinchStrong") == 0);
-        EXPECT_EQ (ROSEE::ActionType::PinchStrong, mapEl.second->getActionType() );
+        EXPECT_EQ (ROSEE::ActionPrimitive::Type::PinchStrong, mapEl.second->getType() );
     }
 }
 
@@ -115,7 +114,7 @@ TEST_F ( testFindPinches, checkOrderStatesInfoSet ) {
     for (auto &mapEl: pinchMap ) { 
         
         std::vector < ROSEE::ActionPinchStrong::StateWithContact> statesInfo = 
-            mapEl.second.getActionStatesWithContact();
+            mapEl.second.getActionStates();
         
         double oldDepth = std::numeric_limits<double>::infinity();
         
@@ -133,7 +132,7 @@ TEST_F ( testFindPinches, checkOrderStatesInfoSet ) {
             
         ASSERT_FALSE (pinchCasted == nullptr);
         std::vector < ROSEE::ActionPinchStrong::StateWithContact> statesInfo = 
-            pinchCasted->getActionStatesWithContact();
+            pinchCasted->getActionStates();
         
         double oldDepth = std::numeric_limits<double>::infinity();
         
@@ -164,29 +163,29 @@ TEST_F ( testFindPinches, checkEmitParse ) {
                 
         //std::string is ok to compare with _EQ
         EXPECT_EQ (pinchCasted->getName(), pinchMap.at(keyPair).getName() );
-        EXPECT_EQ (pinchCasted->getnLinksInvolved(), pinchMap.at(keyPair).getnLinksInvolved() );
-        EXPECT_EQ (pinchCasted->getJointStatesSetMaxSize(), pinchMap.at(keyPair).getJointStatesSetMaxSize());
-        EXPECT_EQ (pinchCasted->getActionType(), pinchMap.at(keyPair).getActionType() );
-        EXPECT_EQ (pinchCasted->getLinksInvolved(), pinchMap.at(keyPair).getLinksInvolved());
+        EXPECT_EQ (pinchCasted->getnFingersInvolved(), pinchMap.at(keyPair).getnFingersInvolved() );
+        EXPECT_EQ (pinchCasted->getMaxStoredActionStates(), pinchMap.at(keyPair).getMaxStoredActionStates());
+        EXPECT_EQ (pinchCasted->getType(), pinchMap.at(keyPair).getType() );
+        EXPECT_EQ (pinchCasted->getFingersInvolved(), pinchMap.at(keyPair).getFingersInvolved());
 
         unsigned int i = 0;
-        for (auto as: pinchCasted->getActionStatesWithContact() ) {
+        for (auto as: pinchCasted->getActionStates() ) {
             
             //check equality of joint states (as.first)
             for (auto joint : as.first) {
                 ASSERT_EQ ( joint.second.size(), 
-                            pinchMap.at(keyPair).getActionStates().at(i).at(joint.first).size() );
+                            pinchMap.at(keyPair).getAllJointPos().at(i).at(joint.first).size() );
                 //loop the eventually multiple joint pos (when dofs > 1)
                 for (int j=0; j<joint.second.size(); ++j){
                     EXPECT_DOUBLE_EQ ( joint.second.at(j),
-                        pinchMap.at(keyPair).getActionStates().at(i).at(joint.first).at(j) ); 
+                        pinchMap.at(keyPair).getAllJointPos().at(i).at(joint.first).at(j) ); 
                 }
             }   
             
             //check equality of contact (as.second)
             collision_detection::Contact thisCont = as.second;
             collision_detection::Contact otherCont =
-                pinchMap.at(keyPair).getActionStatesWithContact().at(i).second;
+                pinchMap.at(keyPair).getActionStates().at(i).second;
             // Tricky here, body colliding names can be swapped.
             // BUT it seems that depth, normal and pos refer to a fixed something, so they must
             // not be swapped (I don't see that EXPECT fails if I don't swap them when names are swapped)
@@ -214,8 +213,8 @@ TEST_F ( testFindPinches, checkEmitParse ) {
             // TODO HOW TO print this once and only if any of the expect at this loop iteration fails?
             if ( (std::abs(thisCont.depth - otherCont.depth)) > 0.00001) {
                 std::cout << "EXPECT equal depths fails: error is on the actionState_" << i << std::endl;
-                pinchCasted->printAction(); 
-                pinchMap.at(keyPair).printAction();
+                pinchCasted->print(); 
+                pinchMap.at(keyPair).print();
                 std::cout << std::endl;
             }
             
@@ -231,15 +230,15 @@ TEST_F ( testFindPinches, checkNumberLinksWeak ) {
     for (auto &mapEl: pinchWeakMap ) {
         
         //being a pair the .first has always dimension 2
-        EXPECT_EQ (2, mapEl.second.getLinksInvolved().size() ); //the names inside the action
-        EXPECT_EQ (2, mapEl.second.getnLinksInvolved() ); //the int nLinkInvolved member of action
+        EXPECT_EQ (2, mapEl.second.getFingersInvolved().size() ); //the names inside the action
+        EXPECT_EQ (2, mapEl.second.getnFingersInvolved() ); //the int nLinkInvolved member of action
     }
     
     for (auto &mapEl: pinchWeakParsedMap ) {
         
         EXPECT_EQ (2, mapEl.first.size()); // the key
-        EXPECT_EQ (2, mapEl.second->getLinksInvolved().size()); //the names inside the action
-        EXPECT_EQ (2, mapEl.second->getnLinksInvolved()); //the int nLinkInvolved member of action
+        EXPECT_EQ (2, mapEl.second->getFingersInvolved().size()); //the names inside the action
+        EXPECT_EQ (2, mapEl.second->getnFingersInvolved()); //the int nLinkInvolved member of action
     }
 }
 
@@ -248,19 +247,19 @@ TEST_F ( testFindPinches, checkSizeStatesInfoSetWeak ) {
     for (auto &mapEl: pinchWeakMap ) {
         
         //get the member which is set in costructor
-        unsigned int size = mapEl.second.getJointStatesSetMaxSize(); 
+        unsigned int size = mapEl.second.getMaxStoredActionStates(); 
         
-        //it must be equal to the real size of the statesInfoSet
+        //it must be equal to the real size of the action state set
         EXPECT_EQ ( size, mapEl.second.getActionStates().size() );
+        EXPECT_EQ ( size, mapEl.second.getAllJointPos().size() );
     }
     
     for (auto &mapEl: pinchWeakParsedMap ) {
         
         //get the member which is set in costructor
-        unsigned int size = mapEl.second->getJointStatesSetMaxSize(); 
+        unsigned int size = mapEl.second->getMaxStoredActionStates(); 
         
-        //it must be equal to the real size of the statesInfoSet
-        EXPECT_EQ (size, mapEl.second->getActionStates().size());
+        EXPECT_EQ (size, mapEl.second->getAllJointPos().size());
     }
 }
 
@@ -269,13 +268,13 @@ TEST_F ( testFindPinches, checkNameWeak ) {
     for (auto &mapEl: pinchWeakMap ) {
         
         EXPECT_TRUE (mapEl.second.getName().compare("pinchWeak") == 0);
-        EXPECT_EQ (ROSEE::ActionType::PinchWeak, mapEl.second.getActionType() );
+        EXPECT_EQ (ROSEE::ActionPrimitive::Type::PinchWeak, mapEl.second.getType() );
     }
     
     for (auto &mapEl: pinchWeakParsedMap ) {
         
         EXPECT_TRUE (mapEl.second->getName().compare("pinchWeak") == 0);
-        EXPECT_EQ (ROSEE::ActionType::PinchWeak, mapEl.second->getActionType() );
+        EXPECT_EQ (ROSEE::ActionPrimitive::Type::PinchWeak, mapEl.second->getType() );
     }
 }
 
@@ -285,7 +284,7 @@ TEST_F ( testFindPinches, checkOrderStatesInfoSetWeak ) {
     for (auto &mapEl: pinchWeakMap ) { 
         
         std::vector < ROSEE::ActionPinchWeak::StateWithDistance> statesInfo = 
-            mapEl.second.getActionStatesWithDistance();
+            mapEl.second.getActionStates();
         
         double oldDist = 0;
         for (auto &setEl : statesInfo) {
@@ -302,7 +301,7 @@ TEST_F ( testFindPinches, checkOrderStatesInfoSetWeak ) {
             
         ASSERT_FALSE (pinchWeakCasted == nullptr);
         std::vector < ROSEE::ActionPinchWeak::StateWithDistance> statesInfo = 
-            pinchWeakCasted->getActionStatesWithDistance();
+            pinchWeakCasted->getActionStates();
                 
         double oldDist = 0;
         for (auto &setEl : statesInfo) {
@@ -332,27 +331,27 @@ TEST_F ( testFindPinches, checkEmitParseWeak ) {
                 
         //std::string is ok to compare with _EQ
         EXPECT_EQ (pinchCasted->getName(), pinchWeakMap.at(keyPair).getName() );
-        EXPECT_EQ (pinchCasted->getnLinksInvolved(), pinchWeakMap.at(keyPair).getnLinksInvolved() );
-        EXPECT_EQ (pinchCasted->getJointStatesSetMaxSize(), pinchWeakMap.at(keyPair).getJointStatesSetMaxSize());
-        EXPECT_EQ (pinchCasted->getActionType(), pinchWeakMap.at(keyPair).getActionType() );
-        EXPECT_EQ (pinchCasted->getLinksInvolved(), pinchWeakMap.at(keyPair).getLinksInvolved());
+        EXPECT_EQ (pinchCasted->getnFingersInvolved(), pinchWeakMap.at(keyPair).getnFingersInvolved() );
+        EXPECT_EQ (pinchCasted->getMaxStoredActionStates(), pinchWeakMap.at(keyPair).getMaxStoredActionStates());
+        EXPECT_EQ (pinchCasted->getType(), pinchWeakMap.at(keyPair).getType() );
+        EXPECT_EQ (pinchCasted->getFingersInvolved(), pinchWeakMap.at(keyPair).getFingersInvolved());
         
         unsigned int i = 0;
-        for (auto as: pinchCasted->getActionStatesWithDistance() ) {
+        for (auto as: pinchCasted->getActionStates() ) {
 
             //check equality of joint states (as.first)
             for (auto joint : as.first) {
                 ASSERT_EQ ( joint.second.size(), 
-                            pinchWeakMap.at(keyPair).getActionStates().at(i).at(joint.first).size() );
+                            pinchWeakMap.at(keyPair).getAllJointPos().at(i).at(joint.first).size() );
                 //loop the eventually multiple joint pos (when dofs > 1)
                 for (int j=0; j<joint.second.size(); ++j){
                     EXPECT_DOUBLE_EQ ( joint.second.at(j),
-                        pinchWeakMap.at(keyPair).getActionStates().at(i).at(joint.first).at(j) ); 
+                        pinchWeakMap.at(keyPair).getAllJointPos().at(i).at(joint.first).at(j) ); 
                 }
             }   
             
             //check equality of distance (as.second)
-            EXPECT_DOUBLE_EQ (as.second, pinchWeakMap.at(keyPair).getActionStatesWithDistance().at(i).second);
+            EXPECT_DOUBLE_EQ (as.second, pinchWeakMap.at(keyPair).getActionStates().at(i).second);
             
             i++;
         }

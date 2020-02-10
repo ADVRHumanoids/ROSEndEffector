@@ -21,7 +21,7 @@
 
 #include <vector>
 #include <string>
-#include <ROSEndEffector/ActionPrimitive.h>
+#include <ROSEndEffector/Action.h>
 #include <yaml-cpp/yaml.h>
 #include <memory>
 
@@ -41,18 +41,8 @@ namespace ROSEE{
  * position of the contained primitives that uses that joint. So each mean can include different primitives, so we need
  * a @involvedJointsCount vector
  */
-class ActionComposed
+class ActionComposed : public Action
 {
-private:
-    std::string name;
-    std::vector < std::string > primitiveNames;
-    std::set < std::string > linksInvolved;
-    ROSEE::JointStates jointStates;
-    std::vector < std::shared_ptr <ROSEE::ActionPrimitive> > primitiveObjects;
-    unsigned int nPrimitives;
-    
-    bool independent; //true if each primitive must set different joint states
-    std::vector <unsigned int> involvedJointsCount;
     
 public: 
     ActionComposed();
@@ -61,19 +51,16 @@ public:
     // Copy constructor 
     ActionComposed (const ActionComposed &other);
     
-    /* getters and setters */
-    std::string getName () const;
-    unsigned int getnPrimitives () const;
-    bool getIndependent () const;
-    std::vector <std::string> getPrimitiveNames() const ;
-    std::set <std::string> getLinksInvolved() const ;
-    ROSEE::JointStates getJointStates() const;
-    std::vector < std::shared_ptr <ROSEE::ActionPrimitive> > getPrimitiveObjects() const;
-    std::vector <unsigned int> getInvolvedJointsCount () const;
+    JointPos getJointPos () const override;
     
-    void printAction () const ; 
-    void emitYaml ( YAML::Emitter&) const;
-    bool fillFromYaml( YAML::Node node );
+    /* getters and setters */
+    unsigned int numberOfInnerActions () const;
+    bool isIndependent () const;
+    std::vector <std::string> getInnerActionsNames() const ;
+    
+    void print () const override; 
+    void emitYaml ( YAML::Emitter&) const override;
+    bool fillFromYaml(  YAML::const_iterator yamlIt ) override;
     
     /** 
      * @brief function to add another primitive to the composed action. 
@@ -83,7 +70,15 @@ public:
      *  (e.g. for the pinchStrong among two tips we can choose among different Jointstates configuration to make the two
      *  tips collide)
      */
-    bool sumPrimitive ( std::shared_ptr <ROSEE::ActionPrimitive> primitive, int as = 0 );
+    bool sumAction ( ROSEE::Action::Ptr );
+    
+private:
+    std::vector < std::string > innerActionsNames;
+    unsigned int nInnerActions;
+    
+    JointPos jointPos;
+    
+    bool independent; //true if each primitive must set different joint states
     
 };
 }

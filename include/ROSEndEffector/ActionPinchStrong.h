@@ -31,7 +31,7 @@ namespace ROSEE {
  * configuration to mark this configuration as a pinchStrong. All the non involved fingers are set in the 
  * default state.
  * A pinchStrong is defined by:
- *  - 2 tips (@tipsPair ), so @nLinksInvolved == 2 (members of base class @PinchGeneric )
+ *  - 2 tips ( that are inside \ref fingersInvolved ), so \ref nFingersInvolved == 2 ( members of base class \ref Action )
  *  - JointStates position: where the collision happens (inside @statesInfoSet)
  *  - Optional info (inside @statesInfoSet ): the contact of moveit. Now only the member depth is used. 
  *    It is used to order, for each pair of tips, the actions in the statesInfoSet 
@@ -45,45 +45,46 @@ class ActionPinchStrong : public ActionPinchGeneric
 public:
     
     /* A pair to "link" the jointStates with infos about the collision among the two tips*/
-    typedef std::pair <JointStates, collision_detection::Contact> StateWithContact; 
+    typedef std::pair <JointPos, collision_detection::Contact> StateWithContact; 
     
     ActionPinchStrong();
-    ActionPinchStrong(unsigned int jointStateSetMaxSize);
-    ActionPinchStrong (std::pair <std::string, std::string>, JointStates, collision_detection::Contact );
+    ActionPinchStrong(unsigned int maxStoredActionStates);
+    ActionPinchStrong (std::pair <std::string, std::string>, JointPos, collision_detection::Contact );
+    ActionPinchStrong (std::string finger1, std::string finger2, JointPos, collision_detection::Contact );
     
-    /** Overriden set and get from the pure virtual functions of the base class @ActionPinchGeneric */
-    std::vector < ROSEE::JointStates > getActionStates() const override;
-    bool setActionStates (std::vector < ROSEE::JointStates > ) override;
+    JointPos getJointPos () const override;
+    JointPos getJointPos (unsigned int index) const;
+    
+    std::vector < ROSEE::JointPos > getAllJointPos () const override;
     
     /** Specific get for this action to return the state with contact info */
-    std::vector< ROSEE::ActionPinchStrong::StateWithContact > getActionStatesWithContact() const;
-
+    std::vector < ROSEE::ActionPinchStrong::StateWithContact > getActionStates() const;
     
     /** 
      * @brief function to insert a single action in the setActionStates of possible action. 
      * If the action is not so good (based on depth now) the action is not inserted and 
      * the function return false 
-     * @param JointStates The hand configuration
+     * @param JointPos The hand configuration
      * @param collision_detection::Contact the contact associated with the action
      * @return TRUE if the action is good and is inserted in the setActionStates
      *         FALSE if the action given as param was not good as the others in the setActionStates
      *           and the set was already full (@jointStateSetMaxSize)
      */
-    bool insertActionState (JointStates, collision_detection::Contact);
+    bool insertActionState (JointPos, collision_detection::Contact);
 
     /** For the pinch, we override these function to print, emit and parse the optional info Contact,
      which is specific of the pinch */
-    void printAction () const override;
-    void emitYaml ( YAML::Emitter&) override;
+    void print () const override;
+    void emitYaml ( YAML::Emitter& ) const override;
     bool fillFromYaml( YAML::const_iterator yamlIt ) override;
     
 private:
     
     /** private function to called by the emitYaml */
-    bool emitYamlForContact ( collision_detection::Contact, YAML::Emitter& );
+    bool emitYamlForContact ( collision_detection::Contact, YAML::Emitter& ) const;
 
     
-    /** struct to put in order the @statesInfoSet. The first elements are the ones 
+    /** struct to put in order the actionStates. The first elements are the ones 
      * with greater depth
      * @FIX, even if is almost impossible, two different contact with same depth will be considered equal
      * with this definition of depthComp. Theoretically they are equal only if the joint status are equal 
@@ -99,7 +100,7 @@ private:
      * to do that action. The pinch among two tips can theoretically be done in infinite ways, we store 
      * the best ways found (ordering them by the depth of fingertips compenetration)
      */
-    std::set < StateWithContact, depthComp > statesInfoSet;
+    std::set < StateWithContact, depthComp > actionStates;
     
 };
 
