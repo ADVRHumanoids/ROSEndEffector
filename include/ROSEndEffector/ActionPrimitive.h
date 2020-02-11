@@ -31,25 +31,6 @@
 
 
 namespace ROSEE{
-/** The map to store the couple jointName (key) --- jointPositions (value), multiple dof in general
- */
-typedef std::map <std::string, std::vector <double> > JointStates;
-
-/** operator overload for JointStates so it is easy to print */
-std::ostream& operator << (std::ostream& output, const JointStates js) {
-    for (const auto &jsEl : js) {
-        output << "\t\t\t"<<jsEl.first << " : "; //joint name
-        for(const auto &jValue : jsEl.second){
-            output << jValue << ", "; //joint position (vector because can have multiple dof)
-        }
-        output.seekp (-2, output.cur); //to remove the last comma (and space)
-        output << std::endl;       
-    }
-    return output;
-}
-
-/** Enum useful to discriminate each action when, for example, we want to parse a file */
-enum ActionType {Pinch, PinchStrong, PinchWeak, Trig, TipFlex, FingFlex, None};
 
 /**
  * @brief Virtual class, Base of all the primitive action. It has some implemented functions that a 

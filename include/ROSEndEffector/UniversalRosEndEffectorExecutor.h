@@ -73,8 +73,6 @@ private:
 
     bool init_grapsing_primitive_subscribers();
     
-    void move_joint_in_finger(double upper_limit, double lower_limit, int id);
-    
     ros::NodeHandle _nh;
     ros::Timer _loop_timer;
 
