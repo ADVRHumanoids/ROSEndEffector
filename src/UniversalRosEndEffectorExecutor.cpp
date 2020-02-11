@@ -82,6 +82,20 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
 
 void ROSEE::UniversalRosEndEffectorExecutor::graspCallback ( const ros_end_effector::EEGraspControlConstPtr& msg ) {
 
+    ROSEE::JointPos grasp_js = _graspParsedMap.getJointPos();
+    // get the joints involved bool vector
+    JointsInvolvedCount grasp_joint_involved_mask = _graspParsedMap.getJointsInvolvedCount();
+     
+    for( auto it : grasp_joint_involved_mask ) {
+        
+        if ( it.second  != 0 ) {
+            int id = -1;
+            _ee->getInternalIdForJoint ( it.first, id );
+            // NOTE assume single joint
+            _qref[id] = grasp_js.at ( it.first ).at ( 0 ) * msg->percentage;
+        }
+        
+    }
 
 }
 
@@ -108,8 +122,14 @@ void ROSEE::UniversalRosEndEffectorExecutor::pinchCallback ( const ros_end_effec
             if ( it.second  != 0 ) {
                 int id = -1;
                 _ee->getInternalIdForJoint ( it.first, id );
-                // NOTE assume single joint
-                _qref[id] = pinch_js.at ( it.first ).at ( 0 ) * msg->percentage;
+                
+                if( id > 0 ) {
+                    // NOTE assume single joint
+                    _qref[id] = pinch_js.at ( it.first ).at ( 0 ) * msg->percentage;
+                }
+                else {
+                    ROS_WARN_STREAM ( "Trying to move Joint: " << it.first << " with ID: " << id );
+                }
             }
 
         }
@@ -171,10 +191,15 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive_subscribers
     for ( auto &i : _fingFlexParsedMap ) {
         i.second->print();
     }
+    
+    // composed actions
+    _graspParsedMap = yamlWorker.parseYamlComposed ("grasp.yaml");
+    ROS_INFO_STREAM ( "GRASP" );
+    _graspParsedMap.print();
 
     // generate the subscribers and services
 
-    if ( !_fingFlexParsedMap.empty() || !_tipFlexParsedMap.empty() ) {
+    if ( !_graspParsedMap.empty() ) {
 
         _sub_grasp = _nh.subscribe<ros_end_effector::EEGraspControl> ( "grasp",
                      1,

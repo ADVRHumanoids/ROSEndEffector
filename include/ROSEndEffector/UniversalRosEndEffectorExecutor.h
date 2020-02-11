@@ -35,6 +35,7 @@
 #include <ros_end_effector/EEPinchControl.h>
 
 #include <ROSEndEffector/ActionPrimitive.h>
+#include <ROSEndEffector/ActionComposed.h>
 
 
 namespace ROSEE
@@ -104,6 +105,8 @@ private:
     std::map<std::set<std::string>, ROSEE::ActionPrimitive::Ptr> _trigParsedMap;
     std::map<std::set<std::string>, ROSEE::ActionPrimitive::Ptr> _tipFlexParsedMap;
     std::map<std::set<std::string>, ROSEE::ActionPrimitive::Ptr> _fingFlexParsedMap;
+    
+    ROSEE::ActionComposed _graspParsedMap;
     
 
 };
