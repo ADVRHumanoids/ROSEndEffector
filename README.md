@@ -109,6 +109,12 @@ roslaunch schunk_svh_driver svh_controller.launch standalone:=true gui:=true sim
 ```
 Be sure to put in rviz as __fixed frame__ the  __base_link__
 
+#To run the ROS EE on the Schunk
+
+```
+roslaunch ros_end_effector schunk_startup.launch gui:=true simulation:=true
+```
+
 ## Creating srdf files
 Both *moveit* and this *ROSEE node* refers to srdf file to explore your hand. So it is important to provide a right srdf file. The convention used is that each finger is a *group* (from the base of the finger to the tip).
 Even for very complicated hand like schunk hand, this file is easy to create (see the one for the schunk [here](configs/srdf/svh-groupsForROSEE.srdf)). 

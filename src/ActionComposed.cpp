@@ -49,6 +49,9 @@ ROSEE::JointPos ROSEE::ActionComposed::getJointPos() const {
     return jointPos;
 }
 
+bool ROSEE::ActionComposed::empty() {
+    return (nInnerActions == 0);
+}
 
 
 bool ROSEE::ActionComposed::sumAction ( ROSEE::Action::Ptr action )

@@ -95,6 +95,7 @@ int main ( int argc, char **argv ) {
 
 
     ROSEE::ActionComposed grasp ("grasp", true);
+
     for (auto trig : trigParsedMap) {
         grasp.sumAction  (trig.second) ; 
     }
@@ -108,24 +109,28 @@ int main ( int argc, char **argv ) {
     actionParsedSimple.print();
     
     
-    std::cout << "A composed action with dependent inner action: " << std::endl;
-    
-    ROSEE::ActionComposed grasp2 ("grasp2", false);
+    if (pinchParsedMap.size() > 0 ) { //if not, we cant add a pinch in the grasp2, so this test isnt done
+        
+        std::cout << "A composed action with dependent inner action: " << std::endl;
+        
+        ROSEE::ActionComposed grasp2 ("grasp2", false);
 
-    for (auto trig : trigParsedMap) {
-        grasp2.sumAction ( (trig.second) );  
+        for (auto trig : trigParsedMap) {
+            grasp2.sumAction ( (trig.second) );  
+        }
+
+        grasp2.sumAction ( (pinchParsedMap.begin()->second) ) ; 
+        if (pinchParsedMap.size() > 1) {
+            grasp2.sumAction ( ((++pinchParsedMap.begin())->second) ) ;
+        }
+        grasp2.print();
+        yamlWorker.createYamlFile (&grasp2);
+        
+        //Parsing
+        auto actionParsed = yamlWorker.parseYamlComposed ("grasp2.yaml");
+        std::cout << "The composed action with dependent inner action (parsed from generated yaml file):" << std::endl;
+        actionParsed.print();
     }
-
-    grasp2.sumAction ( (pinchParsedMap.begin()->second) ) ; 
-    grasp2.sumAction ( ((++pinchParsedMap.begin())->second) ) ;
-
-    grasp2.print();
-    yamlWorker.createYamlFile (&grasp2);
-    
-    //Parsing
-    auto actionParsed = yamlWorker.parseYamlComposed ("grasp2.yaml");
-    std::cout << "The composed action with dependent inner action (parsed from generated yaml file):" << std::endl;
-    actionParsed.print();
     
     return 0;
     

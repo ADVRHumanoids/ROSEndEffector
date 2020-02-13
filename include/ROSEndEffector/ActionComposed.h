@@ -72,6 +72,13 @@ public:
      */
     bool sumAction ( ROSEE::Action::Ptr );
     
+    /**
+     * @brief check if the action composed is empty
+     * 
+     * @return true if empty, false otherwise
+     */
+    bool empty();
+    
 private:
     std::vector < std::string > innerActionsNames;
     unsigned int nInnerActions;
