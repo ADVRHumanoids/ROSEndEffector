@@ -16,7 +16,6 @@
         <joint name="left_hand_Thumb_Helper" />
     </group>
     <group name="index">
-        <joint name="left_hand_f1" />
         <joint name="left_hand_index_spread" />
         <joint name="left_hand_Index_Finger_Proximal" />
         <joint name="left_hand_Index_Finger_Distal" />
