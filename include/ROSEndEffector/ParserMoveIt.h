@@ -41,7 +41,7 @@ public:
     
     /**
      * @brief Init the parser, fill the structures
-     * @param robot_description the 
+     * @param robot_description 
      * 
      */
     bool init (std::string robot_description) ;
@@ -58,7 +58,7 @@ public:
     std::map < std::string, std::vector<std::string> > getJointsOfFingertipMap () const;
     
     /** 
-     * @brief This function reload another model, same as the one loaded in @ref init but this one can be
+     * @brief This function reload another model, same as the one loaded in \ref init but this one can be
      * modified externally, because it will not affect the internal structures of this class
      * @return robot_model::RobotModelPtr a pointer to a new robot model created
      */
@@ -182,8 +182,8 @@ private:
      * getDescendantLinkModels() function in moveit that gives ALL the child links.
      * There is not a function like getNonFixedParentJointModels from the tip, there is only the one to take the 
      * FIRST parent joint (getParentJointModel())
-     * Meanwhile, we find also, for each joint, all the tips that are influenced by the joint movement. This map, 
-     * fingertipOfJointMap, is used in setOnlyDependentJoints()
+     * Meanwhile, we find also, for each joint, all the tips that are influenced by the joint movement:
+     * \ref fingertipsOfJointMap
      */
     void lookJointsTipsCorrelation();
         

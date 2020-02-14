@@ -263,18 +263,8 @@ ROSEE::JointsInvolvedCount ROSEE::FindActions::setOnlyDependentJoints(
 }
 
 
+/**********************************************  TRIGS ***************************************************************/
 
-
-
-
-
-/// trig is the action of closing a SINGLE finger towards the palm
-/// to know the joint direction, the position is set to the limit which is different from 0
-// nikos easy solution: go in the direction of the max range. All hands have more range of motion
-// in the flexion respect to extension (as human finger). NOT valid for other motion, like finger spread or
-// thumb addition/abduction. PROBLEM IS: what is the default position????? WE have to assume 0?
-/// if a joint is continuos, it is excluded from the trig action. (because I cant think about a continuos 
-/// joint that is useful for a trig action, but can be present in theory)
 std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::trig() {
 
     std::map <std::string, ActionTrig> trigMap;
@@ -302,15 +292,7 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::trig() {
     return trigMap;
 }
 
-/** We start from each tip. Given a tip, we look for all the joints that move this tip. If it has 2 
- * or more joints that move exclusively that tip (we count this number with @getNExclusiveJointsOfTip() ), 
- * we say that a tipFlex is possible. If not, we cant move the tip indepently from the rest of the 
- * finger, so we have a trig action (if @getNExclusiveJointsOfTip() == 1 ) or 
- * nothing (if @getNExclusiveJointsOfTip() == 0) 
- * If @getNExclusiveJointsOfTip() >= 2, starting from the tip, we explore the parents joints, 
- * until we found the first actuated joint. This one will be @theInterestingJoint which pose of we must 
- * set. All the other joints (actuated) will have the default position (if no strange errors).
- */
+
 std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::tipFlex() {
     
     std::map <std::string, ROSEE::ActionTrig> tipFlexMap;
@@ -343,13 +325,7 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::tipFlex() {
     return tipFlexMap;
 }
 
-/** We start from each tip. Given a tip, we check if @getNExclusiveJointsOfTip() >= 2 (see @tipFlex() function).
- *  If so, we continue exploring the chain from the tip going up through the parents. We stop when a parent has
- *  more than 1 joint as child. This means that the last link is the first of the finger. Meanwhile we have 
- *  stored the actuated, not continuos joint (in @joint) that we were founding along the chain. The last stored
- *  is exaclty @theInterestingJoint, which pose of we must set.
- *  All the other joints (actuated) will have the default position (if no strange errors).
- */
+
 std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::fingFlex() {
     
     std::map <std::string, ROSEE::ActionTrig> fingFlexMap;

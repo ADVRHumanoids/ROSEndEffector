@@ -54,9 +54,39 @@ private:
      */
     ROSEE::JointsInvolvedCount setOnlyDependentJoints(std::pair < std::string, std::string > tipsNames, JointPos *Jstates);
     
-    //trig etc
+   /** 
+    * @brief trig is the action of closing a SINGLE finger towards the palm.
+    * The position is the bound which is farther from 0 (considered as default pos). All hands have more range of motion
+    * in the flexion respect to extension (as human finger). NOT valid for other motion, like finger spread or
+    * thumb addition/abduction.
+    * @note If a joint is continuos, it is excluded from the trig action. (because I cant think about a continuos 
+    * joint that is useful for a trig action, but can be present in theory)
+    * @return std::map <std::string, ROSEE::ActionTrig> the map witch key the tip/finger and as value its ActionTrig
+    */
     std::map <std::string, ActionTrig> trig();
+    
+    /**
+    * @brief We start from each tip. Given a tip, we look for all the joints that move this tip. If it has 2 
+    * or more joints that move exclusively that tip ( we count this number with \ref ParserMoveIt::getNExclusiveJointsOfTip ), 
+    * we say that a tipFlex is possible. If not, we can't move the tip independently from the rest of the 
+    * finger, so we have a trig action (if \ref ParserMoveIt::getNExclusiveJointsOfTip returns 1 ) or 
+    * nothing (\ref ParserMoveIt::getNExclusiveJointsOfTip returns 0).
+    * If \ref ParserMoveIt::getNExclusiveJointsOfTip return >= 2, starting from the tip, we explore the parents joints, 
+    * until we found the first actuated joint. This one will be \ref theInterestingJoint which pose we must 
+    * set. All the other joints (actuated) will have the default position (if no strange errors).
+    * @return std::map <std::string, ROSEE::ActionTrig> the map witch key the tip/finger and as value its ActionTipFlex
+    */
     std::map <std::string, ROSEE::ActionTrig> tipFlex();
+    
+    /** 
+    * @brief We start from each tip. Given a tip, we check if \ref ParserMoveIt::getNExclusiveJointsOfTip >= 2 
+    *  (see \ref tipFlex function).
+    *  If so, we continue exploring the chain from the tip going up through the parents. We stop when a parent has
+    *  more than 1 joint as child. This means that the last link is the first of the finger. Meanwhile we have 
+    *  stored the actuated, not continuos joint (in \ref joint) that we were founding along the chain. The last stored
+    *  is exaclty \ref theInterestingJoint, which pose of we must set.
+    *  All the other joints (actuated) will have the default position (if no strange errors).
+    */
     std::map <std::string, ROSEE::ActionTrig> fingFlex();
 
     

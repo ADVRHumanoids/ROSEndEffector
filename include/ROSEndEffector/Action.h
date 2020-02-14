@@ -82,31 +82,31 @@ public:
     virtual ~Action() {};
     
     /**
-     * @brief  get the name of the action
+     * @brief Get the name of the action
      * @return std::string the name of the action
      */
     std::string getName () const ;
     
     /**
-     * @brief  get for \ref fingersInvolved
+     * @brief Get for \ref fingersInvolved
      * @return std::set<std::string> the set containing all the hand's fingers involvec in the action
      */
     std::set <std::string> getFingersInvolved () const ;
     
     /**
-     * @brief  get for \ref jointsInvolvedCount
+     * @brief Get for \ref jointsInvolvedCount
      * @return JointsInvolvedCount the map indicating how many times the joint is set by the action
      */
     JointsInvolvedCount getJointsInvolvedCount () const ;
     
     /**
-     * @brief  get the position related to this action. Pure Virtual function: the derived class
+     * @brief Get the position related to this action. Pure Virtual function: the derived class
      * store this info differently so they are in charge of providing the read.
      * @return JointsPos the map indicating how the position of the joint
      */
     virtual JointPos getJointPos () const = 0;
     
-    /* overridable functions, if we want to make them more action-specific*/
+    /** @brief Overridable functions, if we want to make them more action-specific */
     virtual void print () const ;
     
     /**
