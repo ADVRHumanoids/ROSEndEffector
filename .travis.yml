@@ -43,20 +43,20 @@ script:
 
 #tests
 script:
-  - make tests
-  - source devel/setup.bash
-  - roscore &
-  #test with test_ee hand
-  - rosparam set -t $(rospack find ros_end_effector)/configs/urdf/test_ee.urdf robot_description
-  - rosparam set -t $(rospack find ros_end_effector)/configs/srdf/test_ee.srdf robot_description_semantic
-  - make test ARGS="-V"
-  #test with 2_finger hand
-  - rosparam set -t $(rospack find ros_end_effector)/configs/urdf/  two_finger.urdf robot_description
-  - rosparam set -t $(rospack find ros_end_effector)/configs/srdf/two_finger.srdf robot_description_semantic
-  - make test ARGS="-V"
-  #test with schunk hand
+- roscore &
+- make tests
+- source devel/setup.bash
+#test with test_ee hand
+- rosparam set -t $(rospack find ros_end_effector)/configs/urdf/test_ee.urdf robot_description
+- rosparam set -t $(rospack find ros_end_effector)/configs/srdf/test_ee.srdf robot_description_semantic
+- make test ARGS="-V"
+#test with 2_finger hand
+- rosparam set -t $(rospack find ros_end_effector)/configs/urdf/two_finger.urdf robot_description
+- rosparam set -t $(rospack find ros_end_effector)/configs/srdf/two_finger.srdf robot_description_semantic
+- make test ARGS="-V"
+#test with schunk hand
 
-  # add other hand test...
+# add other hand test...
 
 
 deploy:
