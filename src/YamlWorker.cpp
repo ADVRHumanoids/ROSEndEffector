@@ -16,16 +16,10 @@
 
 #include <ROSEndEffector/YamlWorker.h>
 
-ROSEE::YamlWorker::YamlWorker ( std::string handName)
-{
-    dirPath = ROSEE::Utils::getPackagePath() + COLLIDER_REL_PATH 
-        + "/" + handName + "/" ;
-}
-
 ROSEE::YamlWorker::YamlWorker ( std::string handName, std::string path2saveYaml)
 {
     if ( path2saveYaml.compare("") == 0 ){
-        dirPath = ROSEE::Utils::getPackagePath() + COLLIDER_REL_PATH 
+        dirPath = ROSEE::Utils::getPackagePath() + DEFAULT_ACTION_FOLDER 
             + "/" + handName + "/" ;
     } else {
         dirPath = ROSEE::Utils::getPackagePath() + path2saveYaml + "/" + handName + "/" ;

@@ -33,15 +33,15 @@
 namespace ROSEE{
 
 /**
- * @brief Virtual class, Base of all the primitive action. It has some implemented functions that a 
+ * @brief Virtual class, Base of all the primitive actions. It has some implemented functions that a 
  * derived class can use, if you don't want to override to make them more action-specific.
  * All the primitives are defined by:
- *  - A set containing a fixed number (@nLinksInvolved ) of links/handparts, which are involved in
+ *  - A set containing a fixed number (\ref nFingersInvolved ) of links/handparts, which are involved in
  *    the action. (e.g. two fingertips for a pinch)
  *  - JointStates position: hand configuration for which the 100% action happens. This is a member that
  *    all the derived class must have, but it can be store as it is (e.g. trigger) but also in a set 
- *    (if jointStateSetMaxSize > 1) or in a set with some other info linked (e.g. in the pinch we have a
- *    pair JointStates - Contact stored in the set). So it is not a member of this base class
+ *    (if \ref maxStoredActionStates > 1) or in a set with some other info linked (e.g. in the pinch we have a
+ *    pair JointPos - Contact stored in the set). So it is not a member of this base class
  *  - Optional info about the action (e.g. a moveit Contact class for the pinch). Being optional, 
  *    we don't have a member for this in this base class
  */
@@ -53,7 +53,9 @@ public:
     typedef std::shared_ptr<ActionPrimitive> Ptr;
     typedef std::shared_ptr<const ActionPrimitive> ConstPtr;
 
-    /** Enum useful to discriminate each primitive action when, for example, we want to parse a file */
+    /** 
+     * @brief Enum useful to discriminate each primitive action when, for example, we want to parse a file 
+     */
     enum Type {PinchStrong, PinchWeak, Trig, TipFlex, FingFlex, None};
     /* destructor of base must be virtual */
     virtual ~ActionPrimitive() {};
@@ -70,8 +72,10 @@ public:
 
 protected:
  
-    /* Protected costructor: object creable only by derived classes. 
-     No default costructo (without arguments) because we want to set always these three member */
+    /**
+     * @brief Protected costructor: object creable only by derived classes.
+     * There is no default costructor (without arguments) because we want to set always these members
+     */
     ActionPrimitive( std::string name, unsigned int nFingersInvolved, unsigned int maxStoredActionStates,
         Type type );
     

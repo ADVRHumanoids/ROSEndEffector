@@ -14,11 +14,6 @@
  * limitations under the License.
  */
 
-
-
-
-
-
 #include <ROSEndEffector/ParserMoveIt.h>
 
 ROSEE::ParserMoveIt::ParserMoveIt() {
@@ -32,7 +27,7 @@ ROSEE::ParserMoveIt::~ParserMoveIt() {
 bool ROSEE::ParserMoveIt::init ( std::string robot_description ) {
     
     if (robot_model != nullptr ) {
-        std::cerr << "[PARSER]: init() already called by someone " << std::endl;;
+        std::cerr << "[PARSER::"  << __func__ << "]: init() already called by someone " << std::endl;;
         return false;
     }
     // it is a ros param in the launch, take care that also sdrf is read 
@@ -43,10 +38,11 @@ bool ROSEE::ParserMoveIt::init ( std::string robot_description ) {
     robot_model_loader::RobotModelLoader robot_model_loader(robot_description, false) ; 
     robot_model = robot_model_loader.getModel() ;
     if (robot_model == nullptr) {
-        std::cerr << " [PARSER]: Fail To load robot model " << robot_description << std::endl;;
+        std::cerr << " [PARSER::" << __func__ << 
+            "]: Fail To load robot model " << robot_description << std::endl;;
         return false;
     }
-    std::cout << "[PARSER] Parsed Model: " << robot_model->getName() << std::endl; ;
+    std::cout << "[PARSER::" << __func__ << "]: Parsed Model: " << robot_model->getName() << std::endl; ;
     
     handName = robot_model->getName();
     
@@ -304,7 +300,7 @@ void ROSEE::ParserMoveIt::lookForFingertips() {
      for (auto it: robot_model->getJointModelGroups()) {
         
         std::string logGroupInfo;
-        logGroupInfo = "[PARSER] Found Group '" + it->getName() + "', " ;
+        logGroupInfo = "[PARSER::" + std::string(__func__) + "] Found Group '" + it->getName() + "', " ;
         
         if (it->getSubgroupNames().size() != 0 ) {
             logGroupInfo.append("but it has some subgroups \n");
