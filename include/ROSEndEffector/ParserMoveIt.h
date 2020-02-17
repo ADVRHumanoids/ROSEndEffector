@@ -106,15 +106,28 @@ public:
     /**
      * @brief For each DOF of a joint, find the limit which is farther from 0 position
      * @param jointName the name of the joint
-     * @return std::vector<double> a vector containing the values of the limits that are farther from 0
+     * @return std::vector<double> a vector (because joint can have more dofs) containing the values of the limits that are farther from 0
      */
     std::vector<double> getBiggerBoundFromZero ( std::string jointName ) const;
     /**
      * @brief For each DOF of a joint, find the limit which is farther from 0 position
      * @param joint pointer to the joint model
-     * @return std::vector<double> a vector containing the values of the limits that are farther from 0
+     * @return std::vector<double> a vector (because joint can have more dofs) containing the values of the limits that are farther from 0
      */
     std::vector<double> getBiggerBoundFromZero ( const moveit::core::JointModel* joint ) const;
+    
+    /**
+     * @brief For each DOF of a joint, find the limit which is nearer from 0 position
+     * @param jointName the name of the joint
+     * @return std::vector<double> a vector (because joint can have more dofs) containing the values of the limits that are nearer from 0
+     */
+    std::vector<double> getSmallerBoundFromZero ( std::string jointName ) const;
+    /**
+     * @brief For each DOF of a joint, find the limit which is nearer from 0 position
+     * @param joint pointer to the joint model
+     * @return std::vector<double> a vector (because joint can have more dofs) containing the values of the limits that are nearer from 0
+     */
+    std::vector<double> getSmallerBoundFromZero ( const moveit::core::JointModel* joint ) const;
     
     /**
      * @brief Given a fingertip link, this function return the number of the joint that affect

@@ -183,15 +183,45 @@ std::vector <double> ROSEE::ParserMoveIt::getBiggerBoundFromZero ( const moveit:
     
     moveit::core::JointModel::Bounds limits = joint->getVariableBounds();
 
-    std::vector <double> trigMax;
+    std::vector <double> maxPos;
     for ( auto limit : limits ) {
         if ( std::abs(limit.max_position_) > std::abs(limit.min_position_)) {
-            trigMax.push_back ( limit.max_position_ ) ;
+            maxPos.push_back ( limit.max_position_ ) ;
         } else {
-            trigMax.push_back ( limit.min_position_ ) ;
+            maxPos.push_back ( limit.min_position_ ) ;
         }
     }
-    return trigMax;
+    return maxPos;
+}
+
+std::vector <double> ROSEE::ParserMoveIt::getSmallerBoundFromZero ( std::string jointName ) const {
+    if (robot_model == nullptr) {
+        std::cerr << " [PARSER::" << __func__ << 
+            "]: robot_model is null. Have you called init() before?" << std::endl;
+        return std::vector<double>();
+    }
+    return ( ROSEE::ParserMoveIt::getSmallerBoundFromZero (robot_model->getJointModel(jointName) ) );
+
+}
+
+std::vector <double> ROSEE::ParserMoveIt::getSmallerBoundFromZero ( const moveit::core::JointModel* joint ) const {
+    if (robot_model == nullptr) {
+        std::cerr << " [PARSER::" << __func__ << 
+            "]: robot_model is null. Have you called init() before?" << std::endl;
+        return std::vector<double>();
+    }
+    
+    moveit::core::JointModel::Bounds limits = joint->getVariableBounds();
+
+    std::vector <double> minPos;
+    for ( auto limit : limits ) {
+        if ( std::abs(limit.max_position_) < std::abs(limit.min_position_)) {
+            minPos.push_back ( limit.max_position_ ) ;
+        } else {
+            minPos.push_back ( limit.min_position_ ) ;
+        }
+    }
+    return minPos;
 }
 
 unsigned int ROSEE::ParserMoveIt::getNExclusiveJointsOfTip ( std::string tipName, bool continuosIncluded ) const {

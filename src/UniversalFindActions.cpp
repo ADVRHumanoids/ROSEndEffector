@@ -88,8 +88,26 @@ int main ( int argc, char **argv ) {
     for (auto &i : fingFlexParsedMap) {
         i.second->print();
     }
+        std::cout << "DEBUGGGGGGGGGGGGGGGGGGGGG" << std::endl;
+
     
-    /** **************************** COMPOSITE ACTION THINGS *************************************************/
+    /** **************************** ACTION MORE TIPS TO MOVE MORE TIPS WITH SINGLE JOINT ****************************/
+    unsigned int nFinger = 3;
+    std::map < std::set<std::string>, ROSEE::ActionMoreTips> moreTipsMap = actionsFinder.findMoreTips (nFinger) ;
+    
+    std::cout << "A primitive that move " << nFinger << " with a single joint " << std::endl;
+    if (moreTipsMap.size() == 0) {
+        std::cout << "Nothing :C " << std::endl;
+        
+    } else {
+        for (auto map : moreTipsMap) {
+            map.second.print();
+        }
+    }
+    
+    std::cout << "DEBUGGGGGGGGGGGGGGGGGGGGG" << std::endl;
+    
+    /** **************************** COMPOSITE ACTION THINGS ************************************************
     
     std::cout << "A composed action with Independent inner action: " << std::endl;
 
@@ -131,6 +149,7 @@ int main ( int argc, char **argv ) {
         std::cout << "The composed action with dependent inner action (parsed from generated yaml file):" << std::endl;
         actionParsed.print();
     }
+    */
     
     return 0;
     

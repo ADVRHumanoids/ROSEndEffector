@@ -56,7 +56,7 @@ public:
     /** 
      * @brief Enum useful to discriminate each primitive action when, for example, we want to parse a file 
      */
-    enum Type {PinchStrong, PinchWeak, Trig, TipFlex, FingFlex, None};
+    enum Type {PinchStrong, PinchWeak, Trig, TipFlex, FingFlex, MoreTips, None};
     /* destructor of base must be virtual */
     virtual ~ActionPrimitive() {};
 

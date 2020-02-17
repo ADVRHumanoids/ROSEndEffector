@@ -151,6 +151,9 @@ add_library(ActionPinchWeak
 add_library(ActionTrig
     src/ActionTrig.cpp
 )
+add_library(ActionMoreTips
+    src/ActionMoreTips.cpp
+)
 add_library(ActionComposed
     src/ActionComposed.cpp 
 )
@@ -227,6 +230,11 @@ target_link_libraries(ActionPinchWeak
 target_link_libraries(ActionTrig
     ActionPrimitive
 )
+
+target_link_libraries(ActionMoreTips
+    ActionPrimitive
+)
+
 target_link_libraries(ActionComposed
     Action
 )
@@ -239,7 +247,7 @@ target_link_libraries(FindActions
     ActionPinchStrong
     ActionTrig
     ActionPinchWeak
-    
+    ActionMoreTips
 )
 
 target_link_libraries(ParserMoveIt

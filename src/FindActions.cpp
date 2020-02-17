@@ -128,6 +128,55 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::findTrig ( ROSEE::
 }  
 
 
+std::map<std::set<std::string>, ROSEE::ActionMoreTips> ROSEE::FindActions::findMoreTips(unsigned int nFinger, std::string path2saveYaml) {
+    
+    std::map<std::set<std::string>, ROSEE::ActionMoreTips> mapOfMoreTips;
+    std::string actionName = "moreTips-" + std::to_string(nFinger); //action name same for each action
+
+    for (auto mapEl : parserMoveIt->getFingertipsOfJointMap() ) {
+        
+        if (mapEl.second.size() != nFinger ) {
+            continue;
+        }
+        
+        std::vector<double> furtherPos = parserMoveIt->getBiggerBoundFromZero(mapEl.first);
+        std::vector<double> nearerPos = parserMoveIt->getSmallerBoundFromZero(mapEl.first);
+        
+        JointPos jpFar;
+        for (auto it : parserMoveIt->getRobotModel()->getActiveJointModels()){
+            std::vector <double> jPos (it->getVariableCount(), DEFAULT_JOINT_POS);
+            jpFar.insert ( std::make_pair ( it->getName(), jPos ));
+        }
+        JointPos jpNear = jpFar;
+        
+        jpFar.at ( mapEl.first ) = furtherPos;
+        jpNear.at ( mapEl.first ) = nearerPos;
+        
+        ActionMoreTips action (actionName, mapEl.second, mapEl.first, jpFar, jpNear);
+        //"convert" vector to set 
+        std::set <std::string> setFingers;
+        setFingers.insert (mapEl.second.begin(), mapEl.second.end() );
+        
+        mapOfMoreTips.insert (std::make_pair(setFingers, action));
+    }
+    
+    //// EMITTING
+    std::map < std::set <std::string> , ActionPrimitive* > mapForWorker;
+
+    for (auto& it : mapOfMoreTips) {  // auto& and not auto alone!
+
+        ActionPrimitive* pointer = &(it.second);
+        mapForWorker.insert (std::make_pair ( it.first, pointer ) );
+    }
+    
+    ROSEE::YamlWorker yamlWorker(parserMoveIt->getHandName(), path2saveYaml);
+    yamlWorker.createYamlFile(mapForWorker, actionName);
+    
+    return mapOfMoreTips;
+}
+
+
+
 /*********************************** PRIVATE FUNCTIONS ***********************************************************************/
 /**************************************** PINCHES ***********************************************************************/
 
@@ -397,10 +446,6 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::tipFlex() {
     
 
     for (auto mapEl : parserMoveIt->getJointsOfFingertipMap() ) {
-        for ( auto bogh : mapEl.second ) {
-            std::cout << "mapEl  "  << bogh << std::endl;
-        }
-
         
         if (parserMoveIt->getNExclusiveJointsOfTip ( mapEl.first, false ) < 2 ) { 
         //if so, we have a simple trig (or none if 0) and not also a tip/finger flex
@@ -463,16 +508,7 @@ bool ROSEE::FindActions::insertJointPosForTrigInMap ( std::map <std::string, Act
     if ( itMap == trigMap.end() ) {
         //still no action for this tip in the map
         
-        JointPos jp;
-        for (auto it : parserMoveIt->getRobotModel()->getActiveJointModels()){
-            std::vector <double> jPos (it->getVariableCount(), DEFAULT_JOINT_POS);
-            jp.insert ( std::make_pair ( it->getName(), jPos ));
-        }
-        
-        //HACK at(0) because 1dof joint
-        jp.at ( jointName ).at(0) = trigValue;
 
-        action.setJointPos(jp);
         trigMap.insert ( std::make_pair ( action.getFingerInvolved(), action ) );
 
         return true;
