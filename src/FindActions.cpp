@@ -397,10 +397,6 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::tipFlex() {
     
 
     for (auto mapEl : parserMoveIt->getJointsOfFingertipMap() ) {
-        for ( auto bogh : mapEl.second ) {
-            std::cout << "mapEl  "  << bogh << std::endl;
-        }
-
         
         if (parserMoveIt->getNExclusiveJointsOfTip ( mapEl.first, false ) < 2 ) { 
         //if so, we have a simple trig (or none if 0) and not also a tip/finger flex
