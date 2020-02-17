@@ -109,7 +109,7 @@ roslaunch schunk_svh_driver svh_controller.launch standalone:=true gui:=true sim
 ```
 Be sure to put in rviz as __fixed frame__ the  __base_link__
 
-#To run the ROS EE on the Schunk
+# To run the ROS EE on the Schunk
 
 ```
 roslaunch ros_end_effector schunk_startup.launch gui:=true simulation:=true
@@ -121,14 +121,32 @@ Even for very complicated hand like schunk hand, this file is easy to create (se
 If you don't want to create this by hand, you can use the [moveit assistant](http://docs.ros.org/kinetic/api/moveit_tutorials/html/doc/setup_assistant/setup_assistant_tutorial.html), which will help to create srdf files (among the other things) through a GUI
 
 ## How to check if things are good with google tests
-```bash
-cd <ROSEE_pkg_path>/build
-make tests
-roslaunch ros_end_effector googleTest_run_all.launch 
-# make test ARGS="-V" to run the test is not good because before running the node we need to put some params in the ros server (the urdf and srdf files)
-```
-Check the **googleTest_run_all.launch** file to change the hand for the tests
-
+- Compile:
+    ```bash
+    cd <ROSEE_pkg_path>/build
+    make tests
+    ```
+- Run Test OPTION 1 (Colorful cout but all tests togheter)
+    ```bash
+    roslaunch ros_end_effector googleTest_run_all.launch 
+    ```
+    Check the **googleTest_run_all.launch** file to change the hand for the tests
+    
+- Run Test OPTION 2 (each test sequentially)
+    With  ``` make test ARGS="-V" ``` we first need to load the urdf and srdf file "manually" with ``` rosparam set ```, for example:
+    ```bash
+    # test_ee hand
+    rosparam set -t $(rospack find ros_end_effector)/configs/urdf/test_ee.urdf robot_description
+    rosparam set -t $(rospack find ros_end_effector)/configs/srdf/test_ee.srdf robot_description_semantic
+    make test ARGS="-V"
+    ```
+    ```bash
+    # 2_finger hand
+    rosparam set -t $(rospack find ros_end_effector)/configs/urdf/two_finger.urdf robot_description
+    rosparam set -t $(rospack find ros_end_effector)/configs/srdf/two_finger.srdf robot_description_semantic
+    make test ARGS="-V"
+    ```
+    Similar for other hands.
 ## Possible Issues
 * From 28-01-2020 the use_gui param gives an error because it is deprecated. This causes the sliders of joint state publisher not shown. To solve : 
     ```bash
