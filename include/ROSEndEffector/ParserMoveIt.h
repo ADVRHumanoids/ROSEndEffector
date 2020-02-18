@@ -48,6 +48,8 @@ public:
     std::string getHandName () const;
     unsigned int getNumberOfTips () const ;
     std::vector <std::string> getFingertipNames () const; 
+    std::vector <std::string> getActiveJointNames () const; 
+    std::vector <const moveit::core::JointModel*> getRealActiveJointModels () const; 
     /** 
      * @brief the robot model can't be modified, if you want it to modify, use @ref getCopyModel 
      * to get a copy.
@@ -166,6 +168,8 @@ private:
     std::string handName;
     robot_model::RobotModelPtr robot_model;
     std::vector<std::string> fingertipNames;
+    std::vector<std::string> activeJointNames;
+    std::vector<const moveit::core::JointModel*> activeJointModels;
     std::string robot_description;
     
     /** The map with as key the name of the fingertip and as value all the joints (actuated) that can modify its pose*/
@@ -175,7 +179,7 @@ private:
     std::map<std::string, std::vector<std::string>> fingertipsOfJointMap;
     
     /**
-     * @brief This function explore the kinematic_model (which was built from urdf and srdf files), 
+     * @brief This function explore the robot_model (which was built from urdf and srdf files), 
      *  and fills the fingerTipNames vector.
      *  In particular, the function explores only the groups specified in the srdf, and prints infos
      *  about each link it finds (eg. not a fingertin, not a chain group, and so on).
@@ -188,6 +192,16 @@ private:
      *  are not considered 
      */
     void lookForFingertips();
+    
+    
+    /**
+     * @brief This function look for all active joints in the model (i.e. not mimic, not fixed, not passive) 
+     * There exist a moveit function \ref getActiveJointModels() which return all not mimic and not fixed, but it can return
+     * also passive joints (a info that is stored in srdf file). So this function also check if the joint is not passive
+     * It stores both the joint names and pointer to joint models in two private vector (\ref activeJointNames and \ref activeJointModels)
+     */
+    void lookForActiveJoints();
+
     
     /** 
      * @brief Here, we find for each tip, which are all the joints (active) that can modifies its position

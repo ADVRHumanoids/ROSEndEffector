@@ -25,11 +25,20 @@ namespace ROSEE {
     
 /**
  * @todo write docs
+ * 
+ * @bug With schunk hand, the finger is considered dependend on joint thumb_opposition (which in truth make only thumb ring and pinky get closer). 
+ * Problably this is caused by the fact that index_spread joint mimic finger_spread; finger_spread is descendant of thumb opposition because it is 
+ * in the pinky finger (I dont know why). So this cause to detect index tip as "descendant" of also thumb_opposition. So, the actionMoretips related
+ * to thumb_opposition is a 4 finger action and not 3
  */
 class ActionMoreTips : public ActionPrimitive {
     
 public:
-
+    /**
+     * @brief used (for now) by yaml worker only. Before parsing we cant now the info that the other costructor need. So all these infos
+     * are set in the \ref fillFromYaml^
+     */
+    ActionMoreTips(std::string actionName, unsigned int nFingers);
     ActionMoreTips (std::string actionName, std::vector<std::string> fingers, std::string jointName, JointPos jpFurther, JointPos jpNearer);
     
     /** 

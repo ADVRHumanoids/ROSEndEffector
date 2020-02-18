@@ -32,6 +32,7 @@
 #include <ROSEndEffector/ActionPinchStrong.h>
 #include <ROSEndEffector/ActionPinchWeak.h>
 #include <ROSEndEffector/ActionTrig.h>
+#include <ROSEndEffector/ActionMoreTips.h>
 #include <ROSEndEffector/ActionComposed.h>
 
 namespace ROSEE

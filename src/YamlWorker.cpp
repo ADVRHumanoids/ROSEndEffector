@@ -110,6 +110,12 @@ std::map < std::set < std::string>, ROSEE::ActionPrimitive::Ptr > ROSEE::YamlWor
             ptr = std::make_shared <ActionTrig>("fingFlex", ActionPrimitive::Type::FingFlex);
             break;
         }
+        case ActionPrimitive::Type::MoreTips: {
+            std::string actionName = filename.substr(0, filename.find_last_of(".") ); //remove .yaml from string
+            unsigned int nFinger = actionName.back() ;
+            ptr = std::make_shared <ActionMoreTips>(actionName, nFinger);
+            break;
+        }
 
         default : {
             std::cout << "[ERROR YAMLPARSER]: " << actionType << " : type not found" << std::endl;

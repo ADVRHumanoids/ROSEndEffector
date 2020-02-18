@@ -131,6 +131,19 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::findTrig ( ROSEE::
 std::map<std::set<std::string>, ROSEE::ActionMoreTips> ROSEE::FindActions::findMoreTips(unsigned int nFinger, std::string path2saveYaml) {
     
     std::map<std::set<std::string>, ROSEE::ActionMoreTips> mapOfMoreTips;
+    
+    if (nFinger == 1) {
+        std::cout << "[ERROR FINDACTIONS::" << __func__ << "]  with 1 finger, you are looking for a ActionTrig, "
+            << "and not a ActionMoreTips. Returning an empty map" << std::endl;
+        return mapOfMoreTips;
+    }
+    
+    if (nFinger > parserMoveIt->getNumberOfTips() ) {
+        std::cout << "[ERROR FINDACTIONS::" << __func__ << "]  I can not find an action which moves " << nFinger << 
+        " fingers if the hand has only " << parserMoveIt->getNumberOfTips() << " fingers. Returning an empty map" << std::endl;
+        return mapOfMoreTips;
+    }
+       
     std::string actionName = "moreTips-" + std::to_string(nFinger); //action name same for each action
 
     for (auto mapEl : parserMoveIt->getFingertipsOfJointMap() ) {
@@ -143,7 +156,7 @@ std::map<std::set<std::string>, ROSEE::ActionMoreTips> ROSEE::FindActions::findM
         std::vector<double> nearerPos = parserMoveIt->getSmallerBoundFromZero(mapEl.first);
         
         JointPos jpFar;
-        for (auto it : parserMoveIt->getRobotModel()->getActiveJointModels()){
+        for (auto it : parserMoveIt->getRealActiveJointModels()){
             std::vector <double> jPos (it->getVariableCount(), DEFAULT_JOINT_POS);
             jpFar.insert ( std::make_pair ( it->getName(), jPos ));
         }
@@ -444,20 +457,23 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::tipFlex() {
     
     std::map <std::string, ROSEE::ActionTrig> tipFlexMap;
     
-
-    for (auto mapEl : parserMoveIt->getJointsOfFingertipMap() ) {
+    for (auto fingerName : parserMoveIt->getFingertipNames() ) {
         
-        if (parserMoveIt->getNExclusiveJointsOfTip ( mapEl.first, false ) < 2 ) { 
+        std::cout << "finger: " << fingerName << std::endl;
+        std::cout << "numeber " << parserMoveIt->getNExclusiveJointsOfTip ( fingerName, false ) << std::endl;
+
+        if (parserMoveIt->getNExclusiveJointsOfTip ( fingerName, false ) < 2 ) { 
         //if so, we have a simple trig (or none if 0) and not also a tip/finger flex
             continue;
         }
-        
-        
-        std::string theInterestingJoint = parserMoveIt->getFirstActuatedParentJoint ( mapEl.first, false );
+
+        std::string theInterestingJoint = parserMoveIt->getFirstActuatedParentJoint ( fingerName, false );
         double tipFlexMax = parserMoveIt->getBiggerBoundFromZero ( theInterestingJoint ).at(0) ;
         
+        
         ActionTrig action ("tipFlex", ActionPrimitive::Type::TipFlex);
-        action.setFingerInvolved (mapEl.first) ;
+        action.setFingerInvolved (fingerName) ;
+
         if (! insertJointPosForTrigInMap(tipFlexMap, action, theInterestingJoint, tipFlexMax) ) {
             //if here, we have updated the joint position for a action that was already present in the map.
             //this is ok for normal trig because more joints are included in the action, but for the
@@ -467,6 +483,7 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::tipFlex() {
             return tipFlexMap;
         }
     }
+
     return tipFlexMap;
 }
 
@@ -475,18 +492,18 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::fingFlex() {
     
     std::map <std::string, ROSEE::ActionTrig> fingFlexMap;
     
-    for (auto mapEl : parserMoveIt->getJointsOfFingertipMap()) {
+    for (auto fingerName : parserMoveIt->getFingertipNames() ) {
         
-        if (parserMoveIt->getNExclusiveJointsOfTip ( mapEl.first, false ) < 2 ) { 
+        if (parserMoveIt->getNExclusiveJointsOfTip ( fingerName, false ) < 2 ) { 
         //if so, we have a simple trig (or none if 0) and not also a tip/finger flex
             continue;
         }
 
-        std::string theInterestingJoint = parserMoveIt->getFirstActuatedJointInFinger ( mapEl.first );
+        std::string theInterestingJoint = parserMoveIt->getFirstActuatedJointInFinger ( fingerName );
         double fingFlexMax = parserMoveIt->getBiggerBoundFromZero ( theInterestingJoint ).at(0) ;
 
         ActionTrig action ("fingFlex", ActionPrimitive::Type::FingFlex);
-        action.setFingerInvolved (mapEl.first) ;
+        action.setFingerInvolved (fingerName) ;
         if (! insertJointPosForTrigInMap(fingFlexMap, action, theInterestingJoint, fingFlexMax) ) {
             //if here, we have updated the joint position for a action that was already present in the map.
             //this is ok for normal trig because more joints are included in the action, but for the
@@ -507,8 +524,17 @@ bool ROSEE::FindActions::insertJointPosForTrigInMap ( std::map <std::string, Act
     auto itMap = trigMap.find ( action.getFingerInvolved() );
     if ( itMap == trigMap.end() ) {
         //still no action for this tip in the map
-        
 
+        JointPos jp;
+        for (auto it : parserMoveIt->getRealActiveJointModels()){
+            std::vector <double> jPos (it->getVariableCount(), DEFAULT_JOINT_POS);
+            jp.insert ( std::make_pair ( it->getName(), jPos ));
+        }
+        
+        //HACK at(0) because 1dof joint
+        jp.at ( jointName ).at(0) = trigValue;
+ 
+        action.setJointPos(jp);
         trigMap.insert ( std::make_pair ( action.getFingerInvolved(), action ) );
 
         return true;
@@ -523,6 +549,7 @@ bool ROSEE::FindActions::insertJointPosForTrigInMap ( std::map <std::string, Act
         
         return false;
     }
+
 }
 
 
@@ -532,7 +559,7 @@ bool ROSEE::FindActions::insertJointPosForTrigInMap ( std::map <std::string, Act
 ROSEE::JointPos ROSEE::FindActions::getConvertedJointPos(const robot_state::RobotState* kinematic_state) {
     
     JointPos jp;
-    for ( auto actJ : parserMoveIt->getRobotModel()->getActiveJointModels() ) {
+    for ( auto actJ : parserMoveIt->getRealActiveJointModels()) {
         //joint can have multiple pos, so double*, but we want to store in a vector 
         const double* pos = kinematic_state->getJointPositions(actJ); 
         unsigned posSize = sizeof(pos) / sizeof(double);

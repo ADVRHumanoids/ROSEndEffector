@@ -16,6 +16,9 @@
 
 #include <ROSEndEffector/ActionMoreTips.h>
 
+ROSEE::ActionMoreTips::ActionMoreTips(std::string actionName, unsigned int nFingers ) : 
+    ActionPrimitive ( actionName, nFingers, 1, ROSEE::ActionPrimitive::Type::MoreTips ) {}
+
 ROSEE::ActionMoreTips::ActionMoreTips (std::string actionName, std::vector<std::string> fingers, std::string jointName, 
                                        JointPos jpFurther, JointPos jpNearer) : 
     ActionPrimitive ( actionName, fingers.size(), 1, ROSEE::ActionPrimitive::Type::MoreTips ) {
@@ -70,13 +73,13 @@ void ROSEE::ActionMoreTips::print() const {
     output.seekp (-2, output.cur); //to remove the last comma (and space)
     output << "]" << std::endl;
     
-    output << "Joint which moves the tips:" << jointInvolved << std::endl;
+    output << "Joint which moves the tips: " << jointInvolved << std::endl;
     
     output << "JointPos Further from 0:" << std::endl;
-    output << jointPosFurther << std::endl;
+    output << jointPosFurther;
     
     output << "JointPos Nearer to 0:" << std::endl;
-    output << jointPosNearer << std::endl;
+    output << jointPosNearer;
 
     output << std::endl;
 

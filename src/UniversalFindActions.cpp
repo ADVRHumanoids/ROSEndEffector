@@ -30,7 +30,7 @@ int main ( int argc, char **argv ) {
     std::shared_ptr <ROSEE::ParserMoveIt> parserMoveIt = std::make_shared <ROSEE::ParserMoveIt> ();
     parserMoveIt->init ("robot_description") ;
     
-
+    
     ROSEE::FindActions actionsFinder (parserMoveIt);
 
     auto maps = actionsFinder.findPinch();
@@ -50,7 +50,7 @@ int main ( int argc, char **argv ) {
     //pinch     
     std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > pinchParsedMap = 
         yamlWorker.parseYamlPrimitive("pinchStrong.yaml", ROSEE::ActionPrimitive::Type::PinchStrong);
-            
+                
     //pinch Weak  
     std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > pinchWeakParsedMap = 
         yamlWorker.parseYamlPrimitive("pinchWeak.yaml", ROSEE::ActionPrimitive::Type::PinchWeak);
@@ -88,14 +88,13 @@ int main ( int argc, char **argv ) {
     for (auto &i : fingFlexParsedMap) {
         i.second->print();
     }
-        std::cout << "DEBUGGGGGGGGGGGGGGGGGGGGG" << std::endl;
 
     
     /** **************************** ACTION MORE TIPS TO MOVE MORE TIPS WITH SINGLE JOINT ****************************/
     unsigned int nFinger = 3;
     std::map < std::set<std::string>, ROSEE::ActionMoreTips> moreTipsMap = actionsFinder.findMoreTips (nFinger) ;
     
-    std::cout << "A primitive that move " << nFinger << " with a single joint " << std::endl;
+    std::cout << "A primitive that move " << nFinger << " fingers with a single joint " << std::endl;
     if (moreTipsMap.size() == 0) {
         std::cout << "Nothing :C " << std::endl;
         
@@ -105,7 +104,13 @@ int main ( int argc, char **argv ) {
         }
     }
     
-    std::cout << "DEBUGGGGGGGGGGGGGGGGGGGGG" << std::endl;
+    std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > moreTipsParsedMap = 
+        yamlWorker.parseYamlPrimitive("moreTips-" + std::to_string(nFinger) + ".yaml", ROSEE::ActionPrimitive::Type::MoreTips);
+    std::cout << "PARSED MAP OF MORETIPS FROM YAML FILE:" << std::endl;
+    for (auto &i : moreTipsParsedMap) {
+        i.second->print();
+    }
+
     
     /** **************************** COMPOSITE ACTION THINGS ************************************************
     

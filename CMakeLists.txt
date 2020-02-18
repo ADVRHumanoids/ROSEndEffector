@@ -212,6 +212,7 @@ target_link_libraries(YamlWorker
     ActionPinchStrong
     ActionTrig
     ActionPinchWeak
+    ActionMoreTips
     ActionComposed
 )
 
@@ -263,6 +264,9 @@ target_link_libraries(UniversalFindActions
     Action
     ActionPrimitive
     ActionTrig
+    ActionPinchStrong
+    ActionPinchWeak
+    ActionMoreTips
     ParserMoveIt
 )
 
