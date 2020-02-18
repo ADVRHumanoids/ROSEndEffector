@@ -26,28 +26,54 @@
 namespace ROSEE {
 
 /**
- * @todo write docs
+ * @brief An action composed by other ones that must be executed one after other with some wait time (also 0) in between. 
+ * E.G. 0.000000second -----> Grasp -----> 0.1 + 0.1 second -----> OpenLid -----> 0.5second ---- and so on
+ * This class contains all the joint position of each action (\ref actionsJointPosMap ) and some time margins which indicates 
+ * wait time before and after the action (\ref actionsTimeMarginsMap). 
+ * Each action inside is identified by its name, so no two action with same name can exist (see \ref insertAction )
+ * After create the ActionTimed object, we can add actions with \ref insertAction().
+ * As all other Action classes, it implements also functions to emit and parse in a yaml file
  */
 class ActionTimed : public Action
 {
 public:
     /**
-     * Default constructor
+     * @brief Default constructor, used when parsing action from yaml file
      */
     ActionTimed();
+    
+    /**
+     * @brief Costructor
+     * @param actionName name of the action that will be created
+     */
     ActionTimed(std::string actionName);
 
     /**
-     * Destructor
+     * @brief Destructor
      */
     ~ActionTimed() {};
     
+    /**
+     * @brief Override this function is necessary because it is pure virtual in father class \ref Action. 
+     * @return JointPos the joints positions of the last inserted action (the last one in the time line)
+     */
     JointPos getJointPos () const override;
         
-    ROSEE::JointPos getActionJointPos (std::string actionName) const ;
+    /**
+     * @brief get for joint positions
+     * @param actionName the name of the inner action of which we want to know the JointPos
+     * @return JointPos position of joints of actionName
+     *         Return empty JointPos if \p actionName is not present in this ActionTimed
+     */
+    ROSEE::JointPos getActionJointPos ( std::string actionName) const ;
     
-    std::pair <double, double> getActionMargins (std::string actionName ) const ;
-
+    /**
+     * @brief get for time margins
+     * @param actionName the name of the inner action of which we want to know the time margins
+     * @return a pair of positive double. The first is the time needed BEFORE the action, the secont the time AFTER
+     *         return -1 -1 if the \p actionName was not present in this ActionTimed.
+     */
+    std::pair <double, double> getActionMargins ( std::string actionName ) const ;
 
     /**
      * @brief Print info about this action
@@ -67,12 +93,41 @@ public:
      */
     bool fillFromYaml(  YAML::const_iterator yamlIt ) override;
     
+    /** 
+     * @brief Insert an action as last one in the time line 
+     * @param action pointer to the action to be inserted
+     * @param newActionName (default == "") OPTIONAL argument if we want to store the \p action with a different name
+     * @return False if some error happened
+     * @warning We can't have inned actions with same name. So, if \p action name (or \p newActionName) is already present, 
+     * the action is not inserted and the function returns false. Being \ref Action names not changeable, to solve this 
+     * we can pass the \p newActionName argument to this function. If it will be inserted, it will be referenced with this new name
+     * @note We take only necessary infos from \p action and store them in the members of ActionTimed. There is not way to go
+     * back to the original inserted action from an ActionTimed
+     */
     bool insertAction ( ROSEE::Action::Ptr action, std::string newActionName = "" ) ;
+    
+    /** 
+     * @brief Insert an action as last one in the time line 
+     * @param action pointer to the action to be inserted
+     * @param marginBefore the time margin to wait before executing the \p action
+     * @param marginAfter the time margin to wait after executing the \p action
+     * @param newActionName (default == "") OPTIONAL argument if we want to store the \p action with a different name
+     * @return False if some error happened
+     * @warning We can't have inned actions with same name. So, if \p action name (or \p newActionName) is already present, 
+     * the action is not inserted and the function returns false. Being \ref Action names not changeable, to solve this 
+     * we can pass the \p newActionName argument to this function. If it will be inserted, it will be referenced with this new name
+     * @note We take only necessary infos from \p action and store them in the members of ActionTimed. There is not way to go
+     * back to the original inserted action from an ActionTimed
+     */
     bool insertAction ( ROSEE::Action::Ptr action, double marginBefore, double marginAfter, std::string newActionName = "");
     
 private:
     std::map <std::string, std::pair<double, double> > actionsTimeMarginsMap;
     std::map <std::string, ROSEE::JointPos> actionsJointPosMap;
+    
+    /**
+     * This vector is used to take count of the order of the actions inserted
+     */
     std::vector < std::string > actionsNamesOrdered;
 
 };

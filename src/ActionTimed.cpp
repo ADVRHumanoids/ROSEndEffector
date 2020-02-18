@@ -210,10 +210,8 @@ bool ROSEE::ActionTimed::insertAction(ROSEE::Action::Ptr action, double marginBe
     unsigned int count = actionsJointPosMap.count( usedName );
 
     if (count > 0) {
-        //TODO better handle this thing?
-        std::cerr << "[ACTIONTIMED:: " << __func__ << "] WARNING: inserting a action which name is already present. " <<
-        "I will use an appendix to store it into this timed action " << std::endl;
-        usedName.append("_" + std::to_string(count+1));
+        std::cerr << "[ACTIONTIMED:: " << __func__ << "] ERROR: " << usedName << " already present. Failed Insertion" << std::endl;
+        return false;
     }
 
     if (marginAfter < 0 || marginBefore < 0) {

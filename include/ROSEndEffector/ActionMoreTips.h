@@ -24,21 +24,38 @@
 namespace ROSEE {
     
 /**
- * @todo write docs
+ * @brief Primitive which indicate a motion of n fingers moving ONLY ONE joint. 
+ * For example, this primitive is necessary for the hands that have one joint that close all the fingers to do a grasp. But 
+ * it can also useful to detect other multiple finger motions (like a "spread finger")
  * 
  * @bug With schunk hand, the finger is considered dependend on joint thumb_opposition (which in truth make only thumb ring and pinky get closer). 
  * Problably this is caused by the fact that index_spread joint mimic finger_spread; finger_spread is descendant of thumb opposition because it is 
  * in the pinky finger (I dont know why). So this cause to detect index tip as "descendant" of also thumb_opposition. So, the actionMoretips related
- * to thumb_opposition is a 4 finger action and not 3
+ * to thumb_opposition is a 4 finger action and not 3.
+ * This problem happen also with robotiq-3f, we have to solve it.
  */
 class ActionMoreTips : public ActionPrimitive {
     
 public:
     /**
      * @brief used (for now) by yaml worker only. Before parsing we cant now the info that the other costructor need. So all these infos
-     * are set in the \ref fillFromYaml^
+     * are set in the \ref fillFromYaml
+     * @param actionName name of the action
+     * @param nFingers number of the fingers involved in the action (i.e. number of finger that the \ref jointInvolved moves)
      */
     ActionMoreTips(std::string actionName, unsigned int nFingers);
+    /**
+     * @brief "Standard" costructor, which fill all the necessary infos
+     * @param actionName name of the action
+     * @param fingers vector containing all the fingers involved
+     * @param jointName the name of the joint involved in the action (one joint for definition)
+     * @param jpFurther JointPosition of ALL joints of the hand, with only the \p jointName set, in a way that the position is to the bound
+     *        which is further from the default position (which is 0)
+     * @param jpNearer JointPosition of ALL joints of the hand, with only the \p jointName set, in a way that the position is to the bound
+     *        which is nearer from the default position
+     * @warning If 0 position is not included between the bounds (eg 0.4 | 5.1) , jpNearer is the one nearer
+     *       to 0 (0.4) and jpFurther the further (5.1). CHECK THIS FACT TO BE SURE
+     */
     ActionMoreTips (std::string actionName, std::vector<std::string> fingers, std::string jointName, JointPos jpFurther, JointPos jpNearer);
     
     /** 
@@ -49,11 +66,15 @@ public:
     std::vector < JointPos > getAllJointPos() const override;
     
     /** 
-    * @brief Overriden get from the pure virtual function of the base class \ref Action 
-    * Default return the jointPosFurther 
-    */
+     * @brief Overriden get from the pure virtual function of the base class \ref Action 
+     * @return the jointPosFurther 
+     */
     JointPos getJointPos () const override;
     
+    /**
+     * @brief Necessary method to know the key used by the maps which store all the Actions of one type. Used by \ref YamlWorker
+     * @return for this class, it return the jointName, inserted in a single-element set because father signature say so
+     */
     std::set < std::string> getKeyForYamlMap () const override;
 
     JointPos getJointPosFurther () const;
