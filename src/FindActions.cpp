@@ -133,9 +133,9 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::findTrig ( ROSEE::
 }  
 
 
-std::map<std::set<std::string>, ROSEE::ActionMoreTips> ROSEE::FindActions::findMoreTips(unsigned int nFinger, std::string path2saveYaml) {
+std::map <std::string, ROSEE::ActionMoreTips> ROSEE::FindActions::findMoreTips(unsigned int nFinger, std::string path2saveYaml) {
     
-    std::map<std::set<std::string>, ROSEE::ActionMoreTips> mapOfMoreTips;
+    std::map <std::string, ROSEE::ActionMoreTips> mapOfMoreTips;
     
     if (nFinger == 1) {
         std::cout << "[ERROR FINDACTIONS::" << __func__ << "]  with 1 finger, you are looking for a ActionTrig, "
@@ -160,6 +160,7 @@ std::map<std::set<std::string>, ROSEE::ActionMoreTips> ROSEE::FindActions::findM
         std::vector<double> furtherPos = parserMoveIt->getBiggerBoundFromZero(mapEl.first);
         std::vector<double> nearerPos = parserMoveIt->getSmallerBoundFromZero(mapEl.first);
         
+        //create and initialize JointPos map
         JointPos jpFar;
         for (auto it : parserMoveIt->getRealActiveJointModels()){
             std::vector <double> jPos (it->getVariableCount(), DEFAULT_JOINT_POS);
@@ -175,7 +176,7 @@ std::map<std::set<std::string>, ROSEE::ActionMoreTips> ROSEE::FindActions::findM
         std::set <std::string> setFingers;
         setFingers.insert (mapEl.second.begin(), mapEl.second.end() );
         
-        mapOfMoreTips.insert (std::make_pair(setFingers, action));
+        mapOfMoreTips.insert (std::make_pair(mapEl.first, action));
     }
     
     //// EMITTING
@@ -184,7 +185,9 @@ std::map<std::set<std::string>, ROSEE::ActionMoreTips> ROSEE::FindActions::findM
     for (auto& it : mapOfMoreTips) {  // auto& and not auto alone!
 
         ActionPrimitive* pointer = &(it.second);
-        mapForWorker.insert (std::make_pair ( it.first, pointer ) );
+        std::set<std::string> set;
+        set.insert (it.first);
+        mapForWorker.insert (std::make_pair ( set, pointer ) );
     }
     
     ROSEE::YamlWorker yamlWorker(parserMoveIt->getHandName(), path2saveYaml);

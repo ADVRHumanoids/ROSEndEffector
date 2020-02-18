@@ -61,6 +61,12 @@ std::string ROSEE::ActionMoreTips::getJointName() const {
     return jointInvolved;
 }
 
+std::set<std::string> ROSEE::ActionMoreTips::getKeyForYamlMap() const {
+    std::set <std::string> set;
+    set.insert(jointInvolved);
+    return set;
+}
+
 void ROSEE::ActionMoreTips::print() const {
     
     std::stringstream output;
@@ -89,11 +95,11 @@ void ROSEE::ActionMoreTips::print() const {
 
 void ROSEE::ActionMoreTips::emitYaml(YAML::Emitter& out) const {
     
-    out << YAML::Key << YAML::Flow << fingersInvolved;
+    out << YAML::Key << jointInvolved;
     out << YAML::Value << YAML::BeginMap;
     
         out << YAML::Key << "ActionName" << YAML::Value << name;
-        out << YAML::Key << "JointInvolvedName" << YAML::Value << jointInvolved;
+        out << YAML::Key << "FingersInvolved" << YAML::Value << YAML::Flow << fingersInvolved;
         
         out << YAML::Key << "JointPosFurther" << YAML::Value << YAML::BeginMap;
         for (const auto &joint : jointPosFurther) {
@@ -117,10 +123,7 @@ void ROSEE::ActionMoreTips::emitYaml(YAML::Emitter& out) const {
 
 bool ROSEE::ActionMoreTips::fillFromYaml(YAML::const_iterator yamlIt) {
     
-    std::vector <std::string> fingInvolvedVect = yamlIt->first.as <std::vector < std::string >> ();
-    for (const auto &it : fingInvolvedVect) {
-        fingersInvolved.insert(it);
-    }
+    jointInvolved = yamlIt->first.as < std::string > ();
     
     for ( YAML::const_iterator element = yamlIt->second.begin(); element != yamlIt->second.end(); ++element) {
         std::string key = element->first.as<std::string>();
@@ -128,8 +131,11 @@ bool ROSEE::ActionMoreTips::fillFromYaml(YAML::const_iterator yamlIt) {
          if ( key.compare ("ActionName") == 0 ){
             name = element->second.as < std::string > ();
             
-        } else if (key.compare("JointInvolvedName") == 0) {
-            jointInvolved = element->second.as < std::string > ();
+        } else if (key.compare("FingersInvolved") == 0) {
+            std::vector <std::string> fingInvolvedVect = element->second.as <std::vector < std::string >> ();
+            for (const auto &it : fingInvolvedVect) {
+                fingersInvolved.insert(it);
+            }
             
         } else if (key.compare ("JointPosNearer") == 0) {
             jointPosNearer = element->second.as <JointPos>();

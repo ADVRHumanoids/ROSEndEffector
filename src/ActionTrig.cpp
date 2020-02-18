@@ -36,6 +36,10 @@ ROSEE::JointPos ROSEE::ActionTrig::getJointPos() const {
     return jointPos;
 }
 
+std::set<std::string> ROSEE::ActionTrig::getKeyForYamlMap() const {
+    return fingersInvolved;
+}
+
 void ROSEE::ActionTrig::setJointPos(ROSEE::JointPos jointPos) {
     this->jointPos = jointPos;
 }

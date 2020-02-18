@@ -33,3 +33,7 @@ ROSEE::ActionPinchGeneric::ActionPinchGeneric(
     std::string name, unsigned int nFingerInvolved, unsigned int maxStoredActionStates, ActionPrimitive::Type type) :
         ActionPrimitive (name, nFingerInvolved, maxStoredActionStates, type) { }
 
+std::set<std::string> ROSEE::ActionPinchGeneric::getKeyForYamlMap() const {
+    return fingersInvolved;
+}
+

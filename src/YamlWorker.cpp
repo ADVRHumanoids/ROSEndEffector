@@ -27,7 +27,7 @@ ROSEE::YamlWorker::YamlWorker ( std::string handName, std::string path2saveYaml)
 
 }
 
-std::string ROSEE::YamlWorker::createYamlFile( const ROSEE::ActionComposed* action) {
+std::string ROSEE::YamlWorker::createYamlFile( const ROSEE::Action* action) {
     
     ROSEE::Utils::create_directory ( dirPath );
     std::string output = emitYaml ( action );
@@ -64,7 +64,7 @@ std::string ROSEE::YamlWorker::emitYaml (
     
 }
 
-std::string ROSEE::YamlWorker::emitYaml  ( const ROSEE::ActionComposed* action ) {
+std::string ROSEE::YamlWorker::emitYaml  ( const ROSEE::Action* action ) {
     
     YAML::Emitter out;
     action->emitYaml(out);
@@ -72,6 +72,7 @@ std::string ROSEE::YamlWorker::emitYaml  ( const ROSEE::ActionComposed* action )
     return out.c_str();
     
 }
+
 
 std::map < std::set < std::string>, ROSEE::ActionPrimitive::Ptr > ROSEE::YamlWorker::parseYamlPrimitive ( 
                                                     std::string filename, ROSEE::ActionPrimitive::Type actionType){
@@ -81,7 +82,7 @@ std::map < std::set < std::string>, ROSEE::ActionPrimitive::Ptr > ROSEE::YamlWor
     //TODO check elsewhere if file exist or not?
     std::ifstream ifile(dirPath + filename);
     if (! ifile) {
-        std::cout << "[ERROR YAMLPARSER]: file " << dirPath + filename << " not found. "  << std::endl;
+        std::cout << "[ERROR YAMLPARSER:: " << __func__ << "]: file " << dirPath + filename << " not found. "  << std::endl;
             return parsedMap;
     }
     
@@ -124,7 +125,7 @@ std::map < std::set < std::string>, ROSEE::ActionPrimitive::Ptr > ROSEE::YamlWor
         
         ptr->fillFromYaml ( it4Action );
         
-        parsedMap.insert ( std::make_pair ( ptr->getFingersInvolved(), ptr) );
+        parsedMap.insert ( std::make_pair ( ptr->getKeyForYamlMap(), ptr) );
     }
         
     return parsedMap;
@@ -137,7 +138,27 @@ ROSEE::ActionComposed ROSEE::YamlWorker::parseYamlComposed (std::string filename
     //TODO check elsewhere if file exist or not?
     std::ifstream ifile(dirPath + filename);
     if (! ifile) {
-        std::cout << "[ERROR YAMLPARSER]: file " << dirPath + filename << " not found. "  << std::endl;
+        std::cout << "[ERROR YAMLPARSER:: " << __func__ << "]: file " << dirPath + filename << " not found. "  << std::endl;
+            return parsedAction;
+    }
+    
+    YAML::Node node = YAML::LoadFile(dirPath + filename);
+    YAML::const_iterator yamlIt = node.begin();
+
+    parsedAction.fillFromYaml ( yamlIt );
+    
+    return parsedAction;
+    
+}
+
+ROSEE::ActionTimed ROSEE::YamlWorker::parseYamlTimed (std::string filename){
+    
+    ROSEE::ActionTimed parsedAction; 
+
+    //TODO check elsewhere if file exist or not?
+    std::ifstream ifile(dirPath + filename);
+    if (! ifile) {
+        std::cout << "[ERROR YAMLPARSER:: " << __func__ << "]: file " << dirPath + filename << " not found. "  << std::endl;
             return parsedAction;
     }
     

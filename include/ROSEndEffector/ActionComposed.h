@@ -78,27 +78,27 @@ public:
     /**
      * @brief Print info about this action (name, jointpos, inner actions names, and other)
      */
-    void print () const override;
+    virtual void print () const override;
     
     /**
      * @brief Emit info in a file with yaml format
      * @param out a YAML::Emitter& object to emit the infos
      */    
-    void emitYaml ( YAML::Emitter& out) const override;
+    virtual void emitYaml ( YAML::Emitter& out) const override;
     
     /**
      * @brief Fill the internal data with infos taken from yaml file. 
      * @param yamlIt a yamlt iterator to a node which has loaded the file
      * @return false if some error happened
      */
-    bool fillFromYaml(  YAML::const_iterator yamlIt ) override;
+    virtual bool fillFromYaml(  YAML::const_iterator yamlIt ) override;
     
     /** 
-     * @brief Function to add another primitive to the composed action. 
+     * @brief Function to add another action to this one. 
      * @param action The action to be added to the ActionComposed
      * @return False if the ActionComposed is \ref independent and we try to add an action that is dependent from one of the already present
      */
-    bool sumAction ( ROSEE::Action::Ptr action);
+    virtual bool sumAction ( ROSEE::Action::Ptr action);
     
     /**
      * @brief Check if the action composed is empty
@@ -107,13 +107,16 @@ public:
      */
     bool empty();
     
-private:
+protected:
     std::vector < std::string > innerActionsNames;
     unsigned int nInnerActions;
     
     JointPos jointPos;
     
     bool independent; //true if each primitive must set different joint states
+
+    bool checkIndependency ( ROSEE::Action::Ptr action );
+
     
 };
 }

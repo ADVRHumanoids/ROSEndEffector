@@ -157,6 +157,9 @@ add_library(ActionMoreTips
 add_library(ActionComposed
     src/ActionComposed.cpp 
 )
+add_library(ActionTimed
+    src/ActionTimed.cpp 
+)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -214,6 +217,7 @@ target_link_libraries(YamlWorker
     ActionPinchWeak
     ActionMoreTips
     ActionComposed
+    ActionTimed
 )
 
 target_link_libraries(ActionPinchStrong
@@ -240,6 +244,10 @@ target_link_libraries(ActionComposed
     Action
 )
 
+target_link_libraries(ActionTimed
+    Action
+)
+
 target_link_libraries(FindActions
     ${catkin_LIBRARIES}
     ParserMoveIt
@@ -260,6 +268,7 @@ target_link_libraries(UniversalRosEndEffector
 )
 
 target_link_libraries(UniversalFindActions
+    ParserMoveIt
     FindActions
     Action
     ActionPrimitive
@@ -267,7 +276,7 @@ target_link_libraries(UniversalFindActions
     ActionPinchStrong
     ActionPinchWeak
     ActionMoreTips
-    ParserMoveIt
+    ActionTimed
 )
 
 

@@ -21,6 +21,7 @@
 #include <ROSEndEffector/FindActions.h>
 #include <ROSEndEffector/Action.h>
 #include <ROSEndEffector/ActionComposed.h>
+#include <ROSEndEffector/ActionTimed.h>
 #include <ROSEndEffector/ParserMoveIt.h>
 
 int main ( int argc, char **argv ) {
@@ -90,29 +91,7 @@ int main ( int argc, char **argv ) {
     }
 
     
-    /** **************************** ACTION MORE TIPS TO MOVE MORE TIPS WITH SINGLE JOINT ****************************/
-    unsigned int nFinger = 3;
-    std::map < std::set<std::string>, ROSEE::ActionMoreTips> moreTipsMap = actionsFinder.findMoreTips (nFinger) ;
-    
-    std::cout << "A primitive that move " << nFinger << " fingers with a single joint " << std::endl;
-    if (moreTipsMap.size() == 0) {
-        std::cout << "Nothing :C " << std::endl;
-        
-    } else {
-        for (auto map : moreTipsMap) {
-            map.second.print();
-        }
-    }
-    
-    std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > moreTipsParsedMap = 
-        yamlWorker.parseYamlPrimitive("moreTips-" + std::to_string(nFinger) + ".yaml", ROSEE::ActionPrimitive::Type::MoreTips);
-    std::cout << "PARSED MAP OF MORETIPS FROM YAML FILE:" << std::endl;
-    for (auto &i : moreTipsParsedMap) {
-        i.second->print();
-    }
-
-    
-    /** **************************** COMPOSITE ACTION THINGS ************************************************
+    /** **************************** COMPOSITE ACTION THINGS ************************************************    
     
     std::cout << "A composed action with Independent inner action: " << std::endl;
 
@@ -154,7 +133,44 @@ int main ( int argc, char **argv ) {
         std::cout << "The composed action with dependent inner action (parsed from generated yaml file):" << std::endl;
         actionParsed.print();
     }
-    */
+*/
+    
+    /** **************************** ACTION MORE TIPS TO MOVE MORE TIPS WITH SINGLE JOINT ****************************/
+    unsigned int nFinger = 3;
+    std::map < std::string, ROSEE::ActionMoreTips> moreTipsMap = actionsFinder.findMoreTips (nFinger) ;
+    
+    std::cout << "A primitive that move " << nFinger << " fingers with a single joint " << std::endl;
+    if (moreTipsMap.size() == 0) {
+        std::cout << "Nothing :C " << std::endl;
+        
+    } else {
+        for (auto map : moreTipsMap) {
+            map.second.print();
+        }
+    }
+    
+    std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > moreTipsParsedMap = 
+        yamlWorker.parseYamlPrimitive("moreTips-" + std::to_string(nFinger) + ".yaml", ROSEE::ActionPrimitive::Type::MoreTips);
+    std::cout << "PARSED MAP OF MORETIPS FROM YAML FILE:" << std::endl;
+    for (auto &i : moreTipsParsedMap) {
+        i.second->print();
+    }
+
+    /** **************************** TIMED ACTION THINGS ************************************************/
+    ROSEE::ActionTimed actionTimed("wide_grasp");
+    for (auto it : moreTipsParsedMap) {
+        actionTimed.insertAction( it.second, 0, 0.2);
+    }
+
+    actionTimed.print();
+    
+    yamlWorker.createYamlFile (&actionTimed);
+     //Parsing
+    auto actionTimedParsed = yamlWorker.parseYamlTimed ("wide_grasp.yaml");
+    std::cout << "The timed action parsed: " << std::endl;
+    actionTimedParsed.print();
+
+
     
     return 0;
     

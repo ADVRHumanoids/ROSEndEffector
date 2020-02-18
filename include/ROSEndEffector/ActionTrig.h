@@ -76,6 +76,9 @@ public:
      */
     std::vector < JointPos > getAllJointPos() const override;
     
+    std::set < std::string> getKeyForYamlMap () const override;
+
+    
     /** 
      * @brief Overriden get from the pure virtual function of the base class \ref Action 
      */

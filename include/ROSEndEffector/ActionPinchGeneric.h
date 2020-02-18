@@ -37,6 +37,9 @@ public:
     ActionPinchGeneric(std::string name, unsigned int maxStoredActionStates, ActionPrimitive::Type type);
     ActionPinchGeneric(std::string name, unsigned int nFingerInvolved, unsigned int maxStoredActionStates, ActionPrimitive::Type type);
     
+    std::set < std::string> getKeyForYamlMap () const override;
+
+    
 
 };
 

@@ -66,6 +66,13 @@ public:
     unsigned int getnFingersInvolved() const;
     virtual std::vector < ROSEE::JointPos > getAllJointPos () const = 0;
     
+    /**
+     * @brief Depending on the primitive, we can use different "keys" to take info from yaml file when parsing
+     * for example, trig and pinches are selected through fingersInvolved, while ActionMoreTips uses the joint name.
+     * So each derived class must override this info, which for now is used only in \ref YamlWorker::parseYamlPrimitive()
+     */
+    virtual std::set < std::string> getKeyForYamlMap () const = 0;
+    
     void setJointsInvolvedCount (ROSEE::JointsInvolvedCount jointsInvolvedCount ) ;    
     /* overridable functions, if we want to make them more action-specific*/
     virtual void emitYaml ( YAML::Emitter& ) const override;

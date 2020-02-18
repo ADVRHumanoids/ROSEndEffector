@@ -54,6 +54,8 @@ public:
     */
     JointPos getJointPos () const override;
     
+    std::set < std::string> getKeyForYamlMap () const override;
+
     JointPos getJointPosFurther () const;
     JointPos getJointPosNearer () const;
     std::string getJointName() const;

@@ -34,6 +34,7 @@
 #include <ROSEndEffector/ActionTrig.h>
 #include <ROSEndEffector/ActionMoreTips.h>
 #include <ROSEndEffector/ActionComposed.h>
+#include <ROSEndEffector/ActionTimed.h>
 
 namespace ROSEE
 {
@@ -68,8 +69,8 @@ public:
      * @param action [in] pointer to ActionComposed
      * @return std::string the filename (with the path) of the file created/overwritten
      */                             
-    std::string createYamlFile ( const ActionComposed* action) ;
-    
+    std::string createYamlFile ( const Action* action) ;
+        
     /**
      * @brief Parse a yaml file and return the map with all the actions present in the file. 
      * For the moment, a \p actionType argument must be passed to create the right Action object
@@ -78,7 +79,7 @@ public:
      * @param map of action parsed. This map contains pointer to ActionPrimitive, each pointer will point to a specific derived class
      */
     std::map < std::set < std::string>, ROSEE::ActionPrimitive::Ptr > parseYamlPrimitive ( 
-                                                    std::string filename, ROSEE::ActionPrimitive::Type actionType);
+                                    std::string filename, ROSEE::ActionPrimitive::Type actionType);
     
     /**
      * @brief Parse a composed Action
@@ -86,6 +87,10 @@ public:
      * @return the ActionComposed parsed
      */
     ROSEE::ActionComposed parseYamlComposed (std::string filename);
+    
+    ROSEE::ActionTimed parseYamlTimed ( std::string filename );
+    
+
 
     std::string dirPath;
     
@@ -102,7 +107,8 @@ private:
      * @param action the action which infos must be emitted
      * @return std::string a string formatted as yaml file, ready to be put in the file
      */
-    std::string emitYaml  ( const ActionComposed* action) ;
+    std::string emitYaml  ( const Action* action) ;
+
 
 
 };

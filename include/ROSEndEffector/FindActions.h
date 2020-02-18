@@ -56,7 +56,7 @@ public:
     std::map <std::string, ROSEE::ActionTrig> findTrig (  ROSEE::ActionPrimitive::Type actionType,
         std::string path2saveYaml = "" );
     
-    std::map < std::set<std::string>, ROSEE::ActionMoreTips> findMoreTips ( unsigned int nFinger, std::string path2saveYaml = "");
+    std::map < std::string, ROSEE::ActionMoreTips> findMoreTips ( unsigned int nFinger, std::string path2saveYaml = "");
     
 private:
     

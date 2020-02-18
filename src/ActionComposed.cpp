@@ -56,20 +56,16 @@ bool ROSEE::ActionComposed::empty() {
 
 bool ROSEE::ActionComposed::sumAction ( ROSEE::Action::Ptr action )
 {
+    
+    if ( ! checkIndependency(action) ) {
+        return false; //cant add this primitive
+    }
 
     JointPos actionJP = action->getJointPos();
     JointsInvolvedCount actionJIC = action->getJointsInvolvedCount();
         
     if (nInnerActions == 0) { //first primitive inserted
         
-        for ( auto jic : actionJIC ){
-            if ( jic.second  > 1  ) {
-                // if action is dependent we check that all its joints are setted only once
-                return false; //cant add this primitive
-            }
-        }
-
-
         for (auto joint : actionJP ){
             jointsInvolvedCount.insert ( std::make_pair (joint.first, actionJIC.at(joint.first) ) );
             jointPos.insert ( std::make_pair (joint.first, joint.second) );
@@ -78,14 +74,6 @@ bool ROSEE::ActionComposed::sumAction ( ROSEE::Action::Ptr action )
     } else {
         
         if (independent) {
-                        
-            //first we check if the action is independent from all the other inserted
-            for ( auto jic : actionJIC ){
-                if ( jic.second + jointsInvolvedCount.at(jic.first) > 1  ) {
-                    // we use the sum so also if action is dependent we check that all its joints are setted once
-                    return false; //cant add this primitive
-                }
-            }
 
             //if here, action is independent, we can add the joints states
             for ( auto joint : actionJP ){ 
@@ -119,7 +107,6 @@ bool ROSEE::ActionComposed::sumAction ( ROSEE::Action::Ptr action )
                         
                     jointPos.at(joint.first).at(dof) = mean;     
                 }
-
             }
         }
     }
@@ -130,6 +117,34 @@ bool ROSEE::ActionComposed::sumAction ( ROSEE::Action::Ptr action )
     }
 
     nInnerActions ++;
+    
+    return true;
+}
+
+bool ROSEE::ActionComposed::checkIndependency ( ROSEE::Action::Ptr action ) {
+    
+    if (!independent) {
+        
+    } else if (nInnerActions == 0 ) {
+        
+        for ( auto jic : action->getJointsInvolvedCount() ){
+            if ( jic.second  > 1  ) {
+                // if action is dependent we check that all its joints are setted only once
+                // so we can teoretically add a "dipendent" action if all its joints are setted once
+                return false; //cant add this primitive
+            }
+        }
+        
+    } else {   
+    
+        for ( auto jic : action->getJointsInvolvedCount() ){
+            if ( jic.second + jointsInvolvedCount.at(jic.first) > 1  ) {
+                // we use the sum so also if action is dependent we check that all its joints are setted once
+                // so we can teoretically add a "dipendent" action if all its joints are setted once
+                return false; //cant add this primitive
+            }
+        }
+    }
     
     return true;
 }
