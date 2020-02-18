@@ -201,8 +201,8 @@ private:
      * It stores both the joint names and pointer to joint models in two private vector (\ref activeJointNames and \ref activeJointModels)
      */
     void lookForActiveJoints();
-
     
+
     /** 
      * @brief Here, we find for each tip, which are all the joints (active) that can modifies its position
      * It is easier to start from each joint and see which tips has as its descendands, because there is the
