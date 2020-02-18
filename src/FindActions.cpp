@@ -26,40 +26,45 @@ std::pair <  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinc
         //Remove here after checking pinches further with method said
         std::cout << "[FINDACTIONS::" << __func__ << "]: I found no collisions between tips. Are you sure your hand"
             << " has some fingertips that collide? If yes, check your urdf/srdf, or"
-            << " set a bigger value in N_EXP_COLLISION. I am creating a empty file" << std::endl;
-    } 
+            << " set a bigger value in N_EXP_COLLISION" << std::endl;
+            
+    } else {
     
-    ROSEE::YamlWorker yamlWorker(parserMoveIt->getHandName(), path2saveYaml);
-    
-    std::map < std::set <std::string> , ActionPrimitive* > mapForWorker;
-    for (auto& it : mapOfPinches) {  // auto& and not auto alone!
+        ROSEE::YamlWorker yamlWorker(parserMoveIt->getHandName(), path2saveYaml);
+        std::map < std::set <std::string> , ActionPrimitive* > mapForWorker;
+        
+        for (auto& it : mapOfPinches) {  // auto& and not auto alone!
 
-        ActionPrimitive* pointer = &(it.second);
-        std::set < std::string > keys ;
-        keys.insert (it.first.first) ;
-        keys.insert (it.first.second) ;
-        mapForWorker.insert (std::make_pair ( keys, pointer ) );                
+            ActionPrimitive* pointer = &(it.second);
+            std::set < std::string > keys ;
+            keys.insert (it.first.first) ;
+            keys.insert (it.first.second) ;
+            mapForWorker.insert (std::make_pair ( keys, pointer ) );                
+        }
+
+        yamlWorker.createYamlFile(mapForWorker, "pinchStrong");
     }
-
-    yamlWorker.createYamlFile(mapForWorker, "pinchStrong");
     
     if (mapOfWeakPinches.size() == 0 ) { 
         std::cout << "[FINDACTIONS::" << __func__ << "]: I found no weak pinches. This mean that some error happened or that" <<
-        " all the tips collide each other for at least one hand configuration. I am creating a empty file" << std::endl;
+        " all the tips pairs collide with each other for at least one hand configuration." << std::endl;
         
-    } 
+    } else {
         
-    mapForWorker.clear();
-    for (auto& it : mapOfWeakPinches) {  // auto& and not auto alone!
+        ROSEE::YamlWorker yamlWorker(parserMoveIt->getHandName(), path2saveYaml);
+        std::map < std::set <std::string> , ActionPrimitive* > mapForWorker;  
+        
+        for (auto& it : mapOfWeakPinches) {  // auto& and not auto alone!
 
-        ActionPrimitive* pointer = &(it.second);
-        std::set < std::string > keys ;
-        keys.insert (it.first.first) ;
-        keys.insert (it.first.second) ;
-        mapForWorker.insert (std::make_pair ( keys, pointer ) );                
+            ActionPrimitive* pointer = &(it.second);
+            std::set < std::string > keys ;
+            keys.insert (it.first.first) ;
+            keys.insert (it.first.second) ;
+            mapForWorker.insert (std::make_pair ( keys, pointer ) );                
+        }
+
+        yamlWorker.createYamlFile(mapForWorker, "pinchWeak");
     }
-
-    yamlWorker.createYamlFile(mapForWorker, "pinchWeak");
     
     return std::make_pair(mapOfPinches, mapOfWeakPinches);
 }
@@ -90,7 +95,7 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::findTrig ( ROSEE::
     }
     }
     
-    if (trigMap.size() == 0 ) { //is so, no sense to continue
+    if (trigMap.size() == 0 ) { //if so, no sense to continue
         return trigMap;
     }
     
