@@ -154,6 +154,9 @@ add_library(ActionTrig
 add_library(ActionMoreTips
     src/ActionMoreTips.cpp
 )
+add_library(ActionGeneric
+    src/ActionGeneric.cpp 
+)
 add_library(ActionComposed
     src/ActionComposed.cpp 
 )
@@ -240,8 +243,12 @@ target_link_libraries(ActionMoreTips
     ActionPrimitive
 )
 
-target_link_libraries(ActionComposed
+target_link_libraries(ActionGeneric
     Action
+)
+
+target_link_libraries(ActionComposed
+    ActionGeneric
 )
 
 target_link_libraries(ActionTimed
@@ -277,6 +284,7 @@ target_link_libraries(UniversalFindActions
     ActionPinchWeak
     ActionMoreTips
     ActionTimed
+    ActionGeneric
 )
 
 

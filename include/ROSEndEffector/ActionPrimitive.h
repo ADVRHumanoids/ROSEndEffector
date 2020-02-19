@@ -64,7 +64,6 @@ public:
     Type getType() const;
     unsigned int getMaxStoredActionStates() const;
     unsigned int getnFingersInvolved() const;
-    virtual std::vector < ROSEE::JointPos > getAllJointPos () const = 0;
     
     /**
      * @brief Depending on the primitive, we can use different "keys" to take info from yaml file when parsing

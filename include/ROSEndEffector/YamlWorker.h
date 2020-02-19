@@ -85,12 +85,17 @@ public:
      * @brief Parse a composed Action
      * @param filename the path of the file to be parsed
      * @return the ActionComposed parsed
+     * @deprecated use \ref parseYamlAction instead
      */
     ROSEE::ActionComposed parseYamlComposed (std::string filename);
     
+    /**
+     * 
+     * @deprecated use \ref parseYamlAction instead
+     */
     ROSEE::ActionTimed parseYamlTimed ( std::string filename );
     
-
+    bool parseYamlAction (std::string filename, Action::Ptr ptrAction);
 
     std::string dirPath;
     

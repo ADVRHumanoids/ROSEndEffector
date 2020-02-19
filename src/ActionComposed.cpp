@@ -18,17 +18,17 @@
 
 #include <ROSEndEffector/ActionComposed.h>
 
-ROSEE::ActionComposed::ActionComposed() : Action() {
+ROSEE::ActionComposed::ActionComposed() : ActionGeneric() {
     independent = true;
     nInnerActions = 0;
 }
 
-ROSEE::ActionComposed::ActionComposed(std::string name) : Action(name) {
+ROSEE::ActionComposed::ActionComposed(std::string name) : ActionGeneric(name) {
     independent = true;
     nInnerActions = 0;
 }
 
-ROSEE::ActionComposed::ActionComposed(std::string name, bool independent) : Action(name) {
+ROSEE::ActionComposed::ActionComposed(std::string name, bool independent) : ActionGeneric(name) {
     this->independent = independent;
     nInnerActions = 0;
 }
@@ -45,23 +45,24 @@ std::vector<std::string> ROSEE::ActionComposed::getInnerActionsNames() const {
     return innerActionsNames;
 }
 
-ROSEE::JointPos ROSEE::ActionComposed::getJointPos() const {
-    return jointPos;
-}
-
 bool ROSEE::ActionComposed::empty() {
     return (nInnerActions == 0);
 }
 
 
-bool ROSEE::ActionComposed::sumAction ( ROSEE::Action::Ptr action )
+bool ROSEE::ActionComposed::sumAction ( ROSEE::Action::Ptr action, unsigned int jointPosIndex )
 {
     
     if ( ! checkIndependency(action) ) {
         return false; //cant add this primitive
     }
+    
+    if ( jointPosIndex > action->getAllJointPos().size()-1 ) {
+        //TODO write error
+        return false;
+    }
 
-    JointPos actionJP = action->getJointPos();
+    JointPos actionJP = action->getAllJointPos().at(jointPosIndex);
     JointsInvolvedCount actionJIC = action->getJointsInvolvedCount();
         
     if (nInnerActions == 0) { //first primitive inserted

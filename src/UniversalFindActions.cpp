@@ -16,12 +16,12 @@
  */
 
 #include <ros/ros.h>
-
 #include <ROSEndEffector/UniversalRosEndEffectorExecutor.h>
 #include <ROSEndEffector/FindActions.h>
 #include <ROSEndEffector/Action.h>
 #include <ROSEndEffector/ActionComposed.h>
 #include <ROSEndEffector/ActionTimed.h>
+#include <ROSEndEffector/ActionGeneric.h>
 #include <ROSEndEffector/ParserMoveIt.h>
 
 int main ( int argc, char **argv ) {
@@ -30,7 +30,6 @@ int main ( int argc, char **argv ) {
     
     std::shared_ptr <ROSEE::ParserMoveIt> parserMoveIt = std::make_shared <ROSEE::ParserMoveIt> ();
     parserMoveIt->init ("robot_description") ;
-    
     
     ROSEE::FindActions actionsFinder (parserMoveIt);
 
@@ -158,19 +157,37 @@ int main ( int argc, char **argv ) {
 
     /** **************************** TIMED ACTION THINGS ************************************************/
     ROSEE::ActionTimed actionTimed("wide_grasp");
-    for (auto it : moreTipsParsedMap) {
-        actionTimed.insertAction( it.second, 0, 0.2);
-    }
+    std::set<std::string> one;
+    one.insert ("finger_1_joint_1");
+    actionTimed.insertAction( moreTipsParsedMap.at(one), 0, 0.2, 1, "GRASP");
+    one.clear();
+    one.insert("palm_finger_1_joint");
+    actionTimed.insertAction( moreTipsParsedMap.at(one), 0, 0.2, 1, "GRASP2");
 
     actionTimed.print();
     
-    yamlWorker.createYamlFile (&actionTimed);
+    yamlWorker.createYamlFile ( &actionTimed );
      //Parsing
     auto actionTimedParsed = yamlWorker.parseYamlTimed ("wide_grasp.yaml");
     std::cout << "The timed action parsed: " << std::endl;
     actionTimedParsed.print();
+    
+    /** **************************** SIMPLE ACTION MANUALLY CREATED ************************************************/
 
+    ROSEE::JointPos jp;
 
+    //for now copy jp of another action
+    jp = maps.first.begin()->second.getJointPos();
+
+    ROSEE::ActionGeneric simpleAction("casual", jp);
+    simpleAction.print();
+    
+    yamlWorker.createYamlFile( &simpleAction );
+
+    ROSEE::Action::Ptr newCasual = std::make_shared<ROSEE::ActionGeneric>();
+    yamlWorker.parseYamlAction ("casual.yaml", newCasual);
+    std::cout << "The parsed casual: " << std::endl;
+    newCasual->print();
     
     return 0;
     

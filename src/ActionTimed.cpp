@@ -28,7 +28,18 @@ ROSEE::JointPos ROSEE::ActionTimed::getJointPos() const {
     return (actionsJointPosMap.at(actionsNamesOrdered.back()));
 }
 
-ROSEE::JointPos ROSEE::ActionTimed::getActionJointPos (std::string actionName) const {
+std::vector<ROSEE::JointPos> ROSEE::ActionTimed::getAllJointPos() const {
+    
+    std::vector<ROSEE::JointPos> jpVect;
+    jpVect.reserve (actionsNamesOrdered.size());
+    for (auto actName : actionsNamesOrdered) {
+        jpVect.push_back( actionsJointPosMap.at (actName) );
+    }
+    return jpVect;
+}
+
+
+ROSEE::JointPos ROSEE::ActionTimed::getJointPosAction (std::string actionName) const {
     
     auto it = actionsJointPosMap.find(actionName);
     
@@ -59,7 +70,7 @@ void ROSEE::ActionTimed::print() const {
     
     std::stringstream output;
     
-    output << "\nTimed Action '" << name << "'" << std::endl;
+    output << "Timed Action '" << name << "'" << std::endl;
     
     output << "\tNice TimeLine:" << std::endl << "\t\t";
     for ( auto it : actionsNamesOrdered )  {
@@ -94,7 +105,7 @@ void ROSEE::ActionTimed::emitYaml(YAML::Emitter& out) const {
         std::string timeline;
         for ( auto it : actionsNamesOrdered )  {
             timeline += (std::to_string(actionsTimeMarginsMap.at(it).first) + " -----> " + 
-                it + " -----> " + std::to_string(actionsTimeMarginsMap.at(it).first) + " + ");
+                it + " -----> " + std::to_string(actionsTimeMarginsMap.at(it).second) + " + ");
         }
         if (! timeline.empty() ) { 
             timeline.pop_back(); timeline.pop_back(); timeline.pop_back(); //to delete last " + " 
@@ -199,11 +210,8 @@ bool ROSEE::ActionTimed::fillFromYaml(YAML::const_iterator yamlIt){
     return true;
 }
 
-bool ROSEE::ActionTimed::insertAction(ROSEE::Action::Ptr action, std::string newActionName) {
-    return insertAction(action, 0, 0, newActionName);
-}
-
-bool ROSEE::ActionTimed::insertAction(ROSEE::Action::Ptr action, double marginBefore, double marginAfter, std::string newActionName) {
+bool ROSEE::ActionTimed::insertAction(ROSEE::Action::Ptr action, double marginBefore, double marginAfter, 
+                                      unsigned int jointPosIndex, std::string newActionName) {
     
     std::string usedName = (newActionName.empty()) ? action->getName() : newActionName;
 
@@ -218,8 +226,14 @@ bool ROSEE::ActionTimed::insertAction(ROSEE::Action::Ptr action, double marginBe
         std::cerr << "[ACTIONTIMED:: " << __func__ << "] ERROR: Please pass positive time margins" << std::endl;
         return false;
     }
+    
+    if ( jointPosIndex > action->getAllJointPos().size()-1 ) {
+        std::cerr << "[ACTIONTIMED:: " << __func__ << "] ERROR: you pass index "<< jointPosIndex <<
+            " but there are only " << action->getAllJointPos().size() << " JointPos in the action passed as argument" << std::endl;
+        return false;
+    }
 
-    actionsJointPosMap.insert (std::make_pair ( usedName, action->getJointPos() ) );
+    actionsJointPosMap.insert (std::make_pair ( usedName, action->getAllJointPos().at( jointPosIndex ) ));
     actionsTimeMarginsMap.insert ( std::make_pair( usedName, std::make_pair(marginBefore, marginAfter)));
     actionsNamesOrdered.push_back ( usedName );
 

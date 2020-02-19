@@ -46,12 +46,18 @@ void ROSEE::Action::print () const {
     std::stringstream output;
     output << "ActionName: " << name << std::endl;
     
-    output << "FingersInvolved: [";
-    for (auto fingName : fingersInvolved){
-        output << fingName << ", " ;
+    if (fingersInvolved.size() > 0 ){
+        output << "FingersInvolved: [";
+        for (auto fingName : fingersInvolved){
+            output << fingName << ", " ;
+        }
+        output.seekp (-2, output.cur); //to remove the last comma (and space)
+        output << "]" << std::endl;
+        
+    } else {
+        output << "FingersInvolved: <not inserted>" << std::endl; // can happen, for ex for genericAction
     }
-    output.seekp (-2, output.cur); //to remove the last comma (and space)
-    output << "]" << std::endl;
+
     
     output << "JointsInvolvedCount: " << std::endl;;
     output << jointsInvolvedCount << std::endl;

@@ -89,7 +89,7 @@ public:
     
     /**
      * @brief Get for \ref fingersInvolved
-     * @return std::set<std::string> the set containing all the hand's fingers involvec in the action
+     * @return std::set<std::string> the set containing all the hand's fingers involved in the action
      */
     std::set <std::string> getFingersInvolved () const ;
     
@@ -106,6 +106,13 @@ public:
      */
     virtual JointPos getJointPos () const = 0;
     
+    /**
+     * @brief Return all the joint position stored. If the concrete (derived from \ref Action) has only one joint position info,
+     * this function is equal to \ref getJointPos.
+     * @return vector containing all the joint pos of the action
+     */
+    virtual std::vector < ROSEE::JointPos > getAllJointPos () const = 0;
+
     /** @brief Overridable functions, if we want to make them more action-specific */
     virtual void print () const ;
     

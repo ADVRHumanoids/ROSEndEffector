@@ -59,9 +59,9 @@ public:
     ActionMoreTips (std::string actionName, std::vector<std::string> fingers, std::string jointName, JointPos jpFurther, JointPos jpNearer);
     
     /** 
-     * @brief Overriden get from the pure virtual function of the base class \ref ActionPrimitive 
-     * The signature must be equal, even if here we have set and vector of only one element. For this class
-     * this function simply return a vector which contain a single element. 
+     * @brief Overriden get from the pure virtual function of the base class \ref Action
+     * The signature must be equal, even if here we have set and vector of only one element. 
+     * For this class this function return the vector which contain \ref jointPosFurther and \ref jointPosNearer
      */
     std::vector < JointPos > getAllJointPos() const override;
     

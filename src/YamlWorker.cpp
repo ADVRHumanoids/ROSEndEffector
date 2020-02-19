@@ -171,3 +171,26 @@ ROSEE::ActionTimed ROSEE::YamlWorker::parseYamlTimed (std::string filename){
     
 }
 
+bool ROSEE::YamlWorker::parseYamlAction (std::string filename, Action::Ptr ptrAction){
+
+    if (ptrAction == nullptr) {
+        std::cout << "[ERROR YAMLPARSER:: " << __func__ << "]: you passed a nullptr pointer"  << std::endl;
+        return false;
+    }
+    
+    //TODO check elsewhere if file exist or not?
+    std::ifstream ifile(dirPath + filename);
+    if (! ifile) {
+        std::cout << "[ERROR YAMLPARSER:: " << __func__ << "]: file " << dirPath + filename << " not found. "  << std::endl;
+        return false;
+    }
+    
+    YAML::Node node = YAML::LoadFile(dirPath + filename);
+    YAML::const_iterator yamlIt = node.begin();
+
+    ptrAction->fillFromYaml ( yamlIt );
+    
+    return true;
+    
+}
+

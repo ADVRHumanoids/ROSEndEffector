@@ -33,6 +33,7 @@ namespace ROSEE {
  * Each action inside is identified by its name, so no two action with same name can exist (see \ref insertAction )
  * After create the ActionTimed object, we can add actions with \ref insertAction().
  * As all other Action classes, it implements also functions to emit and parse in a yaml file
+ * @todo identify inner actions with integer instead of given name?
  */
 class ActionTimed : public Action
 {
@@ -58,6 +59,14 @@ public:
      * @return JointPos the joints positions of the last inserted action (the last one in the time line)
      */
     JointPos getJointPos () const override;
+    
+    /**
+     * @brief Override function from father \ref Action. For this class, it returns the jointPos of all the 
+     * inner actions that are inside this ActionTimed.
+     * @return vector of JointPos of all the inner actions, in order of execution
+     */
+    std::vector < ROSEE::JointPos > getAllJointPos () const override;
+
         
     /**
      * @brief get for joint positions
@@ -65,7 +74,7 @@ public:
      * @return JointPos position of joints of actionName
      *         Return empty JointPos if \p actionName is not present in this ActionTimed
      */
-    ROSEE::JointPos getActionJointPos ( std::string actionName) const ;
+    ROSEE::JointPos getJointPosAction ( std::string actionName ) const ;
     
     /**
      * @brief get for time margins
@@ -96,21 +105,10 @@ public:
     /** 
      * @brief Insert an action as last one in the time line 
      * @param action pointer to the action to be inserted
-     * @param newActionName (default == "") OPTIONAL argument if we want to store the \p action with a different name
-     * @return False if some error happened
-     * @warning We can't have inned actions with same name. So, if \p action name (or \p newActionName) is already present, 
-     * the action is not inserted and the function returns false. Being \ref Action names not changeable, to solve this 
-     * we can pass the \p newActionName argument to this function. If it will be inserted, it will be referenced with this new name
-     * @note We take only necessary infos from \p action and store them in the members of ActionTimed. There is not way to go
-     * back to the original inserted action from an ActionTimed
-     */
-    bool insertAction ( ROSEE::Action::Ptr action, std::string newActionName = "" ) ;
-    
-    /** 
-     * @brief Insert an action as last one in the time line 
-     * @param action pointer to the action to be inserted
      * @param marginBefore the time margin to wait before executing the \p action
      * @param marginAfter the time margin to wait after executing the \p action
+     * @param jointPosIndex (default == 0) the wanted jointPos or \p action to insert. Error the index is greater than the number
+     *      of joint pos in the \p action. First element has index 0. 
      * @param newActionName (default == "") OPTIONAL argument if we want to store the \p action with a different name
      * @return False if some error happened
      * @warning We can't have inned actions with same name. So, if \p action name (or \p newActionName) is already present, 
@@ -119,7 +117,8 @@ public:
      * @note We take only necessary infos from \p action and store them in the members of ActionTimed. There is not way to go
      * back to the original inserted action from an ActionTimed
      */
-    bool insertAction ( ROSEE::Action::Ptr action, double marginBefore, double marginAfter, std::string newActionName = "");
+    bool insertAction ( ROSEE::Action::Ptr action, double marginBefore = 0.0, double marginAfter = 0.0, 
+                        unsigned int jointPosIndex = 0, std::string newActionName = "");
     
 private:
     std::map <std::string, std::pair<double, double> > actionsTimeMarginsMap;
