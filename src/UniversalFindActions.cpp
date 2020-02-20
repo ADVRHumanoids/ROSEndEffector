@@ -186,11 +186,13 @@ int main ( int argc, char **argv ) {
     ROSEE::JointPos jp;
 
     //for now copy jp of another action
-    jp = maps.first.begin()->second.getJointPos();
+    jp = ROSEE::operator*(maps.first.begin()->second.getJointPos(), 2);
     auto jpc = maps.first.begin()->second.getJointsInvolvedCount();
 
     ROSEE::ActionGeneric simpleAction("casual", jp, jpc);
     simpleAction.print();
+    ROSEE::ActionGeneric simple2("casual2", ROSEE::operator+(jp, jp), jpc);
+    simple2.print();
     
     yamlWorker.createYamlFile( &simpleAction );
 
@@ -202,4 +204,3 @@ int main ( int argc, char **argv ) {
     return 0;
     
 }
-
