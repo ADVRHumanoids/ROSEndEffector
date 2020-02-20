@@ -22,6 +22,7 @@
 #include <vector>
 #include <string>
 #include <ROSEndEffector/ActionGeneric.h>
+#include <ROSEndEffector/Utils.h>
 #include <yaml-cpp/yaml.h>
 #include <memory>
 

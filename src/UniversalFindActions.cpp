@@ -105,9 +105,10 @@ int main ( int argc, char **argv ) {
     yamlWorker.createYamlFile (&grasp);
     
     //Parsing
-    auto actionParsedSimple = yamlWorker.parseYamlComposed ("grasp.yaml");
+    ROSEE::Action::Ptr actionParsedSimple = std::make_shared<ROSEE::ActionComposed> () ;
+    yamlWorker.parseYamlAction ("grasp.yaml", actionParsedSimple);
     std::cout << "The composed action with independent inner action (parsed from generated yaml file):" << std::endl;
-    actionParsedSimple.print();
+    actionParsedSimple->print();
     
     
     if (pinchParsedMap.size() > 0 ) { //if not, we cant add a pinch in the grasp2, so this test isnt done
@@ -128,9 +129,10 @@ int main ( int argc, char **argv ) {
         yamlWorker.createYamlFile (&grasp2);
         
         //Parsing
-        auto actionParsed = yamlWorker.parseYamlComposed ("grasp2.yaml");
+        ROSEE::Action::Ptr actionParsed = std::make_shared<ROSEE::ActionComposed> () ;
+        yamlWorker.parseYamlAction ("grasp2.yaml", actionParsed);
         std::cout << "The composed action with dependent inner action (parsed from generated yaml file):" << std::endl;
-        actionParsed.print();
+        actionParsed->print();
     }
 */
     
@@ -159,27 +161,35 @@ int main ( int argc, char **argv ) {
     ROSEE::ActionTimed actionTimed("wide_grasp");
     std::set<std::string> one;
     one.insert ("finger_1_joint_1");
-    actionTimed.insertAction( moreTipsParsedMap.at(one), 0, 0.2, 1, "GRASP");
+    actionTimed.insertAction( moreTipsParsedMap.at(one), 0, 0.2, 0, 0.5, "GRASP");
     one.clear();
-    one.insert("palm_finger_1_joint");
-    actionTimed.insertAction( moreTipsParsedMap.at(one), 0, 0.2, 1, "GRASP2");
+    one.insert("finger_1_joint_1");
+    actionTimed.insertAction( moreTipsParsedMap.at(one), 0, 0.2, 0, 1, "GRASP2");
+    
+    one.clear();
+    one.insert("finger_2_link_3");
+    one.insert("finger_middle_link_3");    
+    actionTimed.insertAction( pinchParsedMap.at(one), 0, 0.2, 0, 1, "PINCH");
+    actionTimed.insertAction( pinchParsedMap.at(one), 0, 0.2, 0, 0.5, "PINCH2");
 
     actionTimed.print();
     
     yamlWorker.createYamlFile ( &actionTimed );
      //Parsing
-    auto actionTimedParsed = yamlWorker.parseYamlTimed ("wide_grasp.yaml");
+    ROSEE::Action::Ptr actionTimedParsed = std::make_shared <ROSEE::ActionTimed> ();
+    yamlWorker.parseYamlAction ("wide_grasp.yaml", actionTimedParsed);
     std::cout << "The timed action parsed: " << std::endl;
-    actionTimedParsed.print();
+    actionTimedParsed->print();
     
-    /** **************************** SIMPLE ACTION MANUALLY CREATED ************************************************/
+    /** **************************** SIMPLE ACTION MANUALLY CREATED ***********************************************    */
 
     ROSEE::JointPos jp;
 
     //for now copy jp of another action
     jp = maps.first.begin()->second.getJointPos();
+    auto jpc = maps.first.begin()->second.getJointsInvolvedCount();
 
-    ROSEE::ActionGeneric simpleAction("casual", jp);
+    ROSEE::ActionGeneric simpleAction("casual", jp, jpc);
     simpleAction.print();
     
     yamlWorker.createYamlFile( &simpleAction );
@@ -188,7 +198,7 @@ int main ( int argc, char **argv ) {
     yamlWorker.parseYamlAction ("casual.yaml", newCasual);
     std::cout << "The parsed casual: " << std::endl;
     newCasual->print();
-    
+
     return 0;
     
 }

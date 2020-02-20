@@ -58,7 +58,15 @@ bool ROSEE::ActionComposed::sumAction ( ROSEE::Action::Ptr action, unsigned int 
     }
     
     if ( jointPosIndex > action->getAllJointPos().size()-1 ) {
-        //TODO write error
+        std::cerr << "[ACTIONCOMPOSED:: " << __func__ << "] The given jointPosindex " << jointPosIndex  
+            << " exceed the number  " << action->getAllJointPos().size() << " of jointpos of passed action" << std::endl;
+        return false;
+    }
+    
+    if ( nInnerActions > 0 && 
+        (! ROSEE::Utils::keys_equal(action->getAllJointPos().at(jointPosIndex), jointPos)) ) {
+        std::cerr << "[ACTIONCOMPOSED:: " << __func__ << "] The action passed as argument has different keys in jointPosmap" 
+                  << " respect to the others inserted in this composed action " << std::endl;
         return false;
     }
 

@@ -21,6 +21,7 @@
 #include <string>
 #include <map>
 #include <ROSEndEffector/Action.h>
+#include <ROSEndEffector/Utils.h>
 #include <yaml-cpp/yaml.h>
 
 namespace ROSEE {
@@ -118,7 +119,7 @@ public:
      * back to the original inserted action from an ActionTimed
      */
     bool insertAction ( ROSEE::Action::Ptr action, double marginBefore = 0.0, double marginAfter = 0.0, 
-                        unsigned int jointPosIndex = 0, std::string newActionName = "");
+                        unsigned int jointPosIndex = 0, double percentJointPos = 1, std::string newActionName = "");
     
 private:
     std::map <std::string, std::pair<double, double> > actionsTimeMarginsMap;

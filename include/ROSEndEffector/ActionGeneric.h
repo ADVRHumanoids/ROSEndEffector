@@ -19,21 +19,41 @@
 
 #include <ROSEndEffector/Action.h>
 #include <yaml-cpp/yaml.h>
+#include <ROSEndEffector/Utils.h>
 
 
 namespace ROSEE {
 
 /**
- * @todo write docs
+ * @brief Class to handle a generic, simple action. Differently from other class, this is easily creable manually,
+ * for ex giving a name and a \ref JointPos map to the costructor. It contains essential infos about the action,
+ * and override the necessary pure virtual functions of base class \ref Action
  */
 class ActionGeneric :  public Action {
     
 public:
     /**
-     * @brief default costructor. It is used when parsing a file with YamlWorker
+     * @brief default costructor. It is used when parsing a file with YamlWorker,
+     * @warning If you use this costructor, then you must fill internal structures with \ref fillFromYaml 
+     *      (or using \ref YamlWorker support class), it is the only way to set the internal infos (e.g. there is not a
+     *      setName( name ) function ). If you have not a Yaml file to parse, use other costructors.
      */
     ActionGeneric() ;
+    /**
+     * @brief Simpliest costructor, need only essential infos
+     * @note This costructor create \ref jointsInvolvedCount map. To do this, it considers a "not set" joint (count == 0) 
+     *      a joint which pos is 0. If you do not want this, pass also your \ref JointsInvolvedCount map to the costructor
+     */
     ActionGeneric (std::string actionName, ROSEE::JointPos jointPos); 
+    
+    /**
+     * @brief Another costructor
+     * @param actionName the name of this action
+     * @param jointPos map containing position of ALL joints of your robot
+     * @param jic map of counters of times of joints involved (e.g. joint not used --> 0 ; joint used for the action --> 1) 
+     * 
+     * @throw Be sure that keys of jointPos and jic are the same, otherwise exception is throw
+     */
     ActionGeneric (std::string actionName, ROSEE::JointPos jointPos, JointsInvolvedCount jic); 
     ActionGeneric (std::string actionName, ROSEE::JointPos jointPos, JointsInvolvedCount jic, std::set <std::string> fingersInvolved); 
     

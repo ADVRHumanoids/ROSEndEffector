@@ -38,8 +38,8 @@ namespace ROSEE {
 typedef std::map <std::string, std::vector <double> > JointPos;
 
 /** operator overload for JointPos so it is easier to print */
-std::ostream& operator << (std::ostream& output, const JointPos js) {
-    for (const auto &jsEl : js) {
+std::ostream& operator << (std::ostream& output, const JointPos jp) {
+    for (const auto &jsEl : jp) {
         output << "\t\t"<<jsEl.first << " : "; //joint name
         for(const auto &jValue : jsEl.second){
             output << jValue << ", "; //joint position (vector because can have multiple dof)
@@ -48,6 +48,26 @@ std::ostream& operator << (std::ostream& output, const JointPos js) {
         output << std::endl;       
     }
     return output;
+}
+
+JointPos operator * (const double multiplier, const JointPos jp) {
+    
+    JointPos jpNew;
+    for (const auto &jsEl : jp) {
+        std::vector<double> newPos;
+        std::cout << jsEl.first << std::endl;
+        for (const double pos : jsEl.second) {
+            std::cout << "old " << pos << "   new: " << pos*multiplier << std::endl;
+            newPos.push_back (pos*multiplier);
+        }
+        jpNew.insert ( std::make_pair (jsEl.first, newPos) );
+    }
+    
+    return jpNew;
+}
+
+JointPos operator * (const JointPos jp, const double multiplier ) {
+    return (multiplier * jp );
 }
 
 /** 

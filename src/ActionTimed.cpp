@@ -122,39 +122,41 @@ void ROSEE::ActionTimed::emitYaml(YAML::Emitter& out) const {
         
         out << YAML::Key << "ActionsNamesOrdered" << YAML::Value << YAML::Flow << actionsNamesOrdered;
 
-        for (int i = 0; i < actionsNamesOrdered.size(); i++){
+        out << YAML::Key << "ActionTimeMargins" << YAML::Value << YAML::BeginMap;
+        for (const std::string action : actionsNamesOrdered ){
 
-            out << YAML::Key << ("ActionTimeMargins_" + std::to_string(i+1))
-                << YAML::Comment(actionsNamesOrdered.at(i)) << YAML::Value << YAML::BeginMap;
+            out << YAML::Key << action << YAML::Value << YAML::BeginMap;
                 
                 out << YAML::Key << "marginBefore" << 
-                    YAML::Value << actionsTimeMarginsMap.at(actionsNamesOrdered.at(i)).first;
+                    YAML::Value << actionsTimeMarginsMap.at(action).first;
                     
                 out << YAML::Key << "marginAfter" << 
-                    YAML::Value << actionsTimeMarginsMap.at(actionsNamesOrdered.at(i)).second;
+                    YAML::Value << actionsTimeMarginsMap.at(action).second;
             out << YAML::EndMap;
         }
-        
-        for (int i = 0; i < actionsNamesOrdered.size(); i++){
+        out << YAML::EndMap;
 
-            out << YAML::Key << ("JointPos_" + std::to_string(i+1))
-                << YAML::Comment(actionsNamesOrdered.at(i)) << YAML::Value << YAML::BeginMap;
-                for (const auto joint : actionsJointPosMap.at(actionsNamesOrdered.at(i))) {
+        out << YAML::Key << "JointPos" << YAML::Value << YAML::BeginMap;
+        for (const std::string action : actionsNamesOrdered ){
+
+            out << YAML::Key << action << YAML::Value << YAML::BeginMap;
+                
+                for ( const auto joint : actionsJointPosMap.at(action) ) {
                     out << YAML::Key << joint.first;
                     out << YAML::Value << YAML::Flow << joint.second; //vector of double is emitted like Seq
                 }
             out << YAML::EndMap;
         }
-        
         out << YAML::EndMap;
-    out << YAML::EndMap;
+
+        
+        out << YAML::EndMap; // map began at the beginning of the function
+    out << YAML::EndMap;// map began at the beginning of the function
 }
 
 bool ROSEE::ActionTimed::fillFromYaml(YAML::const_iterator yamlIt){
     
     name = yamlIt->first.as<std::string>();
-    std::vector<JointPos> tempJointPos;
-    std::vector<std::pair <double, double>> tempTimeMargins;
     
     for (auto keyValue = yamlIt->second.begin(); keyValue != yamlIt->second.end(); ++keyValue ) {
 
@@ -164,23 +166,31 @@ bool ROSEE::ActionTimed::fillFromYaml(YAML::const_iterator yamlIt){
             auto tempVect = keyValue->second.as <std::vector <std::string> > ();
             fingersInvolved.insert ( tempVect.begin(), tempVect.end() );
             
-        } else if ( key.compare ("JointsInvolvedCount") == 0 ) {
-            jointsInvolvedCount = keyValue->second.as < JointsInvolvedCount >(); 
-        
         } else if ( key.compare ("ActionsNamesOrdered") == 0 ) {
             actionsNamesOrdered = keyValue->second.as < std::vector <std::string> > ();
             
-        } else if ( key.compare(0, 18, "ActionTimeMargins_") == 0 ) { //compare 18 caracters from index 0 of key
-            //we store temporanely in the vector, only after we can put in the actionsTimeMarginsMap
-            //because we may not know the keys of actionsTimeMarginsMap at this point.
-            double before = keyValue->second["marginBefore"].as<double>();
-            double after = keyValue->second["marginAfter"].as<double>();
-            tempTimeMargins.push_back (std::make_pair(before, after) ) ;
+        } else if ( key.compare ("JointsInvolvedCount") == 0 ) {
+            jointsInvolvedCount = keyValue->second.as < JointsInvolvedCount >(); 
             
-        } else if ( key.compare(0, 9, "JointPos_") == 0 ) { //compare 9 caracters from index 0 of key
-            //we store temporanely in the vector, only after we can put in the actionsJointPosMap
-            //because we may not know the keys of actionsJointPosMap at this point.
-            tempJointPos.push_back ( keyValue->second.as <JointPos>() ) ;
+        } else if ( key.compare("ActionTimeMargins") == 0 ) {
+            
+            for (auto tMargins = keyValue->second.begin(); tMargins != keyValue->second.end(); ++tMargins ) {
+
+                std::string actNAme = tMargins->first.as<std::string>();
+                double before = tMargins->second["marginBefore"].as<double>();
+                double after = tMargins->second["marginAfter"].as<double>();
+                actionsTimeMarginsMap.insert (std::make_pair (actNAme, std::make_pair(before, after)  ) ) ;
+            }
+            
+        } else if ( key.compare("JointPos") == 0) {
+            
+            for (auto jPos = keyValue->second.begin(); jPos != keyValue->second.end(); ++jPos ) {
+                
+                std::string actName = jPos->first.as<std::string>();
+                JointPos jp = jPos->second.as<ROSEE::JointPos>();
+                actionsJointPosMap.insert (std::make_pair (actName, jp) );
+            }
+
             
         } else {
             std::cerr << "[TIMEDACTION::" << __func__ << "] Error, not known key " << key << std::endl;
@@ -188,30 +198,11 @@ bool ROSEE::ActionTimed::fillFromYaml(YAML::const_iterator yamlIt){
         }
     }
     
-    if (tempJointPos.size() != actionsNamesOrdered.size() ) {
-        std::cerr << "[TIMEDACTION::" << __func__ << "] Error size of actionsNamesOrdered is " << actionsNamesOrdered.size()
-        << " while there are " << tempJointPos.size() << " joint positions" << std::endl;
-
-        return false;
-    }
-    
-    if (tempTimeMargins.size() != actionsNamesOrdered.size() ) {
-        std::cerr << "[TIMEDACTION::" << __func__ << "] Error size of actionsNamesOrdered is " << actionsNamesOrdered.size()
-        << " while there are " << tempTimeMargins.size() << " pair of time margins" << std::endl;
-
-        return false;
-    }
-    
-    for (int i = 0; i < actionsNamesOrdered.size() ; i++ ) {
-        actionsJointPosMap.insert ( std::make_pair (actionsNamesOrdered.at(i), tempJointPos.at(i) ) );
-        actionsTimeMarginsMap.insert ( std::make_pair (actionsNamesOrdered.at(i), tempTimeMargins.at(i) ) );
-    }
-    
     return true;
 }
 
 bool ROSEE::ActionTimed::insertAction(ROSEE::Action::Ptr action, double marginBefore, double marginAfter, 
-                                      unsigned int jointPosIndex, std::string newActionName) {
+                                      unsigned int jointPosIndex, double percentJointPos, std::string newActionName) {
     
     std::string usedName = (newActionName.empty()) ? action->getName() : newActionName;
 
@@ -232,8 +223,22 @@ bool ROSEE::ActionTimed::insertAction(ROSEE::Action::Ptr action, double marginBe
             " but there are only " << action->getAllJointPos().size() << " JointPos in the action passed as argument" << std::endl;
         return false;
     }
+    
+    if (percentJointPos <=0 || percentJointPos > 1) {
+        std::cerr << "[ACTIONTIMED:: " << __func__ << "] Please insert percentage for jointpos between 0 and 1. Passed: " 
+            << percentJointPos << std::endl;
+        return false;
+    }
+    
+    if ( actionsNamesOrdered.size() > 0 && 
+        (! ROSEE::Utils::keys_equal(action->getAllJointPos().at(jointPosIndex), actionsJointPosMap.begin()->second)) ) {
+        //we need only to compare the first jointPos (.begin())
+        std::cerr << "[ACTIONTIMED:: " << __func__ << "] The action passed as argument has different keys in jointPosmap" 
+                  << " respect to the others inserted in this timed action " << std::endl;
+        return false;
+    }
 
-    actionsJointPosMap.insert (std::make_pair ( usedName, action->getAllJointPos().at( jointPosIndex ) ));
+    actionsJointPosMap.insert (std::make_pair ( usedName, (percentJointPos)*(action->getAllJointPos().at( jointPosIndex )) ));
     actionsTimeMarginsMap.insert ( std::make_pair( usedName, std::make_pair(marginBefore, marginAfter)));
     actionsNamesOrdered.push_back ( usedName );
 

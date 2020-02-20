@@ -37,7 +37,11 @@ ROSEE::ActionGeneric::ActionGeneric(std::string actionName, ROSEE::JointPos join
 }
 
 ROSEE::ActionGeneric::ActionGeneric(std::string actionName, ROSEE::JointPos jointPos, JointsInvolvedCount jic) : Action(actionName) {
-    
+
+    if ( ! ROSEE::Utils::keys_equal(jointPos, jic) ) {
+        throw ROSEE::Utils::DifferentKeysException<ROSEE::JointPos, ROSEE::JointsInvolvedCount>(&jointPos, &jic);
+    }
+        
     this->jointPos = jointPos;
     this->jointsInvolvedCount = jic;
     
@@ -93,6 +97,7 @@ bool ROSEE::ActionGeneric::fillFromYaml(YAML::const_iterator yamlIt) {
         std::string key = keyValue->first.as<std::string>();
 
         if ( key.compare ("FingersInvolved") == 0 ) { 
+            // if <not_inserted> tempVect is a empty vector
             auto tempVect = keyValue->second.as <std::vector <std::string> > ();
             fingersInvolved.insert ( tempVect.begin(), tempVect.end() );
             
@@ -107,6 +112,11 @@ bool ROSEE::ActionGeneric::fillFromYaml(YAML::const_iterator yamlIt) {
             return false;
         }
     } 
+    
+    if ( ! ROSEE::Utils::keys_equal(jointPos, jointsInvolvedCount) ) {
+        throw ROSEE::Utils::DifferentKeysException<ROSEE::JointPos, ROSEE::JointsInvolvedCount>(&jointPos, &jointsInvolvedCount);
+    }
+    
     return true;
 }
 
