@@ -50,6 +50,9 @@ public:
     std::vector <std::string> getFingertipNames () const; 
     std::vector <std::string> getActiveJointNames () const; 
     std::vector <const moveit::core::JointModel*> getRealActiveJointModels () const; 
+    std::map <std::string, std::vector < const moveit::core::LinkModel* > > getDescendantLinksOfJoint() const ;
+    std::map <std::string, std::vector < const moveit::core::JointModel* > > getDescendantJointsOfJoint() const ; 
+
     /** 
      * @brief the robot model can't be modified, if you want it to modify, use @ref getCopyModel 
      * to get a copy.
@@ -172,6 +175,10 @@ private:
     std::vector<const moveit::core::JointModel*> activeJointModels;
     std::string robot_description;
     
+//TODO write doc
+    std::map <std::string, std::vector < const moveit::core::LinkModel* > > descendantLinksOfJoint;
+    std::map <std::string, std::vector < const moveit::core::JointModel* > > descendantJointsOfJoint;
+    
     /** The map with as key the name of the fingertip and as value all the joints (actuated) that can modify its pose*/
     std::map<std::string, std::vector<std::string>> jointsOfFingertipMap;
     
@@ -213,6 +220,14 @@ private:
      * \ref fingertipsOfJointMap
      */
     void lookJointsTipsCorrelation();
+    
+    /**
+     * 
+     */
+    void lookForDescendants();
+    
+    void getRealDescendantLinkModelsRecursive ( const moveit::core::LinkModel* link,  std::vector< const moveit::core::LinkModel* > & linksVect,
+                                                const moveit::core::JointModel* joint,  std::vector< const moveit::core::JointModel* > & jointsVect ) const;
         
 
 

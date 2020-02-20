@@ -48,6 +48,7 @@ bool ROSEE::ParserMoveIt::init ( std::string robot_description ) {
     
     lookForFingertips();
     lookForActiveJoints();
+    lookForDescendants();
     lookJointsTipsCorrelation();
     
     return true;
@@ -70,6 +71,13 @@ std::vector<const moveit::core::JointModel*> ROSEE::ParserMoveIt::getRealActiveJ
     return activeJointModels;
 }
 
+std::map <std::string, std::vector < const moveit::core::LinkModel* > >  ROSEE::ParserMoveIt::getDescendantLinksOfJoint() const {
+    return descendantLinksOfJoint;
+}
+
+std::map <std::string, std::vector < const moveit::core::JointModel* > >  ROSEE::ParserMoveIt::getDescendantJointsOfJoint() const {
+    return descendantJointsOfJoint;
+}
 
 unsigned int ROSEE::ParserMoveIt::getNumberOfTips () const {
     return fingertipNames.size();
@@ -391,16 +399,58 @@ void ROSEE::ParserMoveIt::lookJointsTipsCorrelation() {
         fingertipsOfJointMap.insert ( std::make_pair (it, std::vector<std::string>() ) );
     }
     
-    for ( const auto &joint: activeJointModels){ //for each actuated joint   
+    for ( const auto &jointLink: descendantLinksOfJoint){ //for each actuated joint   
 
-        for (const auto &link : joint->getDescendantLinkModels()) { //for each descendant link
+        for (const auto &link : jointLink.second) { //for each descendant link
 
             //if link is a tip...
             if (std::find(fingertipNames.begin(), fingertipNames.end(), link->getName()) != fingertipNames.end()){
-                jointsOfFingertipMap.at ( link->getName() ) .push_back( joint->getName() );
-                fingertipsOfJointMap.at ( joint->getName() ) .push_back( link->getName() );
+                jointsOfFingertipMap.at ( link->getName() ) .push_back( jointLink.first);
+                fingertipsOfJointMap.at ( jointLink.first ) .push_back( link->getName() );
             }
         }
     }
 
+}
+
+//todo warning che non conto i link del joint che evenutalmente queswto mima...
+void ROSEE::ParserMoveIt::lookForDescendants () {
+    
+    for (auto actJoint : activeJointModels) {
+        
+        std::vector < const moveit::core::LinkModel* >  linksVector;      
+        std::vector < const moveit::core::JointModel* >  jointsVector;   
+        
+        getRealDescendantLinkModelsRecursive ( actJoint->getChildLinkModel(), linksVector, actJoint, jointsVector );
+
+        //now we have to look among the mimic joints, but the mimic of only joint passed as argument, not also the mimic of children joints
+        for (auto mimicJ : actJoint->getMimicRequests()) {
+        // but we do not look on mimic joints that are children of the this joint in the tree,
+        //  because we have already explored them with recursion. Here we look only for mimic that are "cousins" of this joint
+            if (std::find (jointsVector.begin(), jointsVector.end(), mimicJ) == jointsVector.end() ) {
+                getRealDescendantLinkModelsRecursive (mimicJ->getChildLinkModel(), linksVector, mimicJ, jointsVector );  
+            }
+        }
+        
+        descendantLinksOfJoint.insert (std::make_pair ( actJoint->getName(), linksVector ) );
+        descendantJointsOfJoint.insert (std::make_pair ( actJoint->getName(), jointsVector ) );
+    }
+}
+
+void ROSEE::ParserMoveIt::getRealDescendantLinkModelsRecursive ( 
+    const moveit::core::LinkModel* link,  std::vector< const moveit::core::LinkModel* > & linksVect,
+    const moveit::core::JointModel* joint,  std::vector< const moveit::core::JointModel* > & jointsVect ) const {
+    
+    linksVect.push_back (link) ;
+    jointsVect.push_back (joint);
+    auto childJoints = link->getChildJointModels();
+    if ( childJoints.size() == 0 ) { 
+        return; //recursive base
+    }
+    
+    for (auto cj : childJoints) {
+        //recursion
+        getRealDescendantLinkModelsRecursive( cj->getChildLinkModel(), linksVect, cj, jointsVect );
+    }
+    
 }

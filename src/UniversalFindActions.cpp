@@ -137,7 +137,7 @@ int main ( int argc, char **argv ) {
 */
     
     /** **************************** ACTION MORE TIPS TO MOVE MORE TIPS WITH SINGLE JOINT ****************************/
-    unsigned int nFinger = 3;
+    unsigned int nFinger = 5;
     std::map < std::string, ROSEE::ActionMoreTips> moreTipsMap = actionsFinder.findMoreTips (nFinger) ;
     
     std::cout << "A primitive that move " << nFinger << " fingers with a single joint " << std::endl;
@@ -153,11 +153,12 @@ int main ( int argc, char **argv ) {
     std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > moreTipsParsedMap = 
         yamlWorker.parseYamlPrimitive("moreTips-" + std::to_string(nFinger) + ".yaml", ROSEE::ActionPrimitive::Type::MoreTips);
     std::cout << "PARSED MAP OF MORETIPS FROM YAML FILE:" << std::endl;
+    
     for (auto &i : moreTipsParsedMap) {
         i.second->print();
     }
 
-    /** **************************** TIMED ACTION THINGS ************************************************/
+    /** **************************** TIMED ACTION THINGS ***********************************************
     ROSEE::ActionTimed actionTimed("wide_grasp");
     std::set<std::string> one;
     one.insert ("finger_1_joint_1");
@@ -180,8 +181,8 @@ int main ( int argc, char **argv ) {
     yamlWorker.parseYamlAction ("wide_grasp.yaml", actionTimedParsed);
     std::cout << "The timed action parsed: " << std::endl;
     actionTimedParsed->print();
-    
-    /** **************************** SIMPLE ACTION MANUALLY CREATED ***********************************************    */
+    */
+    /** **************************** SIMPLE ACTION MANUALLY CREATED ***********************************************    
 
     ROSEE::JointPos jp;
 
@@ -200,6 +201,25 @@ int main ( int argc, char **argv ) {
     yamlWorker.parseYamlAction ("casual.yaml", newCasual);
     std::cout << "The parsed casual: " << std::endl;
     newCasual->print();
+    */
+    
+    // *********************************************** DEBIGGGGGGGGGGGGGGGGGGGGGGGGGG ********************************/
+    for (auto it : parserMoveIt->getDescendantLinksOfJoint() ) {
+        std::cout << it.first <<std::endl;
+        for (auto itt : it.second ) {
+            std::cout << itt->getName() << std::endl;
+        }
+    }
+    
+    std::cout << std::endl;
+
+    for (auto it : parserMoveIt->getFingertipsOfJointMap() ) {
+        std::cout << it.first <<std::endl;
+        for (auto itt : it.second ) {
+            std::cout << itt << std::endl;
+        }
+    }
+
 
     return 0;
     
