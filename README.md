@@ -109,6 +109,31 @@ roslaunch schunk_svh_driver svh_controller.launch standalone:=true gui:=true sim
 ```
 Be sure to put in rviz as __fixed frame__ the  __base_link__
 
+#### Robotic-3f (3 finger hand with two motors (I think) )
+```bash
+mkdir ~/robotiq_ws
+cd robotiq_ws
+mkdir src
+cd src
+git clone https://github.com/ros-industrial/robotiq.git
+git checkout kinetic-devel
+cd ..
+rosdep update
+rosdep install robotiq_modbus_tcp
+sudo apt-get install ros-kinetic-soem
+rosdep install --from-paths src/ --ignore-src --rosdistro kinetic
+catkin_make
+source devel/setup.bash
+```
+
+launch the find actions node:
+```bash
+source ~/ROSEE/devel/setup.bash # or wherever it is
+roslaunch ros_end_effector findActionsRobotiq_3f.launch
+```
+Still trying to manage to run rviz and joint publisher to move the hand (the model does not load properly in rviz for now). For now, you can move the hand with [moveit assistant](http://docs.ros.org/kinetic/api/moveit_tutorials/html/doc/setup_assistant/setup_assistant_tutorial.html).
+**Note** : I modified a bit the original *urdf* from robotiq. In their file, all joints are actuated. In truth, watching video of how the hand moves, there should be a unique joint that close all the fingers and another one that spread the two fingers on on side of the palm. I do not add "mimicing" of distal phalanges, they are not so linearly coupled.
+
 # To run the ROS EE on the Schunk
 
 ```
