@@ -27,12 +27,6 @@ namespace ROSEE {
  * @brief Primitive which indicate a motion of n fingers moving ONLY ONE joint. 
  * For example, this primitive is necessary for the hands that have one joint that close all the fingers to do a grasp. But 
  * it can also useful to detect other multiple finger motions (like a "spread finger")
- * 
- * @bug With schunk hand, the finger is considered dependend on joint thumb_opposition (which in truth make only thumb ring and pinky get closer). 
- * Problably this is caused by the fact that index_spread joint mimic finger_spread; finger_spread is descendant of thumb opposition because it is 
- * in the pinky finger (I dont know why). So this cause to detect index tip as "descendant" of also thumb_opposition. So, the actionMoretips related
- * to thumb_opposition is a 4 finger action and not 3.
- * This problem happen also with robotiq-3f, we have to solve it.
  */
 class ActionMoreTips : public ActionPrimitive {
     

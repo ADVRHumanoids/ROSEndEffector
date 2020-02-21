@@ -67,7 +67,7 @@ std::vector<std::string> ROSEE::ParserMoveIt::getActiveJointNames() const {
     return activeJointNames;
 }
 
-std::vector<const moveit::core::JointModel*> ROSEE::ParserMoveIt::getRealActiveJointModels() const {
+std::vector<const moveit::core::JointModel*> ROSEE::ParserMoveIt::getActiveJointModels() const {
     return activeJointModels;
 }
 
@@ -413,7 +413,6 @@ void ROSEE::ParserMoveIt::lookJointsTipsCorrelation() {
 
 }
 
-//todo warning che non conto i link del joint che evenutalmente queswto mima...
 void ROSEE::ParserMoveIt::lookForDescendants () {
     
     for (auto actJoint : activeJointModels) {

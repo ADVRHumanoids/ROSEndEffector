@@ -162,7 +162,7 @@ std::map <std::string, ROSEE::ActionMoreTips> ROSEE::FindActions::findMoreTips(u
         
         //create and initialize JointPos map
         JointPos jpFar;
-        for (auto it : parserMoveIt->getRealActiveJointModels()){
+        for (auto it : parserMoveIt->getActiveJointModels()){
             std::vector <double> jPos (it->getVariableCount(), DEFAULT_JOINT_POS);
             jpFar.insert ( std::make_pair ( it->getName(), jPos ));
         }
@@ -531,7 +531,7 @@ bool ROSEE::FindActions::insertJointPosForTrigInMap ( std::map <std::string, Act
         //still no action for this tip in the map
 
         JointPos jp;
-        for (auto it : parserMoveIt->getRealActiveJointModels()){
+        for (auto it : parserMoveIt->getActiveJointModels()){
             std::vector <double> jPos (it->getVariableCount(), DEFAULT_JOINT_POS);
             jp.insert ( std::make_pair ( it->getName(), jPos ));
         }
@@ -564,7 +564,7 @@ bool ROSEE::FindActions::insertJointPosForTrigInMap ( std::map <std::string, Act
 ROSEE::JointPos ROSEE::FindActions::getConvertedJointPos(const robot_state::RobotState* kinematic_state) {
     
     JointPos jp;
-    for ( auto actJ : parserMoveIt->getRealActiveJointModels()) {
+    for ( auto actJ : parserMoveIt->getActiveJointModels()) {
         //joint can have multiple pos, so double*, but we want to store in a vector 
         const double* pos = kinematic_state->getJointPositions(actJ); 
         unsigned posSize = sizeof(pos) / sizeof(double);

@@ -204,21 +204,6 @@ int main ( int argc, char **argv ) {
     */
     
     // *********************************************** DEBIGGGGGGGGGGGGGGGGGGGGGGGGGG ********************************/
-    for (auto it : parserMoveIt->getDescendantLinksOfJoint() ) {
-        std::cout << it.first <<std::endl;
-        for (auto itt : it.second ) {
-            std::cout << itt->getName() << std::endl;
-        }
-    }
-    
-    std::cout << std::endl;
-
-    for (auto it : parserMoveIt->getFingertipsOfJointMap() ) {
-        std::cout << it.first <<std::endl;
-        for (auto itt : it.second ) {
-            std::cout << itt << std::endl;
-        }
-    }
 
 
     return 0;
