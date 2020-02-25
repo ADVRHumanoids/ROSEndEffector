@@ -1,3 +1,4 @@
 ROSEndEffector:
   urdf_path: "urdf/test_ee.urdf"
   srdf_path: "srdf/test_ee.srdf"
+    

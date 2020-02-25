@@ -122,13 +122,19 @@ namespace ROSEE {
          */
         bool getInternalIdForJoint ( std::string joint_name, int& internal_id );
         
-        
         /**
          * @brief getter for the number of fingers in the End-Effector
          * 
          * @return int the number of fingers in the End-Effector
          */
         int getFingersNumber();
+        
+        /**
+         * @brief getter for the EE name
+         * 
+         * @return std::string the EE name parsed from the given config files of the EE
+         */
+        std::string getName();
         
     private:
         
@@ -142,6 +148,8 @@ namespace ROSEE {
         std::vector<std::string> _fingers_names, _actuated_joints;
         
         Eigen::VectorXd _upper_limits, _lower_limits;
+        
+        std::string _ee_name;
         
         int _joints_num = 0;
         

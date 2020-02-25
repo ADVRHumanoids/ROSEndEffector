@@ -82,6 +82,13 @@ namespace ROSEE {
         std::map<std::string, std::vector<std::string>> getFingerJointMap() const;
         
         /**
+         * @brief getter for the configure End-Effector name
+         * 
+         * @return std::string the End-Effector name as reported in the URDF robot name
+         */
+        std::string getEndEffectorName() const;
+        
+        /**
          * @brief getter for the total number of actuated joints in the configuration files
          * 
          * @return int the number of actuated joints in the End-Effector

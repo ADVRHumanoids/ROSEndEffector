@@ -34,7 +34,8 @@
 #include <ros_end_effector/EEGraspControl.h>
 #include <ros_end_effector/EEPinchControl.h>
 
-
+#include <ROSEndEffector/ActionPrimitive.h>
+#include <ROSEndEffector/ActionComposed.h>
 
 
 namespace ROSEE
@@ -71,9 +72,7 @@ private:
     
     void set_references();
 
-    bool init_primitive_subscribers();
-    
-    void move_joint_in_finger(double upper_limit, double lower_limit, int id);
+    bool init_grapsing_primitive_subscribers();
     
     ros::NodeHandle _nh;
     ros::Timer _loop_timer;
@@ -94,11 +93,21 @@ private:
     std::vector<std::string> _joints;
 
     ros_end_effector::EEGraspControl _ctrl_msg;
-    ros::Subscriber _sub_grasp, _sub_pinch;
+    ros::Subscriber _sub_grasp, _sub_pinch, _sub_trigger, sub_finger_flextion, sub_tip_flextion;
 
     Eigen::VectorXd _qref, _qref_filtered;
     
     ROSEE::Utils::SecondOrderFilter<Eigen::VectorXd> _filt_q;
+    
+    // grasping primitives maps
+    std::map<std::set<std::string>, ROSEE::ActionPrimitive::Ptr> _pinchParsedMap;
+    std::map<std::set<std::string>, ROSEE::ActionPrimitive::Ptr> _pinchWeakParsedMap;
+    std::map<std::set<std::string>, ROSEE::ActionPrimitive::Ptr> _trigParsedMap;
+    std::map<std::set<std::string>, ROSEE::ActionPrimitive::Ptr> _tipFlexParsedMap;
+    std::map<std::set<std::string>, ROSEE::ActionPrimitive::Ptr> _fingFlexParsedMap;
+    
+    ROSEE::ActionComposed _graspParsedMap;
+    
 
 };
 

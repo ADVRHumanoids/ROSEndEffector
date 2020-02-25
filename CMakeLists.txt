@@ -131,6 +131,10 @@ add_library(YamlWorker
     src/YamlWorker.cpp
 )
 
+add_library(Action 
+    src/Action.cpp 
+)
+
 add_library(ActionPrimitive 
     src/ActionPrimitive.cpp
 )
@@ -147,17 +151,27 @@ add_library(ActionPinchWeak
 add_library(ActionTrig
     src/ActionTrig.cpp
 )
+add_library(ActionMoreTips
+    src/ActionMoreTips.cpp
+)
+add_library(ActionGeneric
+    src/ActionGeneric.cpp 
+)
 add_library(ActionComposed
     src/ActionComposed.cpp 
+)
+add_library(ActionTimed
+    src/ActionTimed.cpp 
 )
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
 # add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
 add_executable(UniversalRosEndEffector src/UniversalRosEndEffector.cpp)
 add_executable(UniversalFindActions src/UniversalFindActions.cpp)
-add_dependencies(UniversalRosEndEffector ros_end_effector_generate_messages_cpp)
+add_dependencies(UniversalRosEndEffectorExecutor ros_end_effector_generate_messages_cpp)
 
 
 
@@ -190,6 +204,7 @@ target_link_libraries(UniversalRosEndEffectorExecutor
     ${catkin_LIBRARIES}
     ROSEEParser
     ROSEEInterface
+    YamlWorker
     
     # do it automatically
     DummyHal
@@ -198,11 +213,14 @@ target_link_libraries(UniversalRosEndEffectorExecutor
 
 target_link_libraries(YamlWorker
     yaml-cpp
+    Action
     ActionPrimitive
     ActionPinchStrong
     ActionTrig
     ActionPinchWeak
+    ActionMoreTips
     ActionComposed
+    ActionTimed
 )
 
 target_link_libraries(ActionPinchStrong
@@ -220,18 +238,32 @@ target_link_libraries(ActionPinchWeak
 target_link_libraries(ActionTrig
     ActionPrimitive
 )
-target_link_libraries(ActionComposed
+
+target_link_libraries(ActionMoreTips
     ActionPrimitive
+)
+
+target_link_libraries(ActionGeneric
+    Action
+)
+
+target_link_libraries(ActionComposed
+    ActionGeneric
+)
+
+target_link_libraries(ActionTimed
+    Action
 )
 
 target_link_libraries(FindActions
     ${catkin_LIBRARIES}
     ParserMoveIt
     YamlWorker
+    Action
     ActionPinchStrong
     ActionTrig
     ActionPinchWeak
-    
+    ActionMoreTips
 )
 
 target_link_libraries(ParserMoveIt
@@ -243,10 +275,16 @@ target_link_libraries(UniversalRosEndEffector
 )
 
 target_link_libraries(UniversalFindActions
+    ParserMoveIt
     FindActions
+    Action
     ActionPrimitive
     ActionTrig
-    ParserMoveIt
+    ActionPinchStrong
+    ActionPinchWeak
+    ActionMoreTips
+    ActionTimed
+    ActionGeneric
 )
 
 
@@ -326,6 +364,7 @@ if(CATKIN_ENABLE_TESTING)
     if(TARGET ComposedAction_test)
         target_link_libraries(ComposedAction_test ${catkin_LIBRARIES}
                                                  FindActions
+                                                 Action
                                                  ActionPrimitive
                                                  ActionTrig
                                                  ActionComposed)

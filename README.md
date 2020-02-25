@@ -95,6 +95,7 @@ git clone https://github.com/fzi-forschungszentrum-informatik/fzi_icl_comm.git #
 git clone https://github.com/fzi-forschungszentrum-informatik/schunk_svh_driver.git #the main schunk repo
 cd ..
 catkin_make_isolated
+source devel_isolated/setup.bash 
 ```
 Similar to the other examples, launch the node:
 
@@ -108,20 +109,71 @@ roslaunch schunk_svh_driver svh_controller.launch standalone:=true gui:=true sim
 ```
 Be sure to put in rviz as __fixed frame__ the  __base_link__
 
+#### Robotic-3f (3 finger hand with two motors (I think) )
+```bash
+mkdir ~/robotiq_ws
+cd robotiq_ws
+mkdir src
+cd src
+git clone https://github.com/ros-industrial/robotiq.git
+git checkout kinetic-devel
+cd ..
+rosdep update
+rosdep install robotiq_modbus_tcp
+sudo apt-get install ros-kinetic-soem
+rosdep install --from-paths src/ --ignore-src --rosdistro kinetic
+catkin_make
+source devel/setup.bash
+```
+
+launch the find actions node:
+```bash
+source ~/ROSEE/devel/setup.bash # or wherever it is
+roslaunch ros_end_effector findActionsRobotiq_3f.launch
+```
+Still trying to manage to run rviz and joint publisher to move the hand (the model does not load properly in rviz for now). For now, you can move the hand with [moveit assistant](http://docs.ros.org/kinetic/api/moveit_tutorials/html/doc/setup_assistant/setup_assistant_tutorial.html).
+**Note** : I modified a bit the original *urdf* from robotiq. In their file, all joints are actuated. In truth, watching video of how the hand moves, there should be a unique joint that close all the fingers and another one that spread the two fingers on on side of the palm. I do not add "mimicing" of distal phalanges, they are not so linearly coupled.
+
+# To run the ROS EE on the Schunk
+
+```
+roslaunch ros_end_effector schunk_startup.launch gui:=true simulation:=true
+```
+
 ## Creating srdf files
 Both *moveit* and this *ROSEE node* refers to srdf file to explore your hand. So it is important to provide a right srdf file. The convention used is that each finger is a *group* (from the base of the finger to the tip).
 Even for very complicated hand like schunk hand, this file is easy to create (see the one for the schunk [here](configs/srdf/svh-groupsForROSEE.srdf)). 
-If you don't want to create this by hand, you can use the [moveit assistant](http://docs.ros.org/kinetic/api/moveit_tutorials/html/doc/setup_assistant/setup_assistant_tutorial.html), which will help to create srdf files (among the other things) through a GUI
+If you don't want to create this by hand, you can use the [moveit assistant](http://docs.ros.org/kinetic/api/moveit_tutorials/html/doc/setup_assistant/setup_assistant_tutorial.html), which will help to create srdf files (among the other things) through a GUI. 
+In the *srdf* file is also important to set the passive joints: these will be considered not actuated. This is necessary if you do not want to 
+modify the *urdf* setting these joints as mimic or fixed.
 
 ## How to check if things are good with google tests
-```bash
-cd <ROSEE_pkg_path>/build
-make tests
-roslaunch ros_end_effector googleTest_run_all.launch 
-# make test ARGS="-V" to run the test is not good because before running the node we need to put some params in the ros server (the urdf and srdf files)
-```
-Check the **googleTest_run_all.launch** file to change the hand for the tests
-
+- Compile:
+    ```bash
+    cd <ROSEE_pkg_path>/build
+    make tests
+    ```
+- Run Test OPTION 1 (Colorful cout but all tests togheter)
+    ```bash
+    roslaunch ros_end_effector googleTest_run_all.launch 
+    ```
+    Check the **googleTest_run_all.launch** file to change the hand for the tests
+    
+- Run Test OPTION 2 (each test sequentially)
+    With  ``` make test ARGS="-V" ``` we first need to load the urdf and srdf file "manually" with ``` rosparam set ```, for example:
+    ```bash
+    # test_ee hand
+    rosparam set -t $(rospack find ros_end_effector)/configs/urdf/test_ee.urdf robot_description
+    rosparam set -t $(rospack find ros_end_effector)/configs/srdf/test_ee.srdf robot_description_semantic
+    make test ARGS="-V"
+    ```
+    ```bash
+    # 2_finger hand
+    rosparam set -t $(rospack find ros_end_effector)/configs/urdf/two_finger.urdf robot_description
+    rosparam set -t $(rospack find ros_end_effector)/configs/srdf/two_finger.srdf robot_description_semantic
+    make test ARGS="-V"
+    ```
+    Similar for other hands.
 ## Possible Issues
 * From 28-01-2020 the use_gui param gives an error because it is deprecated. This causes the sliders of joint state publisher not shown. To solve : 
     ```bash

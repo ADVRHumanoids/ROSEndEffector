@@ -10,42 +10,31 @@
     <!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group-->
     <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
     <group name="thumb">
-        <joint name="left_hand_Thumb_Flexion" />
-        <joint name="left_hand_j3" />
-        <joint name="left_hand_j4" />
-        <joint name="left_hand_Thumb_Helper" />
+        <chain base_link="left_hand_e1" tip_link="left_hand_c"/>
     </group>
     <group name="index">
-        <joint name="left_hand_f1" />
-        <joint name="left_hand_index_spread" />
-        <joint name="left_hand_Index_Finger_Proximal" />
-        <joint name="left_hand_Index_Finger_Distal" />
-        <joint name="left_hand_j14" />
-    </group>
-    <group name="palm">
-        <joint name="left_hand_f4" />
-        <joint name="left_hand_j5" />
-        <joint name="left_hand_Finger_Spread" />
-        <joint name="left_hand_Thumb_Opposition" />
+        <chain base_link="left_hand_h" tip_link="left_hand_t"/>
     </group>
     <group name="middle">
-        <joint name="left_hand_middle_spread_dummy" />
-        <joint name="left_hand_Middle_Finger_Proximal" />
-        <joint name="left_hand_Middle_Finger_Distal" />
-        <joint name="left_hand_j15" />
+        <chain base_link="left_hand_d" tip_link="left_hand_s"/>
     </group>
     <group name="ring">
-        <joint name="left_hand_ring_spread" />
-        <joint name="left_hand_Ring_Finger" />
-        <joint name="left_hand_j12" />
-        <joint name="left_hand_j16" />
-        <joint name="left_hand_f8" />
+        <chain base_link="left_hand_e" tip_link="left_hand_r"/>
     </group>
     <group name="pinky">
-        <joint name="left_hand_Pinky" />
-        <joint name="left_hand_j13" />
-        <joint name="left_hand_j17" />
+        <chain base_link="left_hand_e4" tip_link="left_hand_q"/>
     </group>
+    
+    <group name="end_effector_fingers">
+      <group name="thumb" />
+      <group name="index" />
+      <group name="middle" />
+      <group name="ring" />
+      <group name="pinky" />
+   </group>
+   
+   <end_effector name="schunk_end_effector" parent_link="base_link" group="end_effector_fingers"/>
+    
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
     <virtual_joint name="virtualJointWorld" type="fixed" parent_frame="world" child_link="base_link" />
 </robot>

@@ -21,69 +21,98 @@
 
 #include <vector>
 #include <string>
-#include <ROSEndEffector/ActionPrimitive.h>
+#include <ROSEndEffector/ActionGeneric.h>
+#include <ROSEndEffector/Utils.h>
 #include <yaml-cpp/yaml.h>
 #include <memory>
 
-/** 
- * 
- * TODO instead of use it as "Composed", use it as single action, that is a different structure respect to
- * action primitive, with a single joint state. Then can contain a single action, or more.
- * 
- * TODO una remove? non è così facile da implementare e non so se sia utile...
- */
+
 namespace ROSEE{
 
 /**
- * If the action has @independent primitives, each joint position is set by ONLY ONE of the primitives inside, or nothing
- * (set at a default state, i.e. not used)
- * If the action has not @independent primitives, each joint position is calculated as the mean among all the joint 
- * position of the contained primitives that uses that joint. So each mean can include different primitives, so we need
- * a @involvedJointsCount vector
+ * @brief A ActionComposed, which is formed by one or more Primitives (or even other composed).
+ * It is useful for example to create an action that grasp only with bending the tips (e.g. to take a dish from above) 
+ * If the ActionComposed has the boolean value \ref independent to true, it means that include indipendent sub-actions, 
+ * so, each joint is used by at maximum by ONLY ONE of the sub-action inside.
+ * In this case the \ref jointsInvolvedCount will contain only 0 or 1 values.
+ * If the ActionComposed is not \ref independent, each joint position is calculated as the mean of all the joint 
+ * position of the contained sub-actions that uses that joint. So each mean can include different primitives, so we used the
+ * \ref jointsInvolvedCount vector to store the number of sub action that use each joint.
+ * 
+ * @todo A removeAction function? difficult to implement, and useless?
  */
-class ActionComposed
+class ActionComposed : public ActionGeneric
 {
-private:
-    std::string name;
-    std::vector < std::string > primitiveNames;
-    std::set < std::string > linksInvolved;
-    ROSEE::JointStates jointStates;
-    std::vector < std::shared_ptr <ROSEE::ActionPrimitive> > primitiveObjects;
-    unsigned int nPrimitives;
-    
-    bool independent; //true if each primitive must set different joint states
-    std::vector <unsigned int> involvedJointsCount;
     
 public: 
     ActionComposed();
     ActionComposed(std::string name);
     ActionComposed(std::string name, bool independent);
-    // Copy constructor 
+    /** @brief Copy costructor 
+     */
     ActionComposed (const ActionComposed &other);
+
     
-    /* getters and setters */
-    std::string getName () const;
-    unsigned int getnPrimitives () const;
-    bool getIndependent () const;
-    std::vector <std::string> getPrimitiveNames() const ;
-    std::set <std::string> getLinksInvolved() const ;
-    ROSEE::JointStates getJointStates() const;
-    std::vector < std::shared_ptr <ROSEE::ActionPrimitive> > getPrimitiveObjects() const;
-    std::vector <unsigned int> getInvolvedJointsCount () const;
+    /**
+     * @brief
+     * @return unsigned int the number of the actions that compose this one
+     */
+    unsigned int numberOfInnerActions () const;
     
-    void printAction () const ; 
-    void emitYaml ( YAML::Emitter&) const;
-    bool fillFromYaml( YAML::Node node );
+    /**
+     * @brief
+     * @return bool true if this action must contain only independent primitives
+     */
+    bool isIndependent () const;
+    
+    /**
+     * @brief
+     * @return std::vector <std::string> all the names that compose this action
+     */
+    std::vector <std::string> getInnerActionsNames() const ;
+    
+    /**
+     * @brief Print info about this action (name, jointpos, inner actions names, and other)
+     */
+    virtual void print () const override;
+    
+    /**
+     * @brief Emit info in a file with yaml format
+     * @param out a YAML::Emitter& object to emit the infos
+     */    
+    virtual void emitYaml ( YAML::Emitter& out) const override;
+    
+    /**
+     * @brief Fill the internal data with infos taken from yaml file. 
+     * @param yamlIt a yamlt iterator to a node which has loaded the file
+     * @return false if some error happened
+     */
+    virtual bool fillFromYaml(  YAML::const_iterator yamlIt ) override;
     
     /** 
-     * @brief function to add another primitive to the composed action. 
-     * @param std::shared_ptr <ROSEE::ActionPrimitive> primitive
-     * @param int as : the index of the actionState that we want to insert in the composed action. 
-     *  the default is the best one. This is due to the fact that a primitive can have different actionState inside 
-     *  (e.g. for the pinchStrong among two tips we can choose among different Jointstates configuration to make the two
-     *  tips collide)
+     * @brief Function to add another action to this one. 
+     * @param action The action to be added to the ActionComposed
+     * @param jointPosIndex (default == 0) the wanted jointPos or \p action to insert. Error the index is greater than the number
+     *      of joint pos in the \p action. First element has index 0. 
+     * @return False if the ActionComposed is \ref independent and we try to add an action that is dependent from one of the already present
      */
-    bool sumPrimitive ( std::shared_ptr <ROSEE::ActionPrimitive> primitive, int as = 0 );
+    virtual bool sumAction ( ROSEE::Action::Ptr action , unsigned int jointPosIndex = 0 );
+    
+    /**
+     * @brief Check if the action composed is empty
+     * 
+     * @return true if empty, false otherwise
+     */
+    bool empty();
+    
+protected:
+    std::vector < std::string > innerActionsNames;
+    unsigned int nInnerActions;
+        
+    bool independent; //true if each primitive must set different joint states
+
+    bool checkIndependency ( ROSEE::Action::Ptr action );
+
     
 };
 }

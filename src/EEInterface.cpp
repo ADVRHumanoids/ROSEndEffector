@@ -24,6 +24,8 @@ ROSEE::EEInterface::EEInterface ( const ROSEE::Parser& p  ) {
     _upper_limits.resize(_joints_num);
     _lower_limits.resize(_joints_num);
     
+    // get the EE name
+    _ee_name = p.getEndEffectorName();
     
     // get the ee description
     _ee_description = p.getFingerJointMap();
@@ -63,6 +65,12 @@ ROSEE::EEInterface::EEInterface ( const ROSEE::Parser& p  ) {
     }
 
 }
+
+std::string ROSEE::EEInterface::getName() {
+    
+    return _ee_name;
+}
+
 
 Eigen::VectorXd ROSEE::EEInterface::getLowerPositionLimits() {
 

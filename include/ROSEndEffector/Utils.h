@@ -20,10 +20,13 @@
 
 #include <cmath>
 #include <memory>
+#include <iostream>
 
 //to find relative path for the config files and create directories
 #include <boost/filesystem.hpp>
 #include <fstream>
+
+
 
 namespace ROSEE
 {
@@ -57,6 +60,51 @@ static std::string getPackagePath() {
     path.remove_filename();
     return path.string() + "/../../";
 }
+
+template <class T>
+static std::vector<std::string> extract_keys(std::map<std::string, T> const& input_map) {
+  std::vector<std::string> retval;
+  for (auto const& element : input_map) {
+    retval.push_back(element.first);
+  }
+  return retval;
+}
+
+/** Return false if two maps have different keys. The type of the keys must be the same obviously */
+template <typename keyType, typename valueType1, typename valueType2>
+bool keys_equal (std::map <keyType, valueType1> const &lhs, std::map<keyType, valueType2> const &rhs) {
+
+    auto pred = [] (decltype(*lhs.begin()) a, decltype(*rhs.begin()) b)
+                   { return (a.first == b.first); };
+
+
+    return lhs.size() == rhs.size()
+        && std::equal(lhs.begin(), lhs.end(), rhs.begin(), pred);
+}
+
+template <typename Map1, typename Map2>
+struct DifferentKeysException : public std::exception {
+    const Map1 *map1;
+    const Map2 *map2;
+    
+    DifferentKeysException(const Map1 *map1, const Map2 *map2) :
+        map1(map1), map2(map2) {}
+        
+    const char * what () const throw () {
+        std::stringstream output;
+        output << "First map keys:\n";
+        for (auto it : *map1) {
+            output << "\t" << it.first << "\n";
+        }
+        output << ("Second map keys:\n");
+        for (auto it : *map2) {
+            output << "\t" << it.first << "\n";
+        }
+        std::cerr << output.str().c_str() << std::endl;
+
+        return "Maps have different keys";
+    }
+};
 
 
 template <typename SignalType>

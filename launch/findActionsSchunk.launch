@@ -1,8 +1,9 @@
 <?xml version="1.0"?>
 <launch>
-  <!-- send urdf to parameter server -->
+  <!-- send urdf to parameter server -->  
+  <!-- We can also use the urdf file in this package config/zrdf folder, but we need anyway the meshes from schunk package -->
   <param name="robot_description" command="$(find xacro)/xacro '--inorder' '$(find schunk_svh_driver)/description/urdf/svh-standalone.urdf.xacro'"/>
-  <param name="robot_description_semantic" textfile="$(find ros_end_effector)/configs/srdf/svh-groupsForROSEE.srdf" />
+  <param name="robot_description_semantic" textfile="$(find ros_end_effector)/configs/srdf/svh-ROSEE.srdf" />
 
     <node type="UniversalFindActions" name="UniversalFindActions" pkg="ros_end_effector" output="screen"/>
 </launch>

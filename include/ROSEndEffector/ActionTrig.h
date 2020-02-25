@@ -28,21 +28,21 @@ namespace ROSEE {
 /**
  * @brief The action of moving some joints (see later) of a single finger in a full clousure position 
  * towards the palm. 
- * The action is unique (joints involved in a certain position: the bound) so @jointStateSetMaxSize == 1
+ * The action is unique (joints involved in a certain position: the bound) so \ref maxStoredActionStates == 1 always
  * Described by:
- *  - a tip (@tip ): the tip of the finger that is involved in the action. So @nLinksInvolved == 1
+ *  - a tip (that is inside \ref fingersInvolved ): the tip of the finger that is involved in the action. So \ref nFingersInvolved == 1
  *  - JointStates position: which set the joints of the finger to a bound to make the finger closes, 
  *    and all the other non-involved joints to zero
- *  - Optional info @actionType (even if is a member of the base class, here is particular). The Trig, TipFlex
- *    and FingFlex have indentical structure, so no necessity to create other class, but necessity of only
- *    discriminate the objects using the actionType.
+ *  - Optional info \ref type (even if is a member of the base class, here is particular). The Trig, TipFlex
+ *    and FingFlex have indentical structure, so ther is no necessity to create different classes, but necessity of only
+ *    discriminate the objects using the \ref Type.
  * 
  * Actually, there are 3 types of action for this class
- * - Trig: The action of fully closing a finger towards the parlm 
+ *  - Trig: The action of fully closing a finger towards the parlm 
  *      (i.e. all joints of a finger set to respective bounds)
- * - TipFlex: The action of fully closing the last part of finger, maintaining the proximal phalanges still
+ *  - TipFlex: The action of fully closing the last part of finger, maintaining the proximal phalanges still
  *      (i.e. the last actuated joint of a finger set to its bound)
- * - FingFlex: The action of fully closing the first part of a finger, maintaing the distal phalanges still, 
+ *  - FingFlex: The action of fully closing the first part of a finger, maintaing the distal phalanges still, 
  *      like moving a human finger maintaining it right
  *      (i.e. the first actuated joint of a finger set to its bound)
  * For each tip:
@@ -52,7 +52,7 @@ namespace ROSEE {
  *   The "sum" of TipFlex and "FingFlex" is equal to the Trig only if the number of actuated not continuos joint
  *   in the finger is 2
  * 
- * @todo instead of @tip , use the finger name for the Trig (i.e. the defined srdf group). or not?
+ * @todo instead of tip , use the finger name for the Trig (i.e. the defined srdf group).
  * 
  * @note We have to understand the direction of joints to make the finger full close. Because full close position
  * can be linked to both lower or upper bound of each joint involved. 
@@ -63,34 +63,46 @@ namespace ROSEE {
  */
 class ActionTrig : public ActionPrimitive 
 {
-private:
-    
-    JointStates jointStates;
-    /** the tip involved in the action. @TODO it should be the finger?*/
-    std::string tip;
-    
+
 public:
     
-    ActionTrig (std::string actionName, ActionType);
-    ActionTrig (std::string actionName, ActionType, std::string, JointStates);
+    ActionTrig (std::string actionName, ActionPrimitive::Type);
+    ActionTrig (std::string actionName, ActionPrimitive::Type, std::string tip, JointPos);
     
-    /** Overriden set and get from the pure virtual functions of the base class @ActionPrimitive 
-     The signature must be equal, even if here we have set and vector of only one element */
-    std::set < std::string > getLinksInvolved() const override;
-    std::vector < JointStates > getActionStates() const override;
-    bool setLinksInvolved (std::set < std::string >) override;
-    bool setActionStates (std::vector < JointStates > ) override;
+    /** 
+     * @brief Overriden get from the pure virtual function of the base class \ref ActionPrimitive 
+     * The signature must be equal, even if here we have set and vector of only one element. For this class
+     * this function simply return a vector which contain a single element. 
+     */
+    std::vector < JointPos > getAllJointPos() const override;
+    
+    /**
+     * @brief Necessary method to know the key used by the maps which store all the Actions of one type. Used by \ref YamlWorker
+     * @return for this class, it return the finger name, inserted in a single-element set because father signature say so
+     */
+    std::set < std::string> getKeyForYamlMap () const override;
 
-    JointStates getActionState() const;
-    bool setActionState (JointStates);
-    std::string getLinkInvolved () const;
-    void setLinkInvolved ( std::string );
+    
+    /** 
+     * @brief Overriden get from the pure virtual function of the base class \ref Action 
+     */
+    JointPos getJointPos () const override;
+    void setJointPos (JointPos);
+
+    /** 
+     * @brief Specific method of trig to simply return a string instead of the full vector \ref fingersInvolved that in this case 
+     * contains only one element
+     */
+    std::string getFingerInvolved () const;
+    void setFingerInvolved ( std::string );
 
     // we are ok with the default functions of the base class ActionPrimitive
     //void printAction () const override;
     //void emitYaml ( YAML::Emitter&) override;
-    //bool fillFromYaml( YAML::const_iterator yamlIt ) override;
-
+    bool fillFromYaml( YAML::const_iterator yamlIt ) override;
+    
+private:
+    JointPos jointPos;
 };
 
 }

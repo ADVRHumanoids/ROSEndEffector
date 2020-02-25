@@ -18,67 +18,79 @@
 
 #include <ROSEndEffector/ActionTrig.h>
 
-ROSEE::ActionTrig::ActionTrig (std::string actionName, ActionType actionType) :
+ROSEE::ActionTrig::ActionTrig (std::string actionName, ActionPrimitive::Type actionType) :
     ActionPrimitive ( actionName, 1, 1, actionType ) { }
 
-ROSEE::ActionTrig::ActionTrig (std::string actionName, ActionType actionType, std::string tip, JointStates js) :
+ROSEE::ActionTrig::ActionTrig (std::string actionName, ActionPrimitive::Type actionType, std::string tip, JointPos jp) :
     ActionPrimitive ( actionName, 1, 1, actionType ) {
         
-    this->tip = tip;
-    jointStates = js;    
+    fingersInvolved.insert(tip);
+    jointPos = jp;   
 }
 
+std::string ROSEE::ActionTrig::getFingerInvolved () const {
+    return *( fingersInvolved.begin() );
+}
 
-std::set < std::string > ROSEE::ActionTrig::getLinksInvolved() const {
- 
-    std::set < std::string> tempSet;
-    tempSet.insert (tip);
+ROSEE::JointPos ROSEE::ActionTrig::getJointPos() const {
+    return jointPos;
+}
+
+std::set<std::string> ROSEE::ActionTrig::getKeyForYamlMap() const {
+    return fingersInvolved;
+}
+
+void ROSEE::ActionTrig::setJointPos(ROSEE::JointPos jointPos) {
+    this->jointPos = jointPos;
+}
+
+std::vector < ROSEE::JointPos > ROSEE::ActionTrig::getAllJointPos() const{
     
-    return tempSet;    
-}
-
-std::string ROSEE::ActionTrig::getLinkInvolved () const {
-    return tip;
-}
-
-
-std::vector < ROSEE::JointStates > ROSEE::ActionTrig::getActionStates() const{
-    
-    std::vector < JointStates> retVect {jointStates};
+    std::vector < JointPos > retVect {jointPos};
     return retVect;
 }
 
-ROSEE::JointStates ROSEE::ActionTrig::getActionState() const{    
-    return jointStates;
+
+void ROSEE::ActionTrig::setFingerInvolved (std::string fingName ) {
+    fingersInvolved.clear();
+    fingersInvolved.insert(fingName);
 }
 
+bool ROSEE::ActionTrig::fillFromYaml (  YAML::const_iterator yamlIt  ) {
 
-bool ROSEE::ActionTrig::setLinksInvolved (std::set < std::string > setTips) {
-    
-    if (setTips.size() != 1 ) {
-        return false;
-    } else {
-        std::set<std::string>::iterator it = setTips.begin();
-        tip = *it;
+
+    std::vector <std::string> fingInvolvedVect = yamlIt->first.as <std::vector < std::string >> ();
+    for (const auto &it : fingInvolvedVect) {
+        fingersInvolved.insert(it);
     }
-    return true;
-}
 
-void ROSEE::ActionTrig::setLinkInvolved (std::string linkName ) {
-    tip = linkName;
-}
+    for ( YAML::const_iterator element = yamlIt->second.begin(); element != yamlIt->second.end(); ++element) {
+        
+        std::string key = element->first.as<std::string>();
+        if ( key.compare ("ActionName") == 0 ){
+            name = element->second.as < std::string > ();
+            
+        } else  if (key.compare("JointsInvolvedCount") == 0) {
+            jointsInvolvedCount = element->second.as < JointsInvolvedCount > ();
+            
+        } else if (key.compare(0, 12, "ActionState_") == 0) { //compare 12 caracters from index 0 of key
+            for(YAML::const_iterator asEl = element->second.begin(); asEl != element->second.end(); ++asEl) {
+                //asEl can be the map JointStates or the map Optional
 
-bool ROSEE::ActionTrig::setActionStates (std::vector < ROSEE::JointStates > jsVect) {
-    
-    if (jsVect.size() != 1){
-        return false;
+                if (asEl->first.as<std::string>().compare ("JointPos") == 0 ) {
+                    jointPos =  asEl->second.as < JointPos >()  ;
+                } else if (asEl->first.as<std::string>().compare ("Optional") == 0 ) {
+
+                    //an optional is present, errrrrrrr TODO
+
+                } else {
+                    //ERRROr
+                    return false;
+                }
+            }
+        } else {
+            //TODO print errorrr
+        }
     }
-    jointStates = jsVect.at(0);
-    return true;
-}
-
-bool ROSEE::ActionTrig::setActionState (ROSEE::JointStates js) {
-    
-    jointStates = js;
     return true;
 }

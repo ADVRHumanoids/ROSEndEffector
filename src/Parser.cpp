@@ -139,7 +139,8 @@ bool ROSEE::Parser::parseSRDF() {
         // NOTE only one chain per group
         if ( current_finger_group.chains_.size() != CHAIN_PER_GROUP )  {
 
-            ROS_ERROR_STREAM ( "for the finger chain groups you can specify only one chain per group in your SRDF check " << current_finger_group.name_.c_str() << "group" );
+            ROS_ERROR_STREAM ( "for the finger chain groups you can specify only one chain per group in your SRDF check " << 
+                               current_finger_group.name_.c_str() << " group" );
             return false;
         }
 
@@ -157,7 +158,7 @@ bool ROSEE::Parser::parseSRDF() {
 }
 
 
-    bool ROSEE::Parser::parseURDF() {
+bool ROSEE::Parser::parseURDF() {
 
     std::string xml_string;
     std::fstream xml_file ( _urdf_path.c_str(), std::fstream::in );
@@ -255,13 +256,21 @@ bool ROSEE::Parser::configure() {
     bool ret = true;
     if ( getROSEndEffectorConfig() ) {
 
-        if ( parseURDF() && parseSRDF() ) {
-
-            // build the EEInterface
-//             _ee_interface = std::make_shared<ROSEE::EEInterface>( this );
-            ROS_INFO_STREAM ( "ROSEndEffector Parser successfully configured using config file:  " << _ros_ee_config_path );
+        if ( parseURDF() ) {
+            
+            if ( parseSRDF() ) {
+                
+                ROS_INFO_STREAM ( "ROSEndEffector Parser successfully configured using config file:  " << _ros_ee_config_path );
+            
+            } else {
+            
+                ROS_ERROR_STREAM ( "ROSEndEffector Parser error while parsing SRDF");
+                ret = false;
+            }
+            
         } else {
-
+            
+            ROS_ERROR_STREAM ( "ROSEndEffector Parser error while parsing URDF");
             ret = false;
         }
 
@@ -325,8 +334,6 @@ int ROSEE::Parser::getActuatedJointsNumber() const {
     return _joints_num;
 }
 
-
-
 std::map< std::string, std::vector< std::string > > ROSEE::Parser::getFingerJointMap() const {
 
     return _finger_joint_map;
@@ -341,6 +348,12 @@ void ROSEE::Parser::getActuatedJointsMap ( std::map< std::string, std::vector< s
 
     finger_joint_map = _finger_joint_map;
 }
+
+std::string ROSEE::Parser::getEndEffectorName() const {
+
+    return _urdf_model->getName();
+}
+
 
 
 

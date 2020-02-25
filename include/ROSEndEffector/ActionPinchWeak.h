@@ -30,71 +30,79 @@ namespace ROSEE {
 /**
  * @brief The action of pinch with two tips. The two tips must not collide ever 
  * (otherwise we have a StrongPinch). They only need to move towards each other moving the relative joints.
- * This PinchWeak is created because also if the tips do not collide we can have a pinch (that can take an object
- * of a minimum size of @distance ).
+ * This PinchWeak is created because also if the tips do not collide (i.e. there is not a \ref ActionPinchStrong)
+ * we can have anyway a pinch at least to take object of a certain minimum size.
  * All the non involved fingers are set in the default state.
  * A pinchWeak is defined by:
- *  - 2 tips (@tipsPair ), so @nLinksInvolved == 2 (members of base class @PinchGeneric )
- *  - JointStates position: where the minimum distance among two tips is found (inside @statesInfoSet )
- *  - Optional info (inside @statesInfoSet ): the minimum distance found between the two tips.
- *    The distance is used to order, for each pair of tips, the actions in the statesInfoSet 
- *    (make sense if @jointStateSetMaxSize > 1 ): 
+ *  - 2 tips ( that are inside \ref fingersInvolved ), so \ref nFingersInvolved == 2 ( members of base class \ref Action )
+ *  - JointStates position: where the collision happens (inside \ref actionStates )
+ *  - Optional info (inside \ref actionStates ): the minimum distance found between the two tips.
+ *    The distance is used to order, the actions in the \ref actionStates set (make sense if \ref maxStoredActionStates > 1 ): 
  *    the less the distance is, the more we say the pinchWeak is good
- * 
  */
 class ActionPinchWeak : public ActionPinchGeneric
 {
     
 public:
     
-    /* A pair to "link" the jointStates with the optional info 'distance' */
-    typedef std::pair <JointStates, double> StateWithDistance; 
+    /**
+     * @brief A pair to "link" the JointPos with the optional info 'distance' 
+     */
+    typedef std::pair <JointPos, double> StateWithDistance; 
     
     ActionPinchWeak();
-    ActionPinchWeak(unsigned int);
-    ActionPinchWeak(std::string, std::string);
-    ActionPinchWeak (std::pair <std::string, std::string>, JointStates, double distance );
+    ActionPinchWeak ( unsigned int maxStoredActionStates );
+    ActionPinchWeak ( std::string tip1, std::string tip2);
+    ActionPinchWeak ( std::pair <std::string, std::string>, JointPos, double distance );
     
-    /** Overriden set and get from the pure virtual functions of the base class @ActionPrimitive */
-    std::vector < ROSEE::JointStates > getActionStates() const override;
-    bool setActionStates (std::vector < ROSEE::JointStates > ) override;
+    JointPos getJointPos () const override;
+    JointPos getJointPos (unsigned int index) const;
     
-    /** Specific get for this action to return the state with distance info */
-    std::vector< ROSEE::ActionPinchWeak::StateWithDistance > getActionStatesWithDistance() const;
+    std::vector < ROSEE::JointPos > getAllJointPos () const override;    
+    
+    /** 
+     * @brief Specific get for this action to return the state with distance info 
+     * @return The vector (of size \ref maxStoredActionStates) containing all the StateWithDistance objects
+     */
+    std::vector < ROSEE::ActionPinchWeak::StateWithDistance > getActionStates() const;
 
     
     /** 
+     * @brief function to insert a single action in the \ref actionStates set of possible action. 
+     * If the action is not so good (based on distance) the action is not inserted and 
+     * the function return false 
+     * @param JointPos The joints position
+     * @param distance the distance from the two tips.
+     * @return TRUE if the action is good and is inserted in the setActionStates
+     *         FALSE if the action given as param was not good as the others in the \ref actionStates
+     *           and the set was already full (\ref maxStoredActionStates )
      */
-    bool insertActionState (JointStates, double distance);
+    bool insertActionState (JointPos, double distance);
 
     /* For the pinch, we override these function to print, emit and parse the optional info Contact,
      which is specific of the pinch */
-    void printAction () const override;
-    void emitYaml ( YAML::Emitter&) override;
+    void print () const override;
+    void emitYaml ( YAML::Emitter&) const override;
     bool fillFromYaml( YAML::const_iterator yamlIt ) override;
     
 private:
     
-    /** struct to put in order the @statesInfoSet. The first elements are the ones with lesser distance 
+    /**
+     * @brief struct to put in order the \ref actionStates set. The first elements are the ones with lesser distance 
      */
     struct distComp {
         bool operator() (const StateWithDistance& a, const StateWithDistance& b) const
         {return (std::abs(a.second) < std::abs(b.second) );}
     };
     
-    /** 
-     * @brief function to insert a single action in the setActionStates of possible action. 
-     * If the action is not so good (based on distance) the action is not inserted and 
-     * the function return false 
-     * @param JointStates The hand configuration
-     * @param collision_detection::Contact the contact associated with the action
-     * @return TRUE if the action is good and is inserted in the setActionStates
-     *         FALSE if the action given as param was not good as the others in the setActionStates
-     *           and the set was already full (@jointStateSetMaxSize )
-     */
-    std::set < StateWithDistance, distComp > statesInfoSet;
-    
     bool emitYamlForDistance ( double distance, YAML::Emitter& );
+    
+    /** 
+     * @brief For each pair, we want a set of action because we want to store (in general) more possible way
+     * to do that action. The PinchWeak among two tips can theoretically be done in infinite ways, we store 
+     * the best ways found (ordering them by the distance between fingertips)
+     */
+    std::set < StateWithDistance, distComp > actionStates;
 
 };
 
