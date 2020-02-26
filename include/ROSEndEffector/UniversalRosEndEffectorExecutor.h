@@ -38,7 +38,6 @@
 #include <ROSEndEffector/ActionComposed.h>
 
 //for services to gui
-#include <std_srvs/Empty.h>
 #include <rosee_msg/ActionsInfo.h> //service
 #include <rosee_msg/ActionInfo.h>  //message
 
@@ -80,7 +79,7 @@ private:
     bool init_grapsing_primitive_subscribers();
     
     bool init_actionsInfo_services() ;
-    bool actionsInfoCallback (std_srvs::Empty::Request& request,
+    bool actionsInfoCallback (rosee_msg::ActionsInfo::Request& request,
         rosee_msg::ActionsInfo::Response& response);
     
     ros::NodeHandle _nh;
@@ -119,6 +118,7 @@ private:
     
     //for service info to gui
     std::vector<rosee_msg::ActionInfo> _actionsInfoVect;
+    ros::ServiceServer _ros_server_actionsInfo;
     
 
 };

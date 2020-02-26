@@ -70,6 +70,45 @@ static std::vector<std::string> extract_keys(std::map<std::string, T> const& inp
   return retval;
 }
 
+/** 
+ * @brief Extract all the string in the set keys of a map. All string are put togheter so
+ * the original meaning of each set is lost
+ * @param input_map the map where extract the keys
+ * @param max_string_number the max number of different string among all the set keys. 
+ *      Useful to not iterate all the map if not necessary. With default value = 0 all 
+ *      map is iterated.
+ * @return vector of extracted string of set keys (string in this vect will be unique)
+ */
+template <class T>
+static std::vector<std::string> extract_keys_unique(
+    std::map<std::set<std::string>, T> const& input_map, unsigned int max_string_number = 0) {
+    
+    std::set<std::string> allStrings;
+    // if else so we do not check in the for the max_string_number if it is not used (ie ==0)
+
+    if (max_string_number == 0) {
+        for (auto const& element : input_map) {
+            allStrings.insert( element.first.begin(), element.first.end() );
+        }
+            
+    } else {
+        for (auto const& element : input_map) {
+            allStrings.insert(element.first.begin(), element.first.end());
+            if (max_string_number == allStrings.size()){
+                break;
+            }
+            if (max_string_number < allStrings.size() ) {
+                std::cerr << "[ERROR]" << __func__ << " You passed " << max_string_number
+                << " but I found more unique strings in the set keys ( " << allStrings.size()
+                << " found)" << std::endl;
+                return std::vector<std::string>();
+            }
+        }
+    }
+    std::vector<std::string> retval (allStrings.begin(), allStrings.end());
+    return retval;
+}
+
 /** Return false if two maps have different keys. The type of the keys must be the same obviously */
 template <typename keyType, typename valueType1, typename valueType2>
 bool keys_equal (std::map <keyType, valueType1> const &lhs, std::map<keyType, valueType2> const &rhs) {
