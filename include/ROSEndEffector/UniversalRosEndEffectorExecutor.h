@@ -38,7 +38,6 @@
 #include <ROSEndEffector/ActionComposed.h>
 
 //for services to gui
-#include <std_srvs/Empty.h>
 #include <rosee_msg/ActionsInfo.h> //service
 #include <rosee_msg/ActionInfo.h>  //message
 
