@@ -37,6 +37,11 @@
 #include <ROSEndEffector/ActionPrimitive.h>
 #include <ROSEndEffector/ActionComposed.h>
 
+//for services to gui
+#include <std_srvs/Empty.h>
+#include <rosee_msg/ActionsInfo.h> //service
+#include <rosee_msg/ActionInfo.h>  //message
+
 
 namespace ROSEE
 {
@@ -74,6 +79,10 @@ private:
 
     bool init_grapsing_primitive_subscribers();
     
+    bool init_actionsInfo_services() ;
+    bool actionsInfoCallback (std_srvs::Empty::Request& request,
+        rosee_msg::ActionsInfo::Response& response);
+    
     ros::NodeHandle _nh;
     ros::Timer _loop_timer;
 
@@ -107,6 +116,9 @@ private:
     std::map<std::set<std::string>, ROSEE::ActionPrimitive::Ptr> _fingFlexParsedMap;
     
     ROSEE::ActionComposed _graspParsedMap;
+    
+    //for service info to gui
+    std::vector<rosee_msg::ActionInfo> _actionsInfoVect;
     
 
 };

@@ -77,6 +77,9 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
 
     // primitives
     init_grapsing_primitive_subscribers();
+    
+    // services (only for gui now)
+    init_actionsInfo_services();
 
 }
 
@@ -220,6 +223,50 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive_subscribers
 
     return true;
 }
+
+bool ROSEE::UniversalRosEndEffectorExecutor::init_actionsInfo_services() {
+    
+    ROS_INFO_STREAM ( "PINCHES-STRONG:" );
+    
+    rosee_msg::ActionInfo actInfo;
+    actInfo.action_name = _pinchParsedMap.begin()->second->getName();
+    actInfo.topic_name = "pinch"; //TODO define name topics
+    actInfo.seq = 0; //TODO check if necessary the seq in this msg
+    
+    //TODO an utility to extract keys when type of key is a set?
+    std::set<std::string> pinchableFingers; // a set so no duplicates
+    for ( auto &i : _pinchParsedMap ) {
+        if (pinchableFingers.size() >= _ee->getFingers().size() ) {
+            //all possible fingers stored, break
+            break;
+        }
+        pinchableFingers.insert(i.first.begin(), i.first.end());
+    }
+    
+    actInfo.selectable_names.resize(pinchableFingers.size());
+    std::copy ( pinchableFingers.begin(), pinchableFingers.end(), 
+                actInfo.selectable_names.begin() );
+    
+    _actionsInfoVect.push_back(actInfo);
+    
+    ros::ServiceServer ros_server = _nh.advertiseService("/rosee/ActionsInfo", 
+        &ROSEE::UniversalRosEndEffectorExecutor::actionsInfoCallback, this);
+    
+    return true;
+
+}
+
+bool ROSEE::UniversalRosEndEffectorExecutor::actionsInfoCallback(
+    std_srvs::Empty::Request& request,
+    rosee_msg::ActionsInfo::Response& response) {
+    
+    //here we only send the actionsInfo vector, it is better to build it not in this clbk
+    
+    response.actionsInfo = _actionsInfoVect;
+    return true;
+    
+}
+    
 
 
 void ROSEE::UniversalRosEndEffectorExecutor::fill_publish_joint_states() {
