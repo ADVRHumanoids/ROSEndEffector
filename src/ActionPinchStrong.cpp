@@ -96,7 +96,7 @@ bool ROSEE::ActionPinchStrong::insertActionState (ROSEE::JointPos jp, collision_
         //max capacity reached, we have to delete the last one
         auto it = pairRet.first;        
         
-        if (++(it) == actionStates.end() ){
+        if ( (++it) == actionStates.end() ){
            // the new inserted is the last one and has to be erased
             actionStates.erase(pairRet.first);
             return false;

@@ -154,6 +154,9 @@ add_library(ActionTrig
 add_library(ActionMoreTips
     src/ActionMoreTips.cpp
 )
+add_library(ActionMultiplePinchStrong
+    src/ActionMultiplePinchStrong.cpp
+)
 add_library(ActionGeneric
     src/ActionGeneric.cpp 
 )
@@ -241,6 +244,10 @@ target_link_libraries(ActionTrig
 
 target_link_libraries(ActionMoreTips
     ActionPrimitive
+)
+
+target_link_libraries(ActionMultiplePinchStrong
+    ActionPinchGeneric
 )
 
 target_link_libraries(ActionGeneric

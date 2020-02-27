@@ -231,7 +231,7 @@ std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong > ROS
         planning_scene.checkSelfCollision(collision_request, collision_result, kinematic_state, acm);
         
         if (collision_result.collision) { 
-
+            
             //for each collision with this joints state...
             for (auto cont : collision_result.contacts){
                 
@@ -247,7 +247,7 @@ std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong > ROS
                 }
 
                 JointsInvolvedCount jointsInvolvedCount = setOnlyDependentJoints(cont.first, &jointPos);
-                
+
                 //create the actionPinch
                 ActionPinchStrong pinch (cont.first, jointPos, cont.second.at(0) );
                 pinch.setJointsInvolvedCount ( jointsInvolvedCount );
