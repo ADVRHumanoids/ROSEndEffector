@@ -271,6 +271,7 @@ target_link_libraries(FindActions
     ActionTrig
     ActionPinchWeak
     ActionMoreTips
+    ActionMultiplePinchStrong
 )
 
 target_link_libraries(ParserMoveIt

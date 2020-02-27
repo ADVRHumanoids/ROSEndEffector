@@ -10,10 +10,12 @@
 #include <ROSEndEffector/ActionPinchWeak.h>
 #include <ROSEndEffector/ActionTrig.h>
 #include <ROSEndEffector/ActionMoreTips.h>
+#include <ROSEndEffector/ActionMultiplePinchStrong.h>
 
 
 #define N_EXP_COLLISION 5000 //5000 is ok
 #define N_EXP_DISTANCES 5000 //? is ok
+#define N_EXP_COLLISION_MULTPINCH 1000
 #define DEFAULT_JOINT_POS 0.0
 
 namespace ROSEE
@@ -43,6 +45,11 @@ public:
     std::pair <  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong >, 
                  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak >  > 
                  findPinch ( std::string path2saveYaml = "" );
+            
+    /**TODO add doc also for its support functions
+     */
+    std::map < std::set <std::string>, ROSEE::ActionMultiplePinchStrong > fingMultiplePinch (
+        unsigned int nFinger, std::string path2saveYaml = "");
                  
     /**
      * @brief Function to look for trigs (trig, tipFlex and fingFlex). The type of trig to be looked for is choosen thanks
@@ -90,6 +97,8 @@ private:
      */
     void checkWhichTipsCollideWithoutBounds (
         std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak >* mapOfWeakPinches);
+    
+    std::map <std::set<std::string>, ROSEE::ActionMultiplePinchStrong> checkCollisionsForMultiplePinch(unsigned int nFinger);
 
     /**
      * @brief Support function to remove the joint limits from the model. This is done when looking for Weak Pinches.
@@ -174,7 +183,11 @@ private:
      * @return JointsInvolvedCount, the map where each element is relative at one joint (joint name is the key).
      * The value is the number of times that joint is used, for primitive actions can be only 0 or 1
      */
-    ROSEE::JointsInvolvedCount setOnlyDependentJoints(std::pair < std::string, std::string > tipsNames, JointPos *Jstates);
+    ROSEE::JointsInvolvedCount setOnlyDependentJoints(std::pair < std::string, std::string > tipsNames, JointPos *jPos);
+    
+    
+    ROSEE::JointsInvolvedCount setOnlyDependentJoints( std::set< std::string > tipsNames, 
+                                                       JointPos *jPos);
     
     /**
      * @brief Utility function to take the actuated joint positions from a \p kinematic_state and returns the same info as a \ref JointPos map
