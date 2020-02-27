@@ -40,6 +40,7 @@
 //for services to gui
 #include <rosee_msg/ActionsInfo.h> //service
 #include <rosee_msg/ActionInfo.h>  //message
+#include <rosee_msg/SelectablePairInfo.h>  //message
 
 
 namespace ROSEE
@@ -81,6 +82,10 @@ private:
     bool init_actionsInfo_services() ;
     bool actionsInfoCallback (rosee_msg::ActionsInfo::Request& request,
         rosee_msg::ActionsInfo::Response& response);
+    bool selectablePairInfoCallback( rosee_msg::SelectablePairInfo::Request& request,
+                                     rosee_msg::SelectablePairInfo::Response& response);
+    void findPossiblePinchPairs ();
+
     
     ros::NodeHandle _nh;
     ros::Timer _loop_timer;
@@ -119,6 +124,9 @@ private:
     //for service info to gui
     std::vector<rosee_msg::ActionInfo> _actionsInfoVect;
     ros::ServiceServer _ros_server_actionsInfo;
+    ros::ServiceServer _ros_server_selectablePairInfo;
+    std::map <std::string, std::set<std::string> > pairedMap;
+
     
 
 };

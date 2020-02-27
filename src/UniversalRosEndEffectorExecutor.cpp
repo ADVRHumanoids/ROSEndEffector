@@ -226,6 +226,7 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive_subscribers
 
 bool ROSEE::UniversalRosEndEffectorExecutor::init_actionsInfo_services() {
         
+    //TODO add all action with for looping all the files present in the folder
     rosee_msg::ActionInfo actInfo;
     actInfo.action_name = _pinchParsedMap.begin()->second->getName();
     actInfo.topic_name = "pinch"; //TODO define name topics
@@ -234,6 +235,7 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_actionsInfo_services() {
     actInfo.selectable_names = ROSEE::Utils::extract_keys_unique(_pinchParsedMap,  
                                                                  _ee->getFingers().size());
     _actionsInfoVect.push_back(actInfo);
+    findPossiblePinchPairs();
     
     actInfo = rosee_msg::ActionInfo(); //clear container
     actInfo.action_name = _graspParsedMap.getName(); //TODO why this is called map?
@@ -250,6 +252,9 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_actionsInfo_services() {
     
     _ros_server_actionsInfo = _nh.advertiseService("ActionsInfo", 
         &ROSEE::UniversalRosEndEffectorExecutor::actionsInfoCallback, this);
+    
+    _ros_server_selectablePairInfo = _nh.advertiseService("SelectablePairInfo", 
+        &ROSEE::UniversalRosEndEffectorExecutor::selectablePairInfoCallback, this);
     
     return true;
 
@@ -268,6 +273,42 @@ bool ROSEE::UniversalRosEndEffectorExecutor::actionsInfoCallback(
     response.actionsInfo = _actionsInfoVect;
     return true;
     
+}
+
+bool ROSEE::UniversalRosEndEffectorExecutor::selectablePairInfoCallback(
+    rosee_msg::SelectablePairInfo::Request& request,
+    rosee_msg::SelectablePairInfo::Response& response) {
+    
+    //request.action_name not used now
+    auto it = pairedMap.find(request.element_name) ;
+    
+    if (it == pairedMap.end()) {
+        return false;
+    }
+    
+    for (auto fing : it->second ) {
+        response.pair_elements.push_back (fing);
+    }
+    
+    return true;
+        
+}
+
+void ROSEE::UniversalRosEndEffectorExecutor::findPossiblePinchPairs () {
+                                                 
+    for (auto it : _pinchParsedMap) {
+    
+        for (auto fing : it.first) { //.first is a set
+            
+            //TODO we will insert all the set as value, this means that also will include the key itself,
+            // with the meaning : finger_1 can pinch with finger_1: 
+            if (pairedMap.count(fing) == 0 ) {
+               pairedMap.insert(std::make_pair(fing, it.first)); 
+            } else {
+                pairedMap.at(fing).insert (it.first.begin(), it.first.end());
+            }
+        }
+    }
 }
     
 
