@@ -90,7 +90,7 @@ int main ( int argc, char **argv ) {
     }
 
     
-    /** **************************** COMPOSITE ACTION THINGS ************************************************    
+    /** **************************** COMPOSITE ACTION THINGS *************************************************/    
     
     std::cout << "A composed action with Independent inner action: " << std::endl;
 
@@ -134,7 +134,7 @@ int main ( int argc, char **argv ) {
         std::cout << "The composed action with dependent inner action (parsed from generated yaml file):" << std::endl;
         actionParsed->print();
     }
-*/
+
     
     /** **************************** ACTION MORE TIPS TO MOVE MORE TIPS WITH SINGLE JOINT ****************************/
     unsigned int nFinger = 5;

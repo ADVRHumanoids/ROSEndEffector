@@ -230,6 +230,7 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_actionsInfo_services() {
     actInfo.action_name = _pinchParsedMap.begin()->second->getName();
     actInfo.topic_name = "pinch"; //TODO define name topics
     actInfo.seq = 0; //TODO check if necessary the seq in this msg
+    actInfo.max_selectable = _pinchParsedMap.begin()->first.size(); //the size of the key set
     actInfo.selectable_names = ROSEE::Utils::extract_keys_unique(_pinchParsedMap,  
                                                                  _ee->getFingers().size());
     _actionsInfoVect.push_back(actInfo);
@@ -237,6 +238,8 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_actionsInfo_services() {
     actInfo = rosee_msg::ActionInfo(); //clear container
     actInfo.action_name = _graspParsedMap.getName(); //TODO why this is called map?
     actInfo.topic_name = "grasp"; //TODO define name topics
+    actInfo.max_selectable = 0; //zero means no things to select with checkboxes
+
     actInfo.seq = 0; //TODO check if necessary the seq in this msg
 
     _actionsInfoVect.push_back(actInfo);
