@@ -27,7 +27,9 @@
 namespace ROSEE {
 
 /**
- * @brief TODO CHECK ALL DOC FOR THIS
+ * @brief TODO CHECK ALL DOC FOR THIS, sono ancora le copie di altra classe
+ * @todo discussion sul usare > o < per storare actionState... sembra che depth minore
+ * è meglio se uso strict... spiega perchè
  */
 class ActionMultiplePinchStrong : public ActionPinchGeneric
 {
@@ -83,7 +85,7 @@ private:
      */
     struct depthComp {
         bool operator() (const StateWithDepth& a, const StateWithDepth& b) const
-        {return (std::abs(a.second) > std::abs(b.second) );}
+        {return (std::abs(a.second) < std::abs(b.second) );}
     };
     
     /** 

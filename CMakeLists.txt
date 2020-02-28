@@ -222,6 +222,7 @@ target_link_libraries(YamlWorker
     ActionTrig
     ActionPinchWeak
     ActionMoreTips
+    ActionMultiplePinchStrong
     ActionComposed
     ActionTimed
 )

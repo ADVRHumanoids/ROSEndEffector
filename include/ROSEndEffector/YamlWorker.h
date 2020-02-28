@@ -33,6 +33,8 @@
 #include <ROSEndEffector/ActionPinchWeak.h>
 #include <ROSEndEffector/ActionTrig.h>
 #include <ROSEndEffector/ActionMoreTips.h>
+#include <ROSEndEffector/ActionMultiplePinchStrong.h>
+
 #include <ROSEndEffector/ActionComposed.h>
 #include <ROSEndEffector/ActionTimed.h>
 

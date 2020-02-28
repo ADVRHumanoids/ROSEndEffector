@@ -117,6 +117,10 @@ std::map < std::set < std::string>, ROSEE::ActionPrimitive::Ptr > ROSEE::YamlWor
             ptr = std::make_shared <ActionMoreTips>(actionName, nFinger);
             break;
         }
+        case ActionPrimitive::Type::MultiplePinchStrong: {
+            ptr = std::make_shared <ActionMultiplePinchStrong> ();
+            break;
+        }
 
         default : {
             std::cout << "[ERROR YAMLPARSER]: " << actionType << " : type not found" << std::endl;

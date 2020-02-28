@@ -19,16 +19,16 @@
 #include <ROSEndEffector/ActionMultiplePinchStrong.h>
 
 ROSEE::ActionMultiplePinchStrong::ActionMultiplePinchStrong() : 
-    ActionPinchGeneric ("MultiplePinchStrong", 2, 3, ActionPrimitive::Type::MultiplePinchStrong) { }
+    ActionPinchGeneric ("multiplePinchStrong", 2, 3, ActionPrimitive::Type::MultiplePinchStrong) { }
 
 ROSEE::ActionMultiplePinchStrong::ActionMultiplePinchStrong(
     unsigned int jointStateSetMaxSize) : 
-    ActionPinchGeneric ("MultiplePinchStrong", 2, jointStateSetMaxSize, ActionPrimitive::Type::MultiplePinchStrong) { }
+    ActionPinchGeneric ("multiplePinchStrong", 2, jointStateSetMaxSize, ActionPrimitive::Type::MultiplePinchStrong) { }
 
 ROSEE::ActionMultiplePinchStrong::ActionMultiplePinchStrong (
     std::set <std::string> fingerNamesSet, 
     JointPos jp, double depthSum) :
-    ActionPinchGeneric ( ("MultiplePinchStrong-" + std::to_string(fingerNamesSet.size())),
+    ActionPinchGeneric ( ("multiplePinchStrong-" + std::to_string(fingerNamesSet.size())),
                         2, 3, ActionPrimitive::Type::MultiplePinchStrong )  {
 
     //different from insertState, here we are sure the set is empty (we are in costructor)

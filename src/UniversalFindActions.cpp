@@ -203,7 +203,26 @@ int main ( int argc, char **argv ) {
     newCasual->print();
     */
     
-    // *********************************************** DEBIGGGGGGGGGGGGGGGGGGGGGGGGGG ********************************/
+    
+    /******* NEW PRIMITIVE MULTIPINCH ***********************************/
+    std::cout << std::endl << std::endl << "NEW MULTIPINCH" << std::endl;
+    auto mulPinch = actionsFinder.findMultiplePinch(3);
+    for (auto &it : mulPinch) {
+        for (auto itt : it.first) {
+            std::cout << itt << std::endl;
+        }
+        it.second.print();
+    }
+    
+    //parsing  
+    std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > multPinchParsedMap = 
+        yamlWorker.parseYamlPrimitive("multiplePinchStrong-3.yaml",
+                                    ROSEE::ActionPrimitive::Type::MultiplePinchStrong);
+        
+    std::cout << "DEBUG MULTIPINCH PARSED: " << std::endl;
+    for (auto &it : multPinchParsedMap) {
+        it.second->print();
+    }
 
 
     return 0;
