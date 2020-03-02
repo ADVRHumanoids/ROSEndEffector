@@ -27,16 +27,30 @@
 namespace ROSEE {
 
 /**
- * @brief TODO CHECK ALL DOC FOR THIS, sono ancora le copie di altra classe
- * @todo discussion sul usare > o < per storare actionState... sembra che depth minore
- * è meglio se uso strict... spiega perchè
+ * @brief Class to describe the action of "pinching" with more than 2 tips (with 2 tips there is the \ref ActionPinchStrong and 
+ *   \ref ActionPinchWeak
+ *   The number of the finger used is fixed when the object is costructed, and it is stored in the father member \ref nFingersInvolved
+ * 
+ * A pinchMultipleStrong is defined by:
+ *  - X tips ( that are inside \ref fingersInvolved member of \ref Action ), so \ref nFingersInvolved == X ( members of base class \ref ActionPrimitive )
+ *  - JointStates position: where the collision among the tips happens (inside \ref actionStates )
+ *  - Optional info (inside \ref actionStates ): the sum of the depth of compenetration of all the tip pairs that collide.
+ * 
+ * @note When exploring the model to find this action, there are two possibility: we can look for a position where all the X fingertips
+ *   collide among each other (causing EXACTLY bynomial_coeff(X, 2) collisions pair), or, with a "less strict" condition, a position where
+ *   not all fingertips must collide between each other (causing AT LEAST X-1 collisions). 
+ *   The default is the "more strict" condition, because it can find "better looking" mulPinches, even if obviously we find less possible 
+ *   way to perform the action. With this, it seems better to order the actionState considering as "best" the position where the tips collide less,
+ *   i.e. where the depthSum is lower. This is the opposite from the normal strong pinch.
+ *   This cause anyway a collision, but not a ugly one where the tips compenetrate too much. This thing can change if we invert the sign in the 
+ *   \ref depthComp comparison
  */
 class ActionMultiplePinchStrong : public ActionPinchGeneric
 {
     
 public:
     
-    /** @brief A pair to "link" the JointPos with infos about the collision among the two tips */
+    /** @brief A pair to "link" the JointPos with the depthSum info to order the StateWithDepth in the actionState set*/
     typedef std::pair <JointPos, double> StateWithDepth; 
     
     ActionMultiplePinchStrong();
@@ -49,39 +63,32 @@ public:
     std::vector < ROSEE::JointPos > getAllJointPos () const override;
     
     /** 
-     * @brief Specific get for the ActionMultiplePinchStrong to return the state with contact info 
-     * @return The vector (of size \ref maxStoredActionStates) containing all the StateWithContact objects
+     * @brief Specific get for the ActionMultiplePinchStrong to return the state with the paired depthSum
+     * @return The vector (of size \ref maxStoredActionStates) containing all the StateWithDepth objects
      */
     std::vector < ROSEE::ActionMultiplePinchStrong::StateWithDepth > getActionStates() const;
     
     /** 
      * @brief function to insert a single action in the \ref actionStates set of possible action. 
-     * If the action is not so good (based on depth now) the action is not inserted and 
-     * the function return false 
+     *   If the action is not so good (depthSum) the action is not inserted and 
+     *   the function return false 
      * @param JointPos The joints position
-     * @param collision_detection::Contact the contact associated with the action
-     * @return TRUE if the action is good and is inserted in the setActionStates
-     *         FALSE if the action given as param was not good as the others in the setActionStates
+     * @param depthSum the sum of all depth of collisions pairs
+     * @return TRUE if the action is good and is inserted in the set \ref actionStates
+     *         FALSE if the action given as argument was not good as the others in the set \ref actionStates
      *           and the set was already full (\ref maxStoredActionStates)
      */
     bool insertActionState (JointPos, double depthSum);
 
-    /** For the pinch, we override these function to print, emit and parse the optional info Contact,
-     which is specific of the pinch */
     void print () const override;
     void emitYaml ( YAML::Emitter& ) const override;
     bool fillFromYaml( YAML::const_iterator yamlIt ) override;
     
 private:
 
-    
     /** 
-     * @brief struct to put in order the actionStates. The first elements are the ones 
-     * with greater depth
-     * @FIX, even if is almost impossible, two different contact with same depth will be considered equal
-     * with this definition of depthComp. Theoretically they are equal only if the joint status are equal 
-     * (of only joints that act for the collision). In fact, we should have the possibility to have two 
-     * contact with the same depth (if joint statuses are different), they will be equally good
+     * @brief struct to put in order the actionStates.
+     *   with "<" we put as best the position that has less sumDepth.  
      */
     struct depthComp {
         bool operator() (const StateWithDepth& a, const StateWithDepth& b) const
@@ -89,9 +96,9 @@ private:
     };
     
     /** 
-     * @brief For each pair, we want a set of action because we want to store (in general) more possible way
-     * to do that action. The pinch among two tips can theoretically be done in infinite ways, we store 
-     * the best ways found (ordering them by the depth of fingertips compenetration)
+     * @brief For each multiple pinch possible, we want a set of action because we want to store (in general) more possible way
+     * to do that action with that X fingers. The pinch among X tips can theoretically be done in infinite ways, so we store 
+     * the best ways found (ordering them with depthSum of fingertips compenetration)
      */
     std::set < StateWithDepth, depthComp > actionStates;
     

@@ -31,7 +31,7 @@ namespace ROSEE {
  * configuration to mark this configuration as a pinchStrong. All the non involved fingers are set in the 
  * default state.
  * A pinchStrong is defined by:
- *  - 2 tips ( that are inside \ref fingersInvolved ), so \ref nFingersInvolved == 2 ( members of base class \ref Action )
+ *  - 2 tips ( that are inside \ref fingersInvolved ), so \ref nFingersInvolved == 2 ( members of base class \ref ActionPrimitive )
  *  - JointStates position: where the collision happens (inside \ref actionStates )
  *  - Optional info (inside \ref actionStates ): the contact of moveit. Now only the member depth is used. 
  *    It is used to order the actions in the \ref actionStates set, to have a "quality" measure 
@@ -67,8 +67,8 @@ public:
      * the function return false 
      * @param JointPos The joints position
      * @param collision_detection::Contact the contact associated with the action
-     * @return TRUE if the action is good and is inserted in the setActionStates
-     *         FALSE if the action given as param was not good as the others in the setActionStates
+     * @return TRUE if the action is good and is inserted in the set \ref actionStates
+     *         FALSE if the action given as param was not good as the others in the set \ref actionStates
      *           and the set was already full (\ref maxStoredActionStates)
      */
     bool insertActionState (JointPos, collision_detection::Contact);
