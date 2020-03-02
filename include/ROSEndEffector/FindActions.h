@@ -44,7 +44,7 @@ public:
      */
     std::pair <  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong >, 
                  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak >  > 
-                 findPinch ( std::string path2saveYaml = "" );
+                 findPinch ( std::string path2saveYaml );
             
     /**
      * @brief Finder for MultiplePinch (a pinch done with more than 2 finger). This function
@@ -61,7 +61,7 @@ public:
      * @return map of founded \ref ActionMultiplePinchStrong, 
      */
     std::map < std::set <std::string>, ROSEE::ActionMultiplePinchStrong > findMultiplePinch (
-        unsigned int nFinger, bool strict = true, std::string path2saveYaml = "");
+        unsigned int nFinger, std::string path2saveYaml, bool strict = true );
                  
     /**
      * @brief Function to look for trigs (trig, tipFlex and fingFlex). The type of trig to be looked for is choosen thanks
@@ -73,9 +73,9 @@ public:
      * @return the map of chosen type of trig filled with infos about the possible actions.
      */
     std::map <std::string, ROSEE::ActionTrig> findTrig (  ROSEE::ActionPrimitive::Type actionType,
-        std::string path2saveYaml = "" );
+        std::string path2saveYaml );
     
-    std::map < std::string, ROSEE::ActionMoreTips> findMoreTips ( unsigned int nFinger, std::string path2saveYaml = "");
+    std::map < std::string, ROSEE::ActionMoreTips> findMoreTips ( unsigned int nFinger, std::string path2saveYaml );
     
 private:
     

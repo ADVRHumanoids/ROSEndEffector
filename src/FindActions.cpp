@@ -30,7 +30,7 @@ std::pair <  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinc
             
     } else {
     
-        ROSEE::YamlWorker yamlWorker(parserMoveIt->getHandName(), path2saveYaml);
+        ROSEE::YamlWorker yamlWorker;
         std::map < std::set <std::string> , ActionPrimitive* > mapForWorker;
         
         for (auto& it : mapOfPinches) {  // auto& and not auto alone!
@@ -42,7 +42,7 @@ std::pair <  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinc
             mapForWorker.insert (std::make_pair ( keys, pointer ) );                
         }
 
-        yamlWorker.createYamlFile(mapForWorker, "pinchStrong");
+        yamlWorker.createYamlFile(mapForWorker, "pinchStrong", path2saveYaml);
     }
     
     if (mapOfWeakPinches.size() == 0 ) { 
@@ -51,7 +51,7 @@ std::pair <  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinc
         
     } else {
         
-        ROSEE::YamlWorker yamlWorker(parserMoveIt->getHandName(), path2saveYaml);
+        ROSEE::YamlWorker yamlWorker;
         std::map < std::set <std::string> , ActionPrimitive* > mapForWorker;  
         
         for (auto& it : mapOfWeakPinches) {  // auto& and not auto alone!
@@ -63,7 +63,7 @@ std::pair <  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinc
             mapForWorker.insert (std::make_pair ( keys, pointer ) );                
         }
 
-        yamlWorker.createYamlFile(mapForWorker, "pinchWeak");
+        yamlWorker.createYamlFile(mapForWorker, "pinchWeak", path2saveYaml);
     }
     
     return std::make_pair(mapOfPinches, mapOfWeakPinches);
@@ -126,8 +126,8 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::findTrig ( ROSEE::
         mapForWorker.insert (std::make_pair ( keys, pointer ) );
     }
     
-    ROSEE::YamlWorker yamlWorker(parserMoveIt->getHandName(), path2saveYaml);
-    yamlWorker.createYamlFile(mapForWorker, trigMap.begin()->second.getName());
+    ROSEE::YamlWorker yamlWorker;
+    yamlWorker.createYamlFile(mapForWorker, trigMap.begin()->second.getName(), path2saveYaml);
 
     return trigMap;
 }  
@@ -180,6 +180,11 @@ std::map <std::string, ROSEE::ActionMoreTips> ROSEE::FindActions::findMoreTips(u
     }
     
     //// EMITTING
+    if (mapOfMoreTips.size() == 0 ) {
+        std::cout << "[FINDACTIONS::" << __func__ << "]  no moreTips with " << nFinger << " found" << std::endl;
+        return mapOfMoreTips;
+    }
+    
     std::map < std::set <std::string> , ActionPrimitive* > mapForWorker;
 
     for (auto& it : mapOfMoreTips) {  // auto& and not auto alone!
@@ -190,14 +195,15 @@ std::map <std::string, ROSEE::ActionMoreTips> ROSEE::FindActions::findMoreTips(u
         mapForWorker.insert (std::make_pair ( set, pointer ) );
     }
     
-    ROSEE::YamlWorker yamlWorker(parserMoveIt->getHandName(), path2saveYaml);
-    yamlWorker.createYamlFile(mapForWorker, actionName);
+    ROSEE::YamlWorker yamlWorker;
+    yamlWorker.createYamlFile(mapForWorker, actionName, path2saveYaml);
     
     return mapOfMoreTips;
 }
 
 
-std::map<std::set<std::string>, ROSEE::ActionMultiplePinchStrong> ROSEE::FindActions::findMultiplePinch(unsigned int nFinger, bool strict, std::string path2saveYaml) {
+std::map<std::set<std::string>, ROSEE::ActionMultiplePinchStrong> ROSEE::FindActions::findMultiplePinch(unsigned int nFinger, std::string path2saveYaml,
+                                                                                                        bool strict ) {
     
     std::map<std::set<std::string>, ROSEE::ActionMultiplePinchStrong> multiplePinchMap;
     if (nFinger < 3 ) {
@@ -209,6 +215,9 @@ std::map<std::set<std::string>, ROSEE::ActionMultiplePinchStrong> ROSEE::FindAct
     multiplePinchMap = checkCollisionsForMultiplePinch(nFinger, strict);
         
     //// EMITTING YAML
+    if (multiplePinchMap.size() == 0 ) {
+        return multiplePinchMap;
+    }
     std::map < std::set <std::string> , ActionPrimitive* > mapForWorker;
 
     for (auto& it : multiplePinchMap) {  // auto& and not auto alone!
@@ -217,8 +226,8 @@ std::map<std::set<std::string>, ROSEE::ActionMultiplePinchStrong> ROSEE::FindAct
         mapForWorker.insert (std::make_pair ( it.first, pointer ) );
     }
     
-    ROSEE::YamlWorker yamlWorker(parserMoveIt->getHandName(), path2saveYaml);
-    yamlWorker.createYamlFile(mapForWorker, multiplePinchMap.begin()->second.getName());
+    ROSEE::YamlWorker yamlWorker;
+    yamlWorker.createYamlFile(mapForWorker, multiplePinchMap.begin()->second.getName(), path2saveYaml);
     
     return multiplePinchMap;
 }

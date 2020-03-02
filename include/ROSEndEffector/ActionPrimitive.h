@@ -61,7 +61,7 @@ public:
     virtual ~ActionPrimitive() {};
 
     /* virtual and not getters */
-    Type getType() const;
+    Type getPrimitiveType() const;
     unsigned int getMaxStoredActionStates() const;
     unsigned int getnFingersInvolved() const;
     
@@ -77,6 +77,8 @@ public:
     virtual void emitYaml ( YAML::Emitter& ) const override;
 
 protected:
+    
+    ActionPrimitive ( std::string name, unsigned int maxStoredActionStates, Type type );
  
     /**
      * @brief Protected costructor: object creable only by derived classes.
@@ -86,12 +88,12 @@ protected:
         Type type );
     
     /* e.g. two tips for the pinch*/
-    const unsigned int nFingersInvolved;
+    unsigned int nFingersInvolved;
     
     /* the max number of action for each linksInvolved set that we want to store */
     const unsigned int maxStoredActionStates;
     
-    const Type type;
+    const Type primitiveType;
         
 
     

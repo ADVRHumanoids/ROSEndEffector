@@ -23,13 +23,19 @@ ROSEE::Action::Action () {
 }
 
 
-ROSEE::Action::Action ( std::string name ) {
+ROSEE::Action::Action ( std::string name, Action::Type type ) {
     this->name = name;
+    this->type = type;
 }
 
 std::string ROSEE::Action::getName() const {
     return name;
 }
+
+ROSEE::Action::Type ROSEE::Action::getType() const {
+    return type;
+}
+
 
 std::set<std::string> ROSEE::Action::getFingersInvolved() const {
     return fingersInvolved;

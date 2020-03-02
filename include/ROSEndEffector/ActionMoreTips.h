@@ -31,8 +31,11 @@ namespace ROSEE {
 class ActionMoreTips : public ActionPrimitive {
     
 public:
+    
+    ActionMoreTips();
+
     /**
-     * @brief used (for now) by yaml worker only. Before parsing we cant now the info that the other costructor need. So all these infos
+     * @brief NOT ANYOMORE ? used (for now) by yaml worker only. Before parsing we cant now the info that the other costructor need. So all these infos
      * are set in the \ref fillFromYaml
      * @param actionName name of the action
      * @param nFingers number of the fingers involved in the action (i.e. number of finger that the \ref jointInvolved moves)

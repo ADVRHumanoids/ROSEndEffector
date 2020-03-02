@@ -19,17 +19,16 @@
 #include <ROSEndEffector/ActionMultiplePinchStrong.h>
 
 ROSEE::ActionMultiplePinchStrong::ActionMultiplePinchStrong() : 
-    ActionPinchGeneric ("multiplePinchStrong", 2, 3, ActionPrimitive::Type::MultiplePinchStrong) { }
+    ActionPinchGeneric ("multiplePinchStrong", 3, ActionPrimitive::Type::MultiplePinchStrong) { }
 
-ROSEE::ActionMultiplePinchStrong::ActionMultiplePinchStrong(
-    unsigned int jointStateSetMaxSize) : 
-    ActionPinchGeneric ("multiplePinchStrong", 2, jointStateSetMaxSize, ActionPrimitive::Type::MultiplePinchStrong) { }
+ROSEE::ActionMultiplePinchStrong::ActionMultiplePinchStrong(unsigned int maxStoredActionStates) : 
+    ActionPinchGeneric ("multiplePinchStrong", maxStoredActionStates, ActionPrimitive::Type::MultiplePinchStrong) { }
 
 ROSEE::ActionMultiplePinchStrong::ActionMultiplePinchStrong (
     std::set <std::string> fingerNamesSet, 
     JointPos jp, double depthSum) :
     ActionPinchGeneric ( ("multiplePinchStrong-" + std::to_string(fingerNamesSet.size())),
-                        2, 3, ActionPrimitive::Type::MultiplePinchStrong )  {
+                        fingerNamesSet.size(), 3, ActionPrimitive::Type::MultiplePinchStrong )  {
 
     //different from insertState, here we are sure the set is empty (we are in costructor)
     fingersInvolved = fingerNamesSet;
@@ -144,6 +143,7 @@ void ROSEE::ActionMultiplePinchStrong::emitYaml ( YAML::Emitter& out ) const {
     
     unsigned int nCont = 1;
     out << YAML::Value << YAML::BeginMap;
+    out << YAML::Key << "PrimitiveType" << YAML::Value << primitiveType;
     out << YAML::Key << "ActionName" << YAML::Value << name;
     out << YAML::Key << "JointsInvolvedCount" << YAML::Value << YAML::BeginMap;
     for (const auto &jointCount : jointsInvolvedCount ) {
@@ -219,6 +219,8 @@ bool ROSEE::ActionMultiplePinchStrong::fillFromYaml ( YAML::const_iterator yamlI
             //TODO print some error
         }
     }
+    
+    nFingersInvolved = fingersInvolved.size();
     
     return true;
 }

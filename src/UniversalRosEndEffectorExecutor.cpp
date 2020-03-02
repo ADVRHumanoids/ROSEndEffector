@@ -134,7 +134,6 @@ void ROSEE::UniversalRosEndEffectorExecutor::pinchCallback ( const ros_end_effec
                     ROS_WARN_STREAM ( "Trying to move Joint: " << it.first << " with ID: " << id );
                 }
             }
-
         }
 
     } else {
@@ -144,35 +143,32 @@ void ROSEE::UniversalRosEndEffectorExecutor::pinchCallback ( const ros_end_effec
                            " is not a feasible couple for the Pinch Grasping Action" );
     }
 
-
 }
-
 
 
 bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive_subscribers() {
 
     // parse YAML for End-Effector cconfiguration
-    ROSEE::YamlWorker yamlWorker ( _ee->getName() );
+    ROSEE::YamlWorker yamlWorker ;
+    
+    std::string folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/" + _ee->getName() + "/primitives/";
+    std::string folderForActionsComposed = ROSEE::Utils::getPackagePath() + "/configs/actions/" + _ee->getName() + "/generics/";
 
+    
     //pinch
-    _pinchParsedMap = yamlWorker.parseYamlPrimitive ( "pinchStrong.yaml", 
-                                                      ROSEE::ActionPrimitive::Type::PinchStrong );
+    _pinchParsedMap = yamlWorker.parseYamlPrimitive ( folderForActions + "pinchStrong.yaml", ROSEE::ActionPrimitive::Type::PinchStrong );
 
     //pinch Weak
-    _pinchWeakParsedMap = yamlWorker.parseYamlPrimitive ( "pinchWeak.yaml", 
-                                                          ROSEE::ActionPrimitive::Type::PinchWeak );
+    _pinchWeakParsedMap = yamlWorker.parseYamlPrimitive ( folderForActions + "pinchWeak.yaml", ROSEE::ActionPrimitive::Type::PinchWeak );
 
     //trig
-    _trigParsedMap = yamlWorker.parseYamlPrimitive ( "trig.yaml", 
-                                                     ROSEE::ActionPrimitive::Type::Trig );
+    _trigParsedMap = yamlWorker.parseYamlPrimitive ( folderForActions + "trig.yaml", ROSEE::ActionPrimitive::Type::Trig );
 
     //tipFlex
-    _tipFlexParsedMap = yamlWorker.parseYamlPrimitive ( "tipFlex.yaml",
-                                                        ROSEE::ActionPrimitive::Type::TipFlex );
+    _tipFlexParsedMap = yamlWorker.parseYamlPrimitive ( folderForActions + "tipFlex.yaml", ROSEE::ActionPrimitive::Type::TipFlex );
 
     //fingFlex
-    _fingFlexParsedMap = yamlWorker.parseYamlPrimitive ( "fingFlex.yaml", 
-                                                         ROSEE::ActionPrimitive::Type::FingFlex );
+    _fingFlexParsedMap = yamlWorker.parseYamlPrimitive ( folderForActions + "fingFlex.yaml", ROSEE::ActionPrimitive::Type::FingFlex );
 
     ROS_INFO_STREAM ( "PINCHES-STRONG:" );
     for ( auto &i : _pinchParsedMap ) {
@@ -196,7 +192,7 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive_subscribers
     }
     
     // composed actions
-    _graspParsedMap = yamlWorker.parseYamlComposed ("grasp.yaml");
+    _graspParsedMap = yamlWorker.parseYamlComposed (folderForActionsComposed + "grasp.yaml");
     ROS_INFO_STREAM ( "GRASP" );
     _graspParsedMap.print();
 
@@ -219,7 +215,6 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive_subscribers
                      this
                                                                      );
     }
-
 
     return true;
 }

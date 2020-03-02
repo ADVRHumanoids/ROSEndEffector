@@ -43,6 +43,28 @@ static void out2file ( std::string pathFile, std::string output) {
     std::ofstream fout ( pathFile );
     fout << output;
 }
+
+static std::vector <std::string> getFilesInDir ( std::string pathFolder ) {
+    
+    boost::filesystem::path p (pathFolder);
+    std::vector <std::string> retVect;
+    
+    if (! boost::filesystem::exists(p) ) {
+        std::cerr << "[ERROR " << __func__ << "] pathFolder" << pathFolder << " does not exists" << std::endl;
+        return retVect;
+    }
+    
+    if (! boost::filesystem::is_directory(p)){ 
+        std::cerr << "[ERROR " << __func__ << "] pathFolder" << pathFolder << " is not a directory" << std::endl;
+        return retVect;
+    }
+    
+    for (boost::filesystem::directory_entry& x : boost::filesystem::directory_iterator(p)) {
+        retVect.push_back (x.path().filename().string() );
+    }
+    
+    return retVect;
+}
     
 static inline int binomial_coefficent(int n, int k) {
 

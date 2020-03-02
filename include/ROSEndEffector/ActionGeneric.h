@@ -32,6 +32,9 @@ namespace ROSEE {
 class ActionGeneric :  public Action {
     
 public:
+    typedef std::shared_ptr<ActionGeneric> Ptr;
+    typedef std::shared_ptr<const ActionGeneric> ConstPtr;
+    
     /**
      * @brief default costructor. It is used when parsing a file with YamlWorker,
      * @warning If you use this costructor, then you must fill internal structures with \ref fillFromYaml 

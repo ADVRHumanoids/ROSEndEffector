@@ -18,15 +18,18 @@
 
 #include <ROSEndEffector/ActionPrimitive.h>
 
+ROSEE::ActionPrimitive::ActionPrimitive(std::string name,  unsigned int maxStoredActionStates, ActionPrimitive::Type primitiveType) : 
+    Action(name, Action::Type::Primitive), maxStoredActionStates(maxStoredActionStates), primitiveType(primitiveType) {};
+
 ROSEE::ActionPrimitive::ActionPrimitive(
     std::string name, unsigned int nFingersInvolved, unsigned int maxStoredActionStates,
-        Type type) :
-        Action(name), nFingersInvolved(nFingersInvolved), maxStoredActionStates(maxStoredActionStates),
-        type(type) {}
+        ActionPrimitive::Type primitiveType) :
+        Action(name, Action::Type::Primitive), nFingersInvolved(nFingersInvolved), maxStoredActionStates(maxStoredActionStates),
+        primitiveType(primitiveType) {}
 
 
-ROSEE::ActionPrimitive::Type ROSEE::ActionPrimitive::getType() const {
-    return type;
+ROSEE::ActionPrimitive::Type ROSEE::ActionPrimitive::getPrimitiveType() const {
+    return primitiveType;
 }
 
 unsigned int ROSEE::ActionPrimitive::getMaxStoredActionStates() const {
@@ -50,6 +53,7 @@ void ROSEE::ActionPrimitive::emitYaml ( YAML::Emitter& out ) const {
 
     unsigned int nCont = 1;
     out << YAML::Value << YAML::BeginMap;
+    out << YAML::Key << "PrimitiveType" << YAML::Value << primitiveType;
     out << YAML::Key << "ActionName" << YAML::Value << name;
     out << YAML::Key << "JointsInvolvedCount" << YAML::Value << YAML::BeginMap;
     for (const auto &jointCount : jointsInvolvedCount ) {

@@ -21,16 +21,19 @@
 ROSEE::ActionComposed::ActionComposed() : ActionGeneric() {
     independent = true;
     nInnerActions = 0;
+    type = Action::Type::Composed;
 }
 
 ROSEE::ActionComposed::ActionComposed(std::string name) : ActionGeneric(name) {
     independent = true;
     nInnerActions = 0;
+    type = Action::Type::Composed;
 }
 
 ROSEE::ActionComposed::ActionComposed(std::string name, bool independent) : ActionGeneric(name) {
     this->independent = independent;
     nInnerActions = 0;
+    type = Action::Type::Composed;
 }
 
 unsigned int ROSEE::ActionComposed::numberOfInnerActions() const {
@@ -194,6 +197,7 @@ void ROSEE::ActionComposed::print () const {
 void ROSEE::ActionComposed::emitYaml ( YAML::Emitter& out) const {
     
     out << YAML::BeginMap << YAML::Key << name << YAML::Value << YAML::BeginMap ;
+        out << YAML::Key << "Type" << YAML::Value << type;
         out << YAML::Key << "Independent" << YAML::Value << independent;
         out << YAML::Key << "NInnerActions" << YAML::Value << nInnerActions;
         out << YAML::Key << "InnerActionsNames" << YAML::Value << YAML::Flow << innerActionsNames;
@@ -229,6 +233,14 @@ bool ROSEE::ActionComposed::fillFromYaml ( YAML::const_iterator yamlIt ) {
             
         } else if ( key.compare ("NInnerActions") == 0 ) {
             nInnerActions = keyValue->second.as <unsigned int>();
+            
+        } else if ( key.compare ("Type") == 0 ) {
+            if (ROSEE::Action::Type::Composed != static_cast<ROSEE::Action::Type> ( keyValue->second.as <unsigned int>() )) {
+                std::cout << "[COMPOSED ACTION::" << __func__ << "] Error, found type  " << keyValue->second.as <unsigned int>()
+                << "instead of Composed type (" << ROSEE::Action::Type::Composed << ")" << std::endl;
+                return false;
+            }
+            type = ROSEE::Action::Type::Composed;
             
         } else if ( key.compare ("InnerActionsNames") == 0 ) {
             innerActionsNames = keyValue->second.as <std::vector <std::string> >();

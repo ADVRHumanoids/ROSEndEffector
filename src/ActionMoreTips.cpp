@@ -16,6 +16,9 @@
 
 #include <ROSEndEffector/ActionMoreTips.h>
 
+ROSEE::ActionMoreTips::ActionMoreTips() : 
+    ActionPrimitive ( "moreTips", 1, ROSEE::ActionPrimitive::Type::MoreTips ) {}
+
 ROSEE::ActionMoreTips::ActionMoreTips(std::string actionName, unsigned int nFingers ) : 
     ActionPrimitive ( actionName, nFingers, 1, ROSEE::ActionPrimitive::Type::MoreTips ) {}
 
@@ -98,6 +101,7 @@ void ROSEE::ActionMoreTips::emitYaml(YAML::Emitter& out) const {
     out << YAML::Key << jointInvolved;
     out << YAML::Value << YAML::BeginMap;
     
+        out << YAML::Key << "PrimitiveType" << YAML::Value << primitiveType;
         out << YAML::Key << "ActionName" << YAML::Value << name;
         out << YAML::Key << "FingersInvolved" << YAML::Value << YAML::Flow << fingersInvolved;
         
@@ -153,6 +157,8 @@ bool ROSEE::ActionMoreTips::fillFromYaml(YAML::const_iterator yamlIt) {
         jointsInvolvedCount.insert (std::make_pair (it.first, 0) );
     }
     jointsInvolvedCount.at (jointInvolved) = 1;
+    
+    nFingersInvolved = fingersInvolved.size();
 
     return true;
     

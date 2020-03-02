@@ -120,6 +120,11 @@ class Action
 public:
     typedef std::shared_ptr<Action> Ptr;
     typedef std::shared_ptr<const Action> ConstPtr;
+    
+    /** 
+     * @brief Enum useful to discriminate each  action when, for example, we want to parse a file 
+     */
+    enum Type {Primitive, Generic, Composed, Timed, None};
 
 
     /* destructor of base must be virtual */
@@ -130,6 +135,8 @@ public:
      * @return std::string the name of the action
      */
     std::string getName () const ;
+    
+    Type getType() const;
     
     /**
      * @brief Get for \ref fingersInvolved
@@ -178,11 +185,11 @@ public:
 protected:
     // Only derived class can create this class
     Action();
-    Action(std::string);
+    Action(std::string actionName, Action::Type type);
     
     std::string name;
+    Type type;
     std::set <std::string> fingersInvolved;
-    
     JointsInvolvedCount jointsInvolvedCount;
 
 };

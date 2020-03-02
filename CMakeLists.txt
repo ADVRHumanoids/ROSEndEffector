@@ -131,6 +131,10 @@ add_library(YamlWorker
     src/YamlWorker.cpp
 )
 
+add_library(MapActionHandler
+    src/MapActionHandler.cpp
+)
+
 add_library(Action 
     src/Action.cpp 
 )
@@ -227,6 +231,13 @@ target_link_libraries(YamlWorker
     ActionTimed
 )
 
+target_link_libraries(MapActionHandler
+    Action
+    ActionPrimitive
+    ActionGeneric
+    ActionTimed
+)
+
 target_link_libraries(ActionPinchStrong
     ActionPinchGeneric
 )
@@ -294,6 +305,7 @@ target_link_libraries(UniversalFindActions
     ActionMoreTips
     ActionTimed
     ActionGeneric
+    MapActionHandler
 )
 
 

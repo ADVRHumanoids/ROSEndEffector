@@ -19,9 +19,9 @@
 
 ROSEE::ActionGeneric::ActionGeneric () {}
 
-ROSEE::ActionGeneric::ActionGeneric(std::string actionName) : Action (actionName) {}
+ROSEE::ActionGeneric::ActionGeneric(std::string actionName) : Action (actionName, Action::Type::Generic) {}
 
-ROSEE::ActionGeneric::ActionGeneric(std::string actionName, ROSEE::JointPos jointPos) : Action(actionName) {
+ROSEE::ActionGeneric::ActionGeneric(std::string actionName, ROSEE::JointPos jointPos) : Action(actionName, Action::Type::Generic) {
 
     this->jointPos = jointPos;
     //consider the position 0 as not used joint
@@ -36,7 +36,8 @@ ROSEE::ActionGeneric::ActionGeneric(std::string actionName, ROSEE::JointPos join
     } 
 }
 
-ROSEE::ActionGeneric::ActionGeneric(std::string actionName, ROSEE::JointPos jointPos, JointsInvolvedCount jic) : Action(actionName) {
+ROSEE::ActionGeneric::ActionGeneric(std::string actionName, ROSEE::JointPos jointPos, JointsInvolvedCount jic) : 
+                            Action(actionName, Action::Type::Generic) {
 
     if ( ! ROSEE::Utils::keys_equal(jointPos, jic) ) {
         throw ROSEE::Utils::DifferentKeysException<ROSEE::JointPos, ROSEE::JointsInvolvedCount>(&jointPos, &jic);
@@ -49,7 +50,7 @@ ROSEE::ActionGeneric::ActionGeneric(std::string actionName, ROSEE::JointPos join
 
 
 ROSEE::ActionGeneric::ActionGeneric(std::string actionName, ROSEE::JointPos jointPos, JointsInvolvedCount jic, 
-                                  std::set<std::string> fingersInvolved) : Action(actionName) {
+                                  std::set<std::string> fingersInvolved) : Action(actionName, Action::Type::Generic) {
     
     this->jointPos = jointPos;
     this->jointsInvolvedCount = jic;
@@ -69,6 +70,7 @@ std::vector<ROSEE::JointPos> ROSEE::ActionGeneric::getAllJointPos() const {
 void ROSEE::ActionGeneric::emitYaml(YAML::Emitter& out) const {
     
     out << YAML::BeginMap << YAML::Key << name << YAML::Value << YAML::BeginMap ;
+        out << YAML::Key << "Type" << YAML::Value << type;
         out << YAML::Key << "FingersInvolved" << YAML::Value << YAML::Flow << fingersInvolved;
         out << YAML::Key << "JointsInvolvedCount" << YAML::Value << YAML::BeginMap;
         for (const auto &jointCount : jointsInvolvedCount ) {
@@ -91,6 +93,7 @@ void ROSEE::ActionGeneric::emitYaml(YAML::Emitter& out) const {
 bool ROSEE::ActionGeneric::fillFromYaml(YAML::const_iterator yamlIt) {
     
     name = yamlIt->first.as<std::string>();
+    type = ROSEE::Action::Type::Generic;
             
     for (auto keyValue = yamlIt->second.begin(); keyValue != yamlIt->second.end(); ++keyValue ) {
 
@@ -100,6 +103,14 @@ bool ROSEE::ActionGeneric::fillFromYaml(YAML::const_iterator yamlIt) {
             // if <not_inserted> tempVect is a empty vector
             auto tempVect = keyValue->second.as <std::vector <std::string> > ();
             fingersInvolved.insert ( tempVect.begin(), tempVect.end() );
+            
+        } else if ( key.compare ("Type") == 0 ) {
+            if (ROSEE::Action::Type::Generic != static_cast<ROSEE::Action::Type> ( keyValue->second.as <unsigned int>() )) {
+                std::cout << "[GENERIC ACTION::" << __func__ << "] Error, found type  " << keyValue->second.as <unsigned int>()
+                << "instead of generic type (" << ROSEE::Action::Type::Generic << ")" << std::endl;
+                return false;
+            }
+            type = ROSEE::Action::Type::Generic;
             
         } else if ( key.compare ("JointsInvolvedCount") == 0 ) {
             jointsInvolvedCount = keyValue->second.as < JointsInvolvedCount >(); 

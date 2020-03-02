@@ -143,6 +143,7 @@ void ROSEE::ActionPinchWeak::emitYaml ( YAML::Emitter& out ) const {
 
     unsigned int nCont = 1;
     out << YAML::Value << YAML::BeginMap;
+    out << YAML::Key << "PrimitiveType" << YAML::Value << primitiveType;
     out << YAML::Key << "ActionName" << YAML::Value << name;
     out << YAML::Key << "JointsInvolvedCount" << YAML::Value << YAML::BeginMap;
     for (const auto &jointCount : jointsInvolvedCount ) {

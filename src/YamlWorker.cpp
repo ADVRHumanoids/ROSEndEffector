@@ -16,35 +16,26 @@
 
 #include <ROSEndEffector/YamlWorker.h>
 
-ROSEE::YamlWorker::YamlWorker ( std::string handName, std::string path2saveYaml)
-{
-    if ( path2saveYaml.compare("") == 0 ){
-        dirPath = ROSEE::Utils::getPackagePath() + DEFAULT_ACTION_FOLDER 
-            + "/" + handName + "/" ;
-    } else {
-        dirPath = ROSEE::Utils::getPackagePath() + path2saveYaml + "/" + handName + "/" ;
-    }
+ROSEE::YamlWorker::YamlWorker ( ) {}
 
-}
-
-std::string ROSEE::YamlWorker::createYamlFile( const ROSEE::Action* action) {
+std::string ROSEE::YamlWorker::createYamlFile( const ROSEE::Action* action, std::string pathFolder) {
     
-    ROSEE::Utils::create_directory ( dirPath );
+    ROSEE::Utils::create_directory ( pathFolder );
     std::string output = emitYaml ( action );
-    ROSEE::Utils::out2file(dirPath + action->getName() + ".yaml", output);
-    return (dirPath + action->getName() + ".yaml");
+    ROSEE::Utils::out2file(pathFolder + action->getName() + ".yaml", output);
+    return (pathFolder + action->getName() + ".yaml");
     
 }
 
 std::string ROSEE::YamlWorker::createYamlFile(
-    const std::map < std::set <std::string> , ActionPrimitive* > mapOfActions,
-    const std::string actionName) {
     
-
-    ROSEE::Utils::create_directory ( dirPath );
+    const std::map < std::set <std::string> , ActionPrimitive* > mapOfActions,
+    const std::string actionName, std::string pathFolder) {
+    
+    ROSEE::Utils::create_directory ( pathFolder );
     std::string output = emitYaml ( mapOfActions );
-    ROSEE::Utils::out2file(dirPath + actionName + ".yaml", output);
-    return (dirPath + actionName + ".yaml");
+    ROSEE::Utils::out2file( pathFolder + actionName + ".yaml", output);
+    return (pathFolder + actionName + ".yaml");
     
     
 }
@@ -73,20 +64,19 @@ std::string ROSEE::YamlWorker::emitYaml  ( const ROSEE::Action* action ) {
     
 }
 
-
-std::map < std::set < std::string>, ROSEE::ActionPrimitive::Ptr > ROSEE::YamlWorker::parseYamlPrimitive ( 
-                                                    std::string filename, ROSEE::ActionPrimitive::Type actionType){
+std::map<std::set<std::string>, ROSEE::ActionPrimitive::Ptr> ROSEE::YamlWorker::parseYamlPrimitive(
+        std::string fileWithPath, ROSEE::ActionPrimitive::Type actionType) {
     
     std::map < std::set < std::string>, ROSEE::ActionPrimitive::Ptr > parsedMap; 
 
     //TODO check elsewhere if file exist or not?
-    std::ifstream ifile(dirPath + filename);
+    std::ifstream ifile(fileWithPath);
     if (! ifile) {
-        std::cout << "[ERROR YAMLPARSER:: " << __func__ << "]: file " << dirPath + filename << " not found. "  << std::endl;
+        std::cout << "[ERROR YAMLPARSER:: " << __func__ << "]: file " << fileWithPath << " not found. "  << std::endl;
             return parsedMap;
     }
     
-    YAML::Node node = YAML::LoadFile(dirPath + filename);
+    YAML::Node node = YAML::LoadFile(fileWithPath);
     
     for(YAML::const_iterator it4Action = node.begin(); it4Action != node.end(); ++it4Action) {
         ActionPrimitive::Ptr ptr;
@@ -112,9 +102,7 @@ std::map < std::set < std::string>, ROSEE::ActionPrimitive::Ptr > ROSEE::YamlWor
             break;
         }
         case ActionPrimitive::Type::MoreTips: {
-            std::string actionName = filename.substr(0, filename.find_last_of(".") ); //remove .yaml from string
-            unsigned int nFinger = actionName.back() ;
-            ptr = std::make_shared <ActionMoreTips>(actionName, nFinger);
+            ptr = std::make_shared <ActionMoreTips>();
             break;
         }
         case ActionPrimitive::Type::MultiplePinchStrong: {
@@ -135,18 +123,93 @@ std::map < std::set < std::string>, ROSEE::ActionPrimitive::Ptr > ROSEE::YamlWor
     return parsedMap;
 }
 
-ROSEE::ActionComposed ROSEE::YamlWorker::parseYamlComposed (std::string filename){
+
+std::map < std::set < std::string>, ROSEE::ActionPrimitive::Ptr > ROSEE::YamlWorker::parseYamlPrimitive (std::string fileWithPath) {
+    
+    std::map < std::set < std::string>, ROSEE::ActionPrimitive::Ptr > parsedMap; 
+
+    //TODO check elsewhere if file exist or not?
+    std::ifstream ifile(fileWithPath);
+    if (! ifile) {
+        std::cout << "[ERROR YAMLPARSER:: " << __func__ << "]: file " << fileWithPath << " not found. "  << std::endl;
+            return parsedMap;
+    }
+    
+    YAML::Node node = YAML::LoadFile(fileWithPath);
+
+    for(YAML::const_iterator it4Action = node.begin(); it4Action != node.end(); ++it4Action) {
+        
+        std::string actionName;
+        ROSEE::ActionPrimitive::Type type = ROSEE::ActionPrimitive::Type::None;
+        
+        //now look for the type of the action and for the name
+        for ( YAML::const_iterator actionState = it4Action->second.begin(); actionState != it4Action->second.end(); ++actionState) {        
+        
+            if (actionState->first.as<std::string>().compare("PrimitiveType") == 0) {
+                type = static_cast<ROSEE::ActionPrimitive::Type> ( actionState->second.as < int > () );
+                break; //we only need the type
+            }
+        }
+        
+        //now use emit of specific action
+        ActionPrimitive::Ptr ptr;
+        switch (type) {
+        case ActionPrimitive::Type::PinchStrong: {
+            ptr = std::make_shared <ActionPinchStrong>();
+            break;
+        }
+        case ActionPrimitive::Type::PinchWeak: {
+            ptr = std::make_shared <ActionPinchWeak> ();
+            break;
+        }
+        case ActionPrimitive::Type::Trig: {
+            ptr = std::make_shared <ActionTrig>("trig", ActionPrimitive::Type::Trig);
+            break;
+        }
+        case ActionPrimitive::Type::TipFlex: {
+            ptr = std::make_shared <ActionTrig>("tipFlex", ActionPrimitive::Type::TipFlex);
+            break;
+        }
+        case ActionPrimitive::Type::FingFlex: {
+            ptr = std::make_shared <ActionTrig>("fingFlex", ActionPrimitive::Type::FingFlex);
+            break;
+        }
+        case ActionPrimitive::Type::MoreTips: {
+            ptr = std::make_shared <ActionMoreTips>();
+            break;
+        }
+        case ActionPrimitive::Type::MultiplePinchStrong: {
+            ptr = std::make_shared <ActionMultiplePinchStrong> ();
+            break;
+        }
+
+        default : {
+            std::cout << "[ERROR YAMLPARSER]: " << type << " : type not found" << std::endl;
+        }
+        }
+        
+        ptr->fillFromYaml ( it4Action );
+        
+        parsedMap.insert ( std::make_pair ( ptr->getKeyForYamlMap(), ptr) );
+    }
+        
+    return parsedMap;
+    
+}
+
+
+ROSEE::ActionComposed ROSEE::YamlWorker::parseYamlComposed (std::string fileWithPath){
     
     ROSEE::ActionComposed parsedAction; 
 
     //TODO check elsewhere if file exist or not?
-    std::ifstream ifile(dirPath + filename);
+    std::ifstream ifile(fileWithPath);
     if (! ifile) {
-        std::cout << "[ERROR YAMLPARSER:: " << __func__ << "]: file " << dirPath + filename << " not found. "  << std::endl;
+        std::cout << "[ERROR YAMLPARSER:: " << __func__ << "]: file " << fileWithPath << " not found. "  << std::endl;
             return parsedAction;
     }
     
-    YAML::Node node = YAML::LoadFile(dirPath + filename);
+    YAML::Node node = YAML::LoadFile(fileWithPath);
     YAML::const_iterator yamlIt = node.begin();
 
     parsedAction.fillFromYaml ( yamlIt );
@@ -155,18 +218,80 @@ ROSEE::ActionComposed ROSEE::YamlWorker::parseYamlComposed (std::string filename
     
 }
 
-ROSEE::ActionTimed ROSEE::YamlWorker::parseYamlTimed (std::string filename){
+ROSEE::ActionGeneric::Ptr ROSEE::YamlWorker::parseYamlGeneric(std::string fileWithPath) {
+    
+    ActionGeneric::Ptr ptrAction;
+    
+    //TODO check elsewhere if file exist or not?
+    std::ifstream ifile(fileWithPath);
+    if (! ifile) {
+        std::cout << "[ERROR YAMLPARSER:: " << __func__ << "]: file " << fileWithPath << " not found. "  << std::endl;
+        return ptrAction;
+    }
+    
+    YAML::Node node = YAML::LoadFile(fileWithPath);
+    
+    YAML::const_iterator it4Action = node.begin(); //for not primitive, only one action is inside the file
+        
+    ROSEE::Action::Type type;
+    
+    //now look for the type of the action
+    for ( YAML::const_iterator el = it4Action->second.begin(); el != it4Action->second.end(); ++el) {        
+    
+        if (el->first.as<std::string>().compare("Type") == 0) {
+            type = static_cast<ROSEE::Action::Type> ( el->second.as < int > () );
+            break; //we only need the type
+        }
+    }
+    
+    switch (type) {
+    case Action::Type::Primitive : {
+        std::cout << "[ERROR YAMLPARSER:: " << __func__ << "]: file " << fileWithPath << " contains a primitive action, "
+        << " please use parseYamlPrimitive to parse it " << std::endl;
+        return ptrAction;
+        break;
+    }
+    case Action::Type::Generic : {
+        ptrAction = std::make_shared <ActionGeneric> ();
+        break;
+    }
+    case Action::Type::Composed : {
+        ptrAction = std::make_shared <ActionComposed> ();
+        break;
+    }
+    case Action::Type::Timed : {
+        std::cout << "[ERROR YAMLPARSER:: " << __func__ << "]: file " << fileWithPath << " contains a timed action, "
+        << " please use parseYamlTimed to parse it " << std::endl;
+        return ptrAction;
+        break;
+    }
+    default : {
+        std::cout << "[ERROR YAMLPARSER:: " << __func__ << "]: file " << fileWithPath << " contains an action of not know type "
+        << type << std::endl;
+        return ptrAction; 
+    }
+    }
+
+    ptrAction->fillFromYaml(it4Action);
+    
+    return ptrAction;
+    
+    
+}
+
+
+ROSEE::ActionTimed ROSEE::YamlWorker::parseYamlTimed (std::string fileWithPath){
     
     ROSEE::ActionTimed parsedAction; 
 
     //TODO check elsewhere if file exist or not?
-    std::ifstream ifile(dirPath + filename);
+    std::ifstream ifile(fileWithPath);
     if (! ifile) {
-        std::cout << "[ERROR YAMLPARSER:: " << __func__ << "]: file " << dirPath + filename << " not found. "  << std::endl;
+        std::cout << "[ERROR YAMLPARSER:: " << __func__ << "]: file " << fileWithPath << " not found. "  << std::endl;
             return parsedAction;
     }
     
-    YAML::Node node = YAML::LoadFile(dirPath + filename);
+    YAML::Node node = YAML::LoadFile(fileWithPath);
     YAML::const_iterator yamlIt = node.begin();
 
     parsedAction.fillFromYaml ( yamlIt );
@@ -174,27 +299,3 @@ ROSEE::ActionTimed ROSEE::YamlWorker::parseYamlTimed (std::string filename){
     return parsedAction;
     
 }
-
-bool ROSEE::YamlWorker::parseYamlAction (std::string filename, Action::Ptr ptrAction){
-
-    if (ptrAction == nullptr) {
-        std::cout << "[ERROR YAMLPARSER:: " << __func__ << "]: you passed a nullptr pointer"  << std::endl;
-        return false;
-    }
-    
-    //TODO check elsewhere if file exist or not?
-    std::ifstream ifile(dirPath + filename);
-    if (! ifile) {
-        std::cout << "[ERROR YAMLPARSER:: " << __func__ << "]: file " << dirPath + filename << " not found. "  << std::endl;
-        return false;
-    }
-    
-    YAML::Node node = YAML::LoadFile(dirPath + filename);
-    YAML::const_iterator yamlIt = node.begin();
-
-    ptrAction->fillFromYaml ( yamlIt );
-    
-    return true;
-    
-}
-

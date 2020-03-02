@@ -159,6 +159,7 @@ void ROSEE::ActionPinchStrong::emitYaml ( YAML::Emitter& out ) const {
     
     unsigned int nCont = 1;
     out << YAML::Value << YAML::BeginMap;
+    out << YAML::Key << "PrimitiveType" << YAML::Value << primitiveType;
     out << YAML::Key << "ActionName" << YAML::Value << name;
     out << YAML::Key << "JointsInvolvedCount" << YAML::Value << YAML::BeginMap;
     for (const auto &jointCount : jointsInvolvedCount ) {
@@ -201,7 +202,6 @@ bool ROSEE::ActionPinchStrong::fillFromYaml ( YAML::const_iterator yamlIt ) {
     }
 
     for ( YAML::const_iterator actionState = yamlIt->second.begin(); actionState != yamlIt->second.end(); ++actionState) {        
-        // actionState->first == ActionState_x OR JointsInvolved
         
         std::string key = actionState->first.as<std::string>();
         if (key.compare("JointsInvolvedCount") == 0) {

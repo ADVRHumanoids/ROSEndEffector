@@ -17,10 +17,10 @@
 #include <ROSEndEffector/ActionTimed.h>
 
 ROSEE::ActionTimed::ActionTimed() {
-    
+    type = Action::Type::Timed;
 }
 
-ROSEE::ActionTimed::ActionTimed (std::string name ) : Action(name) {
+ROSEE::ActionTimed::ActionTimed (std::string name ) : Action(name, Action::Type::Timed) {
     
 }
 
@@ -112,6 +112,7 @@ void ROSEE::ActionTimed::emitYaml(YAML::Emitter& out) const {
         }
         
         out << YAML::Comment(timeline);
+        out << YAML::Key << "Type" << YAML::Value << type;
         out << YAML::Key << "FingersInvolved" << YAML::Value << YAML::Flow << fingersInvolved;
         out << YAML::Key << "JointsInvolvedCount" << YAML::Value << YAML::BeginMap;
         for (const auto &jointCount : jointsInvolvedCount ) {
@@ -157,6 +158,7 @@ void ROSEE::ActionTimed::emitYaml(YAML::Emitter& out) const {
 bool ROSEE::ActionTimed::fillFromYaml(YAML::const_iterator yamlIt){
     
     name = yamlIt->first.as<std::string>();
+    type = Action::Type::Timed;
     
     for (auto keyValue = yamlIt->second.begin(); keyValue != yamlIt->second.end(); ++keyValue ) {
 
@@ -165,6 +167,14 @@ bool ROSEE::ActionTimed::fillFromYaml(YAML::const_iterator yamlIt){
         if ( key.compare ("FingersInvolved") == 0 ) { 
             auto tempVect = keyValue->second.as <std::vector <std::string> > ();
             fingersInvolved.insert ( tempVect.begin(), tempVect.end() );
+            
+        } else if ( key.compare ("Type") == 0 ) {
+            if (ROSEE::Action::Type::Timed != static_cast<ROSEE::Action::Type> ( keyValue->second.as <unsigned int>() )) {
+                std::cout << "[Timed ACTION::" << __func__ << "] Error, found type  " << keyValue->second.as <unsigned int>()
+                << "instead of Timed type (" << ROSEE::Action::Type::Timed << ")" << std::endl;
+                return false;
+            }
+            type = ROSEE::Action::Type::Timed;
             
         } else if ( key.compare ("ActionsNamesOrdered") == 0 ) {
             actionsNamesOrdered = keyValue->second.as < std::vector <std::string> > ();
