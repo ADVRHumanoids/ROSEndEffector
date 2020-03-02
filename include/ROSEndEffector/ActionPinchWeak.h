@@ -94,9 +94,7 @@ private:
         bool operator() (const StateWithDistance& a, const StateWithDistance& b) const
         {return (std::abs(a.second) < std::abs(b.second) );}
     };
-    
-    bool emitYamlForDistance ( double distance, YAML::Emitter& );
-    
+        
     /** 
      * @brief For each pair, we want a set of action because we want to store (in general) more possible way
      * to do that action. The PinchWeak among two tips can theoretically be done in infinite ways, we store 

@@ -154,6 +154,9 @@ add_library(ActionTrig
 add_library(ActionMoreTips
     src/ActionMoreTips.cpp
 )
+add_library(ActionMultiplePinchStrong
+    src/ActionMultiplePinchStrong.cpp
+)
 add_library(ActionGeneric
     src/ActionGeneric.cpp 
 )
@@ -219,6 +222,7 @@ target_link_libraries(YamlWorker
     ActionTrig
     ActionPinchWeak
     ActionMoreTips
+    ActionMultiplePinchStrong
     ActionComposed
     ActionTimed
 )
@@ -243,6 +247,10 @@ target_link_libraries(ActionMoreTips
     ActionPrimitive
 )
 
+target_link_libraries(ActionMultiplePinchStrong
+    ActionPinchGeneric
+)
+
 target_link_libraries(ActionGeneric
     Action
 )
@@ -264,6 +272,7 @@ target_link_libraries(FindActions
     ActionTrig
     ActionPinchWeak
     ActionMoreTips
+    ActionMultiplePinchStrong
 )
 
 target_link_libraries(ParserMoveIt

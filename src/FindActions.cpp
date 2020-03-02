@@ -197,6 +197,33 @@ std::map <std::string, ROSEE::ActionMoreTips> ROSEE::FindActions::findMoreTips(u
 }
 
 
+std::map<std::set<std::string>, ROSEE::ActionMultiplePinchStrong> ROSEE::FindActions::findMultiplePinch(unsigned int nFinger, bool strict, std::string path2saveYaml) {
+    
+    std::map<std::set<std::string>, ROSEE::ActionMultiplePinchStrong> multiplePinchMap;
+    if (nFinger < 3 ) {
+        std::cerr << "[ERROR " << __func__ << "] for this find pass at least 3 as number " <<
+        " of fingertips for the pinch" << std::endl;
+        return multiplePinchMap;
+    }
+    
+    multiplePinchMap = checkCollisionsForMultiplePinch(nFinger, strict);
+        
+    //// EMITTING YAML
+    std::map < std::set <std::string> , ActionPrimitive* > mapForWorker;
+
+    for (auto& it : multiplePinchMap) {  // auto& and not auto alone!
+
+        ActionPrimitive* pointer = &(it.second);
+        mapForWorker.insert (std::make_pair ( it.first, pointer ) );
+    }
+    
+    ROSEE::YamlWorker yamlWorker(parserMoveIt->getHandName(), path2saveYaml);
+    yamlWorker.createYamlFile(mapForWorker, multiplePinchMap.begin()->second.getName());
+    
+    return multiplePinchMap;
+}
+
+
 
 /*********************************** PRIVATE FUNCTIONS ***********************************************************************/
 /**************************************** PINCHES ***********************************************************************/
@@ -231,7 +258,7 @@ std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong > ROS
         planning_scene.checkSelfCollision(collision_request, collision_result, kinematic_state, acm);
         
         if (collision_result.collision) { 
-
+            
             //for each collision with this joints state...
             for (auto cont : collision_result.contacts){
                 
@@ -247,7 +274,7 @@ std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong > ROS
                 }
 
                 JointsInvolvedCount jointsInvolvedCount = setOnlyDependentJoints(cont.first, &jointPos);
-                
+
                 //create the actionPinch
                 ActionPinchStrong pinch (cont.first, jointPos, cont.second.at(0) );
                 pinch.setJointsInvolvedCount ( jointsInvolvedCount );
@@ -426,6 +453,77 @@ void ROSEE::FindActions::checkWhichTipsCollideWithoutBounds (
             ++mapEl;
         }
     }
+}
+
+
+std::map<std::set<std::string>, ROSEE::ActionMultiplePinchStrong> ROSEE::FindActions::checkCollisionsForMultiplePinch(unsigned int nFinger, bool strict) {
+    
+    std::map < std::set <std::string> , ROSEE::ActionMultiplePinchStrong > mapOfMultPinches;
+    
+    unsigned int nMinCollision =  strict ? 
+            ROSEE::Utils::binomial_coefficent(nFinger, 2) : (nFinger-1);
+    
+    planning_scene::PlanningScene planning_scene ( parserMoveIt->getRobotModel() );
+    collision_detection::CollisionRequest collision_request;
+    collision_detection::CollisionResult collision_result;
+    collision_request.contacts = true;  //set to compute collisions
+    collision_request.max_contacts = 1000;
+    
+    // Consider only collisions among fingertips 
+    // If an object pair does not appear in the acm, it is assumed that collisions between those 
+    // objects is no tolerated. So we must fill it with all the nonFingertips
+    collision_detection::AllowedCollisionMatrix acm;
+    acm.setEntry(parserMoveIt->getRobotModel()->getLinkModelNames(), 
+                 parserMoveIt->getRobotModel()->getLinkModelNames(), true); //true==not considered collisions
+    acm.setEntry(parserMoveIt->getFingertipNames(), 
+                 parserMoveIt->getFingertipNames(), false); //false== considered collisions
+
+    robot_state::RobotState kinematic_state(parserMoveIt->getRobotModel());
+        
+    for (int i = 0; i < N_EXP_COLLISION_MULTPINCH; i++){
+        
+        collision_result.clear();
+        kinematic_state.setToRandomPositions();
+        planning_scene.checkSelfCollision(collision_request, collision_result, kinematic_state, acm);
+        
+        if (collision_result.contacts.size() >= nMinCollision ) { 
+        
+            double depthSum = 0;
+            std::set <std::string> fingerColliding;
+            for (auto cont : collision_result.contacts){
+                
+                fingerColliding.insert(cont.first.first);
+                fingerColliding.insert(cont.first.second);
+                depthSum += std::abs(cont.second.at(0).depth);
+            }
+            
+            //eg with 2 collision we can have 4 finger colliding because there are two
+            //normal distinct pinch and not a 3-pinch... so we exlude these collisions
+            if (fingerColliding.size() != nFinger) {
+                continue;
+            }
+                
+            //store joint states
+            JointPos jointPos = getConvertedJointPos(&kinematic_state);
+            JointsInvolvedCount jointsInvolvedCount = setOnlyDependentJoints(fingerColliding, &jointPos);
+
+            ActionMultiplePinchStrong pinch (fingerColliding, jointPos, depthSum );
+            pinch.setJointsInvolvedCount ( jointsInvolvedCount );
+            auto itFind = mapOfMultPinches.find ( fingerColliding );
+            if ( itFind == mapOfMultPinches.end() ) {
+                //if here, we have to create store the new created action
+                mapOfMultPinches.insert ( std::make_pair (fingerColliding, pinch) );
+
+            } else { //Check if it is the best depth among the found collision among that pair
+                if (itFind->second.insertActionState( jointPos, depthSum ) ) {
+                    //print debug
+                } else {
+                    //pring debug
+                }
+            }
+        }            
+    }
+    return mapOfMultPinches;
 }
 
 
@@ -637,6 +735,39 @@ ROSEE::JointsInvolvedCount ROSEE::FindActions::setOnlyDependentJoints(
         }
     } 
     
+    return jointsInvolvedCount;    
+}
+
+
+ROSEE::JointsInvolvedCount ROSEE::FindActions::setOnlyDependentJoints(
+    std::set< std::string > tipsNames, JointPos *jPos) {
+    
+    JointsInvolvedCount jointsInvolvedCount;
+    
+    for (auto &jp : *jPos) { //for each among ALL joints
+        
+        jointsInvolvedCount.insert ( std::make_pair (jp.first, 0) );
+        
+        //the tips of the joint
+        std::vector < std::string> tips = parserMoveIt->getFingertipsOfJointMap().at(jp.first); 
+        
+        // if at least one tip of tipsNames is moved by jp.first joint, set the counter
+        // and break the loop (because useless to continue
+        // if no tip of tipsNames is moved by the joint, the count remain to zero and the 
+        // for ends normally
+        for ( auto fingInv : tipsNames ) {
+            if (std::find (tips.begin(), tips.end(), fingInv) != tips.end()) {
+                jointsInvolvedCount.at ( jp.first )  = 1 ;
+                break;
+            }
+        }
+        
+        if (jointsInvolvedCount.at ( jp.first ) == 0 ) {
+            std::fill ( jp.second.begin(), jp.second.end(), DEFAULT_JOINT_POS); 
+            //not used joint, set to default state (all its dof)
+        }
+
+    } 
     return jointsInvolvedCount;    
 }
 
