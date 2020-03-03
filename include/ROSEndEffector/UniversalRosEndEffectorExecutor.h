@@ -85,7 +85,6 @@ private:
         rosee_msg::ActionsInfo::Response& response);
     bool selectablePairInfoCallback( rosee_msg::SelectablePairInfo::Request& request,
                                      rosee_msg::SelectablePairInfo::Response& response);
-    void findPossiblePinchPairs ();
 
     
     ros::NodeHandle _nh;
@@ -125,11 +124,10 @@ private:
     
     MapActionHandler mapActionHandler;
     
-    //for service info to gui //TODO check if all necessary with the new mapaction handler
+    //for service info to gui 
     std::vector<rosee_msg::ActionInfo> _actionsInfoVect;
     ros::ServiceServer _ros_server_actionsInfo;
     ros::ServiceServer _ros_server_selectablePairInfo;
-    std::map <std::string, std::set<std::string> > pairedMap;
 
     
 

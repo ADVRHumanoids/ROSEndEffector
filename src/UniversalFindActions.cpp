@@ -61,31 +61,31 @@ int main ( int argc, char **argv ) {
         
     /******************************* PRINTS OF PARSED PRIMITIVES *********************************************/
     std::cout << "PARSED MAP OF PINCHESSTRONG FROM YAML FILE:" << std::endl;
-    for (auto &i : mapsHandler.getPrimitive("pinchStrong")) {
+    for (auto &i : mapsHandler.getPrimitiveMap("pinchStrong")) {
         i.second->print();
     }    
     std::cout << "PARSED MAP OF PINCHESWEAK FROM YAML FILE:" << std::endl;
-    for (auto &i : mapsHandler.getPrimitive("pinchWeak")) {
+    for (auto &i : mapsHandler.getPrimitiveMap("pinchWeak")) {
         i.second->print();
     }
     std::cout << "PARSED MAP OF TRIGS FROM YAML FILE:" << std::endl;
-    for (auto &i : mapsHandler.getPrimitive("trig")) {
+    for (auto &i : mapsHandler.getPrimitiveMap("trig")) {
         i.second->print();
     }
     std::cout << "PARSED MAP OF TIPFLEX FROM YAML FILE:" << std::endl;
-    for (auto &i : mapsHandler.getPrimitive("tipFlex")) {
+    for (auto &i : mapsHandler.getPrimitiveMap("tipFlex")) {
         i.second->print();
     }
     std::cout << "PARSED MAP OF FINGFLEX FROM YAML FILE:" << std::endl;
-    for (auto &i : mapsHandler.getPrimitive("fingFlex")) {
+    for (auto &i : mapsHandler.getPrimitiveMap("fingFlex")) {
         i.second->print();
     }
     std::cout << "PARSED MAP OF MORETIPS FROM YAML FILE:" << std::endl;
-    for (auto &i : mapsHandler.getPrimitive("moreTips-3")) {
+    for (auto &i : mapsHandler.getPrimitiveMap("moreTips-3")) {
         i.second->print();
     }
     std::cout << "DEBUG MULTIPINCH PARSED: " << std::endl;
-    for (auto &it : mapsHandler.getPrimitive("multiplePinchStrong-3")) {
+    for (auto &it : mapsHandler.getPrimitiveMap("multiplePinchStrong-3")) {
         it.second->print();
     }
     
@@ -96,8 +96,8 @@ int main ( int argc, char **argv ) {
     std::cout << "A composed action with Independent inner action: " << std::endl;
     ROSEE::ActionComposed grasp ("grasp", true);
 
-    if ( mapsHandler.getPrimitive(ROSEE::ActionPrimitive::Type::Trig).size() == parserMoveIt->getFingertipNames().size() ) {
-        for (auto trig : mapsHandler.getPrimitive("trig")) {
+    if ( mapsHandler.getPrimitiveMap(ROSEE::ActionPrimitive::Type::Trig).at(0).size() == parserMoveIt->getFingertipNames().size() ) {
+        for (auto trig : mapsHandler.getPrimitiveMap("trig")) {
             grasp.sumAction  (trig.second) ; 
         }
         grasp.print();
@@ -123,6 +123,8 @@ int main ( int argc, char **argv ) {
     auto jpc = maps.first.begin()->second.getJointsInvolvedCount();
 
     ROSEE::ActionGeneric simpleAction("casual", jp, jpc);
+    std::cout << std::endl << "Casual action manually created: " << std::endl;
+
     simpleAction.print();
     
     yamlWorker.createYamlFile( &simpleAction,  folderForActions + "/generics/" );

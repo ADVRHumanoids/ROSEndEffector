@@ -72,6 +72,15 @@ bool ROSEE::ActionTrig::fillFromYaml (  YAML::const_iterator yamlIt  ) {
             
         } else  if (key.compare("JointsInvolvedCount") == 0) {
             jointsInvolvedCount = element->second.as < JointsInvolvedCount > ();
+        
+        } else if (key.compare ("PrimitiveType") == 0) {
+            ROSEE::ActionPrimitive::Type parsedType = static_cast<ROSEE::ActionPrimitive::Type> ( 
+                element->second.as <unsigned int>() );
+            if (parsedType != primitiveType ) {
+                std::cerr << "[ERROR ActionTrig::" << __func__ << " parsed a type " << parsedType << 
+                    " but this object has primitive type " << primitiveType << std::endl; 
+                return false;
+            }
             
         } else if (key.compare(0, 12, "ActionState_") == 0) { //compare 12 caracters from index 0 of key
             for(YAML::const_iterator asEl = element->second.begin(); asEl != element->second.end(); ++asEl) {
@@ -79,17 +88,19 @@ bool ROSEE::ActionTrig::fillFromYaml (  YAML::const_iterator yamlIt  ) {
 
                 if (asEl->first.as<std::string>().compare ("JointPos") == 0 ) {
                     jointPos =  asEl->second.as < JointPos >()  ;
-                } else if (asEl->first.as<std::string>().compare ("Optional") == 0 ) {
-
-                    //an optional is present, errrrrrrr TODO
-
+                    
                 } else {
-                    //ERRROr
+                    //ERRROr, only JointPos at this level (optional is not for trig)
+                    std::cerr << "[ERROR ActionTrig::" << __func__ << " not know key " 
+                        << asEl->first.as<std::string>() << 
+                        " found in the yaml file at this level" << std::endl; 
                     return false;
                 }
             }
+            
         } else {
-            //TODO print errorrr
+            std::cerr << "[ERROR ActionTrig::" << __func__ << "not know key " << key << 
+                " found in the yaml file" << std::endl; 
         }
     }
     return true;

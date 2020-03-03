@@ -212,6 +212,7 @@ target_link_libraries(UniversalRosEndEffectorExecutor
     ROSEEParser
     ROSEEInterface
     YamlWorker
+    MapActionHandler
     
     # do it automatically
     DummyHal

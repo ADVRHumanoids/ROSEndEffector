@@ -27,7 +27,6 @@
 
 #include <ROSEndEffector/Action.h>
 #include <ROSEndEffector/ActionPrimitive.h>
-#include <ROSEndEffector/ActionMoreTips.h>
 #include <ROSEndEffector/ActionTimed.h>
 #include <ROSEndEffector/ActionGeneric.h>
 
@@ -73,7 +72,7 @@ public:
     std::map <std::string, ROSEE::ActionTimed> getAllTimeds () const;
     
     
-    std::set<std::string> getFingertipsForPinch ( std::string finger, unsigned int choice = 0  ) const;
+    std::set<std::string> getFingertipsForPinch ( std::string finger, ROSEE::ActionPrimitive::Type pinchType) const;
     std::map <std::string, std::set<std::string> > getPinchStrongPairsMap ( ) const;
     std::map <std::string, std::set<std::string> > getPinchWeakPairsMap ( ) const;
 

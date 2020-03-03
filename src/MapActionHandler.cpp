@@ -211,15 +211,17 @@ ROSEE::ActionTimed ROSEE::MapActionHandler::getTimed(std::string name) const {
     return it->second;
 }
 
-std::map<std::string, ROSEE::ActionTimed> ROSEE::MapActionHandler::getAllTimed() const {
+std::map<std::string, ROSEE::ActionTimed> ROSEE::MapActionHandler::getAllTimeds() const {
     return timeds;
 }
 
-std::set<std::string> ROSEE::MapActionHandler::getFingertipsForPinch(std::string finger, unsigned int choice) const {
+std::set<std::string> ROSEE::MapActionHandler::getFingertipsForPinch(std::string finger, ROSEE::ActionPrimitive::Type pinchType) const {
     
     std::set <std::string> pairedFinger;
     
-    if (choice == 0) {
+    switch (pinchType) {
+        
+    case ROSEE::ActionPrimitive::Type::PinchStrong : {
         
         auto it = pinchStrongPairsMap.find(finger);
         
@@ -230,8 +232,10 @@ std::set<std::string> ROSEE::MapActionHandler::getFingertipsForPinch(std::string
             std::cerr << "[WARNING MapActionHandler " << __func__ << "] No companions found to make a strong pinch with " << finger << " finger" 
             << std::endl;
         }
-        
-    } else if (choice == 1 ) {
+        break;
+    }
+    
+    case ROSEE::ActionPrimitive::Type::PinchWeak : {
         
         auto it = pinchWeakPairsMap.find(finger);
         
@@ -242,23 +246,14 @@ std::set<std::string> ROSEE::MapActionHandler::getFingertipsForPinch(std::string
             std::cerr << "[WARNING MapActionHandler " << __func__ << "] No companions found to make a weak pinch with " << finger << " finger" 
             << std::endl;
         } 
-        
-    } else { //both strong a weak companions
+        break;
+    }
+    
+    default: {
        
-        auto it = pinchStrongPairsMap.find(finger);
-        if ( it != pinchStrongPairsMap.end() ) {
-            pairedFinger.insert ( it->second.begin(), it->second.end() );
-        }
-        
-        it = pinchWeakPairsMap.find(finger);
-        if ( it!= pinchWeakPairsMap.end() ) { 
-            pairedFinger.insert ( it->second.begin(), it->second.end() );
-        }
-        
-        if (pairedFinger.size() == 0 ){
-            std::cerr << "[WARNING MapActionHandler " << __func__ << "] No companions found to make a strong or weak pinch with " 
-            << finger << " finger" << std::endl;    
-        }
+        std::cerr << "[WARNING MapActionHandler " << __func__ << "] Type " <<
+        pinchType << " is not a type to look for companions " << std::endl;    
+    }
     }
     
     return pairedFinger;
@@ -337,7 +332,7 @@ bool ROSEE::MapActionHandler::parseAllTimeds(std::string pathFolder) {
 void ROSEE::MapActionHandler::findPinchPairsMap() {
     
     //Assume only one pinch strong, it should be like this now.
-    auto maps = getPrimitive(ROSEE::ActionPrimitive::Type::PinchStrong);
+    auto maps = getPrimitiveMap(ROSEE::ActionPrimitive::Type::PinchStrong);
     
     if (maps.size() != 0 ){
         for (ActionPrimitiveMap map : maps) {
@@ -362,7 +357,7 @@ void ROSEE::MapActionHandler::findPinchPairsMap() {
     }
     
     //now do the same for the weak pinches
-    auto mapsweak = getPrimitive(ROSEE::ActionPrimitive::Type::PinchWeak);
+    auto mapsweak = getPrimitiveMap(ROSEE::ActionPrimitive::Type::PinchWeak);
     
     if (mapsweak.size() != 0 ) {
         for (ActionPrimitiveMap map : mapsweak) {

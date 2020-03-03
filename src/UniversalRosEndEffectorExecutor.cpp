@@ -154,30 +154,22 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive_subscribers
     std::string folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/" + _ee->getName() + "/primitives/";
     std::string folderForActionsComposed = ROSEE::Utils::getPackagePath() + "/configs/actions/" + _ee->getName() + "/generics/";
 
-    MapActionHandler handler;
-    handler.parseAllPrimitives( folderForActions );
+    mapActionHandler.parseAllPrimitives( folderForActions );
+    
     //TODO check if store in this class all the maps is necessary...
-    _pinchParsedMap = handler.getPrimitive("pinchStrong");
-    if (handler.getPrimitive(ROSEE::ActionPrimitive::Type::PinchWeak).size()>0) {//another method to get the map
-        _pinchWeakParsedMap = handler.getPrimitive(ROSEE::ActionPrimitive::Type::PinchWeak).at(0);
+    _pinchParsedMap = mapActionHandler.getPrimitiveMap("pinchStrong");
+    
+    if (mapActionHandler.getPrimitiveMap(ROSEE::ActionPrimitive::Type::PinchWeak).size()>0) {
+        //another method to get the map
+        _pinchWeakParsedMap = mapActionHandler.getPrimitiveMap(ROSEE::ActionPrimitive::Type::PinchWeak).at(0);
     } 
     
-    _trigParsedMap = handler.getPrimitive("trig");
+    _trigParsedMap = mapActionHandler.getPrimitiveMap("trig");
+    _tipFlexParsedMap = mapActionHandler.getPrimitiveMap("tipFlex");
+    _fingFlexParsedMap = mapActionHandler.getPrimitiveMap("fingFlex");
 
     // old way to get maps
     //_pinchParsedMap = yamlWorker.parseYamlPrimitive ( folderForActions + "pinchStrong.yaml",ROSEE::ActionPrimitive::Type::PinchStrong );
-
-    //pinch Weak
-    _pinchWeakParsedMap = yamlWorker.parseYamlPrimitive ( folderForActions + "pinchWeak.yaml", ROSEE::ActionPrimitive::Type::PinchWeak );
-
-    //trig
-    _trigParsedMap = yamlWorker.parseYamlPrimitive ( folderForActions + "trig.yaml", ROSEE::ActionPrimitive::Type::Trig );
-
-    //tipFlex
-    _tipFlexParsedMap = yamlWorker.parseYamlPrimitive ( folderForActions + "tipFlex.yaml", ROSEE::ActionPrimitive::Type::TipFlex );
-
-    //fingFlex
-    _fingFlexParsedMap = yamlWorker.parseYamlPrimitive ( folderForActions + "fingFlex.yaml", ROSEE::ActionPrimitive::Type::FingFlex );
 
     ROS_INFO_STREAM ( "PINCHES-STRONG:" );
     for ( auto &i : _pinchParsedMap ) {
@@ -230,29 +222,38 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive_subscribers
 
 bool ROSEE::UniversalRosEndEffectorExecutor::init_actionsInfo_services() {
         
-    //TODO add all action with for looping all the files present in the folder
-    rosee_msg::ActionInfo actInfo;
-    actInfo.action_name = _pinchParsedMap.begin()->second->getName();
-    actInfo.topic_name = _nh.getNamespace() + "/pinch"; //TODO define name topics
-    actInfo.seq = 0; //TODO check if necessary the seq in this msg
-    actInfo.max_selectable = _pinchParsedMap.begin()->first.size(); //the size of the key set
-    actInfo.selectable_names = ROSEE::Utils::extract_keys_unique(_pinchParsedMap,  
-                                                                 _ee->getFingers().size());
-    _actionsInfoVect.push_back(actInfo);
-    findPossiblePinchPairs();
-    
-    actInfo = rosee_msg::ActionInfo(); //clear container
-    actInfo.action_name = _graspParsedMap.getName(); //TODO why this is called map?
-    actInfo.topic_name = _nh.getNamespace() + "/grasp"; //TODO define name topics
-    actInfo.max_selectable = 0; //zero means no things to select with checkboxes
+    for (auto primitiveContainers : mapActionHandler.getAllPrimitiveMaps() ) {
+        
+        rosee_msg::ActionInfo actInfo;
+        actInfo.action_name = primitiveContainers.first;
+        //TODO define name topics elsewhere?
+        actInfo.topic_name = _nh.getNamespace() + "/" + actInfo.action_name;
+        actInfo.seq = 0; //TODO check if necessary the seq in this msg
+        //until now, there is not a primitive that does not have "something" to select
+        // (eg pinch has 2 fing, trig one fing, moretips 1 joint...). 
+        //Instead generic action has always no thing to select (next for loop)
+        actInfo.max_selectable = primitiveContainers.second.begin()->first.size();
+        //TODO extract the keys with another mapActionHandler function?
+        actInfo.selectable_names =
+            ROSEE::Utils::extract_keys_unique(primitiveContainers.second,
+                                              _ee->getFingers().size());
+        _actionsInfoVect.push_back(actInfo);
 
-    actInfo.seq = 0; //TODO check if necessary the seq in this msg
-
-    _actionsInfoVect.push_back(actInfo);
+    }
     
-    
-    //TODO add others when msg and subscribers will be avaialbel (init_grapsing_primitive_subscribers func)
+    for (auto genericMap : mapActionHandler.getAllGenerics() ) {
+        
+        rosee_msg::ActionInfo actInfo;
+        actInfo.action_name = genericMap.first;
+        //TODO define name topics elsewhere?
+        actInfo.topic_name = _nh.getNamespace() + "/" + actInfo.action_name;
+        actInfo.seq = 0; //TODO check if necessary the seq in this msg
+        //Instead generic action has always no thing to select UNTIL NOW
+        actInfo.max_selectable = 0;
 
+        _actionsInfoVect.push_back(actInfo);
+
+    }
     
     _ros_server_actionsInfo = _nh.advertiseService("ActionsInfo", 
         &ROSEE::UniversalRosEndEffectorExecutor::actionsInfoCallback, this);
@@ -263,6 +264,7 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_actionsInfo_services() {
     return true;
 
 }
+
 
 bool ROSEE::UniversalRosEndEffectorExecutor::actionsInfoCallback(
     rosee_msg::ActionsInfo::Request& request,
@@ -283,39 +285,35 @@ bool ROSEE::UniversalRosEndEffectorExecutor::selectablePairInfoCallback(
     rosee_msg::SelectablePairInfo::Request& request,
     rosee_msg::SelectablePairInfo::Response& response) {
     
-    //request.action_name not used now
-    auto it = pairedMap.find(request.element_name) ;
-    
-    if (it == pairedMap.end()) {
+    std::set<std::string> companionFingers;
+    if (request.action_name.compare ("pinchStrong") == 0) {
+        companionFingers =
+            mapActionHandler.getFingertipsForPinch(request.element_name,
+                ROSEE::ActionPrimitive::Type::PinchStrong) ;
+                
+    } else if (request.action_name.compare ("pinchWeak") == 0) {
+        companionFingers =
+            mapActionHandler.getFingertipsForPinch(request.element_name,
+                ROSEE::ActionPrimitive::Type::PinchWeak) ;
+                
+    } else {
+        ROS_ERROR_STREAM ( "Received" << request.action_name << " that is not" <<
+            "a recognizible action name to look for finger companions" );
         return false;
     }
     
-    for (auto fing : it->second ) {
+    if (companionFingers.size() == 0) {
+        return false;
+    }
+    
+    //push the elements of set into the vector
+    for (auto fing : companionFingers ) {
         response.pair_elements.push_back (fing);
     }
     
     return true;
         
 }
-
-void ROSEE::UniversalRosEndEffectorExecutor::findPossiblePinchPairs () {
-                                                 
-    for (auto it : _pinchParsedMap) {
-    
-        for (auto fing : it.first) { //.first is a set
-            
-            //TODO we will insert all the set as value, this means that also will include the key itself,
-            // with the meaning : finger_1 can pinch with finger_1: 
-            if (pairedMap.count(fing) == 0 ) {
-               pairedMap.insert(std::make_pair(fing, it.first)); 
-            } else {
-                pairedMap.at(fing).insert (it.first.begin(), it.first.end());
-            }
-        }
-    }
-}
-    
-
 
 void ROSEE::UniversalRosEndEffectorExecutor::fill_publish_joint_states() {
 
@@ -395,4 +393,40 @@ ROSEE::UniversalRosEndEffectorExecutor::~UniversalRosEndEffectorExecutor() {
 }
 
 
+/***OLDDD
+bool ROSEE::UniversalRosEndEffectorExecutor::init_actionsInfo_services() {
+        
+    //TODO add all action with for looping all the files present in the folder
+    rosee_msg::ActionInfo actInfo;
+    actInfo.action_name = _pinchParsedMap.begin()->second->getName();
+    actInfo.topic_name = _nh.getNamespace() + "/pinch"; //TODO define name topics
+    actInfo.seq = 0; //TODO check if necessary the seq in this msg
+    actInfo.max_selectable = _pinchParsedMap.begin()->first.size(); //the size of the key set
+    actInfo.selectable_names = ROSEE::Utils::extract_keys_unique(_pinchParsedMap,  
+                                                                 _ee->getFingers().size());
+    _actionsInfoVect.push_back(actInfo);
+    findPossiblePinchPairs();
+    
+    actInfo = rosee_msg::ActionInfo(); //clear container
+    actInfo.action_name = _graspParsedMap.getName(); //TODO why this is called map?
+    actInfo.topic_name = _nh.getNamespace() + "/grasp"; //TODO define name topics
+    actInfo.max_selectable = 0; //zero means no things to select with checkboxes
 
+    actInfo.seq = 0; //TODO check if necessary the seq in this msg
+
+    _actionsInfoVect.push_back(actInfo);
+    
+    
+    //TODO add others when msg and subscribers will be avaialbel (init_grapsing_primitive_subscribers func)
+
+    
+    _ros_server_actionsInfo = _nh.advertiseService("ActionsInfo", 
+        &ROSEE::UniversalRosEndEffectorExecutor::actionsInfoCallback, this);
+    
+    _ros_server_selectablePairInfo = _nh.advertiseService("SelectablePairInfo", 
+        &ROSEE::UniversalRosEndEffectorExecutor::selectablePairInfoCallback, this);
+    
+    return true;
+
+}
+**/

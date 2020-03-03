@@ -201,20 +201,29 @@ bool ROSEE::ActionPinchStrong::fillFromYaml ( YAML::const_iterator yamlIt ) {
         fingersInvolved.insert(it);
     }
 
-    for ( YAML::const_iterator actionState = yamlIt->second.begin(); actionState != yamlIt->second.end(); ++actionState) {        
+    for ( YAML::const_iterator keyValue = yamlIt->second.begin(); keyValue != yamlIt->second.end(); ++keyValue) {        
         
-        std::string key = actionState->first.as<std::string>();
+        std::string key = keyValue->first.as<std::string>();
         if (key.compare("JointsInvolvedCount") == 0) {
-            jointsInvolvedCount = actionState->second.as < JointsInvolvedCount > ();
+            jointsInvolvedCount = keyValue->second.as < JointsInvolvedCount > ();
             
         } else if (key.compare ("ActionName") == 0 ) {
-            name = actionState->second.as <std::string> ();
+            name = keyValue->second.as <std::string> ();
+        
+        } else if (key.compare ("PrimitiveType") == 0) {
+            ROSEE::ActionPrimitive::Type parsedType = static_cast<ROSEE::ActionPrimitive::Type> ( 
+                keyValue->second.as <unsigned int>() );
+            if (parsedType != primitiveType ) {
+                std::cerr << "[ERROR ActionPinchStrong::" << __func__ << " parsed a type " << parsedType << 
+                    " but this object has primitive type " << primitiveType << std::endl; 
+                return false;
+            }
             
         } else if (key.compare(0, 12, "ActionState_") == 0) { //compare 12 caracters from index 0 of key
 
             JointPos jointPos;
             collision_detection::Contact contact;
-            for(YAML::const_iterator asEl = actionState->second.begin(); asEl != actionState->second.end(); ++asEl) {
+            for(YAML::const_iterator asEl = keyValue->second.begin(); asEl != keyValue->second.end(); ++asEl) {
 
                 //asEl can be the map JointPos or the map Optional
                 if (asEl->first.as<std::string>().compare ("JointPos") == 0 ) {
@@ -264,12 +273,18 @@ bool ROSEE::ActionPinchStrong::fillFromYaml ( YAML::const_iterator yamlIt ) {
                     
                 } else {
                     //ERRROr, only joinstates and optional at this level
+                    std::cerr << "[ERROR ActionPinchStrong::" << __func__ << "not know key " 
+                        << asEl->first.as<std::string>() << 
+                        " found in the yaml file at this level" << std::endl; 
                     return false;
                 }
             }  
             actionStates.insert ( std::make_pair (jointPos, contact));
+            
         } else {
-            //TODO print some error
+            std::cerr << "[ERROR ActionPinchStrong::" << __func__ << "not know key " << key << 
+                " found in the yaml file" << std::endl; 
+            return false;
         }
     }
     

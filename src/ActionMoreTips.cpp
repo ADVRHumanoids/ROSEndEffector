@@ -129,25 +129,36 @@ bool ROSEE::ActionMoreTips::fillFromYaml(YAML::const_iterator yamlIt) {
     
     jointInvolved = yamlIt->first.as < std::string > ();
     
-    for ( YAML::const_iterator element = yamlIt->second.begin(); element != yamlIt->second.end(); ++element) {
-        std::string key = element->first.as<std::string>();
+    for ( YAML::const_iterator keyValue = yamlIt->second.begin(); keyValue != yamlIt->second.end(); ++keyValue) {
+        std::string key = keyValue->first.as<std::string>();
         
-         if ( key.compare ("ActionName") == 0 ){
-            name = element->second.as < std::string > ();
+        if ( key.compare ("ActionName") == 0 ){
+            name = keyValue->second.as < std::string > ();
             
         } else if (key.compare("FingersInvolved") == 0) {
-            std::vector <std::string> fingInvolvedVect = element->second.as <std::vector < std::string >> ();
+            std::vector <std::string> fingInvolvedVect = keyValue->second.as <std::vector < std::string >> ();
             for (const auto &it : fingInvolvedVect) {
                 fingersInvolved.insert(it);
             }
             
         } else if (key.compare ("JointPosNearer") == 0) {
-            jointPosNearer = element->second.as <JointPos>();
+            jointPosNearer = keyValue->second.as <JointPos>();
             
         } else if (key.compare ("JointPosFurther") == 0) {
-            jointPosFurther = element->second.as <JointPos>();
+            jointPosFurther = keyValue->second.as <JointPos>();
+        
+        } else if (key.compare ("PrimitiveType") == 0) {
+            ROSEE::ActionPrimitive::Type parsedType = static_cast<ROSEE::ActionPrimitive::Type> ( 
+                keyValue->second.as <unsigned int>() );
+            if (parsedType != primitiveType ) {
+                std::cerr << "[ERROR ActionMoreTips::" << __func__ << " parsed a type " << parsedType << 
+                    " but this object has primitive type " << primitiveType << std::endl; 
+                return false;
+            }
+            
         } else {
-            //todo strange error
+            std::cerr << "[ERROR ActionMoreTips::" << __func__ << "not know key " << key << 
+                " found in the yaml file" << std::endl; 
             return false;
         }
     }

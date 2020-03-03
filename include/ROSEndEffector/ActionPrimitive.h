@@ -68,7 +68,7 @@ public:
     /**
      * @brief Depending on the primitive, we can use different "keys" to take info from yaml file when parsing
      * for example, trig and pinches are selected through fingersInvolved, while ActionMoreTips uses the joint name.
-     * So each derived class must override this info, which for now is used only in \ref YamlWorker::parseYamlPrimitive()
+     * So each derived class must override this info, which for now is used only in \ref YamlWorker::parseYamlPrimitive() and also by map handler to get the primitive
      */
     virtual std::set < std::string> getKeyForYamlMap () const = 0;
     

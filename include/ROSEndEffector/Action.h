@@ -188,7 +188,7 @@ protected:
     Action(std::string actionName, Action::Type type);
     
     std::string name;
-    Type type;
+    Action::Type type;
     std::set <std::string> fingersInvolved;
     JointsInvolvedCount jointsInvolvedCount;
 
