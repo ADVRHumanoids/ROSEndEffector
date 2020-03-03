@@ -154,9 +154,18 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive_subscribers
     std::string folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/" + _ee->getName() + "/primitives/";
     std::string folderForActionsComposed = ROSEE::Utils::getPackagePath() + "/configs/actions/" + _ee->getName() + "/generics/";
 
+    MapActionHandler handler;
+    handler.parseAllPrimitives( folderForActions );
+    //TODO check if store in this class all the maps is necessary...
+    _pinchParsedMap = handler.getPrimitive("pinchStrong");
+    if (handler.getPrimitive(ROSEE::ActionPrimitive::Type::PinchWeak).size()>0) {//another method to get the map
+        _pinchWeakParsedMap = handler.getPrimitive(ROSEE::ActionPrimitive::Type::PinchWeak).at(0);
+    } 
     
-    //pinch
-    _pinchParsedMap = yamlWorker.parseYamlPrimitive ( folderForActions + "pinchStrong.yaml", ROSEE::ActionPrimitive::Type::PinchStrong );
+    _trigParsedMap = handler.getPrimitive("trig");
+
+    // old way to get maps
+    //_pinchParsedMap = yamlWorker.parseYamlPrimitive ( folderForActions + "pinchStrong.yaml",ROSEE::ActionPrimitive::Type::PinchStrong );
 
     //pinch Weak
     _pinchWeakParsedMap = yamlWorker.parseYamlPrimitive ( folderForActions + "pinchWeak.yaml", ROSEE::ActionPrimitive::Type::PinchWeak );

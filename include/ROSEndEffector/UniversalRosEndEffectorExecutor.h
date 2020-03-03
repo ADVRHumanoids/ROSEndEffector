@@ -30,6 +30,7 @@
 #include <ROSEndEffector/EEHal.h>
 #include <ROSEndEffector/DummyHal.h>
 #include <ROSEndEffector/Utils.h>
+#include <ROSEndEffector/MapActionHandler.h>
 
 #include <ros_end_effector/EEGraspControl.h>
 #include <ros_end_effector/EEPinchControl.h>
@@ -113,6 +114,7 @@ private:
     ROSEE::Utils::SecondOrderFilter<Eigen::VectorXd> _filt_q;
     
     // grasping primitives maps
+    // TODO still needed? now we have the handler that store them...
     std::map<std::set<std::string>, ROSEE::ActionPrimitive::Ptr> _pinchParsedMap;
     std::map<std::set<std::string>, ROSEE::ActionPrimitive::Ptr> _pinchWeakParsedMap;
     std::map<std::set<std::string>, ROSEE::ActionPrimitive::Ptr> _trigParsedMap;
@@ -121,7 +123,9 @@ private:
     
     ROSEE::ActionComposed _graspParsedMap;
     
-    //for service info to gui
+    MapActionHandler mapActionHandler;
+    
+    //for service info to gui //TODO check if all necessary with the new mapaction handler
     std::vector<rosee_msg::ActionInfo> _actionsInfoVect;
     ros::ServiceServer _ros_server_actionsInfo;
     ros::ServiceServer _ros_server_selectablePairInfo;

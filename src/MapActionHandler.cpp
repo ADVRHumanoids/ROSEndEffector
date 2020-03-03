@@ -18,12 +18,7 @@
 
 ROSEE::MapActionHandler::MapActionHandler() {}
 
-ROSEE::MapActionHandler::MapActionHandler(std::string handName) {
-    
-    this->handName = handName;
-}
-
-ROSEE::MapActionHandler::ActionPrimitiveMap ROSEE::MapActionHandler::getPrimitive(std::string primitiveName) const{
+ROSEE::MapActionHandler::ActionPrimitiveMap ROSEE::MapActionHandler::getPrimitiveMap(std::string primitiveName) const{
     
     auto it = primitives.find (primitiveName);
     if (it == primitives.end() ){
@@ -34,7 +29,7 @@ ROSEE::MapActionHandler::ActionPrimitiveMap ROSEE::MapActionHandler::getPrimitiv
     return it->second;
 }
 
-std::vector<ROSEE::MapActionHandler::ActionPrimitiveMap> ROSEE::MapActionHandler::getPrimitive(ROSEE::ActionPrimitive::Type type) const {
+std::vector<ROSEE::MapActionHandler::ActionPrimitiveMap> ROSEE::MapActionHandler::getPrimitiveMap(ROSEE::ActionPrimitive::Type type) const {
     
     std::vector<ROSEE::MapActionHandler::ActionPrimitiveMap> vectRet;
     
@@ -50,8 +45,135 @@ std::vector<ROSEE::MapActionHandler::ActionPrimitiveMap> ROSEE::MapActionHandler
     
 }
 
-std::map<std::string, ROSEE::MapActionHandler::ActionPrimitiveMap> ROSEE::MapActionHandler::getAllPrimitives() const {
+std::map<std::string, ROSEE::MapActionHandler::ActionPrimitiveMap> ROSEE::MapActionHandler::getAllPrimitiveMaps() const {
     return primitives;
+}
+
+ROSEE::ActionPrimitive::Ptr ROSEE::MapActionHandler::getPrimitive(std::string primitiveName, std::set<std::string> key) const {
+    
+    auto map = getPrimitiveMap(primitiveName);
+    if (map.begin()->second->getKeyForYamlMap().size() != key.size()) {
+        std::cerr << "[ERROR MapActionHandler::" << __func__ << "] The action '" 
+        << primitiveName << "' has as key a set of dimension " <<
+        map.begin()->second->getKeyForYamlMap().size() <<
+        " and not dimension of passed 2nd argument" << key.size() << std::endl;
+        return nullptr;
+    }
+    
+    auto it = map.find(key);
+    
+    if (it == map.end()) {
+        std::cerr << "[ERROR MapActionHandler::" << __func__ << "] Not found any action '" 
+            << primitiveName << "' with key [ " ;
+        for (auto keyEl : key) {
+            std::cerr << keyEl << ", ";
+        }
+        std::cerr << "] " << std::endl;
+        return nullptr;
+    }
+    
+    return it->second;
+}
+
+ROSEE::ActionPrimitive::Ptr ROSEE::MapActionHandler::getPrimitive(std::string primitiveName, std::string key) const {
+    
+    std::set <std::string> keySet {key};
+    return getPrimitive(primitiveName, keySet);
+}
+
+ROSEE::ActionPrimitive::Ptr ROSEE::MapActionHandler::getPrimitive(std::string primitiveName, std::pair<std::string,std::string> key) const {
+    
+    std::set <std::string> keySet {key.first, key.second};
+    return getPrimitive(primitiveName, keySet);
+}
+
+std::vector<ROSEE::ActionPrimitive::Ptr> ROSEE::MapActionHandler::getPrimitive(ROSEE::ActionPrimitive::Type type, std::set<std::string> key) const {
+    
+    std::vector <ActionPrimitiveMap> maps = getPrimitiveMap(type);
+    
+    //now we look among the maps, for all the maps that has key size as the size of key passed
+    std::vector <ActionPrimitiveMap> theMaps;
+    for (int i =0; i<maps.size(); i++) {
+        if (maps.at(i).begin()->second->getKeyForYamlMap().size() == key.size()) {
+            theMaps.push_back(maps.at(i));
+        }
+    }
+    
+    if (theMaps.size() == 0 ) {
+        std::cerr << "[ERROR MapActionHandler::" << __func__ << "] No action of type '" 
+        << type << "' has as key a set of dimension " <<
+        key.size() << " (passed 2nd argument)" << std::endl;
+        return std::vector<ROSEE::ActionPrimitive::Ptr>();
+    }
+    
+    //now we look, among all the themaps (where key size is the same as the passed arg key)
+    // for an action that as effectively the wanted key. We can have more than one action
+    // with the wanted key because in theMaps vector we have different primitives (altought 
+    // of same type). This is not possible now (because moretips have as key a joint, so
+    // a joint cant move X fingers and ALSO Y fingers) (and multiplePinch action have all 
+    // different key set size ( the number of fing used for multpinch). Anyway a vect is
+    // returned because we do not know if in future we will have new type of primitives.
+    std::vector<ROSEE::ActionPrimitive::Ptr> returnVect;
+    for (auto action : theMaps) {
+        auto it = action.find(key);
+        if (it != action.end()) {
+            returnVect.push_back(it->second);
+        }
+    }
+    
+    if (returnVect.size() == 0) {
+        std::cerr << "[ERROR MapActionHandler::" << __func__ << "] Not found any action of type '" << type << "' with key [ " ;
+        for (auto keyEl : key) {
+            std::cerr << keyEl << ", ";
+        }
+        std::cerr << "] " << std::endl;
+        return std::vector<ROSEE::ActionPrimitive::Ptr>();
+    }
+    
+    return returnVect;
+    
+}
+
+std::vector<ROSEE::ActionPrimitive::Ptr> ROSEE::MapActionHandler::getPrimitive(ROSEE::ActionPrimitive::Type type, std::string key) const {
+    std::set <std::string> keySet {key};
+    return getPrimitive(type, keySet);
+}
+
+std::vector<ROSEE::ActionPrimitive::Ptr> ROSEE::MapActionHandler::getPrimitive(ROSEE::ActionPrimitive::Type type, std::pair<std::string,std::string> key) const {
+    
+    std::set <std::string> keySet {key.first, key.second};
+    return getPrimitive(type, keySet);
+}
+
+//only one element because per def we have only one ActionPrimitiveMap of type moretips
+// with a defined number of nFinger. (Then inside it we can have more primitives, but 
+// always with the same number of nFinger)
+//TODO return with the key as set instead???
+std::map<std::string, ROSEE::ActionPrimitive::Ptr> ROSEE::MapActionHandler::getPrimitiveMoreTipsMap(unsigned int nFinger) const {
+    
+    std::map<std::string, ROSEE::ActionPrimitive::Ptr> ret;
+    
+    for (auto it : primitives) {
+        
+        if (it.second.begin()->second->getPrimitiveType() ==
+            ROSEE::ActionPrimitive::Type::MoreTips && 
+            it.second.begin()->second->getnFingersInvolved() == nFinger){
+            
+            //copy the map into one similar but with as key a strign and not a set
+            for (auto itt : it.second) {
+                //itt.first is the set of one element
+                std::string key = *(itt.first.begin());
+                ret.insert(std::make_pair(key, itt.second));
+            }
+
+        }
+    }
+    
+    if (ret.size() == 0) {
+        std::cerr << "[ERROR MapActionHandler::" << __func__ << "] Not found any moreTips action that moves " << nFinger << " fingers " << std::endl;
+    }
+    
+    return ret;
 }
 
 

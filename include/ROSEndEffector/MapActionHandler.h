@@ -27,6 +27,7 @@
 
 #include <ROSEndEffector/Action.h>
 #include <ROSEndEffector/ActionPrimitive.h>
+#include <ROSEndEffector/ActionMoreTips.h>
 #include <ROSEndEffector/ActionTimed.h>
 #include <ROSEndEffector/ActionGeneric.h>
 
@@ -41,27 +42,35 @@ class MapActionHandler {
 public:
 
     MapActionHandler();
-    MapActionHandler(std::string handName);
 
-    typedef std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > ActionPrimitiveMap;
+    typedef std::map < std::set < std::string >, ROSEE::ActionPrimitive::Ptr > ActionPrimitiveMap;
 
     /**
      * @param folder where the action are. the action will be look in (<pkg_path> + pathFolder + "/" + handName + "/") ;
      */
-    bool parseAllPrimitives(std::string pathFolder = "");
-    bool parseAllGenerics(std::string pathFolder = "");
-    bool parseAllTimeds(std::string pathFolder = "");
-    bool parseAllActions(std::string pathFolder = "");
+    bool parseAllPrimitives(std::string pathFolder);
+    bool parseAllGenerics(std::string pathFolder);
+    bool parseAllTimeds(std::string pathFolder);
+    bool parseAllActions(std::string pathFolder);
 
-    std::vector<ActionPrimitiveMap> getPrimitive( ROSEE::ActionPrimitive::Type ) const;
-    ActionPrimitiveMap getPrimitive( std::string primitiveName )  const;
-    std::map <std::string, ActionPrimitiveMap> getAllPrimitives () const;
+    std::vector<ActionPrimitiveMap> getPrimitiveMap( ROSEE::ActionPrimitive::Type ) const;
+    ActionPrimitiveMap getPrimitiveMap( std::string primitiveName )  const;
+    std::map <std::string, ActionPrimitiveMap> getAllPrimitiveMaps () const;
+    ROSEE::ActionPrimitive::Ptr getPrimitive (std::string primitiveName, std::set<std::string> key) const;
+    std::vector<ROSEE::ActionPrimitive::Ptr> getPrimitive (ROSEE::ActionPrimitive::Type, std::set<std::string> key) const;
+    ROSEE::ActionPrimitive::Ptr getPrimitive (std::string primitiveName, std::pair<std::string, std::string> key) const;
+    std::vector<ROSEE::ActionPrimitive::Ptr> getPrimitive (ROSEE::ActionPrimitive::Type, std::pair<std::string, std::string> key) const;
+    ROSEE::ActionPrimitive::Ptr getPrimitive (std::string primitiveName, std::string key) const;
+    std::vector<ROSEE::ActionPrimitive::Ptr> getPrimitive (ROSEE::ActionPrimitive::Type, std::string key) const;
+    
+    // maybe useful to take the grasp with single joint...
+    std::map <std::string, ROSEE::ActionPrimitive::Ptr> getPrimitiveMoreTipsMap ( unsigned int nFinger ) const;    
     
     std::shared_ptr<ROSEE::ActionGeneric> getGeneric (std::string name) const;
     std::map <std::string, std::shared_ptr<ROSEE::ActionGeneric>> getAllGenerics () const;
     
     ROSEE::ActionTimed getTimed (std::string name) const;
-    std::map <std::string, ROSEE::ActionTimed> getAllTimed () const;
+    std::map <std::string, ROSEE::ActionTimed> getAllTimeds () const;
     
     
     std::set<std::string> getFingertipsForPinch ( std::string finger, unsigned int choice = 0  ) const;
