@@ -81,11 +81,11 @@ int main ( int argc, char **argv ) {
         i.second->print();
     }
     std::cout << "PARSED MAP OF MORETIPS FROM YAML FILE:" << std::endl;
-    for (auto &i : mapsHandler.getPrimitiveMap("moreTips-3")) {
+    for (auto &i : mapsHandler.getPrimitiveMap("moreTips_3")) {
         i.second->print();
     }
     std::cout << "DEBUG MULTIPINCH PARSED: " << std::endl;
-    for (auto &it : mapsHandler.getPrimitiveMap("multiplePinchStrong-3")) {
+    for (auto &it : mapsHandler.getPrimitiveMap("multiplePinchStrong_3")) {
         it.second->print();
     }
     
@@ -140,7 +140,7 @@ int main ( int argc, char **argv ) {
     ROSEE::ActionTimed actionTimed("wide_grasp");
     std::set<std::string> one;
     one.insert ("finger_1_joint_1");
-    actionTimed.insertAction( mapsHandler.getPrimitive("moreTips-3").at(one), 0, 0.2, 0, 0.5, "GRASP");
+    actionTimed.insertAction( mapsHandler.getPrimitive("moreTips_3").at(one), 0, 0.2, 0, 0.5, "GRASP");
     one.clear();
     one.insert("finger_1_joint_1");
     actionTimed.insertAction( mapsHandler.getPrimitive(ROSEE::ActionPrimitive::Type::MoreTips).at(0).at(one), 0, 0.2, 0, 1, "GRASP2");

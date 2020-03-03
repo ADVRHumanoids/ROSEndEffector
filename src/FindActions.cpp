@@ -149,7 +149,7 @@ std::map <std::string, ROSEE::ActionMoreTips> ROSEE::FindActions::findMoreTips(u
         return mapOfMoreTips;
     }
        
-    std::string actionName = "moreTips-" + std::to_string(nFinger); //action name same for each action
+    std::string actionName = "moreTips_" + std::to_string(nFinger); //action name same for each action
 
     for (auto mapEl : parserMoveIt->getFingertipsOfJointMap() ) {
         

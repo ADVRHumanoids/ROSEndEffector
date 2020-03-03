@@ -233,7 +233,7 @@ ROSEE::ActionGeneric::Ptr ROSEE::YamlWorker::parseYamlGeneric(std::string fileWi
     
     YAML::const_iterator it4Action = node.begin(); //for not primitive, only one action is inside the file
         
-    ROSEE::Action::Type type;
+    ROSEE::Action::Type type = ROSEE::Action::Type::None;
     
     //now look for the type of the action
     for ( YAML::const_iterator el = it4Action->second.begin(); el != it4Action->second.end(); ++el) {        

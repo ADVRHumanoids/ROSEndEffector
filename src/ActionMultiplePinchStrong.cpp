@@ -27,7 +27,7 @@ ROSEE::ActionMultiplePinchStrong::ActionMultiplePinchStrong(unsigned int maxStor
 ROSEE::ActionMultiplePinchStrong::ActionMultiplePinchStrong (
     std::set <std::string> fingerNamesSet, 
     JointPos jp, double depthSum) :
-    ActionPinchGeneric ( ("multiplePinchStrong-" + std::to_string(fingerNamesSet.size())),
+    ActionPinchGeneric ( ("multiplePinchStrong_" + std::to_string(fingerNamesSet.size())),
                         fingerNamesSet.size(), 3, ActionPrimitive::Type::MultiplePinchStrong )  {
 
     //different from insertState, here we are sure the set is empty (we are in costructor)
