@@ -120,7 +120,7 @@ private:
     std::map<std::set<std::string>, ROSEE::ActionPrimitive::Ptr> _tipFlexParsedMap;
     std::map<std::set<std::string>, ROSEE::ActionPrimitive::Ptr> _fingFlexParsedMap;
     
-    ROSEE::ActionComposed _graspParsedMap;
+    std::shared_ptr<ROSEE::ActionGeneric> _graspParsed;
     
     MapActionHandler mapActionHandler;
     

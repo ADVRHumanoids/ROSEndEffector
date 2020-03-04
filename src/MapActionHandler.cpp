@@ -145,38 +145,6 @@ std::vector<ROSEE::ActionPrimitive::Ptr> ROSEE::MapActionHandler::getPrimitive(R
     return getPrimitive(type, keySet);
 }
 
-//only one element because per def we have only one ActionPrimitiveMap of type moretips
-// with a defined number of nFinger. (Then inside it we can have more primitives, but 
-// always with the same number of nFinger)
-//TODO return with the key as set instead???
-std::map<std::string, ROSEE::ActionPrimitive::Ptr> ROSEE::MapActionHandler::getPrimitiveMoreTipsMap(unsigned int nFinger) const {
-    
-    std::map<std::string, ROSEE::ActionPrimitive::Ptr> ret;
-    
-    for (auto it : primitives) {
-        
-        if (it.second.begin()->second->getPrimitiveType() ==
-            ROSEE::ActionPrimitive::Type::MoreTips && 
-            it.second.begin()->second->getnFingersInvolved() == nFinger){
-            
-            //copy the map into one similar but with as key a strign and not a set
-            for (auto itt : it.second) {
-                //itt.first is the set of one element
-                std::string key = *(itt.first.begin());
-                ret.insert(std::make_pair(key, itt.second));
-            }
-
-        }
-    }
-    
-    if (ret.size() == 0) {
-        std::cerr << "[ERROR MapActionHandler::" << __func__ << "] Not found any moreTips action that moves " << nFinger << " fingers " << std::endl;
-    }
-    
-    return ret;
-}
-
-
 std::map<std::string, std::set<std::string> > ROSEE::MapActionHandler::getPinchStrongPairsMap() const {
     return pinchStrongPairsMap;
 }
@@ -214,6 +182,56 @@ ROSEE::ActionTimed ROSEE::MapActionHandler::getTimed(std::string name) const {
 std::map<std::string, ROSEE::ActionTimed> ROSEE::MapActionHandler::getAllTimeds() const {
     return timeds;
 }
+
+
+std::map<std::string, ROSEE::ActionPrimitive::Ptr> ROSEE::MapActionHandler::getPrimitiveMoreTipsMap(unsigned int nFingers) const {
+    
+    std::map<std::string, ROSEE::ActionPrimitive::Ptr> ret;
+    
+    for (auto it : primitives) {
+        
+        if (it.second.begin()->second->getPrimitiveType() ==
+            ROSEE::ActionPrimitive::Type::MoreTips && 
+            it.second.begin()->second->getnFingersInvolved() == nFingers){
+            
+            //copy the map into one similar but with as key a strign and not a set
+            for (auto itt : it.second) {
+                //itt.first is the set of one element
+                std::string key = *(itt.first.begin());
+                ret.insert(std::make_pair(key, itt.second));
+            }
+
+        }
+    }
+    
+    if (ret.size() == 0) {
+        std::cerr << "[WARNING MapActionHandler::" << __func__ << "] Not found any moreTips action that moves " << nFingers << " fingers " << std::endl;
+    }
+    
+    return ret;
+}
+
+ROSEE::Action::Ptr ROSEE::MapActionHandler::getGrasp(unsigned int nFingers, std::string graspName) {
+    
+    auto it = generics.find(graspName);
+    if (it != generics.end()) {
+        return it->second;
+    }
+    
+    auto moreTip = getPrimitiveMoreTipsMap(nFingers);
+    if (moreTip.size() == 1) { //if more than 1 I do not know how to choose the one that effectively "grasp"
+        return moreTip.begin()->second;
+    }
+    
+    std::cerr << "[WARNING MapActionHandler::" << __func__ << "] Not found any grasp named " << graspName << " neither a moretips primitive " 
+        << "that move all fingers with a single joint, you should create one action for grasp before calling parseAllActions/parseAllGenerics()"
+        << std::endl;
+
+    
+    return nullptr;
+    
+}
+
 
 std::set<std::string> ROSEE::MapActionHandler::getFingertipsForPinch(std::string finger, ROSEE::ActionPrimitive::Type pinchType) const {
     
