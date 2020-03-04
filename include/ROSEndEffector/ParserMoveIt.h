@@ -46,7 +46,7 @@ public:
      */
     bool init (std::string robot_description) ;
     std::string getHandName () const;
-    unsigned int getNumberOfTips () const ;
+    unsigned int getNFingers () const ;
     std::vector <std::string> getFingertipNames () const; 
     
     /**
@@ -197,15 +197,18 @@ private:
     std::vector<std::string> activeJointNames;
     std::vector<const moveit::core::JointModel*> activeJointModels;
     std::string robot_description;
+    unsigned int nFingers;
     
-//TODO write doc
+    /** @brief Map containing info about descendants links of a joint see \ref lookForDescendants function for more info */
     std::map <std::string, std::vector < const moveit::core::LinkModel* > > descendantLinksOfJoint;
+    
+    /** @brief Map containing info about descendants joints of a joint see \ref lookForDescendants function for more info */
     std::map <std::string, std::vector < const moveit::core::JointModel* > > descendantJointsOfJoint;
     
-    /** The map with as key the name of the fingertip and as value all the joints (actuated) that can modify its pose*/
+    /** @brief The map with as key the name of the fingertip and as value all the joints (actuated) that can modify its pose*/
     std::map<std::string, std::vector<std::string>> jointsOfFingertipMap;
     
-    /** The map with as key the name of the actuated joint and as value all the fingertips which pose can be modified by the joint */
+    /** @brief The map with as key the name of the actuated joint and as value all the fingertips which pose can be modified by the joint */
     std::map<std::string, std::vector<std::string>> fingertipsOfJointMap;
     
     /**

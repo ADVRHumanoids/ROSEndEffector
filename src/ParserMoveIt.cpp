@@ -79,8 +79,8 @@ std::map <std::string, std::vector < const moveit::core::JointModel* > >  ROSEE:
     return descendantJointsOfJoint;
 }
 
-unsigned int ROSEE::ParserMoveIt::getNumberOfTips () const {
-    return fingertipNames.size();
+unsigned int ROSEE::ParserMoveIt::getNFingers () const {
+    return nFingers;
 }
 
 const robot_model::RobotModelPtr ROSEE::ParserMoveIt::getRobotModel () const {
@@ -374,6 +374,7 @@ void ROSEE::ParserMoveIt::lookForFingertips() {
         }
         std::cout << logGroupInfo << std::endl;
     }
+    nFingers = fingertipNames.size();
 }
 
 void ROSEE::ParserMoveIt::lookForActiveJoints() { 

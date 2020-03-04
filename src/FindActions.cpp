@@ -143,9 +143,9 @@ std::map <std::string, ROSEE::ActionMoreTips> ROSEE::FindActions::findMoreTips(u
         return mapOfMoreTips;
     }
     
-    if (nFinger > parserMoveIt->getNumberOfTips() ) {
+    if (nFinger > parserMoveIt->getNFingers() ) {
         std::cout << "[ERROR FINDACTIONS::" << __func__ << "]  I can not find an action which moves " << nFinger << 
-        " fingers if the hand has only " << parserMoveIt->getNumberOfTips() << " fingers. Returning an empty map" << std::endl;
+        " fingers if the hand has only " << parserMoveIt->getNFingers() << " fingers. Returning an empty map" << std::endl;
         return mapOfMoreTips;
     }
        
