@@ -162,8 +162,10 @@ add_library(ActionComposed
 
 add_executable(UniversalRosEndEffector src/UniversalRosEndEffector.cpp)
 add_executable(UniversalFindActions src/UniversalFindActions.cpp)
-add_dependencies(UniversalRosEndEffector ros_end_effector_generate_messages_cpp)
 
+# dependecies for msgs generation
+add_dependencies(UniversalRosEndEffector ros_end_effector_generate_messages_cpp)
+add_dependencies(UniversalFindActions ros_end_effector_generate_messages_cpp)
 
 
 ## Rename C++ executable without prefix
