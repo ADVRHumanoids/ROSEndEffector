@@ -92,11 +92,13 @@ int main ( int argc, char **argv ) {
     
     ROSEE::YamlWorker yamlWorker;
     /** **************************** COMPOSITE ACTION THINGS ************************************************ */
-    
-    std::cout << "A composed action with Independent inner action: " << std::endl;
-    ROSEE::ActionComposed grasp ("grasp", true);
 
-    if ( mapsHandler.getPrimitiveMap(ROSEE::ActionPrimitive::Type::Trig).at(0).size() == parserMoveIt->getFingertipNames().size() ) {
+    if (mapsHandler.getPrimitiveMap(ROSEE::ActionPrimitive::Type::Trig).size() > 0  &&  
+        mapsHandler.getPrimitiveMap(ROSEE::ActionPrimitive::Type::Trig).at(0).size() == parserMoveIt->getNFingers() ) {
+        
+        std::cout << "A composed action with Independent inner action: " << std::endl;
+        ROSEE::ActionComposed grasp ("grasp", true);
+        
         for (auto trig : mapsHandler.getPrimitiveMap("trig")) {
             grasp.sumAction  (trig.second) ; 
         }
@@ -108,6 +110,21 @@ int main ( int argc, char **argv ) {
         
         std::cout << "PARSED COMPOSEd" << std::endl;
         mapsHandler.getGeneric("grasp")->print();
+
+    } else  { //look if we have a single moreTips_MAXFINGER: it is 99% a grasp
+        
+        std::cout << "A moretips that move all fingers: " << std::endl;
+
+        std::map < std::string, ROSEE::ActionMoreTips> moreTipsMap = actionsFinder.findMoreTips (parserMoveIt->getNFingers(), folderForActions + "/primitives/") ;
+        
+        if (moreTipsMap.size() == 1) { //if more, we do not know which is the one for grasping
+            std::cout << "No Composed Grasp with trig but I found a MoreTips that probably is a grasp (ie a joint that move all fingers)" << std::endl;
+        }
+        std::cout << "PARSED MAP OF moreTips_MAXFINGER FROM YAML FILE:" << std::endl;
+        for (auto &i : mapsHandler.getPrimitiveMap("moreTips_" + std::to_string(parserMoveIt->getNFingers()) )) {
+            i.second->print();
+        }
+        
 
         
     }

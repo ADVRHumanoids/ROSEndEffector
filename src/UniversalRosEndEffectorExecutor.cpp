@@ -126,7 +126,7 @@ void ROSEE::UniversalRosEndEffectorExecutor::pinchCallback ( const ros_end_effec
                 int id = -1;
                 _ee->getInternalIdForJoint ( it.first, id );
                 
-                if( id > 0 ) {
+                if( id >= 0 ) {
                     // NOTE assume single joint
                     _qref[id] = pinch_js.at ( it.first ).at ( 0 ) * msg->percentage;
                 }
@@ -151,10 +151,11 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive_subscribers
     // parse YAML for End-Effector cconfiguration
     ROSEE::YamlWorker yamlWorker ;
     
-    std::string folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/" + _ee->getName() + "/primitives/";
+    std::string folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/" + _ee->getName();
     std::string folderForActionsComposed = ROSEE::Utils::getPackagePath() + "/configs/actions/" + _ee->getName() + "/generics/";
 
-    mapActionHandler.parseAllPrimitives( folderForActions );
+    mapActionHandler.parseAllActions(folderForActions);
+
     
     //TODO check if store in this class all the maps is necessary...
     _pinchParsedMap = mapActionHandler.getPrimitiveMap("pinchStrong");
@@ -194,8 +195,9 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive_subscribers
     
     // composed actions
     _graspParsedMap = yamlWorker.parseYamlComposed (folderForActionsComposed + "grasp.yaml");
-    ROS_INFO_STREAM ( "GRASP" );
+    ROS_INFO_STREAM ( "GRASP (composed)" );
     _graspParsedMap.print();
+    
 
     // generate the subscribers and services
 
@@ -210,7 +212,7 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive_subscribers
 
     if ( !_pinchParsedMap.empty() ) {
 
-        _sub_pinch = _nh.subscribe<ros_end_effector::EEPinchControl> ( "pinch",
+        _sub_pinch = _nh.subscribe<ros_end_effector::EEPinchControl> ( "pinchStrong",
                      1,
                      &ROSEE::UniversalRosEndEffectorExecutor::pinchCallback,
                      this
@@ -240,15 +242,15 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_actionsInfo_services() {
         _actionsInfoVect.push_back(actInfo);
 
     }
-    
+
     for (auto genericMap : mapActionHandler.getAllGenerics() ) {
-        
+
         rosee_msg::ActionInfo actInfo;
         actInfo.action_name = genericMap.first;
         //TODO define name topics elsewhere?
         actInfo.topic_name = _nh.getNamespace() + "/" + actInfo.action_name;
         actInfo.seq = 0; //TODO check if necessary the seq in this msg
-        //Instead generic action has always no thing to select UNTIL NOW
+        //Generic action has always no thing to select UNTIL NOW
         actInfo.max_selectable = 0;
 
         _actionsInfoVect.push_back(actInfo);
