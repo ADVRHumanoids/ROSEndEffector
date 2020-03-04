@@ -8,7 +8,68 @@
 robotiq-3f-gripper_articulated - articulated version of the robotiq robotiq-3f-gripper,
 3 fingered gripper.                                                
 -->
-<robot name="robotiq-3f-gripper_articulated" xmlns:xacro="http://ros.org/wiki/xacro">
+<robot name="robotiq_3f" xmlns:xacro="http://ros.org/wiki/xacro">
+  <!-- added fixed link to try to solve rviz problem -->
+  <link name="base_link"/>
+  <joint name="base_link_to_palm" type="fixed">
+    <origin rpy="1.57079632679 0 0" xyz="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="palm"/>
+  </joint>
+ <!-- link list -->
+  <link name="palm">
+    <visual>
+      <geometry>
+        <mesh filename="package://robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/visual/palm.dae"/>
+      </geometry>
+      <material name="gray">
+        <color rgba="0.2 0.2 0.2 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/collision/palm.STL"/>
+      </geometry>
+      <material name="yellow">
+        <color rgba="0 1 1 1"/>
+      </material>
+    </collision>
+  </link>
+  <link name="tool0"/>
+  <inertial>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <mass value="1.3"/>
+    <inertia ixx="0.006012" ixy="0.000079" ixz="-0.00024" iyy="0.012892" iyz="0" izz="0.002435"/>
+  </inertial>
+  <!-- end of link list -->
+  <!-- joint list -->
+  <joint name="palm_finger_1_joint" type="revolute">
+    <parent link="palm"/>
+    <child link="finger_1_link_0"/>
+    <axis xyz="0 1 0"/>
+    <origin rpy="0 3.1416 -1.57" xyz="-0.0455 0.0214 0.036"/>
+    <limit effort="100" lower="-0.1784" upper="0.192" velocity="100"/>
+  </joint>
+  <joint name="palm_finger_2_joint" type="revolute">
+    <parent link="palm"/>
+    <child link="finger_2_link_0"/>
+    <axis xyz="0 1 0"/>
+    <origin rpy="0 3.1416 -1.57" xyz="-0.0455 0.0214 -0.036"/>
+    <limit effort="100" lower="-0.192" upper="0.1784" velocity="100"/>
+		<mimic joint="palm_finger_1_joint" multiplier ="-1" offset="0" />
+  </joint>
+  <joint name="palm_finger_middle_joint" type="fixed">
+    <parent link="palm"/>
+    <child link="finger_middle_link_0"/>
+    <axis xyz="0 0 1"/>
+    <origin rpy="0 0 1.57" xyz="0.0455 0.0214 0"/>
+  </joint>
+  <joint name="palm_tool0" type="fixed">
+    <parent link="palm"/>
+    <child link="tool0"/>
+    <origin rpy="0 0 1.5707" xyz="0.0 0.0875 0.0"/>
+  </joint>
+  <!-- end of joint list -->
   <!-- link list -->
   <link name="finger_1_link_0">
     <visual>
@@ -363,60 +424,6 @@ robotiq-3f-gripper_articulated - articulated version of the robotiq robotiq-3f-g
     <axis xyz="0 0 1"/>
     <origin rpy="0 0 0" xyz="0.039 0 0"/>
     <limit effort="100" lower="-1.2217" upper="-0.0523" velocity="100"/>
-  </joint>
-  <!-- end of joint list -->
-  <!-- link list -->
-  <link name="palm">
-    <visual>
-      <geometry>
-        <mesh filename="package://robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/visual/palm.dae"/>
-      </geometry>
-      <material name="gray">
-        <color rgba="0.2 0.2 0.2 1"/>
-      </material>
-    </visual>
-    <collision>
-      <geometry>
-        <mesh filename="package://robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/collision/palm.STL"/>
-      </geometry>
-      <material name="yellow">
-        <color rgba="0 1 1 1"/>
-      </material>
-    </collision>
-  </link>
-  <link name="tool0"/>
-  <inertial>
-    <origin rpy="0 0 0" xyz="0 0 0"/>
-    <mass value="1.3"/>
-    <inertia ixx="0.006012" ixy="0.000079" ixz="-0.00024" iyy="0.012892" iyz="0" izz="0.002435"/>
-  </inertial>
-  <!-- end of link list -->
-  <!-- joint list -->
-  <joint name="palm_finger_1_joint" type="revolute">
-    <parent link="palm"/>
-    <child link="finger_1_link_0"/>
-    <axis xyz="0 1 0"/>
-    <origin rpy="0 3.1416 -1.57" xyz="-0.0455 0.0214 0.036"/>
-    <limit effort="100" lower="-0.1784" upper="0.192" velocity="100"/>
-  </joint>
-  <joint name="palm_finger_2_joint" type="revolute">
-    <parent link="palm"/>
-    <child link="finger_2_link_0"/>
-    <axis xyz="0 1 0"/>
-    <origin rpy="0 3.1416 -1.57" xyz="-0.0455 0.0214 -0.036"/>
-    <limit effort="100" lower="-0.192" upper="0.1784" velocity="100"/>
-		<mimic joint="palm_finger_1_joint" multiplier ="-1" offset="0" />
-  </joint>
-  <joint name="palm_finger_middle_joint" type="fixed">
-    <parent link="palm"/>
-    <child link="finger_middle_link_0"/>
-    <axis xyz="0 0 1"/>
-    <origin rpy="0 0 1.57" xyz="0.0455 0.0214 0"/>
-  </joint>
-  <joint name="palm_tool0" type="fixed">
-    <parent link="palm"/>
-    <child link="tool0"/>
-    <origin rpy="0 0 1.5707" xyz="0.0 0.0875 0.0"/>
   </joint>
   <!-- end of joint list -->
   <!--

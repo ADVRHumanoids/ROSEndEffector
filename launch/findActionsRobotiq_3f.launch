@@ -4,7 +4,7 @@
     <param name="robot_description" textfile="$(find ros_end_effector)/configs/urdf/robotiq_3f.urdf"/>
   <!-- <param name="robot_description" command="$(find xacro)/xacro 'inorder' '$(find robotiq_3f_gripper_visualization)/cfg/robotiq-3f-gripper_articulated.xacro'"/>  -->
   
-  <param name="robot_description_semantic" textfile="$(find ros_end_effector)/configs/srdf/robotiq-3f-groupsForROSEE.srdf" />
+  <param name="robot_description_semantic" textfile="$(find ros_end_effector)/configs/srdf/robotiq_3f-ROSEE.srdf" />
 
     <node type="UniversalFindActions" name="UniversalFindActions" pkg="ros_end_effector" output="screen"/>
 </launch>
