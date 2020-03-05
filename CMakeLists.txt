@@ -131,6 +131,10 @@ add_library(YamlWorker
     src/YamlWorker.cpp
 )
 
+add_library(RosActionServer
+    src/RosActionServer.cpp
+)
+
 add_library(MapActionHandler
     src/MapActionHandler.cpp
 )
@@ -207,6 +211,7 @@ target_link_libraries(UniversalRosEndEffectorExecutor
     ROSEEInterface
     YamlWorker
     MapActionHandler
+    RosActionServer
     
     # do it automatically
     DummyHal
@@ -231,6 +236,10 @@ target_link_libraries(MapActionHandler
     ActionPrimitive
     ActionGeneric
     ActionTimed
+)
+
+target_link_libraries(RosActionServer
+    ${catkin_LIBRARIES}
 )
 
 target_link_libraries(ActionPinchStrong
