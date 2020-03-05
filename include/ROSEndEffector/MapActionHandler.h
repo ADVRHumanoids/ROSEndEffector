@@ -52,9 +52,37 @@ public:
     bool parseAllTimeds(std::string pathFolder);
     bool parseAllActions(std::string pathFolder);
 
-    std::vector<ActionPrimitiveMap> getPrimitiveMap( ROSEE::ActionPrimitive::Type ) const;
+    /************************************* Generic Functions to get actions *************************/
+    /**
+     * @brief getter to take all the primitives maps of one type (\param type) 
+     *      A primitive map is a map where key is the element involved (joints or fingers) and values the action primitive itself
+     *      It returns a vector (differently from version with string as argument) because we can have more primitives
+     *      with same type (e.g. a moreTips primitive, which are differente between them because of the joint they move 
+     *      (moretips_5 , moretips_4 ... ) , or also multipinch)). This consideration is valid for all the other getPrimitive
+     * @param type the primitive type of the action that we want
+     * @return vector of all the primitives that are of type \param type
+     * @warning Be sure to call parsing functions (parseAll*** ) otherwise no actions are returned never
+     */
+    std::vector<ActionPrimitiveMap> getPrimitiveMap( ROSEE::ActionPrimitive::Type type ) const;
+    
     ActionPrimitiveMap getPrimitiveMap( std::string primitiveName )  const;
     std::map <std::string, ActionPrimitiveMap> getAllPrimitiveMaps () const;
+    
+    /**
+     * @brief getter to take a single primitive, identified by the name and by the key (e.g. finger involved or joint involved)
+     * 
+     * There are various version of this get, if you pass the type a vector is returned. For some type, can be  
+     * easier to use pair or single string as second argument instead of the set of string, when the type is associated with these
+     * particular keys (e.g. trig has a single string (the finger used) as key, pinch has a pair (the 2 fingers used for the pinch) ... )
+     *
+     * @param primitiveName the name of the primitive that we want
+     * @param key a set of strings to identify the primitive that we want among all the primitives that are called \param primitiveName
+     * @example to get a pinch with thumb and index, we will pass "pinch" and a set of two element, "thumb" and "index". Note that 
+     *      for this case we can also pass a pair (and not a set) as second argument
+     * 
+     * @return pointer to the primitive that we were looking for. nullptr if action not found.
+     * 
+     */
     ROSEE::ActionPrimitive::Ptr getPrimitive (std::string primitiveName, std::set<std::string> key) const;
     std::vector<ROSEE::ActionPrimitive::Ptr> getPrimitive (ROSEE::ActionPrimitive::Type, std::set<std::string> key) const;
     ROSEE::ActionPrimitive::Ptr getPrimitive (std::string primitiveName, std::pair<std::string, std::string> key) const;
@@ -62,16 +90,54 @@ public:
     ROSEE::ActionPrimitive::Ptr getPrimitive (std::string primitiveName, std::string key) const;
     std::vector<ROSEE::ActionPrimitive::Ptr> getPrimitive (ROSEE::ActionPrimitive::Type, std::string key) const;
     
-    // maybe useful to take the grasp with single joint...
-    std::map <std::string, ROSEE::ActionPrimitive::Ptr> getPrimitiveMoreTipsMap ( unsigned int nFinger ) const;    
-    
     std::shared_ptr<ROSEE::ActionGeneric> getGeneric (std::string name) const;
     std::map <std::string, std::shared_ptr<ROSEE::ActionGeneric>> getAllGenerics () const;
     
     ROSEE::ActionTimed getTimed (std::string name) const;
     std::map <std::string, ROSEE::ActionTimed> getAllTimeds () const;
     
+    /************************************* Specific functions for specific actions *************************/
+
+
+    /**
+     * @brief function to return the map that contains all the moretips primitive with that moves the specific number
+     *    of fingers \param nFingers. This is in practice, the file moreTips_*nFingers*.yaml
+     * 
+     * It return only one map because per definition we have only one ActionPrimitiveMap of type moretips with a defined number of 
+     * nFinger. (Then inside it we can have more primitives ( when we have a hand with more joints that moves more than 1 finger), but
+     * always with the same number of nFinger)
+     * 
+     * @param nFingers the number of the finger that the moreTips primitives moves
+     * @return A map with key the joint that moves the \param nFingers and as value the primitive with all the info to command it to the hand.
+     *      Obvioulsy we can have more joints that move a certain number (\param nFingers) of fingers
+     * @todo return with the key as set instead??? or leave as it is?
+     */
+    std::map <std::string, ROSEE::ActionPrimitive::Ptr> getPrimitiveMoreTipsMap ( unsigned int nFingers ) const;   
     
+    /**
+     * @brief This function try to get an action that should be a grasp
+     * 
+     * A real grasp, until now, can be two things: 
+     *  - a generic/composed action, composed by trig with all the fingers
+     *  - a MoreTips primitive action, where the number of fingers moved is obviously the number of finger of the hand
+     * In the second case, if we have more joints that moves all the fingers, we return no action because we do not know which one is
+     * "the grasp". If we have only one joint that move all fingers, we return the moretips action associated with this joint, even if
+     * there is the possibility that this is not a grasp (but which hand has only one joint that moves all fingers and it is not for a grasp?)
+     * 
+     * This function look first for a generic (or composed, that is a derived class of generic) action with name \param graspName, 
+     * that should have been created and emitted before calling the \ref parseAllActions (or \ref parseAllGenerics) 
+     * (e.g. in UniversalFindActions putting all the trigs togheter, but we can also define the grasp in another way).
+     *   
+     * @param nFingers the number of the finger of the hand, that is an information that this class hasn't
+     * @param graspName name given to the action grasp, default is "grasp"
+     * @return pointer to Action, because the pointed object can be a primitive or a generic action.
+     * @todo If not found, it tries to create a composed action, done with all trigs, and store this new action??   
+     * @warning Generic and moretips are different ros msg: moretips want a element to be set (the joint) so this can cause problems..
+     *   so maybe this function should not exist
+     */
+    ROSEE::Action::Ptr getGrasp ( unsigned int nFingers, std::string graspName = "grasp" ) ;
+    
+    /************************************* Other functions not returning actions themselves *************************/
     std::set<std::string> getFingertipsForPinch ( std::string finger, ROSEE::ActionPrimitive::Type pinchType) const;
     std::map <std::string, std::set<std::string> > getPinchStrongPairsMap ( ) const;
     std::map <std::string, std::set<std::string> > getPinchWeakPairsMap ( ) const;
