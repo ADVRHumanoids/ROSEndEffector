@@ -85,6 +85,8 @@ public:
      */
     ROSEE::ActionPrimitive::Ptr getPrimitive (std::string primitiveName, std::set<std::string> key) const;
     std::vector<ROSEE::ActionPrimitive::Ptr> getPrimitive (ROSEE::ActionPrimitive::Type, std::set<std::string> key) const;
+    ROSEE::ActionPrimitive::Ptr getPrimitive (std::string primitiveName, std::vector<std::string> key) const;
+    std::vector<ROSEE::ActionPrimitive::Ptr> getPrimitive (ROSEE::ActionPrimitive::Type, std::vector<std::string> key) const;
     ROSEE::ActionPrimitive::Ptr getPrimitive (std::string primitiveName, std::pair<std::string, std::string> key) const;
     std::vector<ROSEE::ActionPrimitive::Ptr> getPrimitive (ROSEE::ActionPrimitive::Type, std::pair<std::string, std::string> key) const;
     ROSEE::ActionPrimitive::Ptr getPrimitive (std::string primitiveName, std::string key) const;

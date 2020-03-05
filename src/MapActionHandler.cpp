@@ -75,6 +75,12 @@ ROSEE::ActionPrimitive::Ptr ROSEE::MapActionHandler::getPrimitive(std::string pr
     return it->second;
 }
 
+ROSEE::ActionPrimitive::Ptr ROSEE::MapActionHandler::getPrimitive ( std::string primitiveName, std::vector<std::string> key) const {
+    
+    std::set <std::string> keySet (key.begin(), key.end());
+    return getPrimitive(primitiveName, keySet);
+}
+
 ROSEE::ActionPrimitive::Ptr ROSEE::MapActionHandler::getPrimitive(std::string primitiveName, std::string key) const {
     
     std::set <std::string> keySet {key};
@@ -134,7 +140,14 @@ std::vector<ROSEE::ActionPrimitive::Ptr> ROSEE::MapActionHandler::getPrimitive(R
     
 }
 
+std::vector<ROSEE::ActionPrimitive::Ptr> ROSEE::MapActionHandler::getPrimitive ( ROSEE::ActionPrimitive::Type type, std::vector<std::string> key) const {
+    
+    std::set <std::string> keySet (key.begin(), key.end());
+    return getPrimitive(type, keySet);
+}
+
 std::vector<ROSEE::ActionPrimitive::Ptr> ROSEE::MapActionHandler::getPrimitive(ROSEE::ActionPrimitive::Type type, std::string key) const {
+    
     std::set <std::string> keySet {key};
     return getPrimitive(type, keySet);
 }
