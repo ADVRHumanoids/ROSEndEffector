@@ -41,11 +41,39 @@ research and innovation programme under grant agreement no. 732287.
 For more complicated action, there is the possibility to define them as **composed** action, that is, an action *composed* by different others. In this case the joint positions of the composed action will consider all the action included in it.
 
 ## How to Run
-#### Install Dependencies
+#### Install External Dependencies 
 ```bash
 sudo apt-get install ros-kinetic-moveit #moveit
 ```
-#### Install Rosee package
+#### Install Rosee packages
+```bash
+mkdir ~/ROSEE
+cd ROSEE
+mkdir src
+cd src
+```
+- Necessary dependencies :
+    ```bash
+    git clone https://github.com/ADVRHumanoids/rosee_msg.git
+    ```
+- Optional dependencies:
+    - Gui
+        ```bash
+        git clone https://github.com/ADVRHumanoids/rosee_gui.git
+        ```
+    - Gazebo Pluglin
+        ```bash
+        git clone https://github.com/ADVRHumanoids/rosee_gazebo_plugins.git
+        ```
+Main Package
+```
+git clone https://github.com/ADVRHumanoids/ROSEndEffector
+```
+Compile
+```bash
+cd ~/ROSEE
+catkin_make
+```
 
 #### Run with your model
 Run the node **UniversalFindActions** after filling the two ROS parameters *robot_description* and *robot_description_semantic* with your *urdf* and *srdf* model respectively. An easy way is to use launch files and then launch with **roslaunch**:
