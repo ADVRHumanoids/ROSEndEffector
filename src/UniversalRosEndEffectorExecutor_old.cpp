@@ -16,6 +16,7 @@
 */
 
 #include <ROSEndEffector/UniversalRosEndEffectorExecutor.h>
+#include <ROSEndEffector/YamlWorker.h>
 
 
 ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::string ns ) : _nh ( ns ) {
@@ -77,14 +78,9 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
     // primitives
     init_grapsing_primitive_subscribers();
     
-    // actions
-    init_action_server();
-    
     // services (only for gui now)
     init_actionsInfo_services();
 
-    // this should be done by hal?
-    init_robotState_sub();
 }
 
 void ROSEE::UniversalRosEndEffectorExecutor::graspCallback ( const ros_end_effector::EEGraspControlConstPtr& msg ) {
@@ -235,62 +231,6 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive_subscribers
     return true;
 }
 
-bool ROSEE::UniversalRosEndEffectorExecutor::init_action_server () {
-    
-    _ros_action_server = std::make_shared<RosActionServer> ("actionServer" , &_nh);
-}
-
-//**************************** TODO this should be in the hal? **********************************************//
-void ROSEE::UniversalRosEndEffectorExecutor::init_robotState_sub () {
-
-    jointPosSub = _nh.subscribe ("joint_states", 1, &ROSEE::UniversalRosEndEffectorExecutor::jointStateClbk, this);
-}
-
-void ROSEE::UniversalRosEndEffectorExecutor::jointStateClbk(const sensor_msgs::JointStateConstPtr& msg) {
-    
-    //store only joint pos now, this should not be here anyaway...
-    for (int i=0; i< msg->name.size(); i++) {
-        std::vector <double> one_dof {msg->position.at(i)};
-        jointPos[msg->name.at(i)] = one_dof;
-        
-    }
-}
-//**************************** above this should be in the hal? **********************************************//
-
-// set q ref, similarly to pinch and grasp clbk
-void ROSEE::UniversalRosEndEffectorExecutor::setQRef() {
-    
-    rosee_msg::ROSEEActionControl goal = _ros_action_server->getGoal();
-    //TODO for the moment we take all joint pos... take only the one used like pinchCallback and graspCallback
-    //HACK only getprimitive now
-    //TODO do in branch tori a getPrimitive with second arg a vector and not a set
-    std::set <std::string> setConverted ;
-    setConverted.insert (goal.selectable_items.begin(), goal.selectable_items.end() );
-    ROSEE::ActionPrimitive::Ptr primitive = mapActionHandler.getPrimitive (goal.action_name, setConverted);
-    ROSEE::JointPos jp = primitive->getJointPos();
-    
-    JointsInvolvedCount pinch_joint_involved_mask = primitive->getJointsInvolvedCount();
-
-    for ( auto it : pinch_joint_involved_mask ) {
-
-        if ( it.second  != 0 ) {
-            int id = -1;
-            _ee->getInternalIdForJoint ( it.first, id );
-            
-            if( id >= 0 ) {
-                // NOTE assume single joint
-                _qref[id] = jp.at ( it.first ).at ( 0 ) * goal.percentage;
-            }
-            else {
-                ROS_WARN_STREAM ( "Trying to move Joint: " << it.first << " with ID: " << id );
-            }
-        }
-    }
-
-    
-}
-
-
 bool ROSEE::UniversalRosEndEffectorExecutor::init_actionsInfo_services() {
         
     for (auto primitiveContainers : mapActionHandler.getAllPrimitiveMaps() ) {
@@ -434,35 +374,14 @@ void ROSEE::UniversalRosEndEffectorExecutor::set_references() {
 
 void ROSEE::UniversalRosEndEffectorExecutor::timer_callback ( const ros::TimerEvent& timer_ev ) {
 
-    //TODO check the order of these functions...
-    
     _hal->sense();
 
     fill_publish_joint_states();
-    
-    if (_ros_action_server->hasNewGoal()) {
-        setQRef();
-    }
 
     // filter references
     set_references();
 
     _hal->move();
-    
-    if (_ros_action_server->hasGoal()) {
-        //norm between goal and actual position
-
-        double norm = 0;
-
-        for ( const auto& j : _all_joints ) {
-            int id = -1;
-            _ee->getInternalIdForJoint ( j, id );
-            //OR _qref_filtered ??
-            norm += (_qref[id] * _qref[id]) - (jointPos.at(j).at(0) * jointPos.at(j).at(0));
-        }
-        //TODO... send not norm but percentage complete...
-        _ros_action_server->sendFeedback(norm);
-    }
 
     // update time
     _time += _period;
