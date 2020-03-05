@@ -5,7 +5,6 @@
 
 #include <ROSEndEffector/FindActions.h>
 #include <ROSEndEffector/ParserMoveIt.h>
-#include <ROSEndEffector/MapActionHandler.h>
 #include <ROSEndEffector/ActionComposed.h>
 #include <ROSEndEffector/ActionPrimitive.h>
 #include <ROSEndEffector/ActionTrig.h>
@@ -35,7 +34,7 @@ protected:
         parserMoveIt->init ("robot_description") ;
         ROSEE::FindActions actionsFinder (parserMoveIt);
         
-        std::string folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/" + parserMoveIt->getHandName();
+        std::string folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/tests/" + parserMoveIt->getHandName();
         
         trigMap = actionsFinder.findTrig(ROSEE::ActionPrimitive::Type::Trig, folderForActions + "/primitives/") ;  
 

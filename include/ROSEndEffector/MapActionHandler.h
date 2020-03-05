@@ -53,9 +53,36 @@ public:
     bool parseAllActions(std::string pathFolder);
 
     /************************************* Generic Functions to get actions *************************/
-    std::vector<ActionPrimitiveMap> getPrimitiveMap( ROSEE::ActionPrimitive::Type ) const;
+    /**
+     * @brief getter to take all the primitives maps of one type (\param type) 
+     *      A primitive map is a map where key is the element involved (joints or fingers) and values the action primitive itself
+     *      It returns a vector (differently from version with string as argument) because we can have more primitives
+     *      with same type (e.g. a moreTips primitive, which are differente between them because of the joint they move 
+     *      (moretips_5 , moretips_4 ... ) , or also multipinch)). This consideration is valid for all the other getPrimitive
+     * @param type the primitive type of the action that we want
+     * @return vector of all the primitives that are of type \param type
+     * @warning Be sure to call parsing functions (parseAll*** ) otherwise no actions are returned never
+     */
+    std::vector<ActionPrimitiveMap> getPrimitiveMap( ROSEE::ActionPrimitive::Type type ) const;
+    
     ActionPrimitiveMap getPrimitiveMap( std::string primitiveName )  const;
     std::map <std::string, ActionPrimitiveMap> getAllPrimitiveMaps () const;
+    
+    /**
+     * @brief getter to take a single primitive, identified by the name and by the key (e.g. finger involved or joint involved)
+     * 
+     * There are various version of this get, if you pass the type a vector is returned. For some type, can be  
+     * easier to use pair or single string as second argument instead of the set of string, when the type is associated with these
+     * particular keys (e.g. trig has a single string (the finger used) as key, pinch has a pair (the 2 fingers used for the pinch) ... )
+     *
+     * @param primitiveName the name of the primitive that we want
+     * @param key a set of strings to identify the primitive that we want among all the primitives that are called \param primitiveName
+     * @example to get a pinch with thumb and index, we will pass "pinch" and a set of two element, "thumb" and "index". Note that 
+     *      for this case we can also pass a pair (and not a set) as second argument
+     * 
+     * @return pointer to the primitive that we were looking for. nullptr if action not found.
+     * 
+     */
     ROSEE::ActionPrimitive::Ptr getPrimitive (std::string primitiveName, std::set<std::string> key) const;
     std::vector<ROSEE::ActionPrimitive::Ptr> getPrimitive (ROSEE::ActionPrimitive::Type, std::set<std::string> key) const;
     ROSEE::ActionPrimitive::Ptr getPrimitive (std::string primitiveName, std::pair<std::string, std::string> key) const;
