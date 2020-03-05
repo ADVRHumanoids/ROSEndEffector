@@ -261,12 +261,10 @@ void ROSEE::UniversalRosEndEffectorExecutor::jointStateClbk(const sensor_msgs::J
 void ROSEE::UniversalRosEndEffectorExecutor::setQRef() {
     
     rosee_msg::ROSEEActionControl goal = _ros_action_server->getGoal();
-    //TODO for the moment we take all joint pos... take only the one used like pinchCallback and graspCallback
+    
     //HACK only getprimitive now
-    //TODO do in branch tori a getPrimitive with second arg a vector and not a set
-    std::set <std::string> setConverted ;
-    setConverted.insert (goal.selectable_items.begin(), goal.selectable_items.end() );
-    ROSEE::ActionPrimitive::Ptr primitive = mapActionHandler.getPrimitive (goal.action_name, setConverted);
+
+    ROSEE::ActionPrimitive::Ptr primitive = mapActionHandler.getPrimitive (goal.action_name, goal.selectable_items);
     ROSEE::JointPos jp = primitive->getJointPos();
     
     JointsInvolvedCount pinch_joint_involved_mask = primitive->getJointsInvolvedCount();
