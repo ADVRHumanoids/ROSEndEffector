@@ -35,13 +35,16 @@ protected:
         parserMoveIt->init ("robot_description") ;
         ROSEE::FindActions actionsFinder (parserMoveIt);
         
-        auto theTwoMaps = actionsFinder.findPinch("/configs/actions/tests/");
+        std::string folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/tests" + parserMoveIt->getHandName();
+
+        auto theTwoMaps = actionsFinder.findPinch(folderForActions + "/primitives/");
         pinchMap = theTwoMaps.first;
         pinchWeakMap = theTwoMaps.second;
 
-        ROSEE::YamlWorker yamlWorker(parserMoveIt->getHandName(), "/configs/actions/tests/");
-        pinchParsedMap = yamlWorker.parseYamlPrimitive("pinchStrong.yaml", ROSEE::ActionPrimitive::Type::PinchStrong);
-        pinchWeakParsedMap = yamlWorker.parseYamlPrimitive("pinchWeak.yaml", ROSEE::ActionPrimitive::Type::PinchWeak);
+        ROSEE::YamlWorker yamlWorker;
+
+        pinchParsedMap = yamlWorker.parseYamlPrimitive(folderForActions + "/primitives/" + "pinchStrong.yaml" );
+        pinchWeakParsedMap = yamlWorker.parseYamlPrimitive(folderForActions + "/primitives/" + "pinchWeak.yaml");
     }
 
     virtual void TearDown() {
@@ -98,7 +101,7 @@ TEST_F ( testFindPinches, checkName ) {
     for (auto &mapEl: pinchMap ) {
         
         EXPECT_TRUE (mapEl.second.getName().compare("pinchStrong") == 0);
-        EXPECT_EQ (ROSEE::ActionPrimitive::Type::PinchStrong, mapEl.second.getPrimitiveType );
+        EXPECT_EQ (ROSEE::ActionPrimitive::Type::PinchStrong, mapEl.second.getPrimitiveType() );
     }
     
     for (auto &mapEl: pinchParsedMap ) {
@@ -165,7 +168,7 @@ TEST_F ( testFindPinches, checkEmitParse ) {
         EXPECT_EQ (pinchCasted->getName(), pinchMap.at(keyPair).getName() );
         EXPECT_EQ (pinchCasted->getnFingersInvolved(), pinchMap.at(keyPair).getnFingersInvolved() );
         EXPECT_EQ (pinchCasted->getMaxStoredActionStates(), pinchMap.at(keyPair).getMaxStoredActionStates());
-        EXPECT_EQ (pinchCasted->getPrimitiveType, pinchMap.at(keyPair).getPrimitiveType() );
+        EXPECT_EQ (pinchCasted->getPrimitiveType(), pinchMap.at(keyPair).getPrimitiveType() );
         EXPECT_EQ (pinchCasted->getFingersInvolved(), pinchMap.at(keyPair).getFingersInvolved());
 
         unsigned int i = 0;
@@ -268,13 +271,13 @@ TEST_F ( testFindPinches, checkNameWeak ) {
     for (auto &mapEl: pinchWeakMap ) {
         
         EXPECT_TRUE (mapEl.second.getName().compare("pinchWeak") == 0);
-        EXPECT_EQ (ROSEE::ActionPrimitive::Type::PinchWeak, mapEl.second.getPrimitiveType );
+        EXPECT_EQ (ROSEE::ActionPrimitive::Type::PinchWeak, mapEl.second.getPrimitiveType() );
     }
     
     for (auto &mapEl: pinchWeakParsedMap ) {
         
         EXPECT_TRUE (mapEl.second->getName().compare("pinchWeak") == 0);
-        EXPECT_EQ (ROSEE::ActionPrimitive::Type::PinchWeak, mapEl.second->getPrimitiveType );
+        EXPECT_EQ (ROSEE::ActionPrimitive::Type::PinchWeak, mapEl.second->getPrimitiveType() );
     }
 }
 

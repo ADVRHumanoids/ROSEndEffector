@@ -5,6 +5,7 @@
 
 #include <ROSEndEffector/FindActions.h>
 #include <ROSEndEffector/ParserMoveIt.h>
+#include <ROSEndEffector/MapActionHandler.h>
 #include <ROSEndEffector/ActionComposed.h>
 #include <ROSEndEffector/ActionPrimitive.h>
 #include <ROSEndEffector/ActionTrig.h>
@@ -33,8 +34,10 @@ protected:
         std::shared_ptr <ROSEE::ParserMoveIt> parserMoveIt = std::make_shared <ROSEE::ParserMoveIt> ();
         parserMoveIt->init ("robot_description") ;
         ROSEE::FindActions actionsFinder (parserMoveIt);
-
-        trigMap = actionsFinder.findTrig(ROSEE::ActionPrimitive::Type::Trig, "/configs/actions/tests/") ;  
+        
+        std::string folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/" + parserMoveIt->getHandName();
+        
+        trigMap = actionsFinder.findTrig(ROSEE::ActionPrimitive::Type::Trig, folderForActions + "/primitives/") ;  
 
         for (auto trig : trigMap) {
             std::shared_ptr <ROSEE::ActionPrimitive> pointer = 
@@ -42,12 +45,11 @@ protected:
             grasp.sumAction ( pointer );  
         }
 
-        
-        ROSEE::YamlWorker yamlWorker(parserMoveIt->getHandName(), "/configs/actions/tests/");
-        yamlWorker.createYamlFile (&grasp);
+        ROSEE::YamlWorker yamlWorker;
+        yamlWorker.createYamlFile (&grasp, folderForActions + "/generics/");
         
         //Parsing
-        graspParsed = yamlWorker.parseYamlComposed ("grasp.yaml");
+        graspParsed = yamlWorker.parseYamlComposed (folderForActions + "/generics/grasp.yaml");
 
        
     }
