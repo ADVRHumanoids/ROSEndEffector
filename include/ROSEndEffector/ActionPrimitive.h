@@ -55,6 +55,7 @@ public:
 
     /** 
      * @brief Enum useful to discriminate each primitive action when, for example, we want to parse a file 
+     * @remind if you change this enum, change also the ROSEEControl.msg accordingly
      */
     enum Type {PinchStrong, PinchWeak, MultiplePinchStrong, Trig, TipFlex, FingFlex, MoreTips, None};
     /* destructor of base must be virtual */

@@ -257,19 +257,81 @@ void ROSEE::UniversalRosEndEffectorExecutor::jointStateClbk(const sensor_msgs::J
 }
 //**************************** above this should be in the hal? **********************************************//
 
+
 // set q ref, similarly to pinch and grasp clbk
-void ROSEE::UniversalRosEndEffectorExecutor::setQRef() {
+bool ROSEE::UniversalRosEndEffectorExecutor::set_qRef_from_goal() {
     
     rosee_msg::ROSEEActionControl goal = _ros_action_server->getGoal();
     
-    //HACK only getprimitive now
-
-    ROSEE::ActionPrimitive::Ptr primitive = mapActionHandler.getPrimitive (goal.action_name, goal.selectable_items);
-    ROSEE::JointPos jp = primitive->getJointPos();
+    if (goal.percentage < 0 || goal.percentage > 1) { 
+        ROS_ERROR_STREAM ( "Received an action-goal with percentage " << goal.percentage << 
+            " Please insert a value between 0 (for 0%) and 1 (for 100%) ");
+        _ros_action_server->abortGoal("Percentage not valid");
+        return false;
+        
+    }
     
-    JointsInvolvedCount pinch_joint_involved_mask = primitive->getJointsInvolvedCount();
+    ROSEE::JointPos jp;
+    
+    // we need this as global member because in send_feedback we need it...
+    //JointsInvolvedCount joint_involved_mask;
+    
+    //Be sure that action_type of goal is defined well in msg, it is not a real enum
+    switch (goal.action_type) {
+        
+    case ROSEE::Action::Type::Primitive :
+    {
+        ROSEE::ActionPrimitive::Ptr primitive = mapActionHandler.getPrimitive (goal.action_name, goal.selectable_items);
+        
+        if (primitive == nullptr) {
+            //error message already printed in getPrimitive
+            _ros_action_server->abortGoal("Primitive Action not found");
+            return false;
+        }
+        
+        jp = primitive->getJointPos();
+        this->joint_involved_mask = primitive->getJointsInvolvedCount();
 
-    for ( auto it : pinch_joint_involved_mask ) {
+        break;
+    }
+    case ROSEE::Action::Type::Generic : // same thing as composed
+    case ROSEE::Action::Type::Composed :
+    {
+        ROSEE::ActionGeneric::Ptr generic = mapActionHandler.getGeneric(goal.action_name);
+        
+        if (generic == nullptr) {
+            //error message already printed in getPrimitive
+            _ros_action_server->abortGoal("Generic Action not found");
+            return false;
+        }
+        
+        jp = generic->getJointPos();
+        this->joint_involved_mask = generic->getJointsInvolvedCount();
+        
+        break;
+    }
+    case ROSEE::Action::Type::Timed : {
+        ROS_INFO_STREAM ("TIMED TODO");
+        break;
+    }
+    case ROSEE::Action::Type::None :
+    {
+        ROS_ERROR_STREAM ( "Received an action-goal of type None (" << goal.action_type << 
+            ") which is a no-type. Please use valid Action::Type ");
+        _ros_action_server->abortGoal("Invalid type NONE");
+        return false;
+        break;
+    }
+    default : {
+        ROS_ERROR_STREAM ( "Received an action-goal of type " << goal.action_type << 
+            " which I do not recognize. Please use valid Action::Type ");
+        _ros_action_server->abortGoal("Invalid type " + std::to_string(goal.action_type) );
+        return false;
+    }
+    } 
+    
+    normGoalFromInitialPos = 0;
+    for ( auto it : joint_involved_mask ) {
 
         if ( it.second  != 0 ) {
             int id = -1;
@@ -278,14 +340,65 @@ void ROSEE::UniversalRosEndEffectorExecutor::setQRef() {
             if( id >= 0 ) {
                 // NOTE assume single joint
                 _qref[id] = jp.at ( it.first ).at ( 0 ) * goal.percentage;
+                // to give the % as feedback, we store the initial distance from the goal
+                //TODO take care that initially jointPos can be empty...
+                normGoalFromInitialPos +=  pow (_qref[id] - jointPos.at(it.first).at(0), 2 )  ;
             }
             else {
                 ROS_WARN_STREAM ( "Trying to move Joint: " << it.first << " with ID: " << id );
+                _ros_action_server->abortGoal("Invalid Joint id" );
+                return false;
             }
         }
     }
-
     
+    normGoalFromInitialPos = sqrt(normGoalFromInitialPos);
+    
+    return true;
+    
+}
+
+double ROSEE::UniversalRosEndEffectorExecutor::send_feedback_action() {
+    //norm between goal and initial (when the goal arrived) position, but only considering the jointInvolved
+    
+    double actualNorm = 0;
+    
+    for ( auto it : joint_involved_mask ) {
+
+        if ( it.second  != 0 ) {
+            int id = -1;
+            _ee->getInternalIdForJoint ( it.first, id );
+            
+            if( id >= 0 ) {
+                // NOTE assume single joint
+                actualNorm += pow ( _qref[id] - jointPos.at(it.first).at(0) , 2 );
+            }
+            
+            else {
+                ROS_ERROR_STREAM ( "YOU SHOULD NOT BE HERE, previous error should stop execution");
+            }
+        }
+    }
+    actualNorm = sqrt(actualNorm);
+    
+
+    double actualCompletationPercentage;
+    if (normGoalFromInitialPos < 0.001) { //the initial pos is already in the goal
+        //also we do not want to divide by zero with formula below
+        _ros_action_server->sendFeedback(100);
+        return 100;
+    }
+        
+    //output = output_start + ((output_end - output_start) / (input_end - input_start)) * (input - input_start)
+    actualCompletationPercentage =
+        0 + ((100 - 0) / (0 - normGoalFromInitialPos)) * (actualNorm - normGoalFromInitialPos);
+
+    if (actualCompletationPercentage > 99.99) {
+        actualCompletationPercentage = 100;
+    }
+        
+    _ros_action_server->sendFeedback(actualCompletationPercentage);
+    return actualCompletationPercentage;
 }
 
 
@@ -438,8 +551,9 @@ void ROSEE::UniversalRosEndEffectorExecutor::timer_callback ( const ros::TimerEv
 
     fill_publish_joint_states();
     
+    //this is true only when a new goal has arrived... so new goal ovewrite the old one
     if (_ros_action_server->hasNewGoal()) {
-        setQRef();
+        set_qRef_from_goal();
     }
 
     // filter references
@@ -447,19 +561,11 @@ void ROSEE::UniversalRosEndEffectorExecutor::timer_callback ( const ros::TimerEv
 
     _hal->move();
     
+    // send the feedback with action server, if a goal is "running"
     if (_ros_action_server->hasGoal()) {
-        //norm between goal and actual position
-
-        double norm = 0;
-
-        for ( const auto& j : _all_joints ) {
-            int id = -1;
-            _ee->getInternalIdForJoint ( j, id );
-            //OR _qref_filtered ??
-            norm += (_qref[id] * _qref[id]) - (jointPos.at(j).at(0) * jointPos.at(j).at(0));
+        if (send_feedback_action() >= 100) {
+            _ros_action_server->sendComplete();
         }
-        //TODO... send not norm but percentage complete...
-        _ros_action_server->sendFeedback(norm);
     }
 
     // update time

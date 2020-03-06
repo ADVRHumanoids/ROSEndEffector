@@ -38,7 +38,9 @@ public:
     bool hasNewGoal();
 
     void sendFeedback(double completation_percentage) ;
-    void sendComplete (rosee_msg::ROSEEActionControl msg) ;
+    void sendComplete () ;
+    void abortGoal(std::string errorMsg = "");
+
 
 
     

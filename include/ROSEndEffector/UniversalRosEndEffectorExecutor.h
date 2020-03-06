@@ -138,6 +138,12 @@ private:
     
     std::shared_ptr <RosActionServer> _ros_action_server;
     
+    // we need this as global member because in send_feedback we need it...
+    ROSEE::JointsInvolvedCount joint_involved_mask;
+    double normGoalFromInitialPos;
+    bool set_qRef_from_goal(); //the "new" pinch/grasp callback (now used for all actions)
+    double send_feedback_action();
+    
     //TODO this should be done by hal?
     // ALSO todo get state from gazebo if it is used...
     void init_robotState_sub();
@@ -145,7 +151,7 @@ private:
     ros::Subscriber jointPosSub;
     void jointStateClbk(const sensor_msgs::JointStateConstPtr& msg);
     
-    void setQRef();
+    
     
 
     

@@ -56,7 +56,7 @@ ROSEE::ActionPrimitive::Ptr ROSEE::MapActionHandler::getPrimitive(std::string pr
         std::cerr << "[ERROR MapActionHandler::" << __func__ << "] The action '" 
         << primitiveName << "' has as key a set of dimension " <<
         map.begin()->second->getKeyForYamlMap().size() <<
-        " and not dimension of passed 2nd argument" << key.size() << std::endl;
+        " and not dimension of passed 2nd argument " << key.size() << std::endl;
         return nullptr;
     }
     

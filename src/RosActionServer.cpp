@@ -39,9 +39,15 @@ bool ROSEE::RosActionServer::hasNewGoal () {
     return newGoal;
 }
 
-rosee_msg::ROSEEActionControl ROSEE::RosActionServer::getGoal() { 
-    newGoal = false;
-    return actionControlMsg;
+rosee_msg::ROSEEActionControl ROSEE::RosActionServer::getGoal() {
+    if (goalInExecution) {
+        newGoal = false;
+        return actionControlMsg;
+    } else {
+        ROS_WARN_STREAM ("ROSACTION SERVER no goal is in execution (no one has" <<
+            "arrived or the last one is already completed");
+        return rosee_msg::ROSEEActionControl();
+    }
 }
 
 
@@ -51,7 +57,6 @@ void ROSEE::RosActionServer::goalReceivedCallback() {
     goalInExecution = true;
     newGoal = true;
     this->actionControlMsg = _actionServer.acceptNewGoal()->goal_action;
-
 }
 
 void ROSEE::RosActionServer::preemptReceivedCallback() {
@@ -62,6 +67,16 @@ void ROSEE::RosActionServer::preemptReceivedCallback() {
     // set the action state to preempted
     _actionServer.setPreempted();
     
+}
+
+void ROSEE::RosActionServer::abortGoal(std::string errorMsg) {
+    ROS_INFO_STREAM("ROSACTION SERVER Aborted goal");
+    rosee_msg::ROSEECommandResult result;
+    result.completed_action = actionControlMsg;
+    _actionServer.setAborted(result, errorMsg);
+    newGoal = false;
+    goalInExecution = false;
+
 }
 
 void ROSEE::RosActionServer::sendFeedback(double completation_percentage) {
@@ -75,14 +90,16 @@ void ROSEE::RosActionServer::sendFeedback(double completation_percentage) {
     
 }
 
-void ROSEE::RosActionServer::sendComplete (rosee_msg::ROSEEActionControl msg)  {
+void ROSEE::RosActionServer::sendComplete ()  {
     
     ROS_INFO_STREAM("ROSACTION SERVER Sending final result completed ");
     goalInExecution = false;
+    newGoal = false; //even if here should be already false
     rosee_msg::ROSEECommandResult result;
-    result.completed_action = msg;
+    result.completed_action = actionControlMsg;
     
     _actionServer.setSucceeded ( result ); 
+    //TODO reinitialize actionControlMsg here or not?
 
 }
 

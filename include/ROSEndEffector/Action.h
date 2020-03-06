@@ -123,6 +123,7 @@ public:
     
     /** 
      * @brief Enum useful to discriminate each  action when, for example, we want to parse a file 
+     * @remind if you change this enum, change also the ROSEEControl.msg accordingly
      */
     enum Type {Primitive, Generic, Composed, Timed, None};
 
