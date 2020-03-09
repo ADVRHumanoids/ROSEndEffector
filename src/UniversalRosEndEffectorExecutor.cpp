@@ -439,7 +439,27 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_actionsInfo_services() {
 
     }
     
-    //TODO add timeds
+    for (auto timedMap : mapActionHandler.getAllTimeds() ) {
+        
+         rosee_msg::ActionInfo actInfo;
+        actInfo.action_name = timedMap.first;
+        actInfo.action_type = timedMap.second.getType();
+        actInfo.actionPrimitive_type = ROSEE::ActionPrimitive::Type::None;
+        actInfo.ros_action_name = _nh.getNamespace() + "/" + "action_command";
+        actInfo.seq = 0; //TODO check if necessary the seq in this msg
+        actInfo.max_selectable = 0;
+        // we use selectable items info to store in it the action that compose this timed
+        for (std::string act : timedMap.second.getInnerActionsNames()) {
+            actInfo.inner_actions.push_back(act);
+            auto margin = timedMap.second.getActionMargins(act);
+            actInfo.before_margins.push_back(margin.first);
+            actInfo.after_margins.push_back(margin.second);
+        }
+        
+
+        _actionsInfoVect.push_back(actInfo);
+        
+    }
     
     _ros_server_actionsInfo = _nh.advertiseService("ActionsInfo", 
         &ROSEE::UniversalRosEndEffectorExecutor::actionsInfoCallback, this);

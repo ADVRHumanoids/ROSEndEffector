@@ -153,20 +153,14 @@ int main ( int argc, char **argv ) {
   
 
     
-    /** **************************** TIMED ACTION THINGS ***********************************************    
-    ROSEE::ActionTimed actionTimed("wide_grasp");
-    std::set<std::string> one;
-    one.insert ("finger_1_joint_1");
-    actionTimed.insertAction( mapsHandler.getPrimitive("moreTips_3").at(one), 0, 0.2, 0, 0.5, "GRASP");
-    one.clear();
-    one.insert("finger_1_joint_1");
-    actionTimed.insertAction( mapsHandler.getPrimitive(ROSEE::ActionPrimitive::Type::MoreTips).at(0).at(one), 0, 0.2, 0, 1, "GRASP2");
-    
-    one.clear();
-    one.insert("finger_2_link_3");
-    one.insert("finger_middle_link_3");    
-    actionTimed.insertAction( mapsHandler.getPrimitive("pinch").at(one), 0, 0.2, 0, 1, "PINCH");
-    actionTimed.insertAction( mapsHandler.getPrimitive("pinch").at(one), 0, 0.2, 0, 0.5, "PINCH2");
+    /** **************************** TIMED ACTION THINGS *********************************************/
+    ROSEE::ActionTimed actionTimed ("timed_random");
+
+    actionTimed.insertAction( mapsHandler.getPrimitive("moreTips_3", "left_hand_Finger_Spread"), 
+                              0, 0.2, 0, 0.5, "SPREAD");
+      
+    actionTimed.insertAction( mapsHandler.getPrimitive("pinchStrong", 
+        std::make_pair("left_hand_c", "left_hand_q")), 0, 0.2, 0, 1, "PINCH");
 
     actionTimed.print();
     
@@ -174,9 +168,9 @@ int main ( int argc, char **argv ) {
     mapsHandler.parseAllTimeds(folderForActions + "/timeds/");
 
     std::cout << "The timed action parsed: " << std::endl;
-    mapsHandler.getTimed("wide_grasp").print();
+    mapsHandler.getTimed("timed_random").print();
 
-*/
+
     return 0;
     
 }
