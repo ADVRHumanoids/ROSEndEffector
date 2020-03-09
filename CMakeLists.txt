@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS srdfdom
                                         roscpp
                                         message_generation 
                                         moveit_ros_planning_interface
+                                        rosee_msg
                                         )
                                                                                
 # find_package(matlogger2 REQUIRED)
@@ -241,6 +242,7 @@ target_link_libraries(MapActionHandler
 target_link_libraries(RosActionServer
     ${catkin_LIBRARIES}
 )
+add_dependencies(RosActionServer rosee_msg_generate_messages_cpp)
 
 target_link_libraries(ActionPinchStrong
     ActionPinchGeneric

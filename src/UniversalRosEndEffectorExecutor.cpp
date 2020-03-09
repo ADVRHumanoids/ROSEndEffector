@@ -237,7 +237,7 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive_subscribers
 
 bool ROSEE::UniversalRosEndEffectorExecutor::init_action_server () {
     
-    _ros_action_server = std::make_shared<RosActionServer> ("actionServer" , &_nh);
+    _ros_action_server = std::make_shared<RosActionServer> ("action_command" , &_nh);
 }
 
 //**************************** TODO this should be in the hal? **********************************************//
@@ -408,8 +408,9 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_actionsInfo_services() {
         
         rosee_msg::ActionInfo actInfo;
         actInfo.action_name = primitiveContainers.first;
-        //TODO define name topics elsewhere?
-        actInfo.topic_name = _nh.getNamespace() + "/" + actInfo.action_name;
+        actInfo.action_type = ROSEE::Action::Type::Primitive;
+        actInfo.actionPrimitive_type = primitiveContainers.second.begin()->second->getPrimitiveType();
+        actInfo.ros_action_name = _nh.getNamespace() + "/" + "action_command";
         actInfo.seq = 0; //TODO check if necessary the seq in this msg
         //until now, there is not a primitive that does not have "something" to select
         // (eg pinch has 2 fing, trig one fing, moretips 1 joint...). 
@@ -427,8 +428,9 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_actionsInfo_services() {
 
         rosee_msg::ActionInfo actInfo;
         actInfo.action_name = genericMap.first;
-        //TODO define name topics elsewhere?
-        actInfo.topic_name = _nh.getNamespace() + "/" + actInfo.action_name;
+        actInfo.action_type = genericMap.second->getType();
+        actInfo.actionPrimitive_type = ROSEE::ActionPrimitive::Type::None;
+        actInfo.ros_action_name = _nh.getNamespace() + "/" + "action_command";
         actInfo.seq = 0; //TODO check if necessary the seq in this msg
         //Generic action has always no thing to select UNTIL NOW
         actInfo.max_selectable = 0;
@@ -436,6 +438,8 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_actionsInfo_services() {
         _actionsInfoVect.push_back(actInfo);
 
     }
+    
+    //TODO add timeds
     
     _ros_server_actionsInfo = _nh.advertiseService("ActionsInfo", 
         &ROSEE::UniversalRosEndEffectorExecutor::actionsInfoCallback, this);
