@@ -65,6 +65,10 @@ std::pair <double, double> ROSEE::ActionTimed::getActionMargins ( std::string ac
     }
 }
 
+std::vector<std::string> ROSEE::ActionTimed::getInnerActionsNames() const {
+    return actionsNamesOrdered;
+}
+
 
 void ROSEE::ActionTimed::print() const {
     

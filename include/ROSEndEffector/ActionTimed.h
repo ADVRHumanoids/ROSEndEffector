@@ -86,6 +86,11 @@ public:
     std::pair <double, double> getActionMargins ( std::string actionName ) const ;
 
     /**
+     * @brief getter for action that composed this one
+     * @return vector of string of inner actions, ordered by time execution
+     */
+    std::vector <std::string> getInnerActionsNames() const ;
+    /**
      * @brief Print info about this action
      */
     void print () const override;
