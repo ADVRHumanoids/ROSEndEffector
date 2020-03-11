@@ -68,7 +68,12 @@ public:
      */
     std::vector < ROSEE::JointPos > getAllJointPos () const override;
 
-        
+    /**
+     * @brief Get the JointsInvolvedCount maps of all the inner actions, in order
+     * @return vector of JointsInvolvedCount map of inner actions
+     */ 
+    std::vector < ROSEE::JointsInvolvedCount > getAllJointCountAction() const;
+    
     /**
      * @brief get for joint positions
      * @param actionName the name of the inner action of which we want to know the JointPos
