@@ -37,11 +37,18 @@ public:
     bool hasGoal();
     bool hasNewGoal();
 
-    void sendFeedback(double completation_percentage) ;
+    /** 
+     * @brief send Feedback to the client who has requested the goal.
+     * 
+     * @param completation_percentage the percentae that tells how much we have completed 
+     * the action requested
+     * @param currentAction current action that is running. If it is empty, it is taken the name
+     *    of the action from member \ref actionControlMsg . You should passed not empty string when
+     *    dealing with timed action (passing the inner action of the timed one)
+     */
+    void sendFeedback(double completation_percentage, std::string currentAction) ;
     void sendComplete () ;
     void abortGoal(std::string errorMsg = "");
-
-
 
     
 protected:

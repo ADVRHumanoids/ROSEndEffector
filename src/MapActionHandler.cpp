@@ -181,18 +181,18 @@ std::map<std::string, std::shared_ptr<ROSEE::ActionGeneric> > ROSEE::MapActionHa
     return generics;
 }
 
-ROSEE::ActionTimed ROSEE::MapActionHandler::getTimed(std::string name) const {
+std::shared_ptr<ROSEE::ActionTimed> ROSEE::MapActionHandler::getTimed(std::string name) const {
     
     auto it = timeds.find(name);
     if (it == timeds.end() ) {
          std::cerr << "[ERROR MapActionHandler " << __func__ << "] No timed function named" << name << std::endl;    
-        return ActionTimed();
+        return nullptr;
     }
     
     return it->second;
 }
 
-std::map<std::string, ROSEE::ActionTimed> ROSEE::MapActionHandler::getAllTimeds() const {
+std::map<std::string, std::shared_ptr<ROSEE::ActionTimed>> ROSEE::MapActionHandler::getAllTimeds() const {
     return timeds;
 }
 
@@ -330,7 +330,8 @@ bool ROSEE::MapActionHandler::parseAllGenerics(std::string pathFolder) {
     YamlWorker yamlWorker;
     for (auto file : filenames) {
         
-        std::shared_ptr<ROSEE::ActionGeneric> genericPointer = yamlWorker.parseYamlGeneric(pathFolder+file);
+        ROSEE::ActionGeneric::Ptr genericPointer =
+            yamlWorker.parseYamlGeneric(pathFolder+file);
         generics.insert (std::make_pair( genericPointer->getName(), genericPointer) ) ;
     }
     
@@ -346,13 +347,11 @@ bool ROSEE::MapActionHandler::parseAllTimeds(std::string pathFolder) {
     YamlWorker yamlWorker;
     for (auto file : filenames) {
         
-        ROSEE::ActionTimed timed = yamlWorker.parseYamlTimed(pathFolder+file);
-        timeds.insert (std::make_pair( timed.getName(), timed) ) ;
+        std::shared_ptr < ROSEE::ActionTimed > timed = yamlWorker.parseYamlTimed(pathFolder+file);
+        timeds.insert (std::make_pair( timed->getName(), timed) ) ;
     }
     
-    
     return true;
-    
 }
 
 

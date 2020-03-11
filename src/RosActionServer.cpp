@@ -79,12 +79,17 @@ void ROSEE::RosActionServer::abortGoal(std::string errorMsg) {
 
 }
 
-void ROSEE::RosActionServer::sendFeedback(double completation_percentage) {
+void ROSEE::RosActionServer::sendFeedback(double completation_percentage, std::string currentAction) {
     
     ROS_INFO_STREAM("ROSACTION SERVER Sending feedback " << completation_percentage );
 
     rosee_msg::ROSEECommandFeedback feedback;
     feedback.completation_percentage = completation_percentage;
+    if (currentAction.size() == 0) {
+        feedback.action_name_current = actionControlMsg.action_name;
+    } else {
+        feedback.action_name_current = currentAction;
+    }
     
     _actionServer.publishFeedback(feedback);
     

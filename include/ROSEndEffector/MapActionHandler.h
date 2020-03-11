@@ -95,8 +95,8 @@ public:
     std::shared_ptr<ROSEE::ActionGeneric> getGeneric (std::string name) const;
     std::map <std::string, std::shared_ptr<ROSEE::ActionGeneric>> getAllGenerics () const;
     
-    ROSEE::ActionTimed getTimed (std::string name) const;
-    std::map <std::string, ROSEE::ActionTimed> getAllTimeds () const;
+    std::shared_ptr<ROSEE::ActionTimed> getTimed (std::string name) const;
+    std::map <std::string, std::shared_ptr<ROSEE::ActionTimed>> getAllTimeds () const;
     
     /************************************* Specific functions for specific actions *************************/
 
@@ -152,7 +152,7 @@ private:
 
     std::map <std::string, ActionPrimitiveMap> primitives;
     std::map <std::string, std::shared_ptr<ROSEE::ActionGeneric>> generics;
-    std::map <std::string, ROSEE::ActionTimed> timeds;
+    std::map <std::string, std::shared_ptr<ROSEE::ActionTimed>> timeds;
     
     std::map <std::string, std::set<std::string> > pinchStrongPairsMap;
     std::map <std::string, std::set<std::string> > pinchWeakPairsMap;
