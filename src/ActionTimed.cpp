@@ -52,6 +52,20 @@ ROSEE::JointPos ROSEE::ActionTimed::getJointPosAction (std::string actionName) c
     }
 }
 
+ROSEE::JointsInvolvedCount ROSEE::ActionTimed::getJointCountAction(std::string actionName) const {
+    
+    auto it = actionsJointCountMap.find(actionName);
+    
+    if ( it != actionsJointCountMap.end() ) {
+        return (it->second);
+        
+    } else {
+        std::cerr << "[ACTIONTIMED:: " << __func__ << "] ERROR: action " << actionName << " not present in this composed timed action" << std::endl;
+        return ROSEE::JointsInvolvedCount();
+    } 
+}
+
+
 std::pair <double, double> ROSEE::ActionTimed::getActionMargins ( std::string actionName ) const {
  
     auto it = actionsTimeMarginsMap.find(actionName);
@@ -255,6 +269,7 @@ bool ROSEE::ActionTimed::insertAction(ROSEE::Action::Ptr action, double marginBe
     actionsJointPosMap.insert (std::make_pair ( usedName, (percentJointPos)*(action->getAllJointPos().at( jointPosIndex )) ));
     actionsTimeMarginsMap.insert ( std::make_pair( usedName, std::make_pair(marginBefore, marginAfter)));
     actionsNamesOrdered.push_back ( usedName );
+    actionsJointCountMap.insert (std::make_pair (usedName, action->getJointsInvolvedCount()));
 
     //father member
     for ( auto it: action->getFingersInvolved() ) {
@@ -265,7 +280,7 @@ bool ROSEE::ActionTimed::insertAction(ROSEE::Action::Ptr action, double marginBe
         
         jointsInvolvedCount = action->getJointsInvolvedCount();
         
-    } else {
+    } else { // add the action.jointInvolvedCount to the timed jointCount
         for (auto jic : action->getJointsInvolvedCount() ) {
             jointsInvolvedCount.at(jic.first) += jic.second;
         } 

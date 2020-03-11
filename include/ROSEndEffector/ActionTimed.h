@@ -72,7 +72,7 @@ public:
     /**
      * @brief get for joint positions
      * @param actionName the name of the inner action of which we want to know the JointPos
-     * @return JointPos position of joints of actionName
+     * @return JointPos position of joints of \p actionName
      *         Return empty JointPos if \p actionName is not present in this ActionTimed
      */
     ROSEE::JointPos getJointPosAction ( std::string actionName ) const ;
@@ -84,6 +84,15 @@ public:
      *         return -1 -1 if the \p actionName was not present in this ActionTimed.
      */
     std::pair <double, double> getActionMargins ( std::string actionName ) const ;
+    
+    /**
+     * @brief get for JointsInvolvedCount of the inner actions
+     * @param actionName the name of the inner action of which we want to know the JointCount
+     * @return JointsInvolvedCount of joints of \p actionName
+     *         Return empty JointsInvolvedCount if \p actionName is not present in this
+     *         ActionTimed
+     */
+    ROSEE::JointsInvolvedCount getJointCountAction ( std::string actionName ) const;
 
     /**
      * @brief getter for action that composed this one
@@ -113,7 +122,7 @@ public:
      * @param action pointer to the action to be inserted
      * @param marginBefore the time margin to wait before executing the \p action
      * @param marginAfter the time margin to wait after executing the \p action
-     * @param jointPosIndex (default == 0) the wanted jointPos or \p action to insert. Error the index is greater than the number
+     * @param jointPosIndex (default == 0) the wanted jointPos of \p action to insert. Error the index is greater than the number
      *      of joint pos in the \p action. First element has index 0. 
      * @param newActionName (default == "") OPTIONAL argument if we want to store the \p action with a different name
      * @return False if some error happened
@@ -129,6 +138,7 @@ public:
 private:
     std::map <std::string, std::pair<double, double> > actionsTimeMarginsMap;
     std::map <std::string, ROSEE::JointPos> actionsJointPosMap;
+    std::map <std::string, ROSEE::JointsInvolvedCount> actionsJointCountMap;
     
     /**
      * This vector is used to take count of the order of the actions inserted
