@@ -140,9 +140,16 @@ private:
     
     // we need this as global member because in send_feedback we need it...
     ROSEE::JointsInvolvedCount joint_involved_mask;
+    ROSEE::JointPos joint_position_goal;
     double normGoalFromInitialPos;
-    bool set_qRef_from_goal(); //the "new" pinch/grasp callback (now used for all actions)
-    double send_feedback_action();
+    
+    bool updateGoal(); //the "new" pinch/grasp callback (now used for all actions)
+    bool updateRefGoal(double percentage = 1.0);
+    double sendFeedbackGoal(std::string currentAction = "");
+    bool update_send_timed();
+    bool timed_requested;
+    std::shared_ptr<ROSEE::ActionTimed> timedAction;
+    unsigned int timed_index;
     
     //TODO this should be done by hal?
     // ALSO todo get state from gazebo if it is used...

@@ -168,7 +168,7 @@ int main ( int argc, char **argv ) {
     mapsHandler.parseAllTimeds(folderForActions + "/timeds/");
 
     std::cout << "The timed action parsed: " << std::endl;
-    mapsHandler.getTimed("timed_random").print();
+    mapsHandler.getTimed("timed_random")->print();
 
 
     return 0;
