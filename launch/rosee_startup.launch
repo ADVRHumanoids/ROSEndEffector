@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="gui" default="true" />
+    <arg name="inSlider" default="false" />
+    <arg name="gazebo" default="false" />
+  	<arg name="hand_name"/> 
+    
+    <arg unless="$(arg gazebo)" name = "joint_states_topic" value="/ros_end_effector/joint_states" />
+    <arg if="$(arg gazebo)" name = "joint_states_topic" value="/rosee_gazebo_plugin/joint_states" />
+
+     <!-- send the test_ee robot XML to param server -->
+     <param name="robot_description" textfile="$(find ros_end_effector)/configs/urdf/$(arg hand_name).urdf"/>
+     <param name="robot_description_semantic" textfile="$(find ros_end_effector)/configs/srdf/$(arg hand_name).srdf" />   
+     <param name="use_gui" value="$(arg gui)"/>
+     <param name="rate" value="100.0"/>
+     <param name="ros_ee_config_path" value="$(find ros_end_effector)/configs/$(arg hand_name).yaml"/>
+     
+
+    <!-- start robot state publisher -->
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" output="screen" >
+        <param name="publish_frequency" type="double" value="200.0" />
+        <remap from="joint_states" to="$(arg joint_states_topic)" />
+    </node> 
+    
+    <node type="rviz" name="rviz" pkg="rviz" args="-d $(find ros_end_effector)/configs/rviz/$(arg hand_name).rviz" />
+    
+    <!-- TODO If gazebo, we should run here the launch of rosee_gazebo_plugin, but not it 
+        does not work becuase it put a prefix u' when looking for that file-->
+    
+    <!-- sliders for control single joints-->
+    <node if="$(arg inSlider)" name="input_joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+        <remap from="joint_states" to="ros_end_effector/joint_states" />
+    </node>
+    
+    <node unless="$(arg inSlider)" type="UniversalRosEndEffector" name="UniversalRosEndEffector" pkg="ros_end_effector" output="screen"/>
+
+    
+</launch>
