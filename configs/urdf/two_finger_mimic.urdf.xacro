@@ -230,7 +230,7 @@
   
 
     <gazebo>
-        <plugin name="two_finger_mimic_controller" filename="librosee_plugin.so">
+        <plugin name="two_finger_mimic_controller" filename="libRoseePlugin.so">
         </plugin>
     </gazebo>
     

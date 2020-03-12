@@ -246,5 +246,10 @@
     <child link="right_fingertip2"/>
     <origin xyz="0.6 -0.5 -0.25"/>
   </joint>
+  
+    <gazebo>
+    <plugin name="test_ee_controller" filename="libRoseePlugin.so">
+    </plugin>
+  </gazebo>
 
 </robot>
