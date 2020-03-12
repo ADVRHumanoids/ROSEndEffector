@@ -5,6 +5,8 @@
     <arg name="gazebo" default="false" />
   	<arg name="hand_name"/> 
     
+    <param unless="$(arg gazebo)" name = "/rosee/joint_states_topic" value="/ros_end_effector/joint_states" />
+    <param if="$(arg gazebo)" name = "/rosee/joint_states_topic" value="/rosee_gazebo_plugin/joint_states" />
     <arg unless="$(arg gazebo)" name = "joint_states_topic" value="/ros_end_effector/joint_states" />
     <arg if="$(arg gazebo)" name = "joint_states_topic" value="/rosee_gazebo_plugin/joint_states" />
 

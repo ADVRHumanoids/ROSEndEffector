@@ -150,6 +150,9 @@ private:
     bool timed_requested;
     std::shared_ptr<ROSEE::ActionTimed> timedAction;
     unsigned int timed_index;
+    ROSEE::Utils::Timer<> timer; //for time margins of timed action
+    double msToWait;
+
     
     //TODO this should be done by hal?
     // ALSO todo get state from gazebo if it is used...

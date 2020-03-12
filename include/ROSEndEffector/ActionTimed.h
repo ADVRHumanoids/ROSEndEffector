@@ -75,6 +75,13 @@ public:
     std::vector < ROSEE::JointsInvolvedCount > getAllJointCountAction() const;
     
     /**
+     * @brief get all the time margins of all inner action
+     * @return vector of pair : the first element of pair is the time to wait before
+     *        executing the action, the second element the time to wait after.
+     */
+    std::vector < std::pair <double, double> > getAllActionMargins() const;
+    
+    /**
      * @brief get for joint positions
      * @param actionName the name of the inner action of which we want to know the JointPos
      * @return JointPos position of joints of \p actionName

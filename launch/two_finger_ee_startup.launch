@@ -4,8 +4,11 @@
     <arg name="inSlider" default="false" />
     <arg name="gazebo" default="false" />
     
-    <arg unless="$(arg gazebo)" name = "joint_states_topic" value="ros_end_effector/joint_states" />
-    <arg if="$(arg gazebo)" name = "joint_states_topic" value="rosee_gazebo_plugin/joint_states" />
+    
+    <param unless="$(arg gazebo)" name = "/rosee/joint_states_topic" value="/ros_end_effector/joint_states" />
+    <param if="$(arg gazebo)" name = "/rosee/joint_states_topic" value="/rosee_gazebo_plugin/joint_states" />
+    <arg unless="$(arg gazebo)" name = "joint_states_topic" value="/ros_end_effector/joint_states" />
+    <arg if="$(arg gazebo)" name = "joint_states_topic" value="/rosee_gazebo_plugin/joint_states" />
 
      <!-- send the test_ee robot XML to param server -->
      <param name="robot_description" textfile="$(find ros_end_effector)/configs/urdf/two_finger.urdf"/>
@@ -20,7 +23,7 @@
         <remap from="joint_states" to="$(arg joint_states_topic)" />
     </node> 
     
-    <node type="rviz" name="rviz" pkg="rviz" args="-d $(find ros_end_effector)/configs/rviz/test_ee.rviz" />
+    <node type="rviz" name="rviz" pkg="rviz" args="-d $(find ros_end_effector)/configs/rviz/two_finger.rviz" />
 
     <!-- sliders for control single joints-->
     <node if="$(arg inSlider)" name="input_joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">

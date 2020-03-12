@@ -48,6 +48,16 @@ std::vector<ROSEE::JointsInvolvedCount> ROSEE::ActionTimed::getAllJointCountActi
     return jcVect;
 }
 
+std::vector<std::pair<double, double> > ROSEE::ActionTimed::getAllActionMargins() const {
+    
+    std::vector <std::pair <double,double> > timeVect;
+    timeVect.reserve (actionsNamesOrdered.size());
+    for (auto actName : actionsNamesOrdered) {
+        timeVect.push_back( actionsTimeMarginsMap.at (actName) );
+    }
+    return timeVect;
+}
+
 ROSEE::JointPos ROSEE::ActionTimed::getJointPosAction (std::string actionName) const {
     
     auto it = actionsJointPosMap.find(actionName);

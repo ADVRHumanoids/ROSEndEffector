@@ -82,7 +82,6 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
     timed_requested = false;
     timed_index = -1;
 
-    
     // services (only for gui now)
     init_actionsInfo_services();
 
@@ -241,6 +240,7 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive_subscribers
 bool ROSEE::UniversalRosEndEffectorExecutor::init_action_server () {
     
     _ros_action_server = std::make_shared<RosActionServer> ("action_command" , &_nh);
+    return true;
 }
 
 //**************************** TODO this should be in the hal? **********************************************//
@@ -248,13 +248,9 @@ void ROSEE::UniversalRosEndEffectorExecutor::init_robotState_sub () {
 
     //to get joint state from gazebo, if used
     std::string topic_name_js;
-    _nh.param<std::string>("/joint_states_topic", topic_name_js, "joint_states");
+    _nh.param<std::string>("/rosee/joint_states_topic", topic_name_js, "/ros_end_effector/joint_states");
     
-    if (_nh.hasParam("/gazebo_jointStates")) {
-        ROS_INFO_STREAM ( "Using gazebo simulation to get joint states..." );
-    } else {
-        ROS_INFO_STREAM ( "Using rviz simulation to get joint states..." );
-    }
+    ROS_INFO_STREAM ( "Getting joint pos from '" << topic_name_js << "'" );
     
     jointPosSub = _nh.subscribe (topic_name_js, 1, 
                                  &ROSEE::UniversalRosEndEffectorExecutor::jointStateClbk, this);
@@ -393,8 +389,25 @@ bool ROSEE::UniversalRosEndEffectorExecutor::updateRefGoal(double percentage) {
             }
         }
     }
-    
     normGoalFromInitialPos = sqrt(normGoalFromInitialPos); 
+    
+    if (timed_requested) {
+        
+        //we are in this function BEFORE the begin of execution of a inner... so
+        //we set the toWait to (afterMargin of previous inner + beforeMargin of actual (todo) inner)
+        //except when timed_index == 0 where we have only the before
+        //the after margin of last inner is not considered.
+        if (timed_index == 0) {
+            msToWait = timedAction->getAllActionMargins().at(timed_index).first;
+            
+        } else if (timed_index < timedAction->getInnerActionsNames().size()) {
+            msToWait = timedAction->getAllActionMargins().at(timed_index-1).second + 
+                     timedAction->getAllActionMargins().at(timed_index).first;
+        }
+        msToWait *= 1000;
+        timer.reset();
+    }
+    
     return true;
 }
 
@@ -623,30 +636,43 @@ void ROSEE::UniversalRosEndEffectorExecutor::timer_callback ( const ros::TimerEv
             
         } else { //a timed is running
             
-            if ( sendFeedbackGoal(timedAction->getInnerActionsNames().at(timed_index)) >= 100) {
+            if ( sendFeedbackGoal(timedAction->getInnerActionsNames().at(timed_index)) >= 100 ) {
                 
+                // completed all the timed action (the last inner has finished)
                 if (timed_index == timedAction->getInnerActionsNames().size()-1)  {
                     _ros_action_server->sendComplete();
                     timed_requested = false;
                     
-                } else {
+                // completed a inner action, we have to execute the next one now
+                } else { 
                     
                     timed_index++;
                     joint_position_goal = timedAction->getAllJointPos().at(timed_index);
                     joint_involved_mask = timedAction->getAllJointCountAction().at(timed_index);
                     updateRefGoal();
-                    
                 }                      
             }
         }  
     }
 
-    // filter references
-    set_references();
+
+    if (timed_requested) {
+        //TODO is better a mini state machine to deal with timed action?
+        if (timer.elapsed_time<double, std::chrono::milliseconds>() > msToWait )  {
+            //TODO fow now it is this function that make robot moves, and not _hal->move()
+            set_references(); 
+                
+        } else {
+            ROS_INFO_STREAM ("Waiting time to execute action...");
+        }
+            
+        
+    } else {
+        //TODO fow now it is this function that make robot moves, and not _hal->move()
+        set_references(); 
+    }
 
     _hal->move();
-    
-
 
     // update time
     _time += _period;
