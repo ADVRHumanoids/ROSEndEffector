@@ -40,59 +40,13 @@ namespace ROSEE {
 typedef std::map <std::string, std::vector <double> > JointPos;
 
 /** operator overload for JointPos so it is easier to print */
-std::ostream& operator << (std::ostream& output, const JointPos jp) {
-    for (const auto &jsEl : jp) {
-        output << "\t\t"<<jsEl.first << " : "; //joint name
-        for(const auto &jValue : jsEl.second){
-            output << jValue << ", "; //joint position (vector because can have multiple dof)
-        }
-        output.seekp (-2, output.cur); //to remove the last comma (and space)
-        output << std::endl;       
-    }
-    return output;
-}
+std::ostream& operator << (std::ostream& output, const JointPos jp) ;
 
-JointPos operator * (const double multiplier, const JointPos jp) {
-    
-    JointPos jpNew;
-    for (const auto &jsEl : jp) {
-        std::vector<double> newPos;
-       // std::cout << jsEl.first << std::endl;
-        for (const double pos : jsEl.second) {
-            //std::cout << "old " << pos << "   new: " << pos*multiplier << std::endl;
-            newPos.push_back (pos*multiplier);
-        }
-        jpNew.insert ( std::make_pair (jsEl.first, newPos) );
-    }
-    
-    return jpNew;
-}
+JointPos operator * (const double multiplier, const JointPos jp) ;
 
-JointPos operator * (const JointPos jp, const double multiplier ) {
-    return (multiplier * jp );
-}
+JointPos operator * (const JointPos jp, const double multiplier ) ;
 
-JointPos operator + (const JointPos jp1, const JointPos jp2) {
-    
-    if ( ! ROSEE::Utils::keys_equal(jp1, jp2) ) {
-        throw ROSEE::Utils::DifferentKeysException<ROSEE::JointPos, ROSEE::JointPos>(&jp1, &jp2);
-    }
-    
-    JointPos jpNew;
-    for (const auto &jsEl : jp1) {
-        if (jsEl.second.size() != jp2.at(jsEl.first).size() ) {
-            throw "Dofs not same";
-        }
-
-        std::vector<double> newPos;
-        for (int i = 0; i < jsEl.second.size(); i++) {
-            newPos.push_back (jsEl.second.at(i) +  jp2.at(jsEl.first).at(i));
-        }
-        jpNew.insert ( std::make_pair (jsEl.first, newPos) );
-    }
-    
-    return jpNew;
-}
+JointPos operator + (const JointPos jp1, const JointPos jp2) ;
 
 /** 
  * @brief The map to describe, how many times a joint is set by the action. 
@@ -103,13 +57,8 @@ JointPos operator + (const JointPos jp1, const JointPos jp2) {
  */
 typedef std::map <std::string, unsigned int> JointsInvolvedCount;
 
-std::ostream& operator << (std::ostream& output, const JointsInvolvedCount jic) {
-    for (const auto &jicEl : jic) {
-        output << "\t"<< jicEl.first << " : " << jicEl.second;
-        output << std::endl;       
-    }
-    return output;
-}
+std::ostream& operator << (std::ostream& output, const JointsInvolvedCount jic);
+
 
 /**
  * @brief The pure virtual class representing an Action. It has members that are in common to all derived class
