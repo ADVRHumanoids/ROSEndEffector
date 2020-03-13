@@ -21,7 +21,7 @@
 /******************************** OPERATORS OVERLOAD FOR TYPEDEFS ***********************************/
 
 /** operator overload for JointPos so it is easier to print */
-std::ostream& operator << (std::ostream& output, const ROSEE::JointPos jp) {
+std::ostream& ROSEE::operator << (std::ostream& output, const ROSEE::JointPos jp) {
     for (const auto &jsEl : jp) {
         output << "\t\t"<<jsEl.first << " : "; //joint name
         for(const auto &jValue : jsEl.second){
@@ -33,7 +33,7 @@ std::ostream& operator << (std::ostream& output, const ROSEE::JointPos jp) {
     return output;
 }
 
-ROSEE::JointPos operator * (const double multiplier, const ROSEE::JointPos jp) {
+ROSEE::JointPos ROSEE::operator * (const double multiplier, const ROSEE::JointPos jp) {
     
     ROSEE::JointPos jpNew;
     for (const auto &jsEl : jp) {
@@ -49,11 +49,11 @@ ROSEE::JointPos operator * (const double multiplier, const ROSEE::JointPos jp) {
     return jpNew;
 }
 
-ROSEE::JointPos operator * (const ROSEE::JointPos jp, const double multiplier ) {
+ROSEE::JointPos ROSEE::operator * (const ROSEE::JointPos jp, const double multiplier ) {
     return (multiplier * jp );
 }
 
-ROSEE::JointPos operator + (const ROSEE::JointPos jp1, const ROSEE::JointPos jp2) {
+ROSEE::JointPos ROSEE::operator + (const ROSEE::JointPos jp1, const ROSEE::JointPos jp2) {
     
     if ( ! ROSEE::Utils::keys_equal(jp1, jp2) ) {
         throw ROSEE::Utils::DifferentKeysException<ROSEE::JointPos, ROSEE::JointPos>(&jp1, &jp2);
@@ -75,7 +75,7 @@ ROSEE::JointPos operator + (const ROSEE::JointPos jp1, const ROSEE::JointPos jp2
     return jpNew;
 }
 
-std::ostream& operator << (std::ostream& output, const ROSEE::JointsInvolvedCount jic) {
+std::ostream& ROSEE::operator << (std::ostream& output, const ROSEE::JointsInvolvedCount jic) {
     for (const auto &jicEl : jic) {
         output << "\t"<< jicEl.first << " : " << jicEl.second;
         output << std::endl;       
