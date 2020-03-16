@@ -41,12 +41,10 @@ script:
 - tar -xvf v0.1.tar.gz && cd rosee_msg-0.1/
 - mkdir build && cd build
 - cmake .. -DCMAKE_INSTALL_PREFIX:=/usr
-- sudo su root
-- . /opt/ros/kinetic/setup.bash
+- sudo chmod -R 777 /usr
 - make install
 
-# going back to working directory and standard user
-- su travis
+# going back to working directory
 - cd ../../
 
 #Build ROSEE
