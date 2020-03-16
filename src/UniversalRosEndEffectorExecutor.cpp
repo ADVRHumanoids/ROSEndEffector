@@ -83,7 +83,7 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
 
 }
 
-void ROSEE::UniversalRosEndEffectorExecutor::graspCallback ( const ros_end_effector::EEGraspControlConstPtr& msg ) {
+void ROSEE::UniversalRosEndEffectorExecutor::graspCallback ( const rosee_msg::EEGraspControlConstPtr& msg ) {
 
     ROSEE::JointPos grasp_js = _graspParsed->getJointPos();
     // get the joints involved bool vector
@@ -110,7 +110,7 @@ void ROSEE::UniversalRosEndEffectorExecutor::graspCallback ( const ros_end_effec
 }
 
 
-void ROSEE::UniversalRosEndEffectorExecutor::pinchCallback ( const ros_end_effector::EEPinchControlConstPtr& msg ) {
+void ROSEE::UniversalRosEndEffectorExecutor::pinchCallback ( const rosee_msg::EEPinchControlConstPtr& msg ) {
 
     std::vector<int> ids;
 
@@ -212,7 +212,7 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive_subscribers
 
     if ( _graspParsed != nullptr ) {
 
-        _sub_grasp = _nh.subscribe<ros_end_effector::EEGraspControl> ( "grasp",
+        _sub_grasp = _nh.subscribe<rosee_msg::EEGraspControl> ( "grasp",
                      1,
                      &ROSEE::UniversalRosEndEffectorExecutor::graspCallback,
                      this
@@ -221,7 +221,7 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive_subscribers
 
     if ( !_pinchParsedMap.empty() ) {
 
-        _sub_pinch = _nh.subscribe<ros_end_effector::EEPinchControl> ( "pinchStrong",
+        _sub_pinch = _nh.subscribe<rosee_msg::EEPinchControl> ( "pinchStrong",
                      1,
                      &ROSEE::UniversalRosEndEffectorExecutor::pinchCallback,
                      this

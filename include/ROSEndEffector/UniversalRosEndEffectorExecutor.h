@@ -32,8 +32,8 @@
 #include <ROSEndEffector/Utils.h>
 #include <ROSEndEffector/MapActionHandler.h>
 
-#include <ros_end_effector/EEGraspControl.h>
-#include <ros_end_effector/EEPinchControl.h>
+#include <rosee_msg/EEGraspControl.h>
+#include <rosee_msg/EEPinchControl.h>
 
 #include <ROSEndEffector/ActionPrimitive.h>
 #include <ROSEndEffector/ActionComposed.h>
@@ -68,9 +68,9 @@ public:
 
     void timer_callback ( const ros::TimerEvent& timer_ev );
 
-    void graspCallback ( const ros_end_effector::EEGraspControlConstPtr& msg );
+    void graspCallback ( const rosee_msg::EEGraspControlConstPtr& msg );
     
-    void pinchCallback ( const ros_end_effector::EEPinchControlConstPtr& msg );
+    void pinchCallback ( const rosee_msg::EEPinchControlConstPtr& msg );
 
 private:
 
@@ -105,7 +105,7 @@ private:
     std::vector<std::string> _all_joints;
     std::vector<std::string> _joints;
 
-    ros_end_effector::EEGraspControl _ctrl_msg;
+    rosee_msg::EEGraspControl _ctrl_msg;
     ros::Subscriber _sub_grasp, _sub_pinch, _sub_trigger, sub_finger_flextion, sub_tip_flextion;
 
     Eigen::VectorXd _qref, _qref_filtered;
