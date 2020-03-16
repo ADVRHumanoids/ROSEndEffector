@@ -35,7 +35,7 @@ protected:
         parserMoveIt->init ("robot_description") ;
         ROSEE::FindActions actionsFinder (parserMoveIt);
         
-        std::string folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/tests" + parserMoveIt->getHandName();
+        std::string folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/tests/" + parserMoveIt->getHandName();
 
         auto theTwoMaps = actionsFinder.findPinch(folderForActions + "/primitives/");
         pinchMap = theTwoMaps.first;

@@ -34,7 +34,7 @@ protected:
         parserMoveIt->init ("robot_description") ;
         ROSEE::FindActions actionsFinder (parserMoveIt);
         
-        std::string folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/tests" + parserMoveIt->getHandName();
+        std::string folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/tests/" + parserMoveIt->getHandName();
 
         
         trigMap.push_back( actionsFinder.findTrig(ROSEE::ActionPrimitive::Type::Trig, folderForActions + "/primitives/") );
