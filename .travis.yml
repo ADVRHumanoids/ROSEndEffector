@@ -11,7 +11,8 @@ notifications:
 
 before_install:
 
-install:
+script: 
+
 # install ros
 - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
 
@@ -32,8 +33,6 @@ install:
 - mkdir build && cd build
 - cmake .. -DCMAKE_INSTALL_PREFIX:=/usr
 - sudo make install
-
-script: 
 
 #config git
 - git config --global user.name "liesrock"
