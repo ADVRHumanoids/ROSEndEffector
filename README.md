@@ -52,22 +52,23 @@ cd ROSEE
 mkdir src
 cd src
 ```
+**IMPORTANT** : ROSEE is a in development project. When cloning, be sure to download the branch you really want. Now the newest branch are devel and rosActions (for main repo). Note that also the other rosee packages may not have as newest branch the master
 - Necessary dependencies :
     ```bash
-    git clone https://github.com/ADVRHumanoids/rosee_msg.git
+    git clone -b <branch_you_want> https://github.com/ADVRHumanoids/rosee_msg.git
     ```
 - Optional dependencies:
     - Gui
         ```bash
-        git clone https://github.com/ADVRHumanoids/rosee_gui.git
+        git clone -b <branch_you_want> https://github.com/ADVRHumanoids/rosee_gui.git
         ```
     - Gazebo Pluglin
         ```bash
-        git clone https://github.com/ADVRHumanoids/rosee_gazebo_plugins.git
+        git clone -b <branch_you_want> https://github.com/ADVRHumanoids/rosee_gazebo_plugins.git
         ```
 Main Package
-```
-git clone https://github.com/ADVRHumanoids/ROSEndEffector
+```bash
+git clone -b <branch_you_want> https://github.com/ADVRHumanoids/ROSEndEffector
 ```
 Compile
 ```bash
