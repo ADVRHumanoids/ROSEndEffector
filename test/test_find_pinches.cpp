@@ -32,6 +32,7 @@ protected:
         ros::init ( argc, (char**)argv, "testFindPinches" );
     
         std::shared_ptr <ROSEE::ParserMoveIt> parserMoveIt = std::make_shared <ROSEE::ParserMoveIt> ();
+        //if return false, models are not found and it is useless to continue the test
         ASSERT_TRUE(parserMoveIt->init ("robot_description")) ;
         ROSEE::FindActions actionsFinder (parserMoveIt);
         
