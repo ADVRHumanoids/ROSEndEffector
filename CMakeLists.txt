@@ -86,7 +86,7 @@ std_msgs
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
+  INCLUDE_DIRS include
 #  LIBRARIES ros_end_effector
 #  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
@@ -131,6 +131,10 @@ add_library(YamlWorker
     src/YamlWorker.cpp
 )
 
+add_library(MapActionHandler
+    src/MapActionHandler.cpp
+)
+
 add_library(Action 
     src/Action.cpp 
 )
@@ -151,8 +155,20 @@ add_library(ActionPinchWeak
 add_library(ActionTrig
     src/ActionTrig.cpp
 )
+add_library(ActionMoreTips
+    src/ActionMoreTips.cpp
+)
+add_library(ActionMultiplePinchStrong
+    src/ActionMultiplePinchStrong.cpp
+)
+add_library(ActionGeneric
+    src/ActionGeneric.cpp 
+)
 add_library(ActionComposed
     src/ActionComposed.cpp 
+)
+add_library(ActionTimed
+    src/ActionTimed.cpp 
 )
 
 ## Add cmake target dependencies of the library
@@ -162,17 +178,9 @@ add_library(ActionComposed
 
 add_executable(UniversalRosEndEffector src/UniversalRosEndEffector.cpp)
 add_executable(UniversalFindActions src/UniversalFindActions.cpp)
-
-# dependecies for msgs generation
-add_dependencies(UniversalRosEndEffector ros_end_effector_generate_messages_cpp)
+add_dependencies(UniversalRosEndEffectorExecutor ros_end_effector_generate_messages_cpp)
 add_dependencies(UniversalFindActions ros_end_effector_generate_messages_cpp)
 
-
-## Rename C++ executable without prefix
-## The above recommended prefix causes long target names, the following renames the
-## target back to the shorter version for ease of user use
-## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
-# set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
@@ -198,6 +206,7 @@ target_link_libraries(UniversalRosEndEffectorExecutor
     ROSEEParser
     ROSEEInterface
     YamlWorker
+    MapActionHandler
     
     # do it automatically
     DummyHal
@@ -211,7 +220,17 @@ target_link_libraries(YamlWorker
     ActionPinchStrong
     ActionTrig
     ActionPinchWeak
+    ActionMoreTips
+    ActionMultiplePinchStrong
     ActionComposed
+    ActionTimed
+)
+
+target_link_libraries(MapActionHandler
+    Action
+    ActionPrimitive
+    ActionGeneric
+    ActionTimed
 )
 
 target_link_libraries(ActionPinchStrong
@@ -229,7 +248,24 @@ target_link_libraries(ActionPinchWeak
 target_link_libraries(ActionTrig
     ActionPrimitive
 )
+
+target_link_libraries(ActionMoreTips
+    ActionPrimitive
+)
+
+target_link_libraries(ActionMultiplePinchStrong
+    ActionPinchGeneric
+)
+
+target_link_libraries(ActionGeneric
+    Action
+)
+
 target_link_libraries(ActionComposed
+    ActionGeneric
+)
+
+target_link_libraries(ActionTimed
     Action
 )
 
@@ -241,7 +277,8 @@ target_link_libraries(FindActions
     ActionPinchStrong
     ActionTrig
     ActionPinchWeak
-    
+    ActionMoreTips
+    ActionMultiplePinchStrong
 )
 
 target_link_libraries(ParserMoveIt
@@ -253,11 +290,17 @@ target_link_libraries(UniversalRosEndEffector
 )
 
 target_link_libraries(UniversalFindActions
+    ParserMoveIt
     FindActions
     Action
     ActionPrimitive
     ActionTrig
-    ParserMoveIt
+    ActionPinchStrong
+    ActionPinchWeak
+    ActionMoreTips
+    ActionTimed
+    ActionGeneric
+    MapActionHandler
 )
 
 
@@ -284,11 +327,11 @@ target_link_libraries(UniversalFindActions
 # )
 
 ## Mark cpp header files for installation
-# install(DIRECTORY include/${PROJECT_NAME}/
-#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-#   FILES_MATCHING PATTERN "*.h"
-#   PATTERN ".svn" EXCLUDE
-# )
+install(DIRECTORY include/${PROJECT_NAME}/
+    DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+    FILES_MATCHING PATTERN "*.h"
+    PATTERN ".svn" EXCLUDE
+)
 
 install(DIRECTORY launch/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch

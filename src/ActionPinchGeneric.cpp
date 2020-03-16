@@ -24,12 +24,16 @@
 #include <ROSEndEffector/ActionPinchGeneric.h>
 
 ROSEE::ActionPinchGeneric::ActionPinchGeneric(std::string name, ActionPrimitive::Type type) : 
-    ActionPrimitive (name, 2, 3, type) { }
+    ActionPrimitive (name, 3, type) { }
 
 ROSEE::ActionPinchGeneric::ActionPinchGeneric(std::string name, unsigned int maxStoredActionStates, ActionPrimitive::Type type) : 
-    ActionPrimitive (name, 2, maxStoredActionStates, type) { }
+    ActionPrimitive (name, maxStoredActionStates, type) { }
     
 ROSEE::ActionPinchGeneric::ActionPinchGeneric(
     std::string name, unsigned int nFingerInvolved, unsigned int maxStoredActionStates, ActionPrimitive::Type type) :
         ActionPrimitive (name, nFingerInvolved, maxStoredActionStates, type) { }
+
+std::set<std::string> ROSEE::ActionPinchGeneric::getKeyForYamlMap() const {
+    return fingersInvolved;
+}
 

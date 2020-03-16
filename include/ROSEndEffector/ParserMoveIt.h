@@ -46,14 +46,42 @@ public:
      */
     bool init (std::string robot_description) ;
     std::string getHandName () const;
-    unsigned int getNumberOfTips () const ;
+    unsigned int getNFingers () const ;
     std::vector <std::string> getFingertipNames () const; 
+    
+    /**
+     * @brief getter for all active (actuated) joints' names. The analogous moveit function returns also the "passive" ones (defined in srdf)
+     * @return vector of name of all joints that are actuated
+     */
+    std::vector <std::string> getActiveJointNames () const; 
+    
+    /**
+     * @brief getter for all active (actuated) joints. The analogous moveit function returns also the "passive" ones (defined in srdf)
+     * @return vector of pointer of all joints that are actuated
+     */
+    std::vector <const moveit::core::JointModel*> getActiveJointModels () const;
+    
+    /**
+     * @brief getter for descendandsLinksOfJoint. "Descendants" is intended in a slightly different way respect to
+     * moveit (see \ref lookForDescendants doc)
+     * @return map with keys the joint name and values a vector of pointer of all descendants links
+     */
+    std::map <std::string, std::vector < const moveit::core::LinkModel* > > getDescendantLinksOfJoint() const ;
+    
+    /**
+     * @brief getter for descendandsJointsOfJoint. "Descendants" is intended in a slightly different way respect to
+     * moveit (see \ref lookForDescendants doc)
+     * @return map with keys the joint name and values a vector of pointer of all descendants joints
+     */
+    std::map <std::string, std::vector < const moveit::core::JointModel* > > getDescendantJointsOfJoint() const ; 
+
     /** 
      * @brief the robot model can't be modified, if you want it to modify, use @ref getCopyModel 
      * to get a copy.
      * @return const robot_model::RobotModelPtr a shared pointer to the robot model
      */
     const robot_model::RobotModelPtr getRobotModel () const ;
+    
     std::map < std::string, std::vector<std::string> > getFingertipsOfJointMap () const;
     std::map < std::string, std::vector<std::string> > getJointsOfFingertipMap () const;
     
@@ -106,15 +134,28 @@ public:
     /**
      * @brief For each DOF of a joint, find the limit which is farther from 0 position
      * @param jointName the name of the joint
-     * @return std::vector<double> a vector containing the values of the limits that are farther from 0
+     * @return std::vector<double> a vector (because joint can have more dofs) containing the values of the limits that are farther from 0
      */
     std::vector<double> getBiggerBoundFromZero ( std::string jointName ) const;
     /**
      * @brief For each DOF of a joint, find the limit which is farther from 0 position
      * @param joint pointer to the joint model
-     * @return std::vector<double> a vector containing the values of the limits that are farther from 0
+     * @return std::vector<double> a vector (because joint can have more dofs) containing the values of the limits that are farther from 0
      */
     std::vector<double> getBiggerBoundFromZero ( const moveit::core::JointModel* joint ) const;
+    
+    /**
+     * @brief For each DOF of a joint, find the limit which is nearer from 0 position
+     * @param jointName the name of the joint
+     * @return std::vector<double> a vector (because joint can have more dofs) containing the values of the limits that are nearer from 0
+     */
+    std::vector<double> getSmallerBoundFromZero ( std::string jointName ) const;
+    /**
+     * @brief For each DOF of a joint, find the limit which is nearer from 0 position
+     * @param joint pointer to the joint model
+     * @return std::vector<double> a vector (because joint can have more dofs) containing the values of the limits that are nearer from 0
+     */
+    std::vector<double> getSmallerBoundFromZero ( const moveit::core::JointModel* joint ) const;
     
     /**
      * @brief Given a fingertip link, this function return the number of the joint that affect
@@ -153,16 +194,25 @@ private:
     std::string handName;
     robot_model::RobotModelPtr robot_model;
     std::vector<std::string> fingertipNames;
+    std::vector<std::string> activeJointNames;
+    std::vector<const moveit::core::JointModel*> activeJointModels;
     std::string robot_description;
+    unsigned int nFingers;
     
-    /** The map with as key the name of the fingertip and as value all the joints (actuated) that can modify its pose*/
+    /** @brief Map containing info about descendants links of a joint see \ref lookForDescendants function for more info */
+    std::map <std::string, std::vector < const moveit::core::LinkModel* > > descendantLinksOfJoint;
+    
+    /** @brief Map containing info about descendants joints of a joint see \ref lookForDescendants function for more info */
+    std::map <std::string, std::vector < const moveit::core::JointModel* > > descendantJointsOfJoint;
+    
+    /** @brief The map with as key the name of the fingertip and as value all the joints (actuated) that can modify its pose*/
     std::map<std::string, std::vector<std::string>> jointsOfFingertipMap;
     
-    /** The map with as key the name of the actuated joint and as value all the fingertips which pose can be modified by the joint */
+    /** @brief The map with as key the name of the actuated joint and as value all the fingertips which pose can be modified by the joint */
     std::map<std::string, std::vector<std::string>> fingertipsOfJointMap;
     
     /**
-     * @brief This function explore the kinematic_model (which was built from urdf and srdf files), 
+     * @brief This function explore the robot_model (which was built from urdf and srdf files), 
      *  and fills the fingerTipNames vector.
      *  In particular, the function explores only the groups specified in the srdf, and prints infos
      *  about each link it finds (eg. not a fingertin, not a chain group, and so on).
@@ -176,6 +226,16 @@ private:
      */
     void lookForFingertips();
     
+    
+    /**
+     * @brief This function look for all active joints in the model (i.e. not mimic, not fixed, not passive) 
+     * There exist a moveit function \ref getActiveJointModels() which return all not mimic and not fixed, but it can return
+     * also passive joints (a info that is stored in srdf file). So this function also check if the joint is not passive
+     * It stores both the joint names and pointer to joint models in two private vector (\ref activeJointNames and \ref activeJointModels)
+     */
+    void lookForActiveJoints();
+    
+
     /** 
      * @brief Here, we find for each tip, which are all the joints (active) that can modifies its position
      * It is easier to start from each joint and see which tips has as its descendands, because there is the
@@ -186,6 +246,27 @@ private:
      * \ref fingertipsOfJointMap
      */
     void lookJointsTipsCorrelation();
+    
+    /**
+     * @brief Function to explore the kinematic tree from each actuated joint. It stores each descendants links and joints in two maps 
+     * (\ref descendantLinksOfJoint and \ref descendantJointsOfJoint) where the key is the name of the joint and the value a vector of descendandts.
+     * The tree is explored recursively thanks to \ref getRealDescendantLinkModelsRecursive support function
+     * @note Moveit has its own getDescendantLinkModels and getDescendandtsJoint model but it not suitable for us: those one store also the sons
+     * of joints that mimic the sons joint of the initial one (the map's key). So in this way we include also some links that may not move 
+     * when we move the joint. These "errors" happens with schunk, softhand and robotiq for example
+     * @note The descendants are found only for the actuated joints (not fixed, not mimic, not passive).
+     */
+    void lookForDescendants();
+    
+    /**
+     * @brief Recursive function, support for \ref lookForDescendants, to explore the urdf tree
+     * @param link pointer to the actual link that is being explored
+     * @param linksVect [out] vector of explored links are stored here at each iteration
+     * @param joint pointer to the actual joint thaqt is being explored (father of \p link, each joint has always one and only one (direct) child link)
+     * @param jointsVect [out]  vector of explored joints are stored here at each iteration
+     */
+    void getRealDescendantLinkModelsRecursive ( const moveit::core::LinkModel* link,  std::vector< const moveit::core::LinkModel* > & linksVect,
+                                                const moveit::core::JointModel* joint,  std::vector< const moveit::core::JointModel* > & jointsVect ) const;
         
 
 

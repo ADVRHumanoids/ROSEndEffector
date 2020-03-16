@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <launch>
     <!-- global PARAMS Change here if needed -->
     <arg name="gui" default="False" />

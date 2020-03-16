@@ -18,19 +18,22 @@
 
 #include <ROSEndEffector/ActionComposed.h>
 
-ROSEE::ActionComposed::ActionComposed() : Action() {
+ROSEE::ActionComposed::ActionComposed() : ActionGeneric() {
     independent = true;
     nInnerActions = 0;
+    type = Action::Type::Composed;
 }
 
-ROSEE::ActionComposed::ActionComposed(std::string name) : Action(name) {
+ROSEE::ActionComposed::ActionComposed(std::string name) : ActionGeneric(name) {
     independent = true;
     nInnerActions = 0;
+    type = Action::Type::Composed;
 }
 
-ROSEE::ActionComposed::ActionComposed(std::string name, bool independent) : Action(name) {
+ROSEE::ActionComposed::ActionComposed(std::string name, bool independent) : ActionGeneric(name) {
     this->independent = independent;
     nInnerActions = 0;
+    type = Action::Type::Composed;
 }
 
 unsigned int ROSEE::ActionComposed::numberOfInnerActions() const {
@@ -45,31 +48,36 @@ std::vector<std::string> ROSEE::ActionComposed::getInnerActionsNames() const {
     return innerActionsNames;
 }
 
-ROSEE::JointPos ROSEE::ActionComposed::getJointPos() const {
-    return jointPos;
-}
-
 bool ROSEE::ActionComposed::empty() {
     return (nInnerActions == 0);
 }
 
 
-bool ROSEE::ActionComposed::sumAction ( ROSEE::Action::Ptr action )
+bool ROSEE::ActionComposed::sumAction ( ROSEE::Action::Ptr action, unsigned int jointPosIndex )
 {
+    
+    if ( ! checkIndependency(action) ) {
+        return false; //cant add this primitive
+    }
+    
+    if ( jointPosIndex > action->getAllJointPos().size()-1 ) {
+        std::cerr << "[ACTIONCOMPOSED:: " << __func__ << "] The given jointPosindex " << jointPosIndex  
+            << " exceed the number  " << action->getAllJointPos().size() << " of jointpos of passed action" << std::endl;
+        return false;
+    }
+    
+    if ( nInnerActions > 0 && 
+        (! ROSEE::Utils::keys_equal(action->getAllJointPos().at(jointPosIndex), jointPos)) ) {
+        std::cerr << "[ACTIONCOMPOSED:: " << __func__ << "] The action passed as argument has different keys in jointPosmap" 
+                  << " respect to the others inserted in this composed action " << std::endl;
+        return false;
+    }
 
-    JointPos actionJP = action->getJointPos();
+    JointPos actionJP = action->getAllJointPos().at(jointPosIndex);
     JointsInvolvedCount actionJIC = action->getJointsInvolvedCount();
         
     if (nInnerActions == 0) { //first primitive inserted
         
-        for ( auto jic : actionJIC ){
-            if ( jic.second  > 1  ) {
-                // if action is dependent we check that all its joints are setted only once
-                return false; //cant add this primitive
-            }
-        }
-
-
         for (auto joint : actionJP ){
             jointsInvolvedCount.insert ( std::make_pair (joint.first, actionJIC.at(joint.first) ) );
             jointPos.insert ( std::make_pair (joint.first, joint.second) );
@@ -78,14 +86,6 @@ bool ROSEE::ActionComposed::sumAction ( ROSEE::Action::Ptr action )
     } else {
         
         if (independent) {
-                        
-            //first we check if the action is independent from all the other inserted
-            for ( auto jic : actionJIC ){
-                if ( jic.second + jointsInvolvedCount.at(jic.first) > 1  ) {
-                    // we use the sum so also if action is dependent we check that all its joints are setted once
-                    return false; //cant add this primitive
-                }
-            }
 
             //if here, action is independent, we can add the joints states
             for ( auto joint : actionJP ){ 
@@ -119,7 +119,6 @@ bool ROSEE::ActionComposed::sumAction ( ROSEE::Action::Ptr action )
                         
                     jointPos.at(joint.first).at(dof) = mean;     
                 }
-
             }
         }
     }
@@ -130,6 +129,34 @@ bool ROSEE::ActionComposed::sumAction ( ROSEE::Action::Ptr action )
     }
 
     nInnerActions ++;
+    
+    return true;
+}
+
+bool ROSEE::ActionComposed::checkIndependency ( ROSEE::Action::Ptr action ) {
+    
+    if (!independent) {
+        
+    } else if (nInnerActions == 0 ) {
+        
+        for ( auto jic : action->getJointsInvolvedCount() ){
+            if ( jic.second  > 1  ) {
+                // if action is dependent we check that all its joints are setted only once
+                // so we can teoretically add a "dipendent" action if all its joints are setted once
+                return false; //cant add this primitive
+            }
+        }
+        
+    } else {   
+    
+        for ( auto jic : action->getJointsInvolvedCount() ){
+            if ( jic.second + jointsInvolvedCount.at(jic.first) > 1  ) {
+                // we use the sum so also if action is dependent we check that all its joints are setted once
+                // so we can teoretically add a "dipendent" action if all its joints are setted once
+                return false; //cant add this primitive
+            }
+        }
+    }
     
     return true;
 }
@@ -170,6 +197,7 @@ void ROSEE::ActionComposed::print () const {
 void ROSEE::ActionComposed::emitYaml ( YAML::Emitter& out) const {
     
     out << YAML::BeginMap << YAML::Key << name << YAML::Value << YAML::BeginMap ;
+        out << YAML::Key << "Type" << YAML::Value << type;
         out << YAML::Key << "Independent" << YAML::Value << independent;
         out << YAML::Key << "NInnerActions" << YAML::Value << nInnerActions;
         out << YAML::Key << "InnerActionsNames" << YAML::Value << YAML::Flow << innerActionsNames;
@@ -205,6 +233,14 @@ bool ROSEE::ActionComposed::fillFromYaml ( YAML::const_iterator yamlIt ) {
             
         } else if ( key.compare ("NInnerActions") == 0 ) {
             nInnerActions = keyValue->second.as <unsigned int>();
+            
+        } else if ( key.compare ("Type") == 0 ) {
+            if (ROSEE::Action::Type::Composed != static_cast<ROSEE::Action::Type> ( keyValue->second.as <unsigned int>() )) {
+                std::cout << "[COMPOSED ACTION::" << __func__ << "] Error, found type  " << keyValue->second.as <unsigned int>()
+                << "instead of Composed type (" << ROSEE::Action::Type::Composed << ")" << std::endl;
+                return false;
+            }
+            type = ROSEE::Action::Type::Composed;
             
         } else if ( key.compare ("InnerActionsNames") == 0 ) {
             innerActionsNames = keyValue->second.as <std::vector <std::string> >();

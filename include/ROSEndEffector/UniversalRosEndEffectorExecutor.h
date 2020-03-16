@@ -30,12 +30,18 @@
 #include <ROSEndEffector/EEHal.h>
 #include <ROSEndEffector/DummyHal.h>
 #include <ROSEndEffector/Utils.h>
+#include <ROSEndEffector/MapActionHandler.h>
 
 #include <ros_end_effector/EEGraspControl.h>
 #include <ros_end_effector/EEPinchControl.h>
 
 #include <ROSEndEffector/ActionPrimitive.h>
 #include <ROSEndEffector/ActionComposed.h>
+
+//for services to gui
+#include <rosee_msg/ActionsInfo.h> //service
+#include <rosee_msg/ActionInfo.h>  //message
+#include <rosee_msg/SelectablePairInfo.h>  //message
 
 
 namespace ROSEE
@@ -74,6 +80,13 @@ private:
 
     bool init_grapsing_primitive_subscribers();
     
+    bool init_actionsInfo_services() ;
+    bool actionsInfoCallback (rosee_msg::ActionsInfo::Request& request,
+        rosee_msg::ActionsInfo::Response& response);
+    bool selectablePairInfoCallback( rosee_msg::SelectablePairInfo::Request& request,
+                                     rosee_msg::SelectablePairInfo::Response& response);
+
+    
     ros::NodeHandle _nh;
     ros::Timer _loop_timer;
 
@@ -100,13 +113,22 @@ private:
     ROSEE::Utils::SecondOrderFilter<Eigen::VectorXd> _filt_q;
     
     // grasping primitives maps
+    // TODO still needed? now we have the handler that store them...
     std::map<std::set<std::string>, ROSEE::ActionPrimitive::Ptr> _pinchParsedMap;
     std::map<std::set<std::string>, ROSEE::ActionPrimitive::Ptr> _pinchWeakParsedMap;
     std::map<std::set<std::string>, ROSEE::ActionPrimitive::Ptr> _trigParsedMap;
     std::map<std::set<std::string>, ROSEE::ActionPrimitive::Ptr> _tipFlexParsedMap;
     std::map<std::set<std::string>, ROSEE::ActionPrimitive::Ptr> _fingFlexParsedMap;
     
-    ROSEE::ActionComposed _graspParsedMap;
+    std::shared_ptr<ROSEE::ActionGeneric> _graspParsed;
+    
+    MapActionHandler mapActionHandler;
+    
+    //for service info to gui 
+    std::vector<rosee_msg::ActionInfo> _actionsInfoVect;
+    ros::ServiceServer _ros_server_actionsInfo;
+    ros::ServiceServer _ros_server_selectablePairInfo;
+
     
 
 };

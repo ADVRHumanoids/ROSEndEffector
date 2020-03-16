@@ -77,22 +77,32 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
 
     // primitives
     init_grapsing_primitive_subscribers();
+    
+    // services (only for gui now)
+    init_actionsInfo_services();
 
 }
 
 void ROSEE::UniversalRosEndEffectorExecutor::graspCallback ( const ros_end_effector::EEGraspControlConstPtr& msg ) {
 
-    ROSEE::JointPos grasp_js = _graspParsedMap.getJointPos();
+    ROSEE::JointPos grasp_js = _graspParsed->getJointPos();
     // get the joints involved bool vector
-    JointsInvolvedCount grasp_joint_involved_mask = _graspParsedMap.getJointsInvolvedCount();
+    JointsInvolvedCount grasp_joint_involved_mask = _graspParsed->getJointsInvolvedCount();
      
     for( auto it : grasp_joint_involved_mask ) {
         
         if ( it.second  != 0 ) {
             int id = -1;
             _ee->getInternalIdForJoint ( it.first, id );
-            // NOTE assume single joint
-            _qref[id] = grasp_js.at ( it.first ).at ( 0 ) * msg->percentage;
+            
+            if( id >= 0 ) {
+                // NOTE assume single joint
+                _qref[id] = grasp_js.at ( it.first ).at ( 0 ) * msg->percentage;
+            }
+            else {
+                    ROS_WARN_STREAM ( "Trying to move Joint: " << it.first << " with ID: " << id );
+            }
+
         }
         
     }
@@ -123,7 +133,7 @@ void ROSEE::UniversalRosEndEffectorExecutor::pinchCallback ( const ros_end_effec
                 int id = -1;
                 _ee->getInternalIdForJoint ( it.first, id );
                 
-                if( id > 0 ) {
+                if( id >= 0 ) {
                     // NOTE assume single joint
                     _qref[id] = pinch_js.at ( it.first ).at ( 0 ) * msg->percentage;
                 }
@@ -131,7 +141,6 @@ void ROSEE::UniversalRosEndEffectorExecutor::pinchCallback ( const ros_end_effec
                     ROS_WARN_STREAM ( "Trying to move Joint: " << it.first << " with ID: " << id );
                 }
             }
-
         }
 
     } else {
@@ -141,35 +150,34 @@ void ROSEE::UniversalRosEndEffectorExecutor::pinchCallback ( const ros_end_effec
                            " is not a feasible couple for the Pinch Grasping Action" );
     }
 
-
 }
-
 
 
 bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive_subscribers() {
 
     // parse YAML for End-Effector cconfiguration
-    ROSEE::YamlWorker yamlWorker ( _ee->getName() );
+    ROSEE::YamlWorker yamlWorker ;
+    
+    std::string folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/" + _ee->getName();
+    std::string folderForActionsComposed = ROSEE::Utils::getPackagePath() + "/configs/actions/" + _ee->getName() + "/generics/";
 
-    //pinch
-    _pinchParsedMap = yamlWorker.parseYamlPrimitive ( "pinchStrong.yaml", 
-                                                      ROSEE::ActionPrimitive::Type::PinchStrong );
+    mapActionHandler.parseAllActions(folderForActions);
 
-    //pinch Weak
-    _pinchWeakParsedMap = yamlWorker.parseYamlPrimitive ( "pinchWeak.yaml", 
-                                                          ROSEE::ActionPrimitive::Type::PinchWeak );
+    
+    //TODO check if store in this class all the maps is necessary...
+    _pinchParsedMap = mapActionHandler.getPrimitiveMap("pinchStrong");
+    
+    if (mapActionHandler.getPrimitiveMap(ROSEE::ActionPrimitive::Type::PinchWeak).size()>0) {
+        //another method to get the map
+        _pinchWeakParsedMap = mapActionHandler.getPrimitiveMap(ROSEE::ActionPrimitive::Type::PinchWeak).at(0);
+    } 
+    
+    _trigParsedMap = mapActionHandler.getPrimitiveMap("trig");
+    _tipFlexParsedMap = mapActionHandler.getPrimitiveMap("tipFlex");
+    _fingFlexParsedMap = mapActionHandler.getPrimitiveMap("fingFlex");
 
-    //trig
-    _trigParsedMap = yamlWorker.parseYamlPrimitive ( "trig.yaml", 
-                                                     ROSEE::ActionPrimitive::Type::Trig );
-
-    //tipFlex
-    _tipFlexParsedMap = yamlWorker.parseYamlPrimitive ( "tipFlex.yaml",
-                                                        ROSEE::ActionPrimitive::Type::TipFlex );
-
-    //fingFlex
-    _fingFlexParsedMap = yamlWorker.parseYamlPrimitive ( "fingFlex.yaml", 
-                                                         ROSEE::ActionPrimitive::Type::FingFlex );
+    // old way to get maps
+    //_pinchParsedMap = yamlWorker.parseYamlPrimitive ( folderForActions + "pinchStrong.yaml",ROSEE::ActionPrimitive::Type::PinchStrong );
 
     ROS_INFO_STREAM ( "PINCHES-STRONG:" );
     for ( auto &i : _pinchParsedMap ) {
@@ -193,13 +201,16 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive_subscribers
     }
     
     // composed actions
-    _graspParsedMap = yamlWorker.parseYamlComposed ("grasp.yaml");
-    ROS_INFO_STREAM ( "GRASP" );
-    _graspParsedMap.print();
-
+    //OLD WAY
+    //_graspParsedMap = yamlWorker.parseYamlComposed (folderForActionsComposed + "grasp.yaml");
+    _graspParsed = mapActionHandler.getGeneric("grasp");
+    ROS_INFO_STREAM ( "GRASP:" );
+    if (_graspParsed != nullptr) {
+        _graspParsed->print();
+    }
     // generate the subscribers and services
 
-    if ( !_graspParsedMap.empty() ) {
+    if ( _graspParsed != nullptr ) {
 
         _sub_grasp = _nh.subscribe<ros_end_effector::EEGraspControl> ( "grasp",
                      1,
@@ -210,17 +221,110 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive_subscribers
 
     if ( !_pinchParsedMap.empty() ) {
 
-        _sub_pinch = _nh.subscribe<ros_end_effector::EEPinchControl> ( "pinch",
+        _sub_pinch = _nh.subscribe<ros_end_effector::EEPinchControl> ( "pinchStrong",
                      1,
                      &ROSEE::UniversalRosEndEffectorExecutor::pinchCallback,
                      this
                                                                      );
     }
 
-
     return true;
 }
 
+bool ROSEE::UniversalRosEndEffectorExecutor::init_actionsInfo_services() {
+        
+    for (auto primitiveContainers : mapActionHandler.getAllPrimitiveMaps() ) {
+        
+        rosee_msg::ActionInfo actInfo;
+        actInfo.action_name = primitiveContainers.first;
+        //TODO define name topics elsewhere?
+        actInfo.topic_name = _nh.getNamespace() + "/" + actInfo.action_name;
+        actInfo.seq = 0; //TODO check if necessary the seq in this msg
+        //until now, there is not a primitive that does not have "something" to select
+        // (eg pinch has 2 fing, trig one fing, moretips 1 joint...). 
+        //Instead generic action has always no thing to select (next for loop)
+        actInfo.max_selectable = primitiveContainers.second.begin()->first.size();
+        //TODO extract the keys with another mapActionHandler function?
+        actInfo.selectable_names =
+            ROSEE::Utils::extract_keys_unique(primitiveContainers.second,
+                                              _ee->getFingers().size());
+        _actionsInfoVect.push_back(actInfo);
+
+    }
+
+    for (auto genericMap : mapActionHandler.getAllGenerics() ) {
+
+        rosee_msg::ActionInfo actInfo;
+        actInfo.action_name = genericMap.first;
+        //TODO define name topics elsewhere?
+        actInfo.topic_name = _nh.getNamespace() + "/" + actInfo.action_name;
+        actInfo.seq = 0; //TODO check if necessary the seq in this msg
+        //Generic action has always no thing to select UNTIL NOW
+        actInfo.max_selectable = 0;
+
+        _actionsInfoVect.push_back(actInfo);
+
+    }
+    
+    _ros_server_actionsInfo = _nh.advertiseService("ActionsInfo", 
+        &ROSEE::UniversalRosEndEffectorExecutor::actionsInfoCallback, this);
+    
+    _ros_server_selectablePairInfo = _nh.advertiseService("SelectablePairInfo", 
+        &ROSEE::UniversalRosEndEffectorExecutor::selectablePairInfoCallback, this);
+    
+    return true;
+
+}
+
+
+bool ROSEE::UniversalRosEndEffectorExecutor::actionsInfoCallback(
+    rosee_msg::ActionsInfo::Request& request,
+    rosee_msg::ActionsInfo::Response& response) {
+    
+    //here we only send the actionsInfo vector, it is better to build it not in this clbk
+    
+    //TODO timestamp necessary?
+    for (auto &act : _actionsInfoVect) {
+        act.stamp = ros::Time::now();
+    }
+    response.actionsInfo = _actionsInfoVect;
+    return true;
+    
+}
+
+bool ROSEE::UniversalRosEndEffectorExecutor::selectablePairInfoCallback(
+    rosee_msg::SelectablePairInfo::Request& request,
+    rosee_msg::SelectablePairInfo::Response& response) {
+    
+    std::set<std::string> companionFingers;
+    if (request.action_name.compare ("pinchStrong") == 0) {
+        companionFingers =
+            mapActionHandler.getFingertipsForPinch(request.element_name,
+                ROSEE::ActionPrimitive::Type::PinchStrong) ;
+                
+    } else if (request.action_name.compare ("pinchWeak") == 0) {
+        companionFingers =
+            mapActionHandler.getFingertipsForPinch(request.element_name,
+                ROSEE::ActionPrimitive::Type::PinchWeak) ;
+                
+    } else {
+        ROS_ERROR_STREAM ( "Received" << request.action_name << " that is not" <<
+            "a recognizible action name to look for finger companions" );
+        return false;
+    }
+    
+    if (companionFingers.size() == 0) {
+        return false;
+    }
+    
+    //push the elements of set into the vector
+    for (auto fing : companionFingers ) {
+        response.pair_elements.push_back (fing);
+    }
+    
+    return true;
+        
+}
 
 void ROSEE::UniversalRosEndEffectorExecutor::fill_publish_joint_states() {
 
@@ -300,4 +404,40 @@ ROSEE::UniversalRosEndEffectorExecutor::~UniversalRosEndEffectorExecutor() {
 }
 
 
+/***OLDDD
+bool ROSEE::UniversalRosEndEffectorExecutor::init_actionsInfo_services() {
+        
+    //TODO add all action with for looping all the files present in the folder
+    rosee_msg::ActionInfo actInfo;
+    actInfo.action_name = _pinchParsedMap.begin()->second->getName();
+    actInfo.topic_name = _nh.getNamespace() + "/pinch"; //TODO define name topics
+    actInfo.seq = 0; //TODO check if necessary the seq in this msg
+    actInfo.max_selectable = _pinchParsedMap.begin()->first.size(); //the size of the key set
+    actInfo.selectable_names = ROSEE::Utils::extract_keys_unique(_pinchParsedMap,  
+                                                                 _ee->getFingers().size());
+    _actionsInfoVect.push_back(actInfo);
+    findPossiblePinchPairs();
+    
+    actInfo = rosee_msg::ActionInfo(); //clear container
+    actInfo.action_name = _graspParsedMap.getName(); //TODO why this is called map?
+    actInfo.topic_name = _nh.getNamespace() + "/grasp"; //TODO define name topics
+    actInfo.max_selectable = 0; //zero means no things to select with checkboxes
 
+    actInfo.seq = 0; //TODO check if necessary the seq in this msg
+
+    _actionsInfoVect.push_back(actInfo);
+    
+    
+    //TODO add others when msg and subscribers will be avaialbel (init_grapsing_primitive_subscribers func)
+
+    
+    _ros_server_actionsInfo = _nh.advertiseService("ActionsInfo", 
+        &ROSEE::UniversalRosEndEffectorExecutor::actionsInfoCallback, this);
+    
+    _ros_server_selectablePairInfo = _nh.advertiseService("SelectablePairInfo", 
+        &ROSEE::UniversalRosEndEffectorExecutor::selectablePairInfoCallback, this);
+    
+    return true;
+
+}
+**/

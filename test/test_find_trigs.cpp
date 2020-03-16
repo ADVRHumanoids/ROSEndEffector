@@ -34,14 +34,17 @@ protected:
         parserMoveIt->init ("robot_description") ;
         ROSEE::FindActions actionsFinder (parserMoveIt);
         
-        trigMap.push_back( actionsFinder.findTrig(ROSEE::ActionPrimitive::Type::Trig, "/configs/actions/tests/") );
-        trigMap.push_back( actionsFinder.findTrig(ROSEE::ActionPrimitive::Type::TipFlex, "/configs/actions/tests/") );
-        trigMap.push_back( actionsFinder.findTrig(ROSEE::ActionPrimitive::Type::FingFlex, "/configs/actions/tests/") );
+        std::string folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/tests/" + parserMoveIt->getHandName();
 
-        ROSEE::YamlWorker yamlWorker(parserMoveIt->getHandName(), "/configs/actions/tests/");
-        trigParsedMap.push_back( yamlWorker.parseYamlPrimitive("trig.yaml", ROSEE::ActionPrimitive::Type::Trig) );
-        trigParsedMap.push_back( yamlWorker.parseYamlPrimitive("tipFlex.yaml", ROSEE::ActionPrimitive::Type::TipFlex) );
-        trigParsedMap.push_back( yamlWorker.parseYamlPrimitive("fingFlex.yaml", ROSEE::ActionPrimitive::Type::FingFlex) );
+        
+        trigMap.push_back( actionsFinder.findTrig(ROSEE::ActionPrimitive::Type::Trig, folderForActions + "/primitives/") );
+        trigMap.push_back( actionsFinder.findTrig(ROSEE::ActionPrimitive::Type::TipFlex, folderForActions + "/primitives/") );
+        trigMap.push_back( actionsFinder.findTrig(ROSEE::ActionPrimitive::Type::FingFlex, folderForActions + "/primitives/") );
+
+        ROSEE::YamlWorker yamlWorker;
+        trigParsedMap.push_back( yamlWorker.parseYamlPrimitive ( folderForActions + "/primitives/" + "trig.yaml" ) );
+        trigParsedMap.push_back( yamlWorker.parseYamlPrimitive ( folderForActions + "/primitives/" + "tipFlex.yaml" ) );
+        trigParsedMap.push_back( yamlWorker.parseYamlPrimitive ( folderForActions + "/primitives/" + "fingFlex.yaml" ) );
     }
 
     virtual void TearDown() override {
@@ -99,12 +102,12 @@ TEST_F ( testFindTrigs, checkNameTypeConsistency ) {
     
     for (int k = 0; k < trigMap.size(); ++k) {
         
-        ROSEE::ActionPrimitive::Type actionType = trigMap.at(k).begin()->second.getType(); 
+        ROSEE::ActionPrimitive::Type actionType = trigMap.at(k).begin()->second.getPrimitiveType(); 
     
         for (auto &mapEl: trigMap.at(k) ) {
-            EXPECT_EQ (actionType, mapEl.second.getType() ); //in the map all el must be of same ActionType
+            EXPECT_EQ (actionType, mapEl.second.getPrimitiveType() ); //in the map all el must be of same ActionType
 
-            switch (mapEl.second.getType()) {
+            switch (mapEl.second.getPrimitiveType()) {
             case ROSEE::ActionPrimitive::Type::Trig : 
                 EXPECT_EQ (mapEl.second.getName(), "trig");
                 break;
@@ -115,16 +118,16 @@ TEST_F ( testFindTrigs, checkNameTypeConsistency ) {
                 EXPECT_EQ (mapEl.second.getName(), "fingFlex");
                 break;
             default:
-                FAIL() << mapEl.second.getType() << " not a know type" << std::endl ;
+                FAIL() << mapEl.second.getPrimitiveType() << " not a know type" << std::endl ;
             }
         }
     
-        actionType = trigParsedMap.at(k).begin()->second->getType(); 
+        actionType = trigParsedMap.at(k).begin()->second->getPrimitiveType(); 
         for (auto &mapEl: trigParsedMap.at(k) ) {
-            EXPECT_EQ (actionType, mapEl.second->getType() ); //in the map all el must be of same ActionType
+            EXPECT_EQ (actionType, mapEl.second->getPrimitiveType() ); //in the map all el must be of same ActionType
 
 
-            switch (mapEl.second->getType()) {
+            switch (mapEl.second->getPrimitiveType()) {
             case ROSEE::ActionPrimitive::Type::Trig : 
                 EXPECT_EQ (mapEl.second->getName(), "trig");
                 break;
@@ -135,7 +138,7 @@ TEST_F ( testFindTrigs, checkNameTypeConsistency ) {
                 EXPECT_EQ (mapEl.second->getName(), "fingFlex");
                 break;
             default:
-                FAIL() << mapEl.second->getType() << " not a know type" << std::endl ;
+                FAIL() << mapEl.second->getPrimitiveType() << " not a know type" << std::endl ;
             }
         }
     }
@@ -163,7 +166,7 @@ TEST_F ( testFindTrigs, checkEmitParse ) {
             EXPECT_EQ (trigCasted->getName(), trigMap.at(k).at(key).getName() );
             EXPECT_EQ (trigCasted->getnFingersInvolved(), trigMap.at(k).at(key).getnFingersInvolved() );
             EXPECT_EQ (trigCasted->getMaxStoredActionStates(), trigMap.at(k).at(key).getMaxStoredActionStates());
-            EXPECT_EQ (trigCasted->getType(), trigMap.at(k).at(key).getType() );
+            EXPECT_EQ (trigCasted->getPrimitiveType(), trigMap.at(k).at(key).getPrimitiveType() );
             EXPECT_EQ (trigCasted->getFingersInvolved(), trigMap.at(k).at(key).getFingersInvolved());
             EXPECT_EQ (trigCasted->getJointsInvolvedCount(), trigMap.at(k).at(key).getJointsInvolvedCount());
 
@@ -194,9 +197,9 @@ TEST_F ( testFindTrigs, checkJointPosTipAndFing ) {
     
     // we assume the order in trigmap : 0 = trig, 1 = tipflex, 2 = fingflex
     // otherwise we have to check which one is what that is useless
-    ASSERT_EQ ( trigMap.at(0).begin()->second.getType(), ROSEE::ActionPrimitive::Type::Trig);
-    ASSERT_EQ ( trigMap.at(1).begin()->second.getType(), ROSEE::ActionPrimitive::Type::TipFlex);
-    ASSERT_EQ ( trigMap.at(2).begin()->second.getType(), ROSEE::ActionPrimitive::Type::FingFlex);
+    ASSERT_EQ ( trigMap.at(0).begin()->second.getPrimitiveType(), ROSEE::ActionPrimitive::Type::Trig);
+    ASSERT_EQ ( trigMap.at(1).begin()->second.getPrimitiveType(), ROSEE::ActionPrimitive::Type::TipFlex);
+    ASSERT_EQ ( trigMap.at(2).begin()->second.getPrimitiveType(), ROSEE::ActionPrimitive::Type::FingFlex);
     
     //compare tip and fing flex
     for (auto &mapTipEl: trigMap.at(1) ) {
@@ -238,9 +241,9 @@ TEST_F ( testFindTrigs, checkJointPosFlexsAndTrig ) {
     
     // we assume the order in trigmap : 0 = trig, 1 = tipflex, 2 = fingflex
     // otherwise we have to check which one is what that is useless
-    ASSERT_EQ ( trigMap.at(0).begin()->second.getType(), ROSEE::ActionPrimitive::Type::Trig);
-    ASSERT_EQ ( trigMap.at(1).begin()->second.getType(), ROSEE::ActionPrimitive::Type::TipFlex);
-    ASSERT_EQ ( trigMap.at(2).begin()->second.getType(), ROSEE::ActionPrimitive::Type::FingFlex);
+    ASSERT_EQ ( trigMap.at(0).begin()->second.getPrimitiveType(), ROSEE::ActionPrimitive::Type::Trig);
+    ASSERT_EQ ( trigMap.at(1).begin()->second.getPrimitiveType(), ROSEE::ActionPrimitive::Type::TipFlex);
+    ASSERT_EQ ( trigMap.at(2).begin()->second.getPrimitiveType(), ROSEE::ActionPrimitive::Type::FingFlex);
     
     
    // If a tipFlex is present, the unique setted joint must be also setted (equal pos) in the trig action 
@@ -297,7 +300,7 @@ TEST_F ( testFindTrigs, checkFlexsSingleJoint ) {
     
     for (int k = 0; k< trigMap.size(); ++k) {
         
-        if ( trigMap.at(k).begin()->second.getType() == ROSEE::ActionPrimitive::Type::Trig ) {
+        if ( trigMap.at(k).begin()->second.getPrimitiveType() == ROSEE::ActionPrimitive::Type::Trig ) {
             continue;
         }
         

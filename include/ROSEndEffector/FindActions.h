@@ -9,10 +9,13 @@
 #include <ROSEndEffector/ActionPinchStrong.h>
 #include <ROSEndEffector/ActionPinchWeak.h>
 #include <ROSEndEffector/ActionTrig.h>
+#include <ROSEndEffector/ActionMoreTips.h>
+#include <ROSEndEffector/ActionMultiplePinchStrong.h>
 
 
 #define N_EXP_COLLISION 5000 //5000 is ok
 #define N_EXP_DISTANCES 5000 //? is ok
+#define N_EXP_COLLISION_MULTPINCH 3000
 #define DEFAULT_JOINT_POS 0.0
 
 namespace ROSEE
@@ -41,7 +44,24 @@ public:
      */
     std::pair <  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong >, 
                  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak >  > 
-                 findPinch ( std::string path2saveYaml = "" );
+                 findPinch ( std::string path2saveYaml );
+            
+    /**
+     * @brief Finder for MultiplePinch (a pinch done with more than 2 finger). This function
+     * return the found multpinch primitive but it also print this result in a yaml file.
+     * See \ref checkCollisionsForMultiplePinch doc for more info.
+     * 
+     * @param nFinger (2 < nFinger <= max_finger). The type of the multiple pinch that we want.
+     *      The name of the returned action will be based on this param : 
+     *      "MultiplePinchStrong-(nFinger)"
+     * @param strict true to look only for "strict" multiple pinch, i.e. where all tips collide
+     *  with each other (and do not collide in "line") 
+     *  See \ref checkCollisionsForMultiplePinch doc for more info.
+     * @param path2saveYaml the path where to create/overwrite the yaml files. 
+     * @return map of founded \ref ActionMultiplePinchStrong, 
+     */
+    std::map < std::set <std::string>, ROSEE::ActionMultiplePinchStrong > findMultiplePinch (
+        unsigned int nFinger, std::string path2saveYaml, bool strict = true );
                  
     /**
      * @brief Function to look for trigs (trig, tipFlex and fingFlex). The type of trig to be looked for is choosen thanks
@@ -53,7 +73,9 @@ public:
      * @return the map of chosen type of trig filled with infos about the possible actions.
      */
     std::map <std::string, ROSEE::ActionTrig> findTrig (  ROSEE::ActionPrimitive::Type actionType,
-        std::string path2saveYaml = "" );
+        std::string path2saveYaml );
+    
+    std::map < std::string, ROSEE::ActionMoreTips> findMoreTips ( unsigned int nFinger, std::string path2saveYaml );
     
 private:
     
@@ -87,6 +109,36 @@ private:
      */
     void checkWhichTipsCollideWithoutBounds (
         std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak >* mapOfWeakPinches);
+    
+    /**
+     * @brief support function for \ref findMultiplePinch (a pinch done with more than 2 finger).
+     *      This is done similarly to normal pinch, but there are more checks to see
+     *      if the collision is among more than only two fingertips. 
+     * 
+     * Moveit, when looking for collisions, return only pairs of links that collide. 
+     * So we need to handle all the found pairs and "put them togheter" in someway.
+     * We need at least \param nFinger - 1 collision: eg. for triPinch -> 2collision,
+     * for 4finger pinch -> 3 collision. But, with only this check, we can also find 
+     * a configuration whith two distint normal pinch. To solve, we also check if the number of
+     * tips that collide in this configuration is exaclty \param nFinger,
+     * eg with 2 collision we can have 4 finger colliding because there are two
+     * normal distinct pinch and not a 3-pinch... so we exlude these collisions.
+     * The \param strict can solves another problem. If it is true (default) we take only
+     * the multiple pinch where each finger collide with all the other finger involved in 
+     * the pinch. If it is false, we can find also pinch where the tips are "in line" :
+     * finger_2 collide with finger_1 and finger_3, but finger_1 and 3 do not collide.
+     * With strict we will find less groups of fingers that collide, but, in someway, they
+     * collide "better".
+     * 
+     * @param nFinger (2 < nFinger <= max_finger). The type of the multiple pinch that we want.
+     *      The name of the returned action will be based on this param : 
+     *      "MultiplePinchStrong-(nFinger)"
+     * @param strict true to look only for "strict" multiple pinch. Look this funcion description
+     * @return A map with as keys set of size nFinger, and as value an 
+     *      \ref ActionMultiplePinchStrong object
+     */
+    std::map <std::set<std::string>, ROSEE::ActionMultiplePinchStrong>
+        checkCollisionsForMultiplePinch(unsigned int nFinger, bool strict);
 
     /**
      * @brief Support function to remove the joint limits from the model. This is done when looking for Weak Pinches.
@@ -97,7 +149,8 @@ private:
                                           robot_model::RobotModelPtr );
     
     /**
-     * @brief function to "initialize" the map of ActionPinchWeak \p mapOfWeakPinches. It is done adding all the tips pairs and then removing 
+     * @brief function to "initialize" the map of ActionPinchWeak \p mapOfWeakPinches. 
+     * It is done adding all the tips pairs and then removing 
      * the pairs that are present in the map of ActionPinchStrong \p mapOfPinches. Note that the values of the map, the \ref ActionPinchWeak
      * are action with only tips name (so no info right now).
      * 
@@ -107,8 +160,6 @@ private:
      */
     void fillNotCollidingTips ( std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak >* mapOfWeakPinches,
         const std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong >* mapOfPinches );
-    
-    
     
     
    /** 
@@ -171,7 +222,18 @@ private:
      * @return JointsInvolvedCount, the map where each element is relative at one joint (joint name is the key).
      * The value is the number of times that joint is used, for primitive actions can be only 0 or 1
      */
-    ROSEE::JointsInvolvedCount setOnlyDependentJoints(std::pair < std::string, std::string > tipsNames, JointPos *Jstates);
+    ROSEE::JointsInvolvedCount setOnlyDependentJoints(std::pair < std::string, std::string > tipsNames, JointPos *jPos);
+    
+    
+    /**
+     * @brief Set to default pos the joints that do not move any of the tip included in the 
+     * set \param tipsNames. Used by \ref findMultiplePinch function
+     * @param tipsNames the tips involved
+     * @param jpos pointer to the map \ref JointPos with value to be setted if necessary
+     * @return JointsInvolvedCount map, where value are 0 or 1 according to the usage of joint
+     */
+    ROSEE::JointsInvolvedCount setOnlyDependentJoints( std::set< std::string > tipsNames, 
+                                                       JointPos *jPos);
     
     /**
      * @brief Utility function to take the actuated joint positions from a \p kinematic_state and returns the same info as a \ref JointPos map

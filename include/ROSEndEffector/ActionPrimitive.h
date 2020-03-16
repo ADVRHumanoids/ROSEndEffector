@@ -56,21 +56,29 @@ public:
     /** 
      * @brief Enum useful to discriminate each primitive action when, for example, we want to parse a file 
      */
-    enum Type {PinchStrong, PinchWeak, Trig, TipFlex, FingFlex, None};
+    enum Type {PinchStrong, PinchWeak, MultiplePinchStrong, Trig, TipFlex, FingFlex, MoreTips, None};
     /* destructor of base must be virtual */
     virtual ~ActionPrimitive() {};
 
     /* virtual and not getters */
-    Type getType() const;
+    Type getPrimitiveType() const;
     unsigned int getMaxStoredActionStates() const;
     unsigned int getnFingersInvolved() const;
-    virtual std::vector < ROSEE::JointPos > getAllJointPos () const = 0;
+    
+    /**
+     * @brief Depending on the primitive, we can use different "keys" to take info from yaml file when parsing
+     * for example, trig and pinches are selected through fingersInvolved, while ActionMoreTips uses the joint name.
+     * So each derived class must override this info, which for now is used only in \ref YamlWorker::parseYamlPrimitive() and also by map handler to get the primitive
+     */
+    virtual std::set < std::string> getKeyForYamlMap () const = 0;
     
     void setJointsInvolvedCount (ROSEE::JointsInvolvedCount jointsInvolvedCount ) ;    
     /* overridable functions, if we want to make them more action-specific*/
     virtual void emitYaml ( YAML::Emitter& ) const override;
 
 protected:
+    
+    ActionPrimitive ( std::string name, unsigned int maxStoredActionStates, Type type );
  
     /**
      * @brief Protected costructor: object creable only by derived classes.
@@ -80,12 +88,12 @@ protected:
         Type type );
     
     /* e.g. two tips for the pinch*/
-    const unsigned int nFingersInvolved;
+    unsigned int nFingersInvolved;
     
     /* the max number of action for each linksInvolved set that we want to store */
     const unsigned int maxStoredActionStates;
     
-    const Type type;
+    const Type primitiveType;
         
 
     

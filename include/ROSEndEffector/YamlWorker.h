@@ -32,7 +32,11 @@
 #include <ROSEndEffector/ActionPinchStrong.h>
 #include <ROSEndEffector/ActionPinchWeak.h>
 #include <ROSEndEffector/ActionTrig.h>
+#include <ROSEndEffector/ActionMoreTips.h>
+#include <ROSEndEffector/ActionMultiplePinchStrong.h>
+
 #include <ROSEndEffector/ActionComposed.h>
+#include <ROSEndEffector/ActionTimed.h>
 
 namespace ROSEE
 {
@@ -46,12 +50,9 @@ class YamlWorker
 public:
     
     /**
-     * @brief Costructor, with argument some info about where to save/take the yaml files: 
-     * @param handName the name of the robot/hand (used to create file in a named folder)
-     * @param path2saveYaml string containing the path where to save/overwrite the yaml files.
-     *      Nothing can be passed, in this case a default location is used (see code) 
+     * @brief Costructor default
      */
-    YamlWorker ( std::string handName, std::string path2saveYaml = "");
+    YamlWorker ( );
 
     /**
      * @brief Create/overwrite yaml file and emit info on it about each \ref ActionPrimitive inside the given \p mapOfActions.
@@ -60,33 +61,37 @@ public:
      * @return std::string the filename (with the path) of the file created/overwritten
      */
     std::string createYamlFile ( const std::map < std::set <std::string> , ActionPrimitive* > mapOfActions, 
-                                 const std::string actionName  ) ;
+                                 const std::string actionName, std::string pathFolder  ) ;
                                  
     /**
      * @brief Create/overwrite yaml file and emit info on it about the given ActionComposed \p action
      * @param action [in] pointer to ActionComposed
      * @return std::string the filename (with the path) of the file created/overwritten
      */                             
-    std::string createYamlFile ( const ActionComposed* action) ;
-    
+    std::string createYamlFile ( const Action* action, std::string pathFolder) ;
+        
     /**
      * @brief Parse a yaml file and return the map with all the actions present in the file. 
      * For the moment, a \p actionType argument must be passed to create the right Action object
      * @param filename the path of the file to be parsed
-     * @param actionType the type of the action that is in the file
-     * @param map of action parsed. This map contains pointer to ActionPrimitive, each pointer will point to a specific derived class
      */
-    std::map < std::set < std::string>, ROSEE::ActionPrimitive::Ptr > parseYamlPrimitive ( 
-                                                    std::string filename, ROSEE::ActionPrimitive::Type actionType);
+    std::map < std::set < std::string>, ROSEE::ActionPrimitive::Ptr > parseYamlPrimitive (std::string fileWithPath);
     
+    std::map < std::set < std::string>, ROSEE::ActionPrimitive::Ptr > parseYamlPrimitive (std::string fileWithPath, ROSEE::ActionPrimitive::Type);
+        
     /**
      * @brief Parse a composed Action
      * @param filename the path of the file to be parsed
-     * @return the ActionComposed parsed
+     * @return the ActionComposed parsed 
      */
-    ROSEE::ActionComposed parseYamlComposed (std::string filename);
+    ROSEE::ActionComposed parseYamlComposed (std::string fileWithPath);
+    
+    /**
+     * 
+     */
+    ROSEE::ActionTimed parseYamlTimed ( std::string fileWithPath);
 
-    std::string dirPath;
+    ROSEE::ActionGeneric::Ptr parseYamlGeneric ( std::string fileWithPath );
     
 private:
     /**
@@ -101,7 +106,8 @@ private:
      * @param action the action which infos must be emitted
      * @return std::string a string formatted as yaml file, ready to be put in the file
      */
-    std::string emitYaml  ( const ActionComposed* action) ;
+    std::string emitYaml  ( const Action* action) ;
+
 
 
 };

@@ -37,6 +37,13 @@ public:
     ActionPinchGeneric(std::string name, unsigned int maxStoredActionStates, ActionPrimitive::Type type);
     ActionPinchGeneric(std::string name, unsigned int nFingerInvolved, unsigned int maxStoredActionStates, ActionPrimitive::Type type);
     
+    /**
+     * @brief Necessary method to know the key used by the maps which store all the Actions of one type. Used by \ref YamlWorker
+     * @return for this class, it return the two tips names, inserted in a set because father signature say so
+     */
+    std::set < std::string> getKeyForYamlMap () const override;
+
+    
 
 };
 

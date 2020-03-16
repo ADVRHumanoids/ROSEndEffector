@@ -26,6 +26,8 @@
 #include <memory>
 #include <iostream>
 
+#include <ROSEndEffector/Utils.h>
+
 /** 
  * 
  */
@@ -38,17 +40,13 @@ namespace ROSEE {
 typedef std::map <std::string, std::vector <double> > JointPos;
 
 /** operator overload for JointPos so it is easier to print */
-std::ostream& operator << (std::ostream& output, const JointPos js) {
-    for (const auto &jsEl : js) {
-        output << "\t\t"<<jsEl.first << " : "; //joint name
-        for(const auto &jValue : jsEl.second){
-            output << jValue << ", "; //joint position (vector because can have multiple dof)
-        }
-        output.seekp (-2, output.cur); //to remove the last comma (and space)
-        output << std::endl;       
-    }
-    return output;
-}
+std::ostream& operator << (std::ostream& output, const JointPos jp) ;
+
+JointPos operator * (const double multiplier, const JointPos jp) ;
+
+JointPos operator * (const JointPos jp, const double multiplier ) ;
+
+JointPos operator + (const JointPos jp1, const JointPos jp2) ;
 
 /** 
  * @brief The map to describe, how many times a joint is set by the action. 
@@ -59,13 +57,8 @@ std::ostream& operator << (std::ostream& output, const JointPos js) {
  */
 typedef std::map <std::string, unsigned int> JointsInvolvedCount;
 
-std::ostream& operator << (std::ostream& output, const JointsInvolvedCount jic) {
-    for (const auto &jicEl : jic) {
-        output << "\t"<< jicEl.first << " : " << jicEl.second;
-        output << std::endl;       
-    }
-    return output;
-}
+std::ostream& operator << (std::ostream& output, const JointsInvolvedCount jic);
+
 
 /**
  * @brief The pure virtual class representing an Action. It has members that are in common to all derived class
@@ -76,6 +69,11 @@ class Action
 public:
     typedef std::shared_ptr<Action> Ptr;
     typedef std::shared_ptr<const Action> ConstPtr;
+    
+    /** 
+     * @brief Enum useful to discriminate each  action when, for example, we want to parse a file 
+     */
+    enum Type {Primitive, Generic, Composed, Timed, None};
 
 
     /* destructor of base must be virtual */
@@ -87,9 +85,11 @@ public:
      */
     std::string getName () const ;
     
+    Type getType() const;
+    
     /**
      * @brief Get for \ref fingersInvolved
-     * @return std::set<std::string> the set containing all the hand's fingers involvec in the action
+     * @return std::set<std::string> the set containing all the hand's fingers involved in the action
      */
     std::set <std::string> getFingersInvolved () const ;
     
@@ -106,6 +106,13 @@ public:
      */
     virtual JointPos getJointPos () const = 0;
     
+    /**
+     * @brief Return all the joint position stored. If the concrete (derived from \ref Action) has only one joint position info,
+     * this function is equal to \ref getJointPos.
+     * @return vector containing all the joint pos of the action
+     */
+    virtual std::vector < ROSEE::JointPos > getAllJointPos () const = 0;
+
     /** @brief Overridable functions, if we want to make them more action-specific */
     virtual void print () const ;
     
@@ -127,11 +134,11 @@ public:
 protected:
     // Only derived class can create this class
     Action();
-    Action(std::string);
+    Action(std::string actionName, Action::Type type);
     
     std::string name;
+    Action::Type type;
     std::set <std::string> fingersInvolved;
-    
     JointsInvolvedCount jointsInvolvedCount;
 
 };

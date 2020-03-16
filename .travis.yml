@@ -42,7 +42,7 @@ script:
 - make dox
 
 #tests
-- roscore & #before the make soo it has time to setup and travis does not give error
+- roscore & #before the make so it has time to setup and travis does not give error
 - make tests
 - source devel/setup.bash
 #test with test_ee hand
@@ -55,6 +55,7 @@ script:
 - make test ARGS="-V"
 # to test with schunk hand we would need to install its package...
 # add other hand test...
+
 
 deploy:
   provider: pages
