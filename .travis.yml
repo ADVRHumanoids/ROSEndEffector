@@ -43,7 +43,8 @@ script:
 - cmake .. -DCMAKE_INSTALL_PREFIX:=/usr
 - sudo make install
 
-
+# going back to working directory
+- cd ../../
 #Build ROSEE
 - mkdir -p build
 - cd build
