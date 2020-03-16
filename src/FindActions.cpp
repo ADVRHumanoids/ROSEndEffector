@@ -23,7 +23,6 @@ std::pair <  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinc
 
     /// EMITTING PART ................
     if (mapOfPinches.size() == 0 ) {  //print if no collision at all
-        //Remove here after checking pinches further with method said
         std::cout << "[FINDACTIONS::" << __func__ << "]: I found no collisions between tips. Are you sure your hand"
             << " has some fingertips that collide? If yes, check your urdf/srdf, or"
             << " set a bigger value in N_EXP_COLLISION" << std::endl;

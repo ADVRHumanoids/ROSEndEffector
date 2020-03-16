@@ -39,7 +39,9 @@ bool ROSEE::ParserMoveIt::init ( std::string robot_description ) {
     robot_model = robot_model_loader.getModel() ;
     if (robot_model == nullptr) {
         std::cerr << " [PARSER::" << __func__ << 
-            "]: Fail To load robot model " << robot_description << std::endl;;
+            "]: Fail To load robot model " << robot_description <<
+            " are you sure to have put both urdf and srdf files in the parameter server " <<
+            "with names robot_description and robot_description_semantic, respectively?" << std::endl; 
         return false;
     }
     std::cout << "[PARSER::" << __func__ << "]: Parsed Model: " << robot_model->getName() << std::endl; ;
