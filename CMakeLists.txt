@@ -16,66 +16,7 @@ find_package(catkin REQUIRED COMPONENTS srdfdom
                                         )
                                                                                
 # find_package(matlogger2 REQUIRED)
-
 find_package(Eigen3 REQUIRED)
-
-
-
-## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
-
-
-## Uncomment this if the package has a setup.py. This macro ensures
-## modules and global scripts declared therein get installed
-## See http://ros.org/doc/api/catkin/html/user_guide/setup_dot_py.html
-# catkin_python_setup()
-
-################################################
-## Declare ROS messages, services and actions ##
-################################################
-
-add_message_files(
-DIRECTORY msgs
-FILES
-EEGraspControl.msg
-)
-
-add_message_files(
-DIRECTORY msgs
-FILES
-EEPinchControl.msg
-)
-
-add_message_files(
-DIRECTORY msgs
-FILES
-EETriggerControl.msg
-)
-
-generate_messages(
-DEPENDENCIES
-std_msgs
-)
-
-################################################
-## Declare ROS dynamic reconfigure parameters ##
-################################################
-
-## To declare and build dynamic reconfigure parameters within this
-## package, follow these steps:
-## * In the file package.xml:
-##   * add a build_depend and a exec_depend tag for "dynamic_reconfigure"
-## * In this file (CMakeLists.txt):
-##   * add "dynamic_reconfigure" to
-##     find_package(catkin REQUIRED COMPONENTS ...)
-##   * uncomment the "generate_dynamic_reconfigure_options" section below
-##     and list every .cfg file to be processed
-
-## Generate dynamic reconfigure parameters in the 'cfg' folder
-# generate_dynamic_reconfigure_options(
-#   cfg/DynReconf1.cfg
-#   cfg/DynReconf2.cfg
-# )
 
 ###################################
 ## catkin specific configuration ##
@@ -183,8 +124,8 @@ add_library(ActionTimed
 
 add_executable(UniversalRosEndEffector src/UniversalRosEndEffector.cpp)
 add_executable(UniversalFindActions src/UniversalFindActions.cpp)
-add_dependencies(UniversalRosEndEffectorExecutor ros_end_effector_generate_messages_cpp)
-add_dependencies(UniversalFindActions ros_end_effector_generate_messages_cpp)
+# # add_dependencies(UniversalRosEndEffectorExecutor ros_end_effector_generate_messages_cpp)
+# # add_dependencies(UniversalFindActions ros_end_effector_generate_messages_cpp)
 
 
 ## Add cmake target dependencies of the executable

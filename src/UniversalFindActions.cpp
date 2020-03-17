@@ -31,7 +31,10 @@ int main ( int argc, char **argv ) {
     ros::init ( argc, argv, "FindActions" );
     
     std::shared_ptr <ROSEE::ParserMoveIt> parserMoveIt = std::make_shared <ROSEE::ParserMoveIt> ();
-    parserMoveIt->init ("robot_description") ;
+    if (! parserMoveIt->init ("robot_description") ) {
+        ROS_ERROR_STREAM ("FAILED parserMoveit Init, stopping execution");
+        return -1;
+    }
     
     std::string folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/" + parserMoveIt->getHandName();
     
