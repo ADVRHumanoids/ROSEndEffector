@@ -638,19 +638,28 @@ void ROSEE::UniversalRosEndEffectorExecutor::timer_callback ( const ros::TimerEv
             
             if ( sendFeedbackGoal(timedAction->getInnerActionsNames().at(timed_index)) >= 100 ) {
                 
-                // completed all the timed action (the last inner has finished)
                 if (timed_index == timedAction->getInnerActionsNames().size()-1)  {
+                // completed all the timed action (the last inner has finished)
+
                     _ros_action_server->sendComplete();
                     timed_requested = false;
                     
-                // completed a inner action, we have to execute the next one now
-                } else { 
+                } else if ( 
+                    timer.elapsed_time<double, std::chrono::milliseconds>() >
+                        (timedAction->getAllActionMargins().at(timed_index).second*1000) ) {
+                    
+                // if the time passed is greater than the .after margin of the last executed,
+                // then pass to the other action. This is done so we continue to send feedback
+                // of a inner (with value 100) until the margin after is passed. If we are here,
+                // a inner action (but not the last one) is completed (included after margin),
+                // so we have to execute the next one now
                     
                     timed_index++;
                     joint_position_goal = timedAction->getAllJointPos().at(timed_index);
                     joint_involved_mask = timedAction->getAllJointCountAction().at(timed_index);
                     updateRefGoal();
-                }                      
+                    
+                } 
             }
         }  
     }
@@ -658,7 +667,7 @@ void ROSEE::UniversalRosEndEffectorExecutor::timer_callback ( const ros::TimerEv
 
     if (timed_requested) {
         //TODO is better a mini state machine to deal with timed action?
-        if (timer.elapsed_time<double, std::chrono::milliseconds>() > msToWait )  {
+        if (timer.elapsed_time<double, std::chrono::milliseconds>()  >  msToWait )  {
             //TODO fow now it is this function that make robot moves, and not _hal->move()
             set_references(); 
                 
