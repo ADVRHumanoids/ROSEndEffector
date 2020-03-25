@@ -145,8 +145,9 @@ cd robotiq_ws
 mkdir src
 cd src
 git clone https://github.com/ros-industrial/robotiq.git
+cd robotiq
 git checkout kinetic-devel
-cd ..
+cd ../..
 rosdep update
 rosdep install robotiq_modbus_tcp
 sudo apt-get install ros-kinetic-soem
