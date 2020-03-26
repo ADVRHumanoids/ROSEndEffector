@@ -2,9 +2,9 @@
 <launch>
   <!-- send urdf to parameter server -->
   <!--<param name="robot_description" textfile="$(find heri_description)/urdf/robotiq_3f.urdf"/>-->
-  <param name="robot_description" command="$(find xacro)/xacro '--inorder' '$(find heri_description)/urdf/iit_heri_ros.xacro'"/>
+  <param name="robot_description" command="$(find xacro)/xacro '--inorder' '$(find ros_end_effector)/configs/urdf/heri.xacro'"/>
   
-  <param name="robot_description_semantic" textfile="$(find ros_end_effector)/configs/srdf/heri_hand.srdf" />
+  <param name="robot_description_semantic" textfile="$(find ros_end_effector)/configs/srdf/heri.srdf" />
 
   <node type="UniversalFindActions" name="UniversalFindActions" pkg="ros_end_effector" output="screen"/>
 </launch>
