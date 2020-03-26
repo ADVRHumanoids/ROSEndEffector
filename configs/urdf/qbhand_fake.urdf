@@ -45,7 +45,7 @@
     <inertial>
       <mass value="0.15"/>
       <origin xyz="0 0 0.0015"/>
-      <inertia ixx="6e-05" ixy="0" ixz="0" iyy="6e-05" iyz="0" izz="9e-05"/>
+      <inertia ixx="6e-01" ixy="0" ixz="0" iyy="6e-01" iyz="0" izz="9e-01"/>
     </inertial>
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -98,7 +98,7 @@
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <mass value="0.01"/>
-      <inertia ixx="1e-08" ixy="0.0" ixz="0.0" iyy="1e-08" iyz="0.0" izz="1e-08"/>
+      <inertia ixx="1e-03" ixy="0.0" ixz="0.0" iyy="1e-03" iyz="0.0" izz="1e-03"/>
     </inertial>
   </link>
   <joint name="qbhand_thumb_knuckle_joint" type="revolute">
@@ -125,7 +125,7 @@
     <inertial>
       <mass value="0.01"/>
       <origin xyz="0 0 0"/>
-      <inertia ixx="1e-06" ixy="0.0" ixz="0.0" iyy="1e-06" iyz="0.0" izz="1e-06"/>
+      <inertia ixx="1e-02" ixy="0.0" ixz="0.0" iyy="1e-02" iyz="0.0" izz="1e-02"/>
     </inertial>
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -165,7 +165,7 @@
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <mass value="0.01"/>
-      <inertia ixx="1e-08" ixy="0.0" ixz="0.0" iyy="1e-08" iyz="0.0" izz="1e-08"/>
+      <inertia ixx="1e-03" ixy="0.0" ixz="0.0" iyy="1e-03" iyz="0.0" izz="1e-03"/>
     </inertial>
   </link>
   <joint name="qbhand_thumb_proximal_virtual_joint" type="revolute">
@@ -192,7 +192,7 @@
     <inertial>
       <mass value="0.01"/>
       <origin xyz="0 0 0"/>
-      <inertia ixx="1e-06" ixy="0.0" ixz="0.0" iyy="1e-06" iyz="0.0" izz="1e-06"/>
+      <inertia ixx="1e-02" ixy="0.0" ixz="0.0" iyy="1e-02" iyz="0.0" izz="1e-02"/>
     </inertial>
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -232,7 +232,7 @@
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <mass value="0.01"/>
-      <inertia ixx="1e-08" ixy="0.0" ixz="0.0" iyy="1e-08" iyz="0.0" izz="1e-08"/>
+      <inertia ixx="1e-03" ixy="0.0" ixz="0.0" iyy="1e-03" iyz="0.0" izz="1e-03"/>
     </inertial>
   </link>
   <joint name="qbhand_thumb_distal_virtual_joint" type="revolute">
@@ -259,7 +259,7 @@
     <inertial>
       <mass value="0.01"/>
       <origin xyz="0 0 0"/>
-      <inertia ixx="1e-06" ixy="0.0" ixz="0.0" iyy="1e-06" iyz="0.0" izz="1e-06"/>
+      <inertia ixx="1e-02" ixy="0.0" ixz="0.0" iyy="1e-02" iyz="0.0" izz="1e-02"/>
     </inertial>
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -299,7 +299,7 @@
     <inertial>
       <mass value="0.01"/>
       <origin xyz="0 0 0"/>
-      <inertia ixx="1e-06" ixy="0.0" ixz="0.0" iyy="1e-06" iyz="0.0" izz="1e-06"/>
+      <inertia ixx="1e-02" ixy="0.0" ixz="0.0" iyy="1e-02" iyz="0.0" izz="1e-02"/>
     </inertial>
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -339,7 +339,7 @@
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <mass value="0.01"/>
-      <inertia ixx="1e-08" ixy="0.0" ixz="0.0" iyy="1e-08" iyz="0.0" izz="1e-08"/>
+      <inertia ixx="1e-03" ixy="0.0" ixz="0.0" iyy="1e-03" iyz="0.0" izz="1e-03"/>
     </inertial>
   </link>
   <joint name="qbhand_index_proximal_virtual_joint" type="revolute">
@@ -366,7 +366,7 @@
     <inertial>
       <mass value="0.01"/>
       <origin xyz="0 0 0"/>
-      <inertia ixx="1e-06" ixy="0.0" ixz="0.0" iyy="1e-06" iyz="0.0" izz="1e-06"/>
+      <inertia ixx="1e-02" ixy="0.0" ixz="0.0" iyy="1e-02" iyz="0.0" izz="1e-02"/>
     </inertial>
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -406,7 +406,7 @@
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <mass value="0.01"/>
-      <inertia ixx="1e-08" ixy="0.0" ixz="0.0" iyy="1e-08" iyz="0.0" izz="1e-08"/>
+      <inertia ixx="1e-03" ixy="0.0" ixz="0.0" iyy="1e-03" iyz="0.0" izz="1e-03"/>
     </inertial>
   </link>
   <joint name="qbhand_index_middle_virtual_joint" type="revolute">
@@ -433,7 +433,7 @@
     <inertial>
       <mass value="0.01"/>
       <origin xyz="0 0 0"/>
-      <inertia ixx="1e-06" ixy="0.0" ixz="0.0" iyy="1e-06" iyz="0.0" izz="1e-06"/>
+      <inertia ixx="1e-02" ixy="0.0" ixz="0.0" iyy="1e-02" iyz="0.0" izz="1e-02"/>
     </inertial>
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -473,7 +473,7 @@
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <mass value="0.01"/>
-      <inertia ixx="1e-08" ixy="0.0" ixz="0.0" iyy="1e-08" iyz="0.0" izz="1e-08"/>
+      <inertia ixx="1e-03" ixy="0.0" ixz="0.0" iyy="1e-03" iyz="0.0" izz="1e-03"/>
     </inertial>
   </link>
   <joint name="qbhand_index_distal_virtual_joint" type="revolute">
@@ -500,7 +500,7 @@
     <inertial>
       <mass value="0.01"/>
       <origin xyz="0 0 0"/>
-      <inertia ixx="1e-06" ixy="0.0" ixz="0.0" iyy="1e-06" iyz="0.0" izz="1e-06"/>
+      <inertia ixx="1e-02" ixy="0.0" ixz="0.0" iyy="1e-02" iyz="0.0" izz="1e-02"/>
     </inertial>
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -540,7 +540,7 @@
     <inertial>
       <mass value="0.01"/>
       <origin xyz="0 0 0"/>
-      <inertia ixx="1e-06" ixy="0.0" ixz="0.0" iyy="1e-06" iyz="0.0" izz="1e-06"/>
+      <inertia ixx="1e-02" ixy="0.0" ixz="0.0" iyy="1e-02" iyz="0.0" izz="1e-02"/>
     </inertial>
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -580,7 +580,7 @@
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <mass value="0.01"/>
-      <inertia ixx="1e-08" ixy="0.0" ixz="0.0" iyy="1e-08" iyz="0.0" izz="1e-08"/>
+      <inertia ixx="1e-03" ixy="0.0" ixz="0.0" iyy="1e-03" iyz="0.0" izz="1e-03"/>
     </inertial>
   </link>
   <joint name="qbhand_middle_proximal_virtual_joint" type="revolute">
@@ -607,7 +607,7 @@
     <inertial>
       <mass value="0.01"/>
       <origin xyz="0 0 0"/>
-      <inertia ixx="1e-06" ixy="0.0" ixz="0.0" iyy="1e-06" iyz="0.0" izz="1e-06"/>
+      <inertia ixx="1e-02" ixy="0.0" ixz="0.0" iyy="1e-02" iyz="0.0" izz="1e-02"/>
     </inertial>
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -647,7 +647,7 @@
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <mass value="0.01"/>
-      <inertia ixx="1e-08" ixy="0.0" ixz="0.0" iyy="1e-08" iyz="0.0" izz="1e-08"/>
+      <inertia ixx="1e-03" ixy="0.0" ixz="0.0" iyy="1e-03" iyz="0.0" izz="1e-03"/>
     </inertial>
   </link>
   <joint name="qbhand_middle_middle_virtual_joint" type="revolute">
@@ -674,7 +674,7 @@
     <inertial>
       <mass value="0.01"/>
       <origin xyz="0 0 0"/>
-      <inertia ixx="1e-06" ixy="0.0" ixz="0.0" iyy="1e-06" iyz="0.0" izz="1e-06"/>
+      <inertia ixx="1e-02" ixy="0.0" ixz="0.0" iyy="1e-02" iyz="0.0" izz="1e-02"/>
     </inertial>
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -714,7 +714,7 @@
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <mass value="0.01"/>
-      <inertia ixx="1e-08" ixy="0.0" ixz="0.0" iyy="1e-08" iyz="0.0" izz="1e-08"/>
+      <inertia ixx="1e-03" ixy="0.0" ixz="0.0" iyy="1e-03" iyz="0.0" izz="1e-03"/>
     </inertial>
   </link>
   <joint name="qbhand_middle_distal_virtual_joint" type="revolute">
@@ -741,7 +741,7 @@
     <inertial>
       <mass value="0.01"/>
       <origin xyz="0 0 0"/>
-      <inertia ixx="1e-06" ixy="0.0" ixz="0.0" iyy="1e-06" iyz="0.0" izz="1e-06"/>
+      <inertia ixx="1e-02" ixy="0.0" ixz="0.0" iyy="1e-02" iyz="0.0" izz="1e-02"/>
     </inertial>
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -781,7 +781,7 @@
     <inertial>
       <mass value="0.01"/>
       <origin xyz="0 0 0"/>
-      <inertia ixx="1e-06" ixy="0.0" ixz="0.0" iyy="1e-06" iyz="0.0" izz="1e-06"/>
+      <inertia ixx="1e-02" ixy="0.0" ixz="0.0" iyy="1e-02" iyz="0.0" izz="1e-02"/>
     </inertial>
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -821,7 +821,7 @@
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <mass value="0.01"/>
-      <inertia ixx="1e-08" ixy="0.0" ixz="0.0" iyy="1e-08" iyz="0.0" izz="1e-08"/>
+      <inertia ixx="1e-03" ixy="0.0" ixz="0.0" iyy="1e-03" iyz="0.0" izz="1e-03"/>
     </inertial>
   </link>
   <joint name="qbhand_ring_proximal_virtual_joint" type="revolute">
@@ -848,7 +848,7 @@
     <inertial>
       <mass value="0.01"/>
       <origin xyz="0 0 0"/>
-      <inertia ixx="1e-06" ixy="0.0" ixz="0.0" iyy="1e-06" iyz="0.0" izz="1e-06"/>
+      <inertia ixx="1e-02" ixy="0.0" ixz="0.0" iyy="1e-02" iyz="0.0" izz="1e-02"/>
     </inertial>
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -888,7 +888,7 @@
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <mass value="0.01"/>
-      <inertia ixx="1e-08" ixy="0.0" ixz="0.0" iyy="1e-08" iyz="0.0" izz="1e-08"/>
+      <inertia ixx="1e-03" ixy="0.0" ixz="0.0" iyy="1e-03" iyz="0.0" izz="1e-03"/>
     </inertial>
   </link>
   <joint name="qbhand_ring_middle_virtual_joint" type="revolute">
@@ -915,7 +915,7 @@
     <inertial>
       <mass value="0.01"/>
       <origin xyz="0 0 0"/>
-      <inertia ixx="1e-06" ixy="0.0" ixz="0.0" iyy="1e-06" iyz="0.0" izz="1e-06"/>
+      <inertia ixx="1e-02" ixy="0.0" ixz="0.0" iyy="1e-02" iyz="0.0" izz="1e-02"/>
     </inertial>
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -955,7 +955,7 @@
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <mass value="0.01"/>
-      <inertia ixx="1e-08" ixy="0.0" ixz="0.0" iyy="1e-08" iyz="0.0" izz="1e-08"/>
+      <inertia ixx="1e-03" ixy="0.0" ixz="0.0" iyy="1e-03" iyz="0.0" izz="1e-03"/>
     </inertial>
   </link>
   <joint name="qbhand_ring_distal_virtual_joint" type="revolute">
@@ -982,7 +982,7 @@
     <inertial>
       <mass value="0.01"/>
       <origin xyz="0 0 0"/>
-      <inertia ixx="1e-06" ixy="0.0" ixz="0.0" iyy="1e-06" iyz="0.0" izz="1e-06"/>
+      <inertia ixx="1e-02" ixy="0.0" ixz="0.0" iyy="1e-02" iyz="0.0" izz="1e-02"/>
     </inertial>
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -1022,7 +1022,7 @@
     <inertial>
       <mass value="0.01"/>
       <origin xyz="0 0 0"/>
-      <inertia ixx="1e-06" ixy="0.0" ixz="0.0" iyy="1e-06" iyz="0.0" izz="1e-06"/>
+      <inertia ixx="1e-02" ixy="0.0" ixz="0.0" iyy="1e-02" iyz="0.0" izz="1e-02"/>
     </inertial>
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -1062,7 +1062,7 @@
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <mass value="0.01"/>
-      <inertia ixx="1e-08" ixy="0.0" ixz="0.0" iyy="1e-08" iyz="0.0" izz="1e-08"/>
+      <inertia ixx="1e-03" ixy="0.0" ixz="0.0" iyy="1e-03" iyz="0.0" izz="1e-03"/>
     </inertial>
   </link>
   <joint name="qbhand_little_proximal_virtual_joint" type="revolute">
@@ -1089,7 +1089,7 @@
     <inertial>
       <mass value="0.01"/>
       <origin xyz="0 0 0"/>
-      <inertia ixx="1e-06" ixy="0.0" ixz="0.0" iyy="1e-06" iyz="0.0" izz="1e-06"/>
+      <inertia ixx="1e-02" ixy="0.0" ixz="0.0" iyy="1e-02" iyz="0.0" izz="1e-02"/>
     </inertial>
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -1129,7 +1129,7 @@
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <mass value="0.01"/>
-      <inertia ixx="1e-08" ixy="0.0" ixz="0.0" iyy="1e-08" iyz="0.0" izz="1e-08"/>
+      <inertia ixx="1e-03" ixy="0.0" ixz="0.0" iyy="1e-03" iyz="0.0" izz="1e-03"/>
     </inertial>
   </link>
   <joint name="qbhand_little_middle_virtual_joint" type="revolute">
@@ -1156,7 +1156,7 @@
     <inertial>
       <mass value="0.01"/>
       <origin xyz="0 0 0"/>
-      <inertia ixx="1e-06" ixy="0.0" ixz="0.0" iyy="1e-06" iyz="0.0" izz="1e-06"/>
+      <inertia ixx="1e-02" ixy="0.0" ixz="0.0" iyy="1e-02" iyz="0.0" izz="1e-02"/>
     </inertial>
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -1196,7 +1196,7 @@
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <mass value="0.01"/>
-      <inertia ixx="1e-08" ixy="0.0" ixz="0.0" iyy="1e-08" iyz="0.0" izz="1e-08"/>
+      <inertia ixx="1e-03" ixy="0.0" ixz="0.0" iyy="1e-03" iyz="0.0" izz="1e-03"/>
     </inertial>
   </link>
   <joint name="qbhand_little_distal_virtual_joint" type="revolute">
@@ -1223,7 +1223,7 @@
     <inertial>
       <mass value="0.01"/>
       <origin xyz="0 0 0"/>
-      <inertia ixx="1e-06" ixy="0.0" ixz="0.0" iyy="1e-06" iyz="0.0" izz="1e-06"/>
+      <inertia ixx="1e-02" ixy="0.0" ixz="0.0" iyy="1e-02" iyz="0.0" izz="1e-02"/>
     </inertial>
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -1240,9 +1240,8 @@
     </collision>
   </link>
   
-    <gazebo>
+  <gazebo>
       <plugin name="qbhand_controller" filename="libRoseePlugin.so">
       </plugin>
     </gazebo>
-    
 </robot>
