@@ -4,12 +4,13 @@
      <arg name="inSlider" default="false" />
 
      <!-- send the test_ee robot XML to param server -->
-    <param name="robot_description" textfile="$(find ros_end_effector)/configs/urdf/robotiq_3f.urdf"/>
-  <!-- <param name="robot_description" command="$(find xacro)/xacro 'inorder' '$(find robotiq_3f_gripper_visualization)/cfg/robotiq-3f-gripper_articulated.xacro'"/>  -->
-		 <param name="robot_description_semantic" textfile="$(find ros_end_effector)/configs/srdf/robotiq_3f.srdf" />
+  	<param name="robot_description" command="$(find xacro)/xacro '--inorder' '$(find heri_description)/urdf/iit_heri_ros.xacro'"/>
+  
+  	<param name="robot_description_semantic" textfile="$(find ros_end_effector)/configs/srdf/heri_hand.srdf" />
+  
      <param name="use_gui" value="$(arg gui)"/>
      <param name="rate" value="100.0"/>
-     <param name="ros_ee_config_path" value="$(find ros_end_effector)/configs/robotiq_3f.yaml"/>	
+     <param name="ros_ee_config_path" value="$(find ros_end_effector)/configs/heri.yaml"/>	
     
      <node unless="$(arg inSlider)" type="UniversalRosEndEffector" name="UniversalRosEndEffector" pkg="ros_end_effector" output="screen"/>
 			<!--<node type="UniversalRosEndEffector" name="UniversalRosEndEffector" pkg="ros_end_effector" output="screen"/>-->
@@ -20,7 +21,7 @@
         <remap from="joint_states" to="ros_end_effector/joint_states" />
     </node> 
     
-    <node type="rviz" name="rviz" pkg="rviz" args="-d $(find ros_end_effector)/configs/rviz/robotiq_3f.rviz" />
+    <node type="rviz" name="rviz" pkg="rviz" args="-d $(find ros_end_effector)/configs/rviz/heri.rviz" />
     
     <!-- sliders for control single joints-->
     <node if="$(arg inSlider)" name="input_joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">

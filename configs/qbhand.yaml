@@ -1,0 +1,3 @@
+ROSEndEffector:
+  urdf_path: "urdf/qbhand.urdf"
+  srdf_path: "srdf/qbhand.srdf"

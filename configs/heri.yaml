@@ -1,0 +1,3 @@
+ROSEndEffector:
+  urdf_path: "urdf/heri_hand.urdf"
+  srdf_path: "srdf/heri_hand.srdf"
