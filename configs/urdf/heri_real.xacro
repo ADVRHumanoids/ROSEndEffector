@@ -12,7 +12,9 @@
   <link name="world"/>
 
   <joint name="world_base" type="fixed">
-    <origin xyz="0 0 0.01" rpy="0 0 0" />
+    <!-- z!= from 1 is necessary because otherwise the hand has tremors. I think this is because it compentetrate with the
+         terrain ? --> 
+    <origin xyz="0 0 0.015" rpy="0 0 0" />
     <parent link="world" />
     <child link="base_link"/>
   </joint>
@@ -72,7 +74,7 @@
     <child link="SFB1" />
     <axis xyz="0 0 1" />
     <limit lower="-0.1" upper="0.1" effort="10" velocity="1" />
-    <dynamics damping="0.7" />
+    <dynamics damping="0.003" friction="0.003"/>
   </joint>
 
   <!-- ///////////////////////////////////////   First phalanx of the Short_Finger   ////////////////////////////////////////// -->
@@ -106,7 +108,7 @@
     <child link="SFB1_1" />
     <axis xyz="0 0 -1" />
     <limit lower="-0.1" upper="0.5" effort="10" velocity="1" />
-    <dynamics damping="0.7" />
+    <dynamics damping="0.003" friction="0.003"/>
   </joint>
 
   <!-- ///////////////////////////////////////   Tip phalanx of the short finger   ////////////////////////////////////////// -->
@@ -140,8 +142,13 @@
     <child link="SFP1_2" />
     <axis xyz="0 0 -1" />
     <limit lower="-0.1" upper="0.5" effort="10" velocity="1" />
-    <dynamics damping="0.7" />
+    <dynamics damping="0.003" friction="0.003"/>
+    <mimic joint="SFB1__SFP1_1" multiplier="1" offset="0"/>
   </joint>
+  
+      <xacro:mimic_joint_plugin_gazebo name_prefix="SFP1_1__SFP1_2_joint"
+    parent_joint="SFB1__SFP1_1" mimic_joint="SFP1_1__SFP1_2"
+    has_pid="false" multiplier="1.0" max_effort="10.0" />
 
 <!-- ///////////////////////////////////////   Long finger 1   ////////////////////////////////////////// -->
 
@@ -176,7 +183,7 @@
     <child link="LFB1" />
     <axis xyz="0 0 1" />
     <limit lower="-0.1" upper="0.1" effort="10" velocity="1" />
-    <dynamics damping="0.7" />
+    <dynamics damping="0.003" friction="0.003"/>
   </joint>
 
   <!-- ///////////////////////////////////////   First phalanx of the Long_Finger   ////////////////////////////////////////// -->
@@ -210,7 +217,7 @@
     <child link="LFP1_1" />
     <axis xyz="0 0 -1" />
     <limit lower="-0.1" upper="0.5" effort="10" velocity="1" />
-    <dynamics damping="0.7" />
+    <dynamics damping="0.003" friction="0.003"/>
   </joint>
 
   <!-- ///////////////////////////////////////   Second phalanx of the Long_Finger   ////////////////////////////////////////// -->
@@ -244,8 +251,13 @@
     <child link="LFP1_2" />
     <axis xyz="0 0 -1" />
     <limit lower="-0.1" upper="0.5" effort="10" velocity="1" />
-    <dynamics damping="0.7" />
+    <dynamics damping="0.003" friction="0.003"/>
+    <mimic joint="LFB1__LFP1_1" multiplier="1" offset="0"/>
   </joint>
+  
+        <xacro:mimic_joint_plugin_gazebo name_prefix="LFP1_1__LFP1_2_joint"
+    parent_joint="LFB1__LFP1_1" mimic_joint="LFP1_1__LFP1_2"
+    has_pid="false" multiplier="1.0" max_effort="10.0" />
 
   <!-- ///////////////////////////////////////   Tip phalanx of the long finger   ////////////////////////////////////////// -->
   <link name="LFP1_3">
@@ -278,9 +290,12 @@
     <child link="LFP1_3" />
     <axis xyz="0 0 -1" />
     <limit lower="-0.1" upper="0.5" effort="10" velocity="1" />
-    <dynamics damping="0.7" />
+    <dynamics damping="0.003" friction="0.003"/>
   </joint>
 
+        <xacro:mimic_joint_plugin_gazebo name_prefix="LFP1_1__LFP1_3_joint"
+    parent_joint="LFB1__LFP1_1" mimic_joint="LFP1_2__LFP1_3"
+    has_pid="false" multiplier="1.0" max_effort="10.0" />
 
 
   <!-- ///////////////////////////////////////   Long finger 2   ////////////////////////////////////////// -->
@@ -316,7 +331,7 @@
     <child link="LFB2" />
     <axis xyz="0 0 1" />
     <limit lower="-0.1" upper="0.1" effort="10" velocity="1" />
-    <dynamics damping="0.7" />
+    <dynamics damping="0.003" friction="0.003"/>
   </joint>
 
   <!-- ///////////////////////////////////////   First phalanx of the Long_Finger   ////////////////////////////////////////// -->
@@ -350,7 +365,7 @@
     <child link="LFP2_1" />
     <axis xyz="0 0 -1" />
     <limit lower="-0.1" upper="0.5" effort="10" velocity="1" />
-    <dynamics damping="0.7" />
+    <dynamics damping="0.003" friction="0.003"/>
   </joint>
 
   <!-- ///////////////////////////////////////   Second phalanx of the Long_Finger   ////////////////////////////////////////// -->
@@ -384,8 +399,15 @@
     <child link="LFP2_2" />
     <axis xyz="0 0 -1" />
     <limit lower="-0.1" upper="0.5" effort="10" velocity="1"/>
-    <dynamics damping="0.7" />
+    <dynamics damping="0.003" friction="0.003"/>
+    <mimic joint="LFB2_1__LFP2_1" multiplier="1" offset="0"/>    
   </joint>
+  
+          <xacro:mimic_joint_plugin_gazebo name_prefix="LFP2_1__LFP2_2_joint"
+    parent_joint="LFB2__LFP2_1" mimic_joint="LFP2_1__LFP2_2"
+    has_pid="false" multiplier="1.0" max_effort="10.0" />
+  
+  
 
   <!-- ///////////////////////////////////////   Tip phalanx of the long finger   ////////////////////////////////////////// -->
   <link name="LFP2_3">
@@ -418,8 +440,12 @@
     <child link="LFP2_3" />
     <axis xyz="0 0 -1" />
     <limit lower="-0.1" upper="0.5" effort="10" velocity="1"/>
-    <dynamics damping="0.7" />
+    <dynamics damping="0.003" friction="0.003"/>
+    <mimic joint="LFB2__LFP2_1" multiplier="1" offset="0"/>    
   </joint>
-
+  
+            <xacro:mimic_joint_plugin_gazebo name_prefix="LFP2_2__LFP2_3_joint"
+    parent_joint="LFB2__LFP2_1" mimic_joint="LFP2_2__LFP2_3"
+    has_pid="false" multiplier="1.0" max_effort="10.0" />
 
 </robot>
