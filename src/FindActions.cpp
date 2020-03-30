@@ -132,23 +132,23 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::findTrig ( ROSEE::
 }  
 
 
-std::map <std::string, ROSEE::ActionMoreTips> ROSEE::FindActions::findMoreTips(unsigned int nFinger, std::string path2saveYaml) {
+std::map <std::string, ROSEE::ActionSingleJointMultipleTips> ROSEE::FindActions::findSingleJointMultipleTips(unsigned int nFinger, std::string path2saveYaml) {
     
-    std::map <std::string, ROSEE::ActionMoreTips> mapOfMoreTips;
+    std::map <std::string, ROSEE::ActionSingleJointMultipleTips> mapOfSingleJointMultipleTips;
     
     if (nFinger == 1) {
         std::cout << "[ERROR FINDACTIONS::" << __func__ << "]  with 1 finger, you are looking for a ActionTrig, "
-            << "and not a ActionMoreTips. Returning an empty map" << std::endl;
-        return mapOfMoreTips;
+            << "and not a ActionSingleJointMultipleTips. Returning an empty map" << std::endl;
+        return mapOfSingleJointMultipleTips;
     }
     
     if (nFinger > parserMoveIt->getNFingers() ) {
         std::cout << "[ERROR FINDACTIONS::" << __func__ << "]  I can not find an action which moves " << nFinger << 
         " fingers if the hand has only " << parserMoveIt->getNFingers() << " fingers. Returning an empty map" << std::endl;
-        return mapOfMoreTips;
+        return mapOfSingleJointMultipleTips;
     }
        
-    std::string actionName = "moreTips_" + std::to_string(nFinger); //action name same for each action
+    std::string actionName = "singleJointMultipleTips_" + std::to_string(nFinger); //action name same for each action
 
     for (auto mapEl : parserMoveIt->getFingertipsOfJointMap() ) {
         
@@ -170,23 +170,23 @@ std::map <std::string, ROSEE::ActionMoreTips> ROSEE::FindActions::findMoreTips(u
         jpFar.at ( mapEl.first ) = furtherPos;
         jpNear.at ( mapEl.first ) = nearerPos;
         
-        ActionMoreTips action (actionName, mapEl.second, mapEl.first, jpFar, jpNear);
+        ActionSingleJointMultipleTips action (actionName, mapEl.second, mapEl.first, jpFar, jpNear);
         //"convert" vector to set 
         std::set <std::string> setFingers;
         setFingers.insert (mapEl.second.begin(), mapEl.second.end() );
         
-        mapOfMoreTips.insert (std::make_pair(mapEl.first, action));
+        mapOfSingleJointMultipleTips.insert (std::make_pair(mapEl.first, action));
     }
     
     //// EMITTING
-    if (mapOfMoreTips.size() == 0 ) {
-        std::cout << "[FINDACTIONS::" << __func__ << "]  no moreTips with " << nFinger << " found" << std::endl;
-        return mapOfMoreTips;
+    if (mapOfSingleJointMultipleTips.size() == 0 ) {
+        std::cout << "[FINDACTIONS::" << __func__ << "]  no singleJointMultipleTips with " << nFinger << " found" << std::endl;
+        return mapOfSingleJointMultipleTips;
     }
     
     std::map < std::set <std::string> , ActionPrimitive* > mapForWorker;
 
-    for (auto& it : mapOfMoreTips) {  // auto& and not auto alone!
+    for (auto& it : mapOfSingleJointMultipleTips) {  // auto& and not auto alone!
 
         ActionPrimitive* pointer = &(it.second);
         std::set<std::string> set;
@@ -197,7 +197,7 @@ std::map <std::string, ROSEE::ActionMoreTips> ROSEE::FindActions::findMoreTips(u
     ROSEE::YamlWorker yamlWorker;
     yamlWorker.createYamlFile(mapForWorker, actionName, path2saveYaml);
     
-    return mapOfMoreTips;
+    return mapOfSingleJointMultipleTips;
 }
 
 

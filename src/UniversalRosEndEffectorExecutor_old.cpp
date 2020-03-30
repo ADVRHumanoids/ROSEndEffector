@@ -241,7 +241,7 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_actionsInfo_services() {
         actInfo.topic_name = _nh.getNamespace() + "/" + actInfo.action_name;
         actInfo.seq = 0; //TODO check if necessary the seq in this msg
         //until now, there is not a primitive that does not have "something" to select
-        // (eg pinch has 2 fing, trig one fing, moretips 1 joint...). 
+        // (eg pinch has 2 fing, trig one fing, singleJointMultipleTips 1 joint...). 
         //Instead generic action has always no thing to select (next for loop)
         actInfo.max_selectable = primitiveContainers.second.begin()->first.size();
         //TODO extract the keys with another mapActionHandler function?

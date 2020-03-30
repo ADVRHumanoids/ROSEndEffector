@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef ACTIONMORETIPS_H
-#define ACTIONMORETIPS_H
+#ifndef ACTIONSINGLEJOINTMULTIPLETIPS_H
+#define ACTIONSINGLEJOINTMULTIPLETIPS_H
 
 #include <ROSEndEffector/ActionPrimitive.h>
 #include <yaml-cpp/yaml.h>
@@ -28,11 +28,11 @@ namespace ROSEE {
  * For example, this primitive is necessary for the hands that have one joint that close all the fingers to do a grasp. But 
  * it can also useful to detect other multiple finger motions (like a "spread finger")
  */
-class ActionMoreTips : public ActionPrimitive {
+class ActionSingleJointMultipleTips : public ActionPrimitive {
     
 public:
     
-    ActionMoreTips();
+    ActionSingleJointMultipleTips();
 
     /**
      * @brief NOT ANYOMORE ? used (for now) by yaml worker only. Before parsing we cant now the info that the other costructor need. So all these infos
@@ -40,7 +40,7 @@ public:
      * @param actionName name of the action
      * @param nFingers number of the fingers involved in the action (i.e. number of finger that the \ref jointInvolved moves)
      */
-    ActionMoreTips(std::string actionName, unsigned int nFingers);
+    ActionSingleJointMultipleTips(std::string actionName, unsigned int nFingers);
     /**
      * @brief "Standard" costructor, which fill all the necessary infos
      * @param actionName name of the action
@@ -53,7 +53,7 @@ public:
      * @warning If 0 position is not included between the bounds (eg 0.4 | 5.1) , jpNearer is the one nearer
      *       to 0 (0.4) and jpFurther the further (5.1). CHECK THIS FACT TO BE SURE
      */
-    ActionMoreTips (std::string actionName, std::vector<std::string> fingers, std::string jointName, JointPos jpFurther, JointPos jpNearer);
+    ActionSingleJointMultipleTips (std::string actionName, std::vector<std::string> fingers, std::string jointName, JointPos jpFurther, JointPos jpNearer);
     
     /** 
      * @brief Overriden get from the pure virtual function of the base class \ref Action
@@ -90,4 +90,4 @@ private:
 };
 }
 
-#endif // ACTIONMORETIPS_H
+#endif // ACTIONSINGLEJOINTMULTIPLETIPS_H

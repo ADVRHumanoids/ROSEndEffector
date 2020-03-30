@@ -115,7 +115,7 @@ std::vector<ROSEE::ActionPrimitive::Ptr> ROSEE::MapActionHandler::getPrimitive(R
     //now we look, among all the themaps (where key size is the same as the passed arg key)
     // for an action that as effectively the wanted key. We can have more than one action
     // with the wanted key because in theMaps vector we have different primitives (altought 
-    // of same type). This is not possible now (because moretips have as key a joint, so
+    // of same type). This is not possible now (because singleJointMultipleTips have as key a joint, so
     // a joint cant move X fingers and ALSO Y fingers) (and multiplePinch action have all 
     // different key set size ( the number of fing used for multpinch). Anyway a vect is
     // returned because we do not know if in future we will have new type of primitives.
@@ -197,14 +197,14 @@ std::map<std::string, std::shared_ptr<ROSEE::ActionTimed>> ROSEE::MapActionHandl
 }
 
 
-std::map<std::string, ROSEE::ActionPrimitive::Ptr> ROSEE::MapActionHandler::getPrimitiveMoreTipsMap(unsigned int nFingers) const {
+std::map<std::string, ROSEE::ActionPrimitive::Ptr> ROSEE::MapActionHandler::getPrimitiveSingleJointMultipleTipsMap(unsigned int nFingers) const {
     
     std::map<std::string, ROSEE::ActionPrimitive::Ptr> ret;
     
     for (auto it : primitives) {
         
         if (it.second.begin()->second->getPrimitiveType() ==
-            ROSEE::ActionPrimitive::Type::MoreTips && 
+            ROSEE::ActionPrimitive::Type::SingleJointMultipleTips && 
             it.second.begin()->second->getnFingersInvolved() == nFingers){
             
             //copy the map into one similar but with as key a strign and not a set
@@ -218,7 +218,7 @@ std::map<std::string, ROSEE::ActionPrimitive::Ptr> ROSEE::MapActionHandler::getP
     }
     
     if (ret.size() == 0) {
-        std::cerr << "[WARNING MapActionHandler::" << __func__ << "] Not found any moreTips action that moves " << nFingers << " fingers " << std::endl;
+        std::cerr << "[WARNING MapActionHandler::" << __func__ << "] Not found any singleJointMultipleTips action that moves " << nFingers << " fingers " << std::endl;
     }
     
     return ret;
@@ -231,12 +231,12 @@ ROSEE::Action::Ptr ROSEE::MapActionHandler::getGrasp(unsigned int nFingers, std:
         return it->second;
     }
     
-    auto moreTip = getPrimitiveMoreTipsMap(nFingers);
+    auto moreTip = getPrimitiveSingleJointMultipleTipsMap(nFingers);
     if (moreTip.size() == 1) { //if more than 1 I do not know how to choose the one that effectively "grasp"
         return moreTip.begin()->second;
     }
     
-    std::cerr << "[WARNING MapActionHandler::" << __func__ << "] Not found any grasp named " << graspName << " neither a moretips primitive " 
+    std::cerr << "[WARNING MapActionHandler::" << __func__ << "] Not found any grasp named " << graspName << " neither a singleJointMultipleTips primitive " 
         << "that move all fingers with a single joint, you should create one action for grasp before calling parseAllActions/parseAllGenerics()"
         << std::endl;
 

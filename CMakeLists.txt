@@ -101,8 +101,8 @@ add_library(ActionPinchWeak
 add_library(ActionTrig
     src/ActionTrig.cpp
 )
-add_library(ActionMoreTips
-    src/ActionMoreTips.cpp
+add_library(ActionSingleJointMultipleTips
+    src/ActionSingleJointMultipleTips.cpp
 )
 add_library(ActionMultiplePinchStrong
     src/ActionMultiplePinchStrong.cpp
@@ -167,7 +167,7 @@ target_link_libraries(YamlWorker
     ActionPinchStrong
     ActionTrig
     ActionPinchWeak
-    ActionMoreTips
+    ActionSingleJointMultipleTips
     ActionMultiplePinchStrong
     ActionComposed
     ActionTimed
@@ -201,7 +201,7 @@ target_link_libraries(ActionTrig
     ActionPrimitive
 )
 
-target_link_libraries(ActionMoreTips
+target_link_libraries(ActionSingleJointMultipleTips
     ActionPrimitive
 )
 
@@ -229,7 +229,7 @@ target_link_libraries(FindActions
     ActionPinchStrong
     ActionTrig
     ActionPinchWeak
-    ActionMoreTips
+    ActionSingleJointMultipleTips
     ActionMultiplePinchStrong
 )
 
@@ -249,7 +249,7 @@ target_link_libraries(UniversalFindActions
     ActionTrig
     ActionPinchStrong
     ActionPinchWeak
-    ActionMoreTips
+    ActionSingleJointMultipleTips
     ActionTimed
     ActionGeneric
     MapActionHandler

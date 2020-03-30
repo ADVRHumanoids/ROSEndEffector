@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-#include <ROSEndEffector/ActionMoreTips.h>
+#include <ROSEndEffector/ActionSingleJointMultipleTips.h>
 
-ROSEE::ActionMoreTips::ActionMoreTips() : 
-    ActionPrimitive ( "moreTips", 1, ROSEE::ActionPrimitive::Type::MoreTips ) {}
+ROSEE::ActionSingleJointMultipleTips::ActionSingleJointMultipleTips() : 
+    ActionPrimitive ( "singleJointMultipleTips", 1, ROSEE::ActionPrimitive::Type::SingleJointMultipleTips ) {}
 
-ROSEE::ActionMoreTips::ActionMoreTips(std::string actionName, unsigned int nFingers ) : 
-    ActionPrimitive ( actionName, nFingers, 1, ROSEE::ActionPrimitive::Type::MoreTips ) {}
+ROSEE::ActionSingleJointMultipleTips::ActionSingleJointMultipleTips(std::string actionName, unsigned int nFingers ) : 
+    ActionPrimitive ( actionName, nFingers, 1, ROSEE::ActionPrimitive::Type::SingleJointMultipleTips ) {}
 
-ROSEE::ActionMoreTips::ActionMoreTips (std::string actionName, std::vector<std::string> fingers, std::string jointName, 
+ROSEE::ActionSingleJointMultipleTips::ActionSingleJointMultipleTips (std::string actionName, std::vector<std::string> fingers, std::string jointName, 
                                        JointPos jpFurther, JointPos jpNearer) : 
-    ActionPrimitive ( actionName, fingers.size(), 1, ROSEE::ActionPrimitive::Type::MoreTips ) {
+    ActionPrimitive ( actionName, fingers.size(), 1, ROSEE::ActionPrimitive::Type::SingleJointMultipleTips ) {
         
     this->jointInvolved = jointName;
     fingersInvolved.insert (fingers.begin(), fingers.end());
@@ -40,7 +40,7 @@ ROSEE::ActionMoreTips::ActionMoreTips (std::string actionName, std::vector<std::
         
 }
 
-std::vector<ROSEE::JointPos> ROSEE::ActionMoreTips::getAllJointPos() const {
+std::vector<ROSEE::JointPos> ROSEE::ActionSingleJointMultipleTips::getAllJointPos() const {
     
     std::vector<JointPos> vect;
     vect.push_back (jointPosFurther); 
@@ -48,29 +48,29 @@ std::vector<ROSEE::JointPos> ROSEE::ActionMoreTips::getAllJointPos() const {
     return vect;
 }
 
-ROSEE::JointPos ROSEE::ActionMoreTips::getJointPos() const {
+ROSEE::JointPos ROSEE::ActionSingleJointMultipleTips::getJointPos() const {
     return jointPosFurther;
 }
 
-ROSEE::JointPos ROSEE::ActionMoreTips::getJointPosFurther() const {
+ROSEE::JointPos ROSEE::ActionSingleJointMultipleTips::getJointPosFurther() const {
     return jointPosFurther;
 }
 
-ROSEE::JointPos ROSEE::ActionMoreTips::getJointPosNearer() const {
+ROSEE::JointPos ROSEE::ActionSingleJointMultipleTips::getJointPosNearer() const {
     return jointPosNearer;
 }
 
-std::string ROSEE::ActionMoreTips::getJointName() const {
+std::string ROSEE::ActionSingleJointMultipleTips::getJointName() const {
     return jointInvolved;
 }
 
-std::set<std::string> ROSEE::ActionMoreTips::getKeyForYamlMap() const {
+std::set<std::string> ROSEE::ActionSingleJointMultipleTips::getKeyForYamlMap() const {
     std::set <std::string> set;
     set.insert(jointInvolved);
     return set;
 }
 
-void ROSEE::ActionMoreTips::print() const {
+void ROSEE::ActionSingleJointMultipleTips::print() const {
     
     std::stringstream output;
     output << "ActionName: " << name << std::endl;
@@ -96,7 +96,7 @@ void ROSEE::ActionMoreTips::print() const {
     
 }
 
-void ROSEE::ActionMoreTips::emitYaml(YAML::Emitter& out) const {
+void ROSEE::ActionSingleJointMultipleTips::emitYaml(YAML::Emitter& out) const {
     
     out << YAML::Key << jointInvolved;
     out << YAML::Value << YAML::BeginMap;
@@ -125,7 +125,7 @@ void ROSEE::ActionMoreTips::emitYaml(YAML::Emitter& out) const {
 
 
 
-bool ROSEE::ActionMoreTips::fillFromYaml(YAML::const_iterator yamlIt) {
+bool ROSEE::ActionSingleJointMultipleTips::fillFromYaml(YAML::const_iterator yamlIt) {
     
     jointInvolved = yamlIt->first.as < std::string > ();
     
@@ -151,13 +151,13 @@ bool ROSEE::ActionMoreTips::fillFromYaml(YAML::const_iterator yamlIt) {
             ROSEE::ActionPrimitive::Type parsedType = static_cast<ROSEE::ActionPrimitive::Type> ( 
                 keyValue->second.as <unsigned int>() );
             if (parsedType != primitiveType ) {
-                std::cerr << "[ERROR ActionMoreTips::" << __func__ << " parsed a type " << parsedType << 
+                std::cerr << "[ERROR ActionSingleJointMultipleTips::" << __func__ << " parsed a type " << parsedType << 
                     " but this object has primitive type " << primitiveType << std::endl; 
                 return false;
             }
             
         } else {
-            std::cerr << "[ERROR ActionMoreTips::" << __func__ << "not know key " << key << 
+            std::cerr << "[ERROR ActionSingleJointMultipleTips::" << __func__ << "not know key " << key << 
                 " found in the yaml file" << std::endl; 
             return false;
         }

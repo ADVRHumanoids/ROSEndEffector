@@ -101,8 +101,8 @@ std::map<std::set<std::string>, ROSEE::ActionPrimitive::Ptr> ROSEE::YamlWorker::
             ptr = std::make_shared <ActionTrig>("fingFlex", ActionPrimitive::Type::FingFlex);
             break;
         }
-        case ActionPrimitive::Type::MoreTips: {
-            ptr = std::make_shared <ActionMoreTips>();
+        case ActionPrimitive::Type::SingleJointMultipleTips: {
+            ptr = std::make_shared <ActionSingleJointMultipleTips>();
             break;
         }
         case ActionPrimitive::Type::MultiplePinchStrong: {
@@ -174,8 +174,8 @@ std::map < std::set < std::string>, ROSEE::ActionPrimitive::Ptr > ROSEE::YamlWor
             ptr = std::make_shared <ActionTrig>("fingFlex", ActionPrimitive::Type::FingFlex);
             break;
         }
-        case ActionPrimitive::Type::MoreTips: {
-            ptr = std::make_shared <ActionMoreTips>();
+        case ActionPrimitive::Type::SingleJointMultipleTips: {
+            ptr = std::make_shared <ActionSingleJointMultipleTips>();
             break;
         }
         case ActionPrimitive::Type::MultiplePinchStrong: {
