@@ -12,13 +12,12 @@
   <link name="world"/>
 
   <joint name="world_base" type="fixed">
-    <!-- z!= from 1 is necessary because otherwise the hand has tremors. I think this is because it compentetrate with the
-         terrain ? --> 
+    <!-- z!= from 1 is necessary because otherwise the hand has tremors. I think this is because it compentetrate
+     with the terrain ? -->
     <origin xyz="0 0 0.015" rpy="0 0 0" />
     <parent link="world" />
     <child link="base_link"/>
   </joint>
-  
   
   <link name="base_link">
     <inertial>
