@@ -73,6 +73,10 @@ add_library(YamlWorker
     src/YamlWorker.cpp
 )
 
+add_library(RosActionServer
+    src/RosActionServer.cpp
+)
+
 add_library(MapActionHandler
     src/MapActionHandler.cpp
 )
@@ -97,8 +101,8 @@ add_library(ActionPinchWeak
 add_library(ActionTrig
     src/ActionTrig.cpp
 )
-add_library(ActionMoreTips
-    src/ActionMoreTips.cpp
+add_library(ActionSingleJointMultipleTips
+    src/ActionSingleJointMultipleTips.cpp
 )
 add_library(ActionMultiplePinchStrong
     src/ActionMultiplePinchStrong.cpp
@@ -149,6 +153,7 @@ target_link_libraries(UniversalRosEndEffectorExecutor
     ROSEEInterface
     YamlWorker
     MapActionHandler
+    RosActionServer
     
     # do it automatically
     DummyHal
@@ -162,7 +167,7 @@ target_link_libraries(YamlWorker
     ActionPinchStrong
     ActionTrig
     ActionPinchWeak
-    ActionMoreTips
+    ActionSingleJointMultipleTips
     ActionMultiplePinchStrong
     ActionComposed
     ActionTimed
@@ -174,6 +179,11 @@ target_link_libraries(MapActionHandler
     ActionGeneric
     ActionTimed
 )
+
+target_link_libraries(RosActionServer
+    ${catkin_LIBRARIES}
+)
+add_dependencies(RosActionServer rosee_msg_generate_messages_cpp)
 
 target_link_libraries(ActionPinchStrong
     ActionPinchGeneric
@@ -191,7 +201,7 @@ target_link_libraries(ActionTrig
     ActionPrimitive
 )
 
-target_link_libraries(ActionMoreTips
+target_link_libraries(ActionSingleJointMultipleTips
     ActionPrimitive
 )
 
@@ -219,7 +229,7 @@ target_link_libraries(FindActions
     ActionPinchStrong
     ActionTrig
     ActionPinchWeak
-    ActionMoreTips
+    ActionSingleJointMultipleTips
     ActionMultiplePinchStrong
 )
 
@@ -239,7 +249,7 @@ target_link_libraries(UniversalFindActions
     ActionTrig
     ActionPinchStrong
     ActionPinchWeak
-    ActionMoreTips
+    ActionSingleJointMultipleTips
     ActionTimed
     ActionGeneric
     MapActionHandler

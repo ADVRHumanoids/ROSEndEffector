@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+
+	<arg name="hand_name"/> 
+  <!-- send urdf to parameter server -->
+  <param name="robot_description" textfile="$(find ros_end_effector)/configs/urdf/$(arg hand_name).urdf"/>
+  <param name="robot_description_semantic" textfile="$(find ros_end_effector)/configs/srdf/$(arg hand_name).srdf" />
+
+	<node type="UniversalFindActions" name="UniversalFindActions" pkg="ros_end_effector" output="screen"/>
+</launch>

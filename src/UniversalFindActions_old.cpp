@@ -143,24 +143,24 @@ int main ( int argc, char **argv ) {
     
     /** **************************** ACTION MORE TIPS TO MOVE MORE TIPS WITH SINGLE JOINT ****************************/
     unsigned int nFinger = 5;
-    std::map < std::string, ROSEE::ActionMoreTips> moreTipsMap = actionsFinder.findMoreTips (nFinger, folderForActions + "/primitives/") ;
+    std::map < std::string, ROSEE::ActionSingleJointMultipleTips> singleJointMultipleTipsMap = actionsFinder.findSingleJointMultipleTips (nFinger, folderForActions + "/primitives/") ;
     
     std::cout << "A primitive that move " << nFinger << " fingers with a single joint " << std::endl;
-    if (moreTipsMap.size() == 0) {
+    if (singleJointMultipleTipsMap.size() == 0) {
         std::cout << "Nothing :C " << std::endl;
         
     } else {
-        for (auto map : moreTipsMap) {
+        for (auto map : singleJointMultipleTipsMap) {
             map.second.print();
         }
     }
     
-    std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > moreTipsParsedMap = 
-        yamlWorker.parseYamlPrimitive("moreTips-" + std::to_string(nFinger) + ".yaml", ROSEE::ActionPrimitive::Type::MoreTips, 
+    std::map < std::set < std::string>, std::shared_ptr<ROSEE::ActionPrimitive> > singleJointMultipleTipsParsedMap = 
+        yamlWorker.parseYamlPrimitive("singleJointMultipleTips-" + std::to_string(nFinger) + ".yaml", ROSEE::ActionPrimitive::Type::SingleJointMultipleTips, 
                                       folderForActions+"/primitives/");
-    std::cout << "PARSED MAP OF MORETIPS FROM YAML FILE:" << std::endl;
+    std::cout << "PARSED MAP OF SINGLEJOINTMULTIPLETIPS FROM YAML FILE:" << std::endl;
     
-    for (auto &i : moreTipsParsedMap) {
+    for (auto &i : singleJointMultipleTipsParsedMap) {
         i.second->print();
     }
 
@@ -168,10 +168,10 @@ int main ( int argc, char **argv ) {
     ROSEE::ActionTimed actionTimed("wide_grasp");
     std::set<std::string> one;
     one.insert ("finger_1_joint_1");
-    actionTimed.insertAction( moreTipsParsedMap.at(one), 0, 0.2, 0, 0.5, "GRASP");
+    actionTimed.insertAction( singleJointMultipleTipsParsedMap.at(one), 0, 0.2, 0, 0.5, "GRASP");
     one.clear();
     one.insert("finger_1_joint_1");
-    actionTimed.insertAction( moreTipsParsedMap.at(one), 0, 0.2, 0, 1, "GRASP2");
+    actionTimed.insertAction( singleJointMultipleTipsParsedMap.at(one), 0, 0.2, 0, 1, "GRASP2");
     
     one.clear();
     one.insert("finger_2_link_3");

@@ -38,6 +38,25 @@ std::vector<ROSEE::JointPos> ROSEE::ActionTimed::getAllJointPos() const {
     return jpVect;
 }
 
+std::vector<ROSEE::JointsInvolvedCount> ROSEE::ActionTimed::getAllJointCountAction() const {
+    
+    std::vector<ROSEE::JointsInvolvedCount> jcVect;
+    jcVect.reserve (actionsNamesOrdered.size());
+    for (auto actName : actionsNamesOrdered) {
+        jcVect.push_back( actionsJointCountMap.at (actName) );
+    }
+    return jcVect;
+}
+
+std::vector<std::pair<double, double> > ROSEE::ActionTimed::getAllActionMargins() const {
+    
+    std::vector <std::pair <double,double> > timeVect;
+    timeVect.reserve (actionsNamesOrdered.size());
+    for (auto actName : actionsNamesOrdered) {
+        timeVect.push_back( actionsTimeMarginsMap.at (actName) );
+    }
+    return timeVect;
+}
 
 ROSEE::JointPos ROSEE::ActionTimed::getJointPosAction (std::string actionName) const {
     
@@ -51,6 +70,20 @@ ROSEE::JointPos ROSEE::ActionTimed::getJointPosAction (std::string actionName) c
         return ROSEE::JointPos();
     }
 }
+
+ROSEE::JointsInvolvedCount ROSEE::ActionTimed::getJointCountAction(std::string actionName) const {
+    
+    auto it = actionsJointCountMap.find(actionName);
+    
+    if ( it != actionsJointCountMap.end() ) {
+        return (it->second);
+        
+    } else {
+        std::cerr << "[ACTIONTIMED:: " << __func__ << "] ERROR: action " << actionName << " not present in this composed timed action" << std::endl;
+        return ROSEE::JointsInvolvedCount();
+    } 
+}
+
 
 std::pair <double, double> ROSEE::ActionTimed::getActionMargins ( std::string actionName ) const {
  
@@ -127,7 +160,7 @@ void ROSEE::ActionTimed::emitYaml(YAML::Emitter& out) const {
         
         out << YAML::Key << "ActionsNamesOrdered" << YAML::Value << YAML::Flow << actionsNamesOrdered;
 
-        out << YAML::Key << "ActionTimeMargins" << YAML::Value << YAML::BeginMap;
+        out << YAML::Key << "ActionsTimeMargins" << YAML::Value << YAML::BeginMap;
         for (const std::string action : actionsNamesOrdered ){
 
             out << YAML::Key << action << YAML::Value << YAML::BeginMap;
@@ -141,12 +174,25 @@ void ROSEE::ActionTimed::emitYaml(YAML::Emitter& out) const {
         }
         out << YAML::EndMap;
 
-        out << YAML::Key << "JointPos" << YAML::Value << YAML::BeginMap;
+        out << YAML::Key << "ActionsJointPos" << YAML::Value << YAML::BeginMap;
         for (const std::string action : actionsNamesOrdered ){
 
             out << YAML::Key << action << YAML::Value << YAML::BeginMap;
                 
                 for ( const auto joint : actionsJointPosMap.at(action) ) {
+                    out << YAML::Key << joint.first;
+                    out << YAML::Value << YAML::Flow << joint.second; //vector of double is emitted like Seq
+                }
+            out << YAML::EndMap;
+        }
+        out << YAML::EndMap;
+        
+        out << YAML::Key << "ActionsJointCount" << YAML::Value << YAML::BeginMap;
+        for (const std::string action : actionsNamesOrdered ){
+
+            out << YAML::Key << action << YAML::Value << YAML::BeginMap;
+                
+                for ( const auto joint : actionsJointCountMap.at(action) ) {
                     out << YAML::Key << joint.first;
                     out << YAML::Value << YAML::Flow << joint.second; //vector of double is emitted like Seq
                 }
@@ -186,7 +232,7 @@ bool ROSEE::ActionTimed::fillFromYaml(YAML::const_iterator yamlIt){
         } else if ( key.compare ("JointsInvolvedCount") == 0 ) {
             jointsInvolvedCount = keyValue->second.as < JointsInvolvedCount >(); 
             
-        } else if ( key.compare("ActionTimeMargins") == 0 ) {
+        } else if ( key.compare("ActionsTimeMargins") == 0 ) {
             
             for (auto tMargins = keyValue->second.begin(); tMargins != keyValue->second.end(); ++tMargins ) {
 
@@ -196,13 +242,22 @@ bool ROSEE::ActionTimed::fillFromYaml(YAML::const_iterator yamlIt){
                 actionsTimeMarginsMap.insert (std::make_pair (actNAme, std::make_pair(before, after)  ) ) ;
             }
             
-        } else if ( key.compare("JointPos") == 0) {
+        } else if ( key.compare("ActionsJointPos") == 0) {
             
             for (auto jPos = keyValue->second.begin(); jPos != keyValue->second.end(); ++jPos ) {
                 
                 std::string actName = jPos->first.as<std::string>();
                 JointPos jp = jPos->second.as<ROSEE::JointPos>();
                 actionsJointPosMap.insert (std::make_pair (actName, jp) );
+            }
+
+        } else if ( key.compare("ActionsJointCount") == 0) {
+            
+            for (auto jCount = keyValue->second.begin(); jCount != keyValue->second.end(); ++jCount ) {
+                
+                std::string actName = jCount->first.as<std::string>();
+                JointsInvolvedCount jc = jCount->second.as<ROSEE::JointsInvolvedCount>();
+                actionsJointCountMap.insert (std::make_pair (actName, jc) );
             }
 
             
@@ -255,6 +310,7 @@ bool ROSEE::ActionTimed::insertAction(ROSEE::Action::Ptr action, double marginBe
     actionsJointPosMap.insert (std::make_pair ( usedName, (percentJointPos)*(action->getAllJointPos().at( jointPosIndex )) ));
     actionsTimeMarginsMap.insert ( std::make_pair( usedName, std::make_pair(marginBefore, marginAfter)));
     actionsNamesOrdered.push_back ( usedName );
+    actionsJointCountMap.insert (std::make_pair (usedName, action->getJointsInvolvedCount()));
 
     //father member
     for ( auto it: action->getFingersInvolved() ) {
@@ -265,7 +321,7 @@ bool ROSEE::ActionTimed::insertAction(ROSEE::Action::Ptr action, double marginBe
         
         jointsInvolvedCount = action->getJointsInvolvedCount();
         
-    } else {
+    } else { // add the action.jointInvolvedCount to the timed jointCount
         for (auto jic : action->getJointsInvolvedCount() ) {
             jointsInvolvedCount.at(jic.first) += jic.second;
         } 

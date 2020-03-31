@@ -55,8 +55,9 @@ public:
 
     /** 
      * @brief Enum useful to discriminate each primitive action when, for example, we want to parse a file 
+     * @remind if you change this enum, change also the ROSEEControl.msg accordingly
      */
-    enum Type {PinchStrong, PinchWeak, MultiplePinchStrong, Trig, TipFlex, FingFlex, MoreTips, None};
+    enum Type {PinchStrong, PinchWeak, MultiplePinchStrong, Trig, TipFlex, FingFlex, SingleJointMultipleTips, None};
     /* destructor of base must be virtual */
     virtual ~ActionPrimitive() {};
 
@@ -67,7 +68,7 @@ public:
     
     /**
      * @brief Depending on the primitive, we can use different "keys" to take info from yaml file when parsing
-     * for example, trig and pinches are selected through fingersInvolved, while ActionMoreTips uses the joint name.
+     * for example, trig and pinches are selected through fingersInvolved, while ActionSingleJointMultipleTips uses the joint name.
      * So each derived class must override this info, which for now is used only in \ref YamlWorker::parseYamlPrimitive() and also by map handler to get the primitive
      */
     virtual std::set < std::string> getKeyForYamlMap () const = 0;

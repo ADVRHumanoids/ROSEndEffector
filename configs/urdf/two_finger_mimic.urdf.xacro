@@ -1,0 +1,239 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="two_finger_mimic_end_effector">
+    
+    <xacro:macro name="mimic_joint_plugin_gazebo" params="name_prefix parent_joint mimic_joint has_pid:=false multiplier:=1.0 offset:=0 sensitiveness:=0.0 max_effort:=1.0 robot_namespace:=''">
+        <gazebo>
+        <plugin name="${name_prefix}mimic_joint_plugin" filename="libroboticsgroup_gazebo_mimic_joint_plugin.so">
+            <joint>${parent_joint}</joint>
+            <mimicJoint>${mimic_joint}</mimicJoint>
+            <xacro:if value="${has_pid}">                     <!-- if set to true, PID parameters from "/gazebo_ros_control/pid_gains/${mimic_joint}" are loaded -->
+                <hasPID />
+            </xacro:if>
+            <multiplier>${multiplier}</multiplier>
+            <offset>${offset}</offset>
+            <sensitiveness>${sensitiveness}</sensitiveness>   <!-- if absolute difference between setpoint and process value is below this threshold, do nothing; 0.0 = disable [rad] -->
+            <maxEffort>${max_effort}</maxEffort>              <!-- only taken into account if has_pid:=true [Nm] -->
+            <xacro:unless value="${robot_namespace == ''}">
+                <robotNamespace>($robot_namespace)</robotNamespace>
+            </xacro:unless>
+        </plugin>
+        </gazebo>
+    </xacro:macro>
+    
+    
+    <link name="world"/>
+        <joint name="virtualFixed" type="fixed">
+        <parent link="world"/>
+        <child link="motor"/>
+    </joint>
+
+  
+  <link name="motor">
+  <inertial>
+    <mass value="1"/>
+    <inertia ixx="100" ixy="0" ixz="0" iyy="100" iyz="0" izz="100" />
+    <origin/>
+  </inertial>
+    <visual>
+      <geometry>
+        <cylinder length="0.6" radius=".2"/>
+      </geometry>
+      <material name="black">
+
+      <color rgba=".1 .1 .1 1"/>
+      </material>
+    </visual>
+  <collision>
+    <origin xyz="0 0 0"/>
+    <geometry>
+      <cylinder length="0.6" radius=".2"/>
+    </geometry>
+    <contact_coefficients mu="0" kp="1000.0" kd="1.0"/>
+  </collision>
+  </link>
+
+  <link name="base">
+  <inertial>
+    <mass value="1"/>
+    <inertia ixx="100" ixy="0" ixz="0" iyy="100" iyz="0" izz="100" />
+    <origin/>
+  </inertial>
+    <visual>
+      <geometry>
+        <box size="0.4 .1 .6"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 -0.15 0"/>
+      <material name="white">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+  <collision>
+      <origin rpy="0 0 0" xyz="0 -0.15 0"/>
+    <geometry>
+        <box size="0.4 .1 .6"/>
+    </geometry>
+    <contact_coefficients mu="0" kp="1000.0" kd="1.0"/>
+  </collision>
+  </link>
+
+  <joint name="motor_to_base" type="fixed">
+    <parent link="motor"/>
+    <child link="base"/>
+    <origin xyz="0 -0.15 0"/>
+  </joint>
+
+
+  <link name="left_finger">
+  <inertial>
+    <mass value="1"/>
+    <inertia ixx="100" ixy="0" ixz="0" iyy="100" iyz="0" izz="100" />
+    <origin/>
+  </inertial>
+    <visual>
+      <geometry>
+        <box size="0.1 .5 .1"/>
+      </geometry>
+      <origin rpy="0 0 -0.7" xyz="-0.4 -0.3 0"/>
+      <material name="white">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+  <collision>
+      <origin rpy="0 0 -0.7" xyz="-0.4 -0.3 0"/>
+    <geometry>
+        <box size="0.1 .5 .1"/>
+    </geometry>
+    <contact_coefficients mu="0" kp="1000.0" kd="1.0"/>
+  </collision>
+  </link>
+
+  <joint name="base_to_left_finger" type="revolute">
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="0.0" upper="0.7" velocity="0.5"/>
+    <parent link="base"/>
+    <child link="left_finger"/>
+    <origin xyz="-0.1 0 0"/>
+  </joint>
+
+  <link name="right_finger">
+  <inertial>
+    <mass value="1"/>
+    <inertia ixx="100" ixy="0" ixz="0" iyy="100" iyz="0" izz="100" />
+    <origin/>
+  </inertial>
+    <visual>
+      <geometry>
+        <box size="0.1 .5 .1"/>
+      </geometry>
+      <origin rpy="0 0 0.7" xyz="0.4 -0.3 0.0"/>
+      <material name="white">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+  <collision>
+      <origin rpy="0 0 0.7" xyz="0.4 -0.3 0.0"/>
+    <geometry>
+        <box size="0.1 .5 .1"/>
+    </geometry>
+    <contact_coefficients mu="0" kp="1000.0" kd="1.0"/>
+  </collision>
+  </link>
+
+  <joint name="base_to_right_finger" type="revolute">
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="-0.7" upper="0.0" velocity="0.5"/>
+    <parent link="base"/>
+    <child link="right_finger"/>
+    <origin xyz=".1 0 0"/>
+    <mimic joint="base_to_left_finger" multiplier="-1" offset="0"/>
+  </joint>
+  
+    <xacro:mimic_joint_plugin_gazebo name_prefix="base_to_right_finger_joint"
+    parent_joint="base_to_left_finger" mimic_joint="base_to_right_finger"
+    has_pid="false" multiplier="-1.0" max_effort="1000.0" />
+
+  
+  <link name="left_fingertip">
+  <inertial>
+    <mass value="1"/>
+    <inertia ixx="100" ixy="0" ixz="0" iyy="100" iyz="0" izz="100" />
+    <origin/>
+  </inertial>
+    <visual>
+      <geometry>
+        <box size="0.1 .4 .1"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 -0.2 0"/>
+      <material name="white">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+  <collision>
+      <origin rpy="0 0 0" xyz="0 -0.2 0"/>
+    <geometry>
+        <box size="0.1 .4 .1"/>
+    </geometry>
+    <contact_coefficients mu="0" kp="1000.0" kd="1.0"/>
+  </collision>
+  </link>
+
+  <joint name="left_finger_to_left_fingertip" type="revolute">
+    <axis xyz="0 0 1"/>
+    <limit effort="1.0" lower="0" upper="0.9" velocity="0.5"/>
+    <parent link="left_finger"/>
+    <child link="left_fingertip"/>
+    <origin xyz="-0.6 -0.5 0"/>
+    <mimic joint="base_to_left_finger" multiplier="0.85" offset="0"/>
+  </joint>
+  
+  <xacro:mimic_joint_plugin_gazebo name_prefix="left_finger_to_left_fingertip_joint"
+    parent_joint="base_to_left_finger" mimic_joint="left_finger_to_left_fingertip"
+    has_pid="false" multiplier="0.85" max_effort="1.0" />
+
+  <link name="right_fingertip">
+  <inertial>
+    <mass value="1"/>
+    <inertia ixx="100" ixy="0" ixz="0" iyy="100" iyz="0" izz="100" />
+    <origin/>
+  </inertial>
+    <visual>
+      <geometry>
+        <box size="0.1 .4 .1"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 -0.2 0"/>
+      <material name="white">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+  <collision>
+      <origin rpy="0 0 0" xyz="0 -0.2 0"/>
+    <geometry>
+        <box size="0.1 .4 .1"/>
+    </geometry>
+    <contact_coefficients mu="0" kp="1000.0" kd="1.0"/>
+  </collision>
+  </link>
+
+  <joint name="right_finger_to_right_fingertip" type="revolute">
+    <axis xyz="0 0 1"/>
+    <limit effort="1.0" lower="-0.9" upper="0.0" velocity="0.5"/>
+    <parent link="right_finger"/>
+    <child link="right_fingertip"/>
+    <origin xyz="0.6 -0.5 0.0"/>
+    <mimic joint="base_to_right_finger" multiplier="0.85" offset="0"/>
+  </joint>
+  
+    <xacro:mimic_joint_plugin_gazebo name_prefix="right_finger_to_right_fingertip_joint"
+    parent_joint="base_to_right_finger" mimic_joint="right_finger_to_right_fingertip"
+    has_pid="false" multiplier="0.85" max_effort="1.0" />
+  
+  
+
+    <gazebo>
+        <plugin name="two_finger_mimic_controller" filename="libRoseePlugin.so">
+        </plugin>
+    </gazebo>
+    
+
+
+</robot>

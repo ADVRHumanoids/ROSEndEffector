@@ -1,0 +1,3 @@
+ROSEndEffector:
+  urdf_path: "urdf/two_finger_mimic.urdf"
+  srdf_path: "srdf/two_finger_mimic.srdf"
