@@ -52,6 +52,11 @@ std::map<std::string, ROSEE::MapActionHandler::ActionPrimitiveMap> ROSEE::MapAct
 ROSEE::ActionPrimitive::Ptr ROSEE::MapActionHandler::getPrimitive(std::string primitiveName, std::set<std::string> key) const {
     
     auto map = getPrimitiveMap(primitiveName);
+    
+    if (map.size() == 0 ) { 
+        return nullptr; //error message already printed in getPrimitiveMap
+    }
+    
     if (map.begin()->second->getKeyForYamlMap().size() != key.size()) {
         std::cerr << "[ERROR MapActionHandler::" << __func__ << "] The action '" 
         << primitiveName << "' has as key a set of dimension " <<
