@@ -178,6 +178,7 @@ target_link_libraries(MapActionHandler
     ActionPrimitive
     ActionGeneric
     ActionTimed
+    YamlWorker
 )
 
 target_link_libraries(RosActionServer
