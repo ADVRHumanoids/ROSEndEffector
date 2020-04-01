@@ -83,7 +83,7 @@ private:
     
     void set_references();
 
-    bool init_grapsing_primitive_subscribers();
+    bool init_grapsing_primitive();
     
     bool init_action_server();
     
