@@ -1,5 +1,12 @@
 <?xml version="1.0"?>
 <robot name="test_ee">
+
+  <link name="world"/>
+    <joint name="virtualFixed" type="fixed">
+    <parent link="world"/>
+    <child link="motor"/>
+  </joint>
+  
   <link name="motor">
   <inertial>
     <mass value="1"/>

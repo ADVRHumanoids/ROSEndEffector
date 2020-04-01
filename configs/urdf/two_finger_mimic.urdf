@@ -216,7 +216,7 @@
     </plugin>
   </gazebo>
   <gazebo>
-    <plugin filename="librosee_plugin.so" name="two_finger_mimic_controller">
+    <plugin filename="libRoseePlugin.so" name="two_finger_mimic_controller">
         </plugin>
   </gazebo>
 </robot>
