@@ -44,7 +44,7 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
 
 
     // prepare joint state publisher
-    std::string jstate_topic_name  = "joint_states";
+    std::string jstate_topic_name  = "joint_commands";
     const int jstate_queue = 10;
 
     _joint_state_pub = _nh.advertise<sensor_msgs::JointState> ( jstate_topic_name, jstate_queue );
