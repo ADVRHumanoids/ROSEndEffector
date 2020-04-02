@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-  <!-- send urdf to parameter server -->
-  <param name="robot_description" command="$(find xacro)/xacro '--inorder' '$(find qb_hand_description)/urdf/qbhand.urdf.xacro'"/>
-  <param name="robot_description_semantic" textfile="$(find ros_end_effector)/configs/srdf/qbhand.srdf" />
-
-    <node type="UniversalFindActions" name="UniversalFindActions" pkg="ros_end_effector" output="screen"/>
-</launch>

@@ -1,42 +1,52 @@
 <?xml version="1.0"?>
 <launch>
-    <arg name="gui" default="true" />
     <arg name="inSlider" default="false" />
     <arg name="gazebo" default="false" />
     <arg name="hand_name"/> 
     
-    <!-- param is need by c++ (universalroseeexec) to take states from gazebo or rviz --> 
-    <param unless="$(arg gazebo)" name = "/rosee/joint_states_topic" value="/ros_end_effector/joint_states" />
+    <!-- this param is need by c++ (universalroseeexec) to take states from gazebo or joint state publisher (which deal with mimic joints) --> 
+    <param unless="$(arg gazebo)" name = "/rosee/joint_states_topic" value="/js_publisher/joint_states" />
     <param if="$(arg gazebo)" name = "/rosee/joint_states_topic" value="/rosee_gazebo_plugin/joint_states" />
     <!-- arg is needed by this launch file itself to run the robot state publisher below -->
-    <arg unless="$(arg gazebo)" name = "joint_states_topic" value="/ros_end_effector/joint_states" />
-    <arg if="$(arg gazebo)" name = "joint_states_topic" value="/rosee_gazebo_plugin/joint_states" />
+    <arg unless="$(arg gazebo)" name = "jointState4robotState" value="/js_publisher/joint_states" />
+    <arg if="$(arg gazebo)" name = "jointState4robotState" value="/rosee_gazebo_plugin/joint_states" />
 
-     <!-- send the test_ee robot XML to param server -->
-     <param name="robot_description" textfile="$(find ros_end_effector)/configs/urdf/$(arg hand_name).urdf"/>
-     <param name="robot_description_semantic" textfile="$(find ros_end_effector)/configs/srdf/$(arg hand_name).srdf" />   
-     <param name="use_gui" value="$(arg gui)"/>
-     <param name="rate" value="100.0"/>
-     <param name="ros_ee_config_path" value="$(find ros_end_effector)/configs/$(arg hand_name).yaml"/>
+    <!-- send the test_ee robot XML to param server -->
+    <param name="robot_description" textfile="$(find ros_end_effector)/configs/urdf/$(arg hand_name).urdf"/>
+    <param name="robot_description_semantic" textfile="$(find ros_end_effector)/configs/srdf/$(arg hand_name).srdf" />
+		<param name="ros_ee_config_path" value="$(find ros_end_effector)/configs/$(arg hand_name).yaml"/>    
+    <param name="rate" value="100.0"/>
+
      
-    <!-- start robot state publisher -->
+    <!-- Joint state publisher is necessary for mimic joint, not used if gazebo is used because there is the gazebo_ros_plugin which handle the mimic -->
+    <node unless="$(arg gazebo)" name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+        <!-- Input -->
+        <rosparam param="source_list">["ros_end_effector/joint_commands"] </rosparam>
+        <!-- Output -->
+        <remap from="joint_states" to="/js_publisher/joint_states" />
+        <param name="use_gui" value="false" />
+    </node>
+     
+    <!-- start robot state publisher to transform joint pos into tf for rviz, so it is always on, gazebo or not -->
     <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" output="screen" >
         <param name="publish_frequency" type="double" value="200.0" />
-        <remap from="joint_states" to="$(arg joint_states_topic)" />
+        <remap from="joint_states" to="$(arg jointState4robotState)" />
     </node> 
     
     <node type="rviz" name="rviz" pkg="rviz" args="-d $(find ros_end_effector)/configs/rviz/$(arg hand_name).rviz" />
         
     <include if="$(arg gazebo)" file="$(find rosee_gazebo_plugins)/launch/gazebo.launch"> 
-    	<arg name="hand_name" value="$(arg hand_name)"/>
+    	  <arg name="hand_name" value="$(arg hand_name)"/>
     </include>
     
     <node unless="$(arg inSlider)" type="UniversalRosEndEffector" name="UniversalRosEndEffector" pkg="ros_end_effector" output="screen"/>
     
+    
+    
     <!-- sliders for control single joints, debug purpose only, without gazebo always-->
     <node if="$(arg inSlider)" name="input_joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
         <remap from="joint_states" to="ros_end_effector/joint_states" />
+        <param name="use_gui" value="true" />
     </node>
 
-    
 </launch>
