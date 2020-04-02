@@ -74,8 +74,8 @@
   <!-- ///////////////////////////////////////   base_link   ////////////////////////////////////////// -->
   <link name="world"/>
   <joint name="world_base" type="fixed">
-    <!-- z!= from 1 is necessary because otherwise the hand has tremors. I think this is because it compentetrate with the
-         terrain ? -->
+    <!-- z!= from 1 is necessary because otherwise the hand has tremors. I think this is because it compentetrate
+     with the terrain ? -->
     <origin rpy="0 0 0" xyz="0 0 0.015"/>
     <parent link="world"/>
     <child link="base_link"/>
@@ -350,6 +350,7 @@
     <axis xyz="0 0 -1"/>
     <limit effort="10" lower="-0.1" upper="0.5" velocity="1"/>
     <dynamics damping="0.003" friction="0.003"/>
+    <mimic joint="LFB1__LFP1_1" multiplier="1" offset="0"/>
   </joint>
   <gazebo>
     <plugin filename="libroboticsgroup_gazebo_mimic_joint_plugin.so" name="LFP1_1__LFP1_3_jointmimic_joint_plugin">
@@ -458,7 +459,7 @@
     <axis xyz="0 0 -1"/>
     <limit effort="10" lower="-0.1" upper="0.5" velocity="1"/>
     <dynamics damping="0.003" friction="0.003"/>
-    <mimic joint="LFB2_1__LFP2_1" multiplier="1" offset="0"/>
+    <mimic joint="LFB2__LFP2_1" multiplier="1" offset="0"/>
   </joint>
   <gazebo>
     <plugin filename="libroboticsgroup_gazebo_mimic_joint_plugin.so" name="LFP2_1__LFP2_2_jointmimic_joint_plugin">

@@ -74,6 +74,8 @@
   <!-- ///////////////////////////////////////   base_link   ////////////////////////////////////////// -->
   <link name="world"/>
   <joint name="world_base" type="fixed">
+    <!-- z!= from 1 is necessary because otherwise the hand has tremors. I think this is because it compentetrate
+     with the terrain ? -->
     <origin rpy="0 0 0" xyz="0 0 0.015"/>
     <parent link="world"/>
     <child link="base_link"/>

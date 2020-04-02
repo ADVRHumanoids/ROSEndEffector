@@ -290,6 +290,7 @@
     <axis xyz="0 0 -1" />
     <limit lower="-0.1" upper="0.5" effort="10" velocity="1" />
     <dynamics damping="0.003" friction="0.003"/>
+    <mimic joint="LFB1__LFP1_1" multiplier="1" offset="0"/>
   </joint>
 
         <xacro:mimic_joint_plugin_gazebo name_prefix="LFP1_1__LFP1_3_joint"
@@ -399,7 +400,7 @@
     <axis xyz="0 0 -1" />
     <limit lower="-0.1" upper="0.5" effort="10" velocity="1"/>
     <dynamics damping="0.003" friction="0.003"/>
-    <mimic joint="LFB2_1__LFP2_1" multiplier="1" offset="0"/>    
+    <mimic joint="LFB2__LFP2_1" multiplier="1" offset="0"/>    
   </joint>
   
           <xacro:mimic_joint_plugin_gazebo name_prefix="LFP2_1__LFP2_2_joint"
@@ -440,7 +441,7 @@
     <axis xyz="0 0 -1" />
     <limit lower="-0.1" upper="0.5" effort="10" velocity="1"/>
     <dynamics damping="0.003" friction="0.003"/>
-    <mimic joint="LFB2__LFP2_1" multiplier="1" offset="0"/>    
+    <mimic joint="LFB2__LFP2_1" multiplier="1" offset="0"/>
   </joint>
   
             <xacro:mimic_joint_plugin_gazebo name_prefix="LFP2_2__LFP2_3_joint"
