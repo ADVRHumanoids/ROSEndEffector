@@ -154,10 +154,17 @@ roslaunch ros_end_effector schunk_startup.launch gui:=true simulation:=true
 **Note** the schunk urdf does not have dynamic params, so at the moment it can be simulated with gazebo 
 
 ##### HERI III
-
+Package is in development, it will be provided soon
 
 ##### QBhand (softHand)
-
+~~~bash
+cd ~/qbhand/src
+git clone --branch production-kinetic https://bitbucket.org/qbrobotics/qbdevice-ros.git
+git clone --branch production-kinetic https://bitbucket.org/qbrobotics/qbhand-ros.git
+#compile
+cd ~/catkin_ws
+catkin_make
+~~~
 
 
 ##### (TODO) Robotic-3f (3 finger hand with two motors (I think) )
