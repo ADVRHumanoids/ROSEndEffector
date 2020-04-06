@@ -153,7 +153,7 @@ roslaunch ros_end_effector schunk_startup.launch gui:=true simulation:=true
 ```
 **Note** the schunk urdf does not have dynamic params, so at the moment it can be simulated with gazebo 
 
-##### HERI III
+##### HERI III & II
 Package is in development, it will be provided soon
 
 ##### QBhand (softHand)
@@ -167,7 +167,7 @@ catkin_make
 ~~~
 
 
-##### (TODO) Robotic-3f (3 finger hand with two motors (I think) )
+##### (To Test) Robotic-3f (3 finger hand with two motors (I think) )
 ```bash
 mkdir ~/robotiq_ws
 cd robotiq_ws
