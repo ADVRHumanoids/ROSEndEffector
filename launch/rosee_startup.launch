@@ -13,8 +13,10 @@
 
     <!-- send the test_ee robot XML to param server -->
     <param name="robot_description" textfile="$(find ros_end_effector)/configs/urdf/$(arg hand_name).urdf"/>
-    <param name="robot_description_semantic" textfile="$(find ros_end_effector)/configs/srdf/$(arg hand_name).srdf" />
-		<param name="ros_ee_config_path" value="$(find ros_end_effector)/configs/$(arg hand_name).yaml"/>    
+    <!-- inSlider is param to only see the hand in rviz with sliders to control each joint, srdf and yaml are 
+    not necessary -->
+    <param unless="$(arg inSlider)" name="robot_description_semantic" textfile="$(find ros_end_effector)/configs/srdf/$(arg hand_name).srdf" />
+		<param unless="$(arg inSlider)" name="ros_ee_config_path" value="$(find ros_end_effector)/configs/$(arg hand_name).yaml"/>   --> 
     <param name="rate" value="100.0"/>
 
      
@@ -45,7 +47,7 @@
     
     <!-- sliders for control single joints, debug purpose only, without gazebo always-->
     <node if="$(arg inSlider)" name="input_joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
-        <remap from="joint_states" to="ros_end_effector/joint_states" />
+        <remap from="joint_states" to="ros_end_effector/joint_commands" />
         <param name="use_gui" value="true" />
     </node>
 
