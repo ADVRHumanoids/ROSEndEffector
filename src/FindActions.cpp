@@ -24,7 +24,8 @@ std::pair <  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinc
     /// EMITTING PART ................
     if (mapOfPinches.size() == 0 ) {  //print if no collision at all
         std::cout << "[FINDACTIONS::" << __func__ << "]: I found no collisions between tips. Are you sure your hand"
-            << " has some fingertips that collide? If yes, check your urdf/srdf, or"
+            << " has some fingertips that can collide? If yes, check your urdf/srdf, or be sure to"
+            << " have set the mesh or some collision geometry for the links, or" 
             << " set a bigger value in N_EXP_COLLISION" << std::endl;
             
     } else {
@@ -237,7 +238,7 @@ std::map<std::set<std::string>, ROSEE::ActionMultiplePinchStrong> ROSEE::FindAct
 /**************************************** PINCHES ***********************************************************************/
 
 std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong > ROSEE::FindActions::checkCollisions () {
-        
+    
     std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong > mapOfPinches;
     
     planning_scene::PlanningScene planning_scene ( parserMoveIt->getRobotModel() );
@@ -300,7 +301,8 @@ std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong > ROS
                 logCollision << std::endl;
                 logCollision << jointPos;
             }
-           // std::cout << logCollision.str() << std::endl;
+            //this print is for debugging purposes
+            //std::cout << logCollision.str() << std::endl;
         }            
     }
     
