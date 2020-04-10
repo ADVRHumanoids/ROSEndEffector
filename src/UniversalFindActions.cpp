@@ -53,6 +53,9 @@ int main ( int argc, char **argv ) {
     unsigned int nFinger = 3;
     std::map < std::string, ROSEE::ActionSingleJointMultipleTips> singleJointMultipleTipsMap = actionsFinder.findSingleJointMultipleTips (nFinger, folderForActions + "/primitives/") ;
     
+    nFinger = 2;
+    std::map < std::string, ROSEE::ActionSingleJointMultipleTips> singleJointMultipleTipsMap2 = actionsFinder.findSingleJointMultipleTips (nFinger, folderForActions + "/primitives/") ;
+    
     auto mulPinch = actionsFinder.findMultiplePinch(3, folderForActions + "/primitives/" );
 
 
