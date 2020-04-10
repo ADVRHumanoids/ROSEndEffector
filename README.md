@@ -157,6 +157,7 @@ roslaunch ros_end_effector schunk_startup.launch gui:=true simulation:=true
 Package is in development, it will be provided soon
 
 ##### QBhand (softHand)
+Install QBhand package:
 ~~~bash
 cd ~/qbhand/src
 git clone --branch production-kinetic https://bitbucket.org/qbrobotics/qbdevice-ros.git
@@ -165,9 +166,11 @@ git clone --branch production-kinetic https://bitbucket.org/qbrobotics/qbhand-ro
 cd ~/catkin_ws
 catkin_make
 ~~~
+Then run findActions and rosee nodes with qbhand as hand_name
 
 
-##### (To Test) Robotic-3f (3 finger hand with two motors (I think) )
+##### Robotiq-3f (3 finger hand with two motors (I think) )
+Install robotiq packages
 ```bash
 mkdir ~/robotiq_ws
 cd robotiq_ws
@@ -187,11 +190,11 @@ source devel/setup.bash
 
 launch the find actions node:
 ```bash
-source ~/ROSEE/devel/setup.bash # or wherever it is
-roslaunch ros_end_effector findActionsRobotiq_3f.launch
+roslaunch ros_end_effector findActions.launch hand_name:=robotiq_3f
 ```
-Still trying to manage to run rviz and joint publisher to move the hand (the model does not load properly in rviz for now). For now, you can move the hand with [moveit assistant](http://docs.ros.org/kinetic/api/moveit_tutorials/html/doc/setup_assistant/setup_assistant_tutorial.html).
-**Note** : I modified a bit the original *urdf* from robotiq. In their file, all joints are actuated. In truth, watching video of how the hand moves, there should be a unique joint that close all the fingers and another one that spread the two fingers on on side of the palm. I do not add "mimicing" of distal phalanges, they are not so linearly coupled.
+then launch the rosee.launch as with other hands, with the right arguments.
+
+**Note** : I modified the original *urdf* from robotiq. In their file, all joints are actuated. In truth, watching video of how the hand moves, there should be a unique joint that close all the fingers and another one that spread the two fingers on on side of the palm. So I add mimic tag for phalanges. I also add friction and damping for joints so the model can be used in gazebo. Other addition are contact coefficent (of tips) and colors. These parameters obviosly can be very different from the real hand.
 
 ---
 
