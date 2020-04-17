@@ -114,7 +114,7 @@ Now you can run the main controller, which will take actions command and will ou
 ~~~ bash
 roslaunch ros_end_effector rosee_startup.launch hand_name:=myHand
 ~~~
-This command will only the kinematic simulation. If you want to simulate with gazebo, add `gazebo:=true` (be sure to have the **rosee_gazebo_plugin** and urdf model set accordingly, see [rosee_gazebo_plugin](https://github.com/ADVRHumanoids/rosee_gazebo_plugins) for details ). 
+This command will only the kinematic simulation. If you want to simulate with gazebo, add `gazebo:=true` (be sure to have the **rosee_gazebo_plugin** and urdf model set accordingly, see [rosee_gazebo_plugin](https://github.com/ADVRHumanoids/rosee_gazebo_plugins/blob/devel/README.md#how-to-run-with-your-model) for details ). 
 
 In another terminal, you can run the gui to easy send the action parsed by the main controller ( [rosee_gui](https://github.com/ADVRHumanoids/rosee_gui) package):
 ~~~ bash
