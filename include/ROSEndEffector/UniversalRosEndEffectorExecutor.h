@@ -35,9 +35,6 @@
 #include <ROSEndEffector/YamlWorker.h>
 #include <ROSEndEffector/RosActionServer.h>
 
-#include <rosee_msg/EEGraspControl.h>
-#include <rosee_msg/EEPinchControl.h>
-
 #include <ROSEndEffector/ActionPrimitive.h>
 #include <ROSEndEffector/ActionComposed.h>
 
@@ -65,17 +62,11 @@ public:
     typedef std::shared_ptr<const UniversalRosEndEffectorExecutor> ConstPtr;
 
     UniversalRosEndEffectorExecutor ( std::string ns = "" );
-    //EEInterface ( const EEInterface& other );
-    //EEInterface& operator= ( const EEInterface& p );
     virtual ~UniversalRosEndEffectorExecutor();
 
     void spin();
 
     void timer_callback ( const ros::TimerEvent& timer_ev );
-
-    void graspCallback ( const rosee_msg::EEGraspControlConstPtr& msg );
-    
-    void pinchCallback ( const rosee_msg::EEPinchControlConstPtr& msg );
 
 private:
 
@@ -88,8 +79,10 @@ private:
     bool init_action_server();
     
     bool init_actionsInfo_services() ;
+    
     bool actionsInfoCallback (rosee_msg::ActionsInfo::Request& request,
         rosee_msg::ActionsInfo::Response& response);
+    
     bool selectablePairInfoCallback( rosee_msg::SelectablePairInfo::Request& request,
                                      rosee_msg::SelectablePairInfo::Response& response);
 
@@ -112,7 +105,6 @@ private:
     std::vector<std::string> _all_joints;
     std::vector<std::string> _joints;
 
-    rosee_msg::EEGraspControl _ctrl_msg;
     ros::Subscriber _sub_grasp, _sub_pinch, _sub_trigger, sub_finger_flextion, sub_tip_flextion;
 
     Eigen::VectorXd _qref, _qref_filtered;

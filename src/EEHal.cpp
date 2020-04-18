@@ -19,8 +19,7 @@
 
 ROSEE::EEHal::EEHal ( ROSEE::EEInterface::Ptr ee_interface ) : _ee_inteface ( ee_interface ) {
 
-    std::vector<std::string> joints;
-    _ee_inteface->getActuatedJoints ( joints );
+    std::vector<std::string> joints = _ee_inteface->getActuatedJoints ();
     for ( auto& j: joints ) {
 
         _joint_postion[j] = 0;

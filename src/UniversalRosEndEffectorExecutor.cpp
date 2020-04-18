@@ -40,8 +40,8 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
     for ( auto& f : _ee->getFingers() ) {
         ROS_INFO_STREAM ( f );
     }
-    _ee->getActuatedJoints ( _all_joints );
-
+    
+    _all_joints =_ee->getActuatedJoints();
 
     // prepare joint state publisher
     std::string jstate_topic_name  = "joint_commands";
@@ -88,76 +88,6 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
     // this should be done by hal?
     init_robotState_sub();
 }
-
-void ROSEE::UniversalRosEndEffectorExecutor::graspCallback ( const rosee_msg::EEGraspControlConstPtr& msg ) {
-
-    ROSEE::JointPos grasp_js = _graspParsed->getJointPos();
-    // get the joints involved bool vector
-    JointsInvolvedCount grasp_joint_involved_mask = _graspParsed->getJointsInvolvedCount();
-     
-    for( auto it : grasp_joint_involved_mask ) {
-        
-        if ( it.second  != 0 ) {
-            int id = -1;
-            _ee->getInternalIdForJoint ( it.first, id );
-            
-            if( id >= 0 ) {
-                // NOTE assume single joint
-                _qref[id] = grasp_js.at ( it.first ).at ( 0 ) * msg->percentage;
-            }
-            else {
-                    ROS_WARN_STREAM ( "Trying to move Joint: " << it.first << " with ID: " << id );
-            }
-
-        }
-        
-    }
-
-}
-
-
-void ROSEE::UniversalRosEndEffectorExecutor::pinchCallback ( const rosee_msg::EEPinchControlConstPtr& msg ) {
-
-    std::vector<int> ids;
-
-    std::set<std::string> pinch_set;
-    pinch_set.insert ( msg->finger_pinch_1 );
-    pinch_set.insert ( msg->finger_pinch_2 );
-
-    if ( _pinchParsedMap.count ( pinch_set ) ) {
-
-        ROSEE::ActionPrimitive::Ptr p = _pinchParsedMap.at ( pinch_set );
-        // NOTE take the best pinch for now
-        ROSEE::JointPos pinch_js = p->getAllJointPos().at ( 0 );
-
-        // get the joints involved bool vector
-        JointsInvolvedCount pinch_joint_involved_mask = p->getJointsInvolvedCount();
-
-        for ( auto it : pinch_joint_involved_mask ) {
-
-            if ( it.second  != 0 ) {
-                int id = -1;
-                _ee->getInternalIdForJoint ( it.first, id );
-                
-                if( id >= 0 ) {
-                    // NOTE assume single joint
-                    _qref[id] = pinch_js.at ( it.first ).at ( 0 ) * msg->percentage;
-                }
-                else {
-                    ROS_WARN_STREAM ( "Trying to move Joint: " << it.first << " with ID: " << id );
-                }
-            }
-        }
-
-    } else {
-        
-        ROS_ERROR_STREAM ( "finger_pinch_1 :" << msg->finger_pinch_1 << 
-                           " and finger_pinch_2 :" << msg->finger_pinch_2 << 
-                           " is not a feasible couple for the Pinch Grasping Action" );
-    }
-
-}
-
 
 bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive() {
 
