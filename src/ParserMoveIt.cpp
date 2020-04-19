@@ -357,22 +357,42 @@ void ROSEE::ParserMoveIt::lookForFingertips() {
             
         } else if (! groupIsChain ( it ) ) { 
             logGroupInfo.append("but it is not a chain \n");
-        } 
         
-        else {
+        } else if (it->getLinkModels().size() == 0) { 
+            logGroupInfo.append("but it has 0 links \n");
+
+        } else {
+
             logGroupInfo.append("with links: \n");
+            
+            std::string theTip = ""; //the last link with a visual geometry
             for (auto itt : it->getLinkModels()) {
                 
                 logGroupInfo.append("\t'" + itt->getName() + "' ");
+                
                 if (itt->getChildJointModels().size() != 0) {
-                    
-                    logGroupInfo.append("not a leaf link (not a fingertip)\n");
+                    logGroupInfo.append("(not a leaf link) ");
+                } else {
+                    logGroupInfo.append("(a leaf link) ");
+                }
+                
+                if (itt->getShapes().size() == 0 ) {
+                    logGroupInfo.append("(no visual geometry) ");
                     
                 } else {
-                    logGroupInfo.append("a leaf link (a fingertip)\n");
-                    fingertipNames.push_back(itt->getName());
+                    theTip = itt->getName();
                 }
-            }            
+                logGroupInfo.append("\n");
+
+            }
+            
+            if (theTip.compare("") == 0) {
+                logGroupInfo.append("Warning: No link has a mesh in this group\n");
+                
+            } else {
+                fingertipNames.push_back(theTip);
+            }
+
         }
         std::cout << logGroupInfo << std::endl;
     }

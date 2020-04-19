@@ -219,8 +219,9 @@ private:
      *  A fingertip is a link with the following conditions:
      *  - It is part of a group (defined in the srdf)
      *  - The group which the tip is part of is a chain (not a tree)
-     *  - It is a "leaf" link, ie it has not children joints/links
-     * @todo Check also if it is unique in the group?
+     *  - It is the last link of the group AND has a mesh or some visual geometry (if not, 
+     *    it is probably a virtual link). If the second condition is not valid, it is taken the 
+     *    last link of the group that has a mesh (so it will not be a "leaf")
      * @warning Only link belonging to a group are explored (and printed), so other links (if present) 
      *  are not considered 
      */

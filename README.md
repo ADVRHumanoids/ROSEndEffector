@@ -30,36 +30,26 @@ This project has received funding from the European Union’s Horizon 2020
 research and innovation programme under grant agreement no. 732287. 
 
 
+## How to Install and Configure ROSEE
 
-# Actions
-## Primitives & Actions Finder Node
-* This node will explore your robot model (i.e. *urdf* and *srdf* files) in order to find some primitive actions (e.g. __pinch__, __trig__ ) that your hand can do. 
-* MoveIt library is used to parse the models and to find collisions (to find the **pinches**)
-* Information about each action are stored in some *yaml* files, that can be parsed afterwards. The main information in the *yaml* files is the necessary position of the joints to perform that action (see some examples [here](configs/actionExamples)).
-* Additional primitive actions can be added, deriving the c++ class or creating directly by hand the *yaml* file.
-
-
-## Custom Actions
-If the actions found are not sufficient, you can create your custom ones as **generic**. This can be done creating a yaml file, or filling the c++ structures with the code. A **composed** action can be also created as a *sum* of others.
-
-There is also the possibility to create **timed** action, that is, an action which will execute other ones sequentially, separating each execution by a time margin.
-
-
-
-## How to Run
-#### Install External Dependencies 
+#### Install External System Dependencies 
 ```bash
 sudo apt-get install ros-kinetic-moveit #moveit
 ```
-#### Install Rosee packages
+#### Install ROS End-Effector package from sources
+
+We are going to use the abreviation ROSEE for the ROS End-Effector from now on:
+
 ```bash
 mkdir ~/ROSEE
 cd ROSEE
 mkdir src
 cd src
+catkin_init_workspace
 ```
-**IMPORTANT** : ROSEE is a in development project. When cloning, be sure to download the branch you really want. Now the newest branch is devel. Note that also the other rosee packages may not have as newest branch the master
-- Necessary dependencies :
+**IMPORTANT** : ROSEE is a project under development. When cloning, be sure to download the branch you really want. Currently the newest features can be found in the devel branch. Note that also the other ROSEEE related packages should be used with the right branch.
+
+- Necessary dependencies:
     ```bash
     git clone -b <branch_you_want> https://github.com/ADVRHumanoids/rosee_msg.git
     ```
@@ -72,25 +62,57 @@ cd src
         ```bash
         git clone -b <branch_you_want> https://github.com/ADVRHumanoids/rosee_gazebo_plugins.git
         ```
-Main Package
+- Core Package
 ```bash
 git clone -b <branch_you_want> https://github.com/ADVRHumanoids/ROSEndEffector
 ```
-Compile
+
+For the compilation:
+
 ```bash
 cd ~/ROSEE
 catkin_make
 ```
 
-### Run with your model
-#### Find Actions (offline phase)
-First thing is to let **UniversalFindActions** explore your model and extract the primitives. First copy your urdf file in config/urdf and srdf in config/srdf (local folders of ROSEE package). The files must have same name e.g. myHand.urdf and myHand.srdf (See below on how to write your srdf file)
+## ROSEE Grasping Actions
+
+#### Grasping Primitives & Actions Finder Node
+* This node will explore your robot model (i.e. *urdf* and *srdf* files) in order to find some grasping primitive actions (e.g. __pinch__, __trig__ ) that your end-effector can do. 
+* MoveIt library is used to parse the models and to find collisions (e.g. to find the **pinches**)
+* Information about each grasping action are stored in some *yaml* files, that can be parsed afterwards. The main information in the *yaml* files is the necessary position of the joints to perform that grasping action (see some examples [here](configs/actionExamples)).
+* Additional grasping primitive actions can be added, deriving the c++ class or creating directly by hand the *yaml* file.
+
+#### Custom Grasping Actions
+
+- Generic Grasping Actions
+If the grasping actions found are not sufficient, you can create your custom ones as **generic**. This can be done creating a yaml file, or filling the C++ structures with the provided API. 
+
+- Composed Grasping Actions
+A **composed** grasping action can be also created as a *sum* of others.
+
+- Timed Grasping Actions
+There is also the possibility to create a **timed** grasping action, that is, an action which will execute other actions sequentially, separating each execution by a time margin.
+
+
+## How to use ROSEE with your End-Effector
+
+### Creating SRDF files
+Both *moveit* and this *ROSEE node* refers to SRDF file to explore your hand. So it is important to provide a compatible SRDF file. 
+The convention used is that each finger is a *group* (from the base of the finger to the tip).
+Even for very complicated hand like schunk hand, this file is easy to create (see the one for the schunk [here](configs/srdf/svh-ROSEE.srdf)). 
+You must simply add a chain for every group. Take care to include in the chain all the joint that move that group (i.e. that finger). The chain can also have a common root.
+If you don't want to create this by hand, you can use the [moveit assistant](http://docs.ros.org/kinetic/api/moveit_tutorials/html/doc/setup_assistant/setup_assistant_tutorial.html), which will help to create SRDF files (among the other things) through a GUI. 
+In the *SRDF* file is also important to set the passive joints: these will be considered not actuated. This is necessary if you do not want to  modify the *URDF* setting these joints as mimic or fixed.
+
+#### Find Grasping Actions (offline phase)
+First thing is to let **UniversalFindActions** explore your model and extract the grasping primitives. First copy your URDF file in config/urdf and srdf in config/srdf (local folders of ROSEE package). The files must have same name e.g. myHand.urdf and myHand.srdf (See above how to write your SRDF file)
+
 ~~~bash
 #Be sure to source the package where the robot mesh are
 roslaunch ros_end_effector findActions.launch hand_name:=myHand
 ~~~
 
-Another method is to create another launch file, filling  filling the two ROS parameters *robot_description* and *robot_description_semantic* with your *urdf* and *srdf* model respectively and calling the node **UniversalFindActions**.
+Another method is to create another launch file, filling  filling the two ROS parameters *robot_description* and *robot_description_semantic* with your *URDF* and *SRDF* model respectively and calling the node **UniversalFindActions**.
 ```xml
 <launch>
   <!-- send urdf to parameter server -->
@@ -107,29 +129,33 @@ Another method is to create another launch file, filling  filling the two ROS pa
 
 The findActions node will generate yaml files in the *config/action/myHand* folder. The same yaml files are also parsed by the same node to test (and print) the correctness. 
 **WARNING** old action *yaml* files will be ovewritten every time you run again the node.
-Also, take care to generate correctly the srdf (see later).
+Also, take care to generate correctly the SRDF (as described above).
 
-#### Online phase
+#### Control your End-Effector with ROSEE (online phase)
+
 Now you can run the main controller, which will take actions command and will output joint positions accordingly.
+
 ~~~ bash
 roslaunch ros_end_effector rosee_startup.launch hand_name:=myHand
 ~~~
-This command will only the kinematic simulation. If you want to simulate with gazebo, add `gazebo:=true` (be sure to have the **rosee_gazebo_plugin** and urdf model set accordingly, see [rosee_gazebo_plugin](https://github.com/ADVRHumanoids/rosee_gazebo_plugins/blob/devel/README.md#how-to-run-with-your-model) for details ). 
 
-In another terminal, you can run the gui to easy send the action parsed by the main controller ( [rosee_gui](https://github.com/ADVRHumanoids/rosee_gui) package):
+This command will only work for the kinematic simulation of your End-Effector. If you want to simulate it with gazebo, add `gazebo:=true` (be sure to have the **rosee_gazebo_plugin** and URDF model set accordingly, see [rosee_gazebo_plugin](https://github.com/ADVRHumanoids/rosee_gazebo_plugins/blob/devel/README.md#how-to-run-with-your-model) for details ). 
+
+In another terminal, you can run the GUI to easy send the action parsed by the main controller ( [rosee_gui](https://github.com/ADVRHumanoids/rosee_gui) package):
 ~~~ bash
 roslaunch rosee_gui gui.launch #no hand name is needed
 ~~~
 
 
-## Examples with tested hands
+## Ready to use examples with tested hands
 Run the described command above with the hand located in urdf folder. At the moment they are:
-- test_ee (a simple 3 fingers model without pinch)
-- two_finger (simple 2 finger model with pinch)
+- test_ee (a simple 3 fingers model without pinch capabilities)
+- two_finger (simple 2 finger model with pinch capabilities)
 - two_finger_mimic
 
-Other more interesting hands need their external packages. These listed here have the urdf and srdf already in config folders, but download the packages is needed for the mesh.
-##### Schunk Hand (very complex hand with lot of dofs)
+Other (more interesting) end-effectors need their external packages. The ones listed below have the URDF and SRDF already in the config folders of the ROSEE, but you will need to download the original packages for the end-effector meshes.
+
+##### Schunk Hand (very complex hand with several DoFs)
 First, install schunk package: (taken from [here](http://wiki.ros.org/schunk_svh_driver), section "2.4 From Source")
 ```bash
 mkdir ~/schunk_ws
@@ -151,7 +177,7 @@ roslaunch ros_end_effector findActionsSchunk.launch
 source devel_isolated/setup.bash
 roslaunch ros_end_effector schunk_startup.launch gui:=true simulation:=true
 ```
-**Note** the schunk urdf does not have dynamic params, so at the moment it can be simulated with gazebo 
+**Note** the schunk URDF does not have dynamic params, so at the moment it can be simulated with gazebo 
 
 ##### HERI III & II
 Package is in development, it will be provided soon
@@ -194,21 +220,11 @@ roslaunch ros_end_effector findActions.launch hand_name:=robotiq_3f
 ```
 then launch the rosee.launch as with other hands, with the right arguments.
 
-**Note** : I modified the original *urdf* from robotiq. In their file, all joints are actuated. In truth, watching video of how the hand moves, there should be a unique joint that close all the fingers and another one that spread the two fingers on on side of the palm. So I add mimic tag for phalanges. I also add friction and damping for joints so the model can be used in gazebo. Other addition are contact coefficent (of tips) and colors. These parameters obviosly can be very different from the real hand.
+**Note** : the original *urdf* from robotiq has been modified. In their file, all joints are actuated. In truth, watching video of how the hand moves, there should be a unique joint that close all the fingers and another one that spread the two fingers on on side of the palm. So mimic tag for phalanges were added. Friction and damping were inserted for the joints so the model can be used in gazebo. Other addition are contact coefficent (of tips) and colors. These parameters obviosly can be very different from the real hand.
 
 ---
 
-## Creating srdf files
-Both *moveit* and this *ROSEE node* refers to srdf file to explore your hand. So it is important to provide a right srdf file. The convention used is that each finger is a *group* (from the base of the finger to the tip).
-Even for very complicated hand like schunk hand, this file is easy to create (see the one for the schunk [here](configs/srdf/svh-ROSEE.srdf)). 
-You must simply add a chain for every group. Take care to include in the chain all the joint that move that group (i.e. that finger). The chain can also have a common root.
-If you don't want to create this by hand, you can use the [moveit assistant](http://docs.ros.org/kinetic/api/moveit_tutorials/html/doc/setup_assistant/setup_assistant_tutorial.html), which will help to create srdf files (among the other things) through a GUI. 
-In the *srdf* file is also important to set the passive joints: these will be considered not actuated. This is necessary if you do not want to 
-modify the *urdf* setting these joints as mimic or fixed.
-
----
-
-## How to check if things are good with google tests
+## How to run ROSEE with google tests
 - Compile:
     ```bash
     cd <ROSEE_pkg_path>/build
