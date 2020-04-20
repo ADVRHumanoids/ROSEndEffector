@@ -1,0 +1,43 @@
+<?xml version="1.0" ?>
+<!--This does not replace URDF, and is not an extension of URDF.
+    This is a format for representing semantic information about the robot structure.
+    A URDF file must exist for this robot as well, where the joints and the links that are referenced are defined
+-->
+<robot name="shadowhand_motor">
+    <!--GROUPS: Representation of a set of joints and links. This can be useful for specifying DOF to plan for, defining arms, end effectors, etc-->
+    <!--LINKS: When a link is specified, the parent joint of that link (if it exists) is automatically included-->
+    <!--JOINTS: When a joint is specified, the child link of that joint (which will always exist) is automatically included-->
+    <!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group-->
+    <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
+    
+    <!-- NOTE: in this hand, the last link of each finger (called "**_*tip") is a non-link: it has not the mesh, it has 
+    0 inertial parameters. So the true tip are the "**_*distal" link. Without the meshes, the findactions cant find collisions,
+    so no pinches will be found -->
+    <group name="thumb">
+        <chain base_link="rh_palm" tip_link="rh_thtip"/>
+    </group>
+    <group name="index">
+        <chain base_link="rh_palm" tip_link="rh_fftip"/>
+    </group>
+    <group name="middle">
+        <chain base_link="rh_palm" tip_link="rh_mftip"/>
+    </group>
+    <group name="ring">
+        <chain base_link="rh_palm" tip_link="rh_rftip"/>
+    </group>
+    
+    <group name="end_effector_fingers">
+      <group name="thumb" />
+      <group name="index" />
+      <group name="middle" />
+      <group name="ring" />
+   </group>
+   
+   <end_effector name="shadow_lite_end_effector" parent_link="rh_forearm" group="end_effector_fingers"/>
+    
+    <passive_joint name="rh_FFJ1" />
+    <passive_joint name="rh_MFJ1" />
+    <passive_joint name="rh_RFJ1" />
+    <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
+    <virtual_joint name="virtualJointWorld" type="fixed" parent_frame="world" child_link="rh_forearm" />
+</robot>
