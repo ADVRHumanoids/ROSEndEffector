@@ -264,6 +264,7 @@ std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong > ROS
         std::stringstream logCollision;
         collision_result.clear();
         kinematic_state.setToRandomPositions();
+        setToDefaultPositionPassiveJoints(&kinematic_state);
         planning_scene.checkSelfCollision(collision_request, collision_result, kinematic_state, acm);
         
         if (collision_result.collision) { 
@@ -317,6 +318,7 @@ void ROSEE::FindActions::checkDistances (std::map < std::pair <std::string, std:
     for (int i = 0; i < N_EXP_DISTANCES; i++){
         
         kinematic_state.setToRandomPositions();
+        setToDefaultPositionPassiveJoints(&kinematic_state);
 
         //for each pair remaining in notCollidingTips, check if a new min distance is found
         for (auto &mapEl : *mapOfWeakPinches) { 
@@ -447,6 +449,8 @@ void ROSEE::FindActions::checkWhichTipsCollideWithoutBounds (
     for (int i = 0; i < N_EXP_COLLISION; i++){
         collision_result.clear();
         kinematic_state.setToRandomPositions();
+        setToDefaultPositionPassiveJoints(&kinematic_state);
+
         planning_scene.checkSelfCollision(collision_request, collision_result, kinematic_state, acm);
         
         for (auto cont : collision_result.contacts){
@@ -494,6 +498,8 @@ std::map<std::set<std::string>, ROSEE::ActionMultiplePinchStrong> ROSEE::FindAct
         
         collision_result.clear();
         kinematic_state.setToRandomPositions();
+        setToDefaultPositionPassiveJoints(&kinematic_state);
+
         planning_scene.checkSelfCollision(collision_request, collision_result, kinematic_state, acm);
         
         if (collision_result.contacts.size() >= nMinCollision ) { 
@@ -779,5 +785,14 @@ ROSEE::JointsInvolvedCount ROSEE::FindActions::setOnlyDependentJoints(
 
     } 
     return jointsInvolvedCount;    
+}
+
+void ROSEE::FindActions::setToDefaultPositionPassiveJoints(moveit::core::RobotState * kinematic_state) {
+    
+    const double pos = DEFAULT_JOINT_POS; //idk why but setJointPositions want a pointer as 2nd arg
+    for (auto joint : parserMoveIt->getPassiveJointNames()){
+        kinematic_state->setJointPositions(joint, &pos);
+    }
+    
 }
 

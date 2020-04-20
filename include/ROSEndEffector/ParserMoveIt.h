@@ -56,10 +56,18 @@ public:
     std::vector <std::string> getActiveJointNames () const; 
     
     /**
-     * @brief getter for all active (actuated) joints. The analogous moveit function returns also the "passive" ones (defined in srdf)
+     * @brief getter for all active (actuated) joints. The analogous moveit function returns also the "passive" ones (defined in srdf), this one exclude the passive
      * @return vector of pointer of all joints that are actuated
      */
     std::vector <const moveit::core::JointModel*> getActiveJointModels () const;
+    
+    /**
+     * @brief getter for all the passive joints (defined in this way in the srdf file)
+     *  Not all the not-actuated joint are passive (a mimic joint can also be not
+     *  defined as passive in srdf)
+     * @return std::vector <std::string> string with names of all passive joints
+     */
+    std::vector <std::string> getPassiveJointNames () const;
     
     /**
      * @brief getter for descendandsLinksOfJoint. "Descendants" is intended in a slightly different way respect to
@@ -195,6 +203,8 @@ private:
     robot_model::RobotModelPtr robot_model;
     std::vector<std::string> fingertipNames;
     std::vector<std::string> activeJointNames;
+    std::vector<std::string> passiveJointNames;
+    
     std::vector<const moveit::core::JointModel*> activeJointModels;
     std::string robot_description;
     unsigned int nFingers;
@@ -236,7 +246,14 @@ private:
      */
     void lookForActiveJoints();
     
-
+    
+    /** 
+     * @brief This function looks for all passive joints, defined so in the 
+     * srdf file
+     */
+    void lookForPassiveJoints();
+    
+    
     /** 
      * @brief Here, we find for each tip, which are all the joints (active) that can modifies its position
      * It is easier to start from each joint and see which tips has as its descendands, because there is the

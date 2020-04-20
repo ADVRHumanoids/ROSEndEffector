@@ -50,6 +50,7 @@ bool ROSEE::ParserMoveIt::init ( std::string robot_description ) {
     
     lookForFingertips();
     lookForActiveJoints();
+    lookForPassiveJoints();
     lookForDescendants();
     lookJointsTipsCorrelation();
     
@@ -71,6 +72,10 @@ std::vector<std::string> ROSEE::ParserMoveIt::getActiveJointNames() const {
 
 std::vector<const moveit::core::JointModel*> ROSEE::ParserMoveIt::getActiveJointModels() const {
     return activeJointModels;
+}
+
+std::vector<std::string> ROSEE::ParserMoveIt::getPassiveJointNames() const {
+    return passiveJointNames;
 }
 
 std::map <std::string, std::vector < const moveit::core::LinkModel* > >  ROSEE::ParserMoveIt::getDescendantLinksOfJoint() const {
@@ -405,6 +410,15 @@ void ROSEE::ParserMoveIt::lookForActiveJoints() {
         if (! joint->isPassive() ) {
             activeJointNames.push_back(joint->getName());
             activeJointModels.push_back(joint);
+        }
+    }
+}
+
+void ROSEE::ParserMoveIt::lookForPassiveJoints() { 
+    
+    for (auto joint : robot_model->getJointModels() ) { 
+        if ( joint->isPassive() ) {
+            passiveJointNames.push_back(joint->getName());
         }
     }
 }
