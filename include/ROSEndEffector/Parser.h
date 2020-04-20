@@ -74,12 +74,21 @@ namespace ROSEE {
         std::map<std::string, urdf::JointConstSharedPtr> getUrdfJointMap() const;
         
         /**
-         * @brief getter for a description of the End-Effector as a map of finger name, finger joint names
+         * @brief getter for a description of the End-Effector as a map of finger name, finger joint names. There exists another version to get the map as reference: 
+         * \ref getFingerJointMapAsReference
          * 
          * @return std::map<std::string, std::vector<std::string>> a map respresenting an End-Effector with a key representing the finger name 
          * and the values representing a vector of joint names.
          */
         std::map<std::string, std::vector<std::string>> getFingerJointMap() const;
+        
+        /**
+         * @brief getter for the map between the finger kinematic chains and the related  actuated joints, reference version of \ref getFingerJointMap
+         * 
+         * @param finger_joint_map a map between the finger kinematic chains and the related actuated joints
+         * @return void
+         */
+        void getFingerJointMap(std::map<std::string, std::vector<std::string>>& finger_joint_map) const;
         
         /**
          * @brief getter for a description of the End-Effector as a map of joint name, 
@@ -89,6 +98,16 @@ namespace ROSEE {
          * and the value representing the finger which the joint belongs to
          */
         std::map<std::string, std::string> getJointFingerMap() const;
+        
+        /**
+         * @brief getter for a description of the End-Effector as a map of joint name, 
+         * finger name
+         * 
+         * @param joint_finger_map a map between the joint and the related finger kinematic chain
+         * 
+         * @return void
+         */
+        void getJointFingerMap(std::map<std::string, std::string>& joint_finger_map) const;
         
         /**
          * @brief getter for the configure End-Effector name
@@ -181,18 +200,6 @@ namespace ROSEE {
          */
         bool getJointsInFinger(std::string base_link, std::string tip_link, std::string finger_name);
         
-        /**
-        * @brief getter for the map between the finger kinematic chains and the related actuated joints
-        * 
-        * @param finger_joint_map a map between the finger kinematic chains and the related actuated joints
-        * @return void
-        * @todo should this be public?
-        * @todo add a get by reference also for joint_finger_map
-        */
-        void getActuatedJointsMap(std::map<std::string, std::vector<std::string>>& finger_joint_map);
-        
-        
-    
     };
 }
 

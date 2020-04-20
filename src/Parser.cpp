@@ -383,9 +383,14 @@ std::map< std::string, urdf::JointConstSharedPtr > ROSEE::Parser::getUrdfJointMa
     return _urdf_joint_map;
 }
 
-void ROSEE::Parser::getActuatedJointsMap ( std::map< std::string, std::vector< std::string > >& finger_joint_map ) {
+void ROSEE::Parser::getFingerJointMap( std::map< std::string, std::vector< std::string > >& finger_joint_map ) const {
 
     finger_joint_map = _finger_joint_map;
+}
+
+void ROSEE::Parser::getJointFingerMap ( std::map< std::string, std::string >& joint_finger_map ) const {
+
+    joint_finger_map = _joint_finger_map;
 }
 
 std::string ROSEE::Parser::getEndEffectorName() const {
