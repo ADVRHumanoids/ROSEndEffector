@@ -6,11 +6,11 @@
 #include <ROSEndEffector/YamlWorker.h>
 #include <ROSEndEffector/ParserMoveIt.h>
 #include <ROSEndEffector/Action.h>
-#include <ROSEndEffector/ActionPinchStrong.h>
-#include <ROSEndEffector/ActionPinchWeak.h>
+#include <ROSEndEffector/ActionPinchTight.h>
+#include <ROSEndEffector/ActionPinchLoose.h>
 #include <ROSEndEffector/ActionTrig.h>
 #include <ROSEndEffector/ActionSingleJointMultipleTips.h>
-#include <ROSEndEffector/ActionMultiplePinchStrong.h>
+#include <ROSEndEffector/ActionMultiplePinchTight.h>
 
 
 #define N_EXP_COLLISION 5000 //5000 is ok
@@ -37,13 +37,13 @@ public:
     FindActions ( std::shared_ptr < ROSEE::ParserMoveIt > parserMoveit ) ;
     
     /**
-     * @brief Function to look for pinches, both Strong and Weak ones. It fill the maps (returned as pair), but also 
-     * print the infos in two yaml files (one for strong, one for weak) using a \ref YamlWorker
+     * @brief Function to look for pinches, both Tight and Loose ones. It fill the maps (returned as pair), but also 
+     * print the infos in two yaml files (one for tight, one for loose) using a \ref YamlWorker
      * @param path2saveYaml the path where to create/overwrite the yaml files. 
-     * @return a pair of maps. The first is the map of \ref ActionPinchStrong, the second the map of \ref ActionPinchWeak
+     * @return a pair of maps. The first is the map of \ref ActionPinchTight, the second the map of \ref ActionPinchLoose
      */
-    std::pair <  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong >, 
-                 std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak >  > 
+    std::pair <  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchTight >, 
+                 std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchLoose >  > 
                  findPinch ( std::string path2saveYaml );
             
     /**
@@ -53,14 +53,14 @@ public:
      * 
      * @param nFinger (2 < nFinger <= max_finger). The type of the multiple pinch that we want.
      *      The name of the returned action will be based on this param : 
-     *      "MultiplePinchStrong-(nFinger)"
+     *      "MultiplePinchTight-(nFinger)"
      * @param strict true to look only for "strict" multiple pinch, i.e. where all tips collide
      *  with each other (and do not collide in "line") 
      *  See \ref checkCollisionsForMultiplePinch doc for more info.
      * @param path2saveYaml the path where to create/overwrite the yaml files. 
-     * @return map of founded \ref ActionMultiplePinchStrong, 
+     * @return map of founded \ref ActionMultiplePinchTight, 
      */
-    std::map < std::set <std::string>, ROSEE::ActionMultiplePinchStrong > findMultiplePinch (
+    std::map < std::set <std::string>, ROSEE::ActionMultiplePinchTight > findMultiplePinch (
         unsigned int nFinger, std::string path2saveYaml, bool strict = true );
                  
     /**
@@ -82,33 +82,33 @@ private:
     std::shared_ptr < ROSEE::ParserMoveIt > parserMoveIt;
     
     /**
-     * @brief principal function which check for collisions with moveit functions when looking for strong pinches
-     * @return the map of ActionPinchStrong
+     * @brief principal function which check for collisions with moveit functions when looking for tight pinches
+     * @return the map of ActionPinchTight
      * 
      */
-    std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong >  checkCollisions();
+    std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchTight >  checkCollisions();
     
     /**
-     * @brief Principal function which fill the \p mapOfWeakPinches basing on minumun distance between tips
-     * @param mapOfWeakPinches [out] pointer to the mapOfWeakPinches to be filled
+     * @brief Principal function which fill the \p mapOfLoosePinches basing on minumun distance between tips
+     * @param mapOfLoosePinches [out] pointer to the mapOfLoosePinches to be filled
      */
-    void checkDistances (std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak >* mapOfWeakPinches);
+    void checkDistances (std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchLoose >* mapOfLoosePinches);
     
     /**
-     * @brief Function similar to \ref checkCollisions but used for Weak Pinches.
+     * @brief Function similar to \ref checkCollisions but used for Loose Pinches.
      * First, we temporarily remove bounds of joints linked to the non-colliding tips (with \ref removeBoundsOfNotCollidingTips),
      * and we check for collision with this function.
      * If some collision are found, this means that tips movements make them go towards each other, (also with the bounds) but
-     * the joint limits do not permit them to touch. This is a weak pinch. 
-     * If they do not collide even without bounds, this means that they never go towards each other, so this is not a strong neither weak
+     * the joint limits do not permit them to touch. This is a loose pinch. 
+     * If they do not collide even without bounds, this means that they never go towards each other, so this is not a tight neither loose
      * pinch. 
      * We also create new kinematic_model object so we dont modify the original kinematic_model, and we can change the joint limits 
      * of the new copy safely
      * 
-     * @param mapOfWeakPinches [out] map of weak pinches that will be filled with info about these particular actions
+     * @param mapOfLoosePinches [out] map of loose pinches that will be filled with info about these particular actions
      */
     void checkWhichTipsCollideWithoutBounds (
-        std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak >* mapOfWeakPinches);
+        std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchLoose >* mapOfLoosePinches);
     
     /**
      * @brief support function for \ref findMultiplePinch (a pinch done with more than 2 finger).
@@ -132,34 +132,34 @@ private:
      * 
      * @param nFinger (2 < nFinger <= max_finger). The type of the multiple pinch that we want.
      *      The name of the returned action will be based on this param : 
-     *      "MultiplePinchStrong-(nFinger)"
+     *      "MultiplePinchTight-(nFinger)"
      * @param strict true to look only for "strict" multiple pinch. Look this funcion description
      * @return A map with as keys set of size nFinger, and as value an 
-     *      \ref ActionMultiplePinchStrong object
+     *      \ref ActionMultiplePinchTight object
      */
-    std::map <std::set<std::string>, ROSEE::ActionMultiplePinchStrong>
+    std::map <std::set<std::string>, ROSEE::ActionMultiplePinchTight>
         checkCollisionsForMultiplePinch(unsigned int nFinger, bool strict);
 
     /**
-     * @brief Support function to remove the joint limits from the model. This is done when looking for Weak Pinches.
-     * @param mapOfWeakPinches [in] pointer to the map of weak pinches
+     * @brief Support function to remove the joint limits from the model. This is done when looking for Loose Pinches.
+     * @param mapOfLoosePinches [in] pointer to the map of loose pinches
      * @param RobotModelPtr the pointer to the robot model
      */
-    void removeBoundsOfNotCollidingTips ( const std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak >* mapOfWeakPinches, 
+    void removeBoundsOfNotCollidingTips ( const std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchLoose >* mapOfLoosePinches, 
                                           robot_model::RobotModelPtr );
     
     /**
-     * @brief function to "initialize" the map of ActionPinchWeak \p mapOfWeakPinches. 
+     * @brief function to "initialize" the map of ActionPinchLoose \p mapOfLoosePinches. 
      * It is done adding all the tips pairs and then removing 
-     * the pairs that are present in the map of ActionPinchStrong \p mapOfPinches. Note that the values of the map, the \ref ActionPinchWeak
+     * the pairs that are present in the map of ActionPinchTight \p mapOfPinches. Note that the values of the map, the \ref ActionPinchLoose
      * are action with only tips name (so no info right now).
      * 
-     * @param mapOfWeakPinches [out] Pointer to the map of \ref ActionPinchWeak to be initialized
-     * @param mapOfPinches [in] pointer to the map of \ref ActionPinchStrong, already filled before, that is used to erase the get the tips that collide
-     *      and to remove them from the \p mapOfWeakPinches
+     * @param mapOfLoosePinches [out] Pointer to the map of \ref ActionPinchLoose to be initialized
+     * @param mapOfPinches [in] pointer to the map of \ref ActionPinchTight, already filled before, that is used to erase the get the tips that collide
+     *      and to remove them from the \p mapOfLoosePinches
      */
-    void fillNotCollidingTips ( std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak >* mapOfWeakPinches,
-        const std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong >* mapOfPinches );
+    void fillNotCollidingTips ( std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchLoose >* mapOfLoosePinches,
+        const std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchTight >* mapOfPinches );
     
     
    /** 

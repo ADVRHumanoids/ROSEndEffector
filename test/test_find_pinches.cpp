@@ -7,8 +7,8 @@
 #include <ROSEndEffector/FindActions.h>
 #include <ROSEndEffector/ParserMoveIt.h>
 #include <ROSEndEffector/ActionPrimitive.h>
-#include <ROSEndEffector/ActionPinchStrong.h>
-#include <ROSEndEffector/ActionPinchWeak.h>
+#include <ROSEndEffector/ActionPinchTight.h>
+#include <ROSEndEffector/ActionPinchLoose.h>
 
 namespace {
 
@@ -41,22 +41,22 @@ protected:
         auto theTwoMaps = actionsFinder.findPinch(folderForActions + "/primitives/");
 
         pinchMap = theTwoMaps.first;
-        pinchWeakMap = theTwoMaps.second;
+        pinchLooseMap = theTwoMaps.second;
 
         ROSEE::YamlWorker yamlWorker;
 
-        pinchParsedMap = yamlWorker.parseYamlPrimitive(folderForActions + "/primitives/" + "pinchStrong.yaml" );
-        pinchWeakParsedMap = yamlWorker.parseYamlPrimitive(folderForActions + "/primitives/" + "pinchWeak.yaml");
+        pinchParsedMap = yamlWorker.parseYamlPrimitive(folderForActions + "/primitives/" + "pinchTight.yaml" );
+        pinchLooseParsedMap = yamlWorker.parseYamlPrimitive(folderForActions + "/primitives/" + "pinchLoose.yaml");
     }
 
     virtual void TearDown() {
     }
 
-    std::map < std::pair < std::string, std::string >, ROSEE::ActionPinchStrong > pinchMap;
+    std::map < std::pair < std::string, std::string >, ROSEE::ActionPinchTight > pinchMap;
     std::map < std::set < std::string >, std::shared_ptr<ROSEE::ActionPrimitive> > pinchParsedMap;
     
-    std::map < std::pair < std::string, std::string >, ROSEE::ActionPinchWeak > pinchWeakMap;
-    std::map < std::set < std::string >, std::shared_ptr<ROSEE::ActionPrimitive> > pinchWeakParsedMap;
+    std::map < std::pair < std::string, std::string >, ROSEE::ActionPinchLoose > pinchLooseMap;
+    std::map < std::set < std::string >, std::shared_ptr<ROSEE::ActionPrimitive> > pinchLooseParsedMap;
 };
 
 
@@ -102,14 +102,14 @@ TEST_F ( testFindPinches, checkName ) {
     
     for (auto &mapEl: pinchMap ) {
         
-        EXPECT_TRUE (mapEl.second.getName().compare("pinchStrong") == 0);
-        EXPECT_EQ (ROSEE::ActionPrimitive::Type::PinchStrong, mapEl.second.getPrimitiveType() );
+        EXPECT_TRUE (mapEl.second.getName().compare("pinchTight") == 0);
+        EXPECT_EQ (ROSEE::ActionPrimitive::Type::PinchTight, mapEl.second.getPrimitiveType() );
     }
     
     for (auto &mapEl: pinchParsedMap ) {
         
-        EXPECT_TRUE (mapEl.second->getName().compare("pinchStrong") == 0);
-        EXPECT_EQ (ROSEE::ActionPrimitive::Type::PinchStrong, mapEl.second->getPrimitiveType() );
+        EXPECT_TRUE (mapEl.second->getName().compare("pinchTight") == 0);
+        EXPECT_EQ (ROSEE::ActionPrimitive::Type::PinchTight, mapEl.second->getPrimitiveType() );
     }
 }
 
@@ -118,7 +118,7 @@ TEST_F ( testFindPinches, checkOrderStatesInfoSet ) {
     
     for (auto &mapEl: pinchMap ) { 
         
-        std::vector < ROSEE::ActionPinchStrong::StateWithContact> statesInfo = 
+        std::vector < ROSEE::ActionPinchTight::StateWithContact> statesInfo = 
             mapEl.second.getActionStates();
         
         double oldDepth = std::numeric_limits<double>::infinity();
@@ -132,11 +132,11 @@ TEST_F ( testFindPinches, checkOrderStatesInfoSet ) {
     
     for (auto &mapEl: pinchParsedMap ) { 
         
-        std::shared_ptr <ROSEE::ActionPinchStrong> pinchCasted = 
-            std::dynamic_pointer_cast < ROSEE::ActionPinchStrong > (mapEl.second);
+        std::shared_ptr <ROSEE::ActionPinchTight> pinchCasted = 
+            std::dynamic_pointer_cast < ROSEE::ActionPinchTight > (mapEl.second);
             
         ASSERT_FALSE (pinchCasted == nullptr);
-        std::vector < ROSEE::ActionPinchStrong::StateWithContact> statesInfo = 
+        std::vector < ROSEE::ActionPinchTight::StateWithContact> statesInfo = 
             pinchCasted->getActionStates();
         
         double oldDepth = std::numeric_limits<double>::infinity();
@@ -155,8 +155,8 @@ TEST_F ( testFindPinches, checkEmitParse ) {
     
     for (auto &mapEl: pinchParsedMap ) { 
         
-        std::shared_ptr <ROSEE::ActionPinchStrong> pinchCasted = 
-            std::dynamic_pointer_cast < ROSEE::ActionPinchStrong > (mapEl.second);
+        std::shared_ptr <ROSEE::ActionPinchTight> pinchCasted = 
+            std::dynamic_pointer_cast < ROSEE::ActionPinchTight > (mapEl.second);
             
         ASSERT_FALSE (pinchCasted == nullptr);
         ASSERT_EQ (2, mapEl.first.size() );
@@ -229,17 +229,17 @@ TEST_F ( testFindPinches, checkEmitParse ) {
 }
 
 
-////*********************************   WEAK PINCH TESTSSS *********************************************************
-TEST_F ( testFindPinches, checkNumberLinksWeak ) {
+////*********************************   LOOSE PINCH TESTS *********************************************************
+TEST_F ( testFindPinches, checkNumberLinksLoose ) {
     
-    for (auto &mapEl: pinchWeakMap ) {
+    for (auto &mapEl: pinchLooseMap ) {
         
         //being a pair the .first has always dimension 2
         EXPECT_EQ (2, mapEl.second.getFingersInvolved().size() ); //the names inside the action
         EXPECT_EQ (2, mapEl.second.getnFingersInvolved() ); //the int nLinkInvolved member of action
     }
     
-    for (auto &mapEl: pinchWeakParsedMap ) {
+    for (auto &mapEl: pinchLooseParsedMap ) {
         
         EXPECT_EQ (2, mapEl.first.size()); // the key
         EXPECT_EQ (2, mapEl.second->getFingersInvolved().size()); //the names inside the action
@@ -247,9 +247,9 @@ TEST_F ( testFindPinches, checkNumberLinksWeak ) {
     }
 }
 
-TEST_F ( testFindPinches, checkSizeStatesInfoSetWeak ) {
+TEST_F ( testFindPinches, checkSizeStatesInfoSetLoose ) {
     
-    for (auto &mapEl: pinchWeakMap ) {
+    for (auto &mapEl: pinchLooseMap ) {
         
         //get the member which is set in costructor
         unsigned int size = mapEl.second.getMaxStoredActionStates(); 
@@ -259,7 +259,7 @@ TEST_F ( testFindPinches, checkSizeStatesInfoSetWeak ) {
         EXPECT_EQ ( size, mapEl.second.getAllJointPos().size() );
     }
     
-    for (auto &mapEl: pinchWeakParsedMap ) {
+    for (auto &mapEl: pinchLooseParsedMap ) {
         
         //get the member which is set in costructor
         unsigned int size = mapEl.second->getMaxStoredActionStates(); 
@@ -268,27 +268,27 @@ TEST_F ( testFindPinches, checkSizeStatesInfoSetWeak ) {
     }
 }
 
-TEST_F ( testFindPinches, checkNameWeak ) {
+TEST_F ( testFindPinches, checkNameLoose ) {
     
-    for (auto &mapEl: pinchWeakMap ) {
+    for (auto &mapEl: pinchLooseMap ) {
         
-        EXPECT_TRUE (mapEl.second.getName().compare("pinchWeak") == 0);
-        EXPECT_EQ (ROSEE::ActionPrimitive::Type::PinchWeak, mapEl.second.getPrimitiveType() );
+        EXPECT_TRUE (mapEl.second.getName().compare("pinchLoose") == 0);
+        EXPECT_EQ (ROSEE::ActionPrimitive::Type::PinchLoose, mapEl.second.getPrimitiveType() );
     }
     
-    for (auto &mapEl: pinchWeakParsedMap ) {
+    for (auto &mapEl: pinchLooseParsedMap ) {
         
-        EXPECT_TRUE (mapEl.second->getName().compare("pinchWeak") == 0);
-        EXPECT_EQ (ROSEE::ActionPrimitive::Type::PinchWeak, mapEl.second->getPrimitiveType() );
+        EXPECT_TRUE (mapEl.second->getName().compare("pinchLoose") == 0);
+        EXPECT_EQ (ROSEE::ActionPrimitive::Type::PinchLoose, mapEl.second->getPrimitiveType() );
     }
 }
 
 //this is an important test: check if the order of statesInfo in right according to distance
-TEST_F ( testFindPinches, checkOrderStatesInfoSetWeak ) {
+TEST_F ( testFindPinches, checkOrderStatesInfoSetLoose ) {
     
-    for (auto &mapEl: pinchWeakMap ) { 
+    for (auto &mapEl: pinchLooseMap ) { 
         
-        std::vector < ROSEE::ActionPinchWeak::StateWithDistance> statesInfo = 
+        std::vector < ROSEE::ActionPinchLoose::StateWithDistance> statesInfo = 
             mapEl.second.getActionStates();
         
         double oldDist = 0;
@@ -299,14 +299,14 @@ TEST_F ( testFindPinches, checkOrderStatesInfoSetWeak ) {
     }
     
     
-    for (auto &mapEl: pinchWeakParsedMap ) { 
+    for (auto &mapEl: pinchLooseParsedMap ) { 
         
-        std::shared_ptr <ROSEE::ActionPinchWeak> pinchWeakCasted = 
-            std::dynamic_pointer_cast < ROSEE::ActionPinchWeak > (mapEl.second);
+        std::shared_ptr <ROSEE::ActionPinchLoose> pinchLooseCasted = 
+            std::dynamic_pointer_cast < ROSEE::ActionPinchLoose > (mapEl.second);
             
-        ASSERT_FALSE (pinchWeakCasted == nullptr);
-        std::vector < ROSEE::ActionPinchWeak::StateWithDistance> statesInfo = 
-            pinchWeakCasted->getActionStates();
+        ASSERT_FALSE (pinchLooseCasted == nullptr);
+        std::vector < ROSEE::ActionPinchLoose::StateWithDistance> statesInfo = 
+            pinchLooseCasted->getActionStates();
                 
         double oldDist = 0;
         for (auto &setEl : statesInfo) {
@@ -317,14 +317,14 @@ TEST_F ( testFindPinches, checkOrderStatesInfoSetWeak ) {
 }
 
 // to check if the found map is the same map that is emitted in the file and then parsed
-TEST_F ( testFindPinches, checkEmitParseWeak ) {
+TEST_F ( testFindPinches, checkEmitParseLoose ) {
     
-    ASSERT_EQ (pinchWeakMap.size(), pinchWeakParsedMap.size() );
+    ASSERT_EQ (pinchLooseMap.size(), pinchLooseParsedMap.size() );
     
-    for (auto &mapEl: pinchWeakParsedMap ) { 
+    for (auto &mapEl: pinchLooseParsedMap ) { 
         
-        std::shared_ptr <ROSEE::ActionPinchWeak> pinchCasted = 
-            std::dynamic_pointer_cast < ROSEE::ActionPinchWeak > (mapEl.second);
+        std::shared_ptr <ROSEE::ActionPinchLoose> pinchCasted = 
+            std::dynamic_pointer_cast < ROSEE::ActionPinchLoose > (mapEl.second);
             
         ASSERT_FALSE (pinchCasted == nullptr);
         ASSERT_EQ (2, mapEl.first.size() ); // the key set must have dim 2 (the tip pair)
@@ -335,11 +335,11 @@ TEST_F ( testFindPinches, checkEmitParseWeak ) {
         keyPair.second = *it;
                 
         //std::string is ok to compare with _EQ
-        EXPECT_EQ (pinchCasted->getName(), pinchWeakMap.at(keyPair).getName() );
-        EXPECT_EQ (pinchCasted->getnFingersInvolved(), pinchWeakMap.at(keyPair).getnFingersInvolved() );
-        EXPECT_EQ (pinchCasted->getMaxStoredActionStates(), pinchWeakMap.at(keyPair).getMaxStoredActionStates());
-        EXPECT_EQ (pinchCasted->getPrimitiveType(), pinchWeakMap.at(keyPair).getPrimitiveType() );
-        EXPECT_EQ (pinchCasted->getFingersInvolved(), pinchWeakMap.at(keyPair).getFingersInvolved());
+        EXPECT_EQ (pinchCasted->getName(), pinchLooseMap.at(keyPair).getName() );
+        EXPECT_EQ (pinchCasted->getnFingersInvolved(), pinchLooseMap.at(keyPair).getnFingersInvolved() );
+        EXPECT_EQ (pinchCasted->getMaxStoredActionStates(), pinchLooseMap.at(keyPair).getMaxStoredActionStates());
+        EXPECT_EQ (pinchCasted->getPrimitiveType(), pinchLooseMap.at(keyPair).getPrimitiveType() );
+        EXPECT_EQ (pinchCasted->getFingersInvolved(), pinchLooseMap.at(keyPair).getFingersInvolved());
         
         unsigned int i = 0;
         for (auto as: pinchCasted->getActionStates() ) {
@@ -347,16 +347,16 @@ TEST_F ( testFindPinches, checkEmitParseWeak ) {
             //check equality of joint states (as.first)
             for (auto joint : as.first) {
                 ASSERT_EQ ( joint.second.size(), 
-                            pinchWeakMap.at(keyPair).getAllJointPos().at(i).at(joint.first).size() );
+                            pinchLooseMap.at(keyPair).getAllJointPos().at(i).at(joint.first).size() );
                 //loop the eventually multiple joint pos (when dofs > 1)
                 for (int j=0; j<joint.second.size(); ++j){
                     EXPECT_DOUBLE_EQ ( joint.second.at(j),
-                        pinchWeakMap.at(keyPair).getAllJointPos().at(i).at(joint.first).at(j) ); 
+                        pinchLooseMap.at(keyPair).getAllJointPos().at(i).at(joint.first).at(j) ); 
                 }
             }   
             
             //check equality of distance (as.second)
-            EXPECT_DOUBLE_EQ (as.second, pinchWeakMap.at(keyPair).getActionStates().at(i).second);
+            EXPECT_DOUBLE_EQ (as.second, pinchLooseMap.at(keyPair).getActionStates().at(i).second);
             
             i++;
         }
@@ -364,19 +364,19 @@ TEST_F ( testFindPinches, checkEmitParseWeak ) {
 }
 
 
-//A strong pinch cant be a weak pinch and viceversa
+//A tight pinch cant be a loose pinch and viceversa
 //here we check if all entries of one map are not present in the other (and viceversa)
 //we check only the not parsed maps, other tests are done for correctness of parsing (checkEmitParse)
-TEST_F ( testFindPinches, checkStrongWeakExclusion ) {
+TEST_F ( testFindPinches, checkTightLooseExclusion ) {
     
     for (auto mapEl : pinchMap ) {
-        EXPECT_EQ (0, pinchWeakMap.count(mapEl.first)) << mapEl.first.first << ", " << mapEl.first.second 
-            << "  " << " is also present in Weak Pinches" << std::endl;
+        EXPECT_EQ (0, pinchLooseMap.count(mapEl.first)) << mapEl.first.first << ", " << mapEl.first.second 
+            << "  " << " is also present in Loose Pinches" << std::endl;
     }
     
-    for (auto mapEl : pinchWeakMap ) {
+    for (auto mapEl : pinchLooseMap ) {
         EXPECT_EQ (0, pinchMap.count(mapEl.first)) << mapEl.first.first << ", " << mapEl.first.second 
-            << "  " << " is also present in Strong Pinches" << std::endl;
+            << "  " << " is also present in Tight Pinches" << std::endl;
     }
     
 }

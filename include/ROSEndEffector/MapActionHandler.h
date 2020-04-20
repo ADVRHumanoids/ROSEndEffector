@@ -141,8 +141,8 @@ public:
     
     /************************************* Other functions not returning actions themselves *************************/
     std::set<std::string> getFingertipsForPinch ( std::string finger, ROSEE::ActionPrimitive::Type pinchType) const;
-    std::map <std::string, std::set<std::string> > getPinchStrongPairsMap ( ) const;
-    std::map <std::string, std::set<std::string> > getPinchWeakPairsMap ( ) const;
+    std::map <std::string, std::set<std::string> > getPinchTightPairsMap ( ) const;
+    std::map <std::string, std::set<std::string> > getPinchLoosePairsMap ( ) const;
 
 private:
     
@@ -154,8 +154,8 @@ private:
     std::map <std::string, std::shared_ptr<ROSEE::ActionGeneric>> generics;
     std::map <std::string, std::shared_ptr<ROSEE::ActionTimed>> timeds;
     
-    std::map <std::string, std::set<std::string> > pinchStrongPairsMap;
-    std::map <std::string, std::set<std::string> > pinchWeakPairsMap;
+    std::map <std::string, std::set<std::string> > pinchTightPairsMap;
+    std::map <std::string, std::set<std::string> > pinchLoosePairsMap;
 
 
 };

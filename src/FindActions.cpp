@@ -6,18 +6,18 @@ ROSEE::FindActions::FindActions ( std::shared_ptr < ROSEE::ParserMoveIt > parser
 }
 
 
-std::pair <  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong >, 
-             std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak > >
+std::pair <  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchTight >, 
+             std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchLoose > >
              ROSEE::FindActions::findPinch ( std::string path2saveYaml ){
     
-    std::map < std::pair <std::string, std::string> , ActionPinchStrong > mapOfPinches = checkCollisions();
-    std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak > mapOfWeakPinches;
-    fillNotCollidingTips(&mapOfWeakPinches, &mapOfPinches);
+    std::map < std::pair <std::string, std::string> , ActionPinchTight > mapOfPinches = checkCollisions();
+    std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchLoose > mapOfLoosePinches;
+    fillNotCollidingTips(&mapOfLoosePinches, &mapOfPinches);
 
-    checkWhichTipsCollideWithoutBounds ( &mapOfWeakPinches ) ;
+    checkWhichTipsCollideWithoutBounds ( &mapOfLoosePinches ) ;
 
-    if (mapOfWeakPinches.size() != 0 ){
-        checkDistances (&mapOfWeakPinches) ;
+    if (mapOfLoosePinches.size() != 0 ){
+        checkDistances (&mapOfLoosePinches) ;
     }
     
 
@@ -42,11 +42,11 @@ std::pair <  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinc
             mapForWorker.insert (std::make_pair ( keys, pointer ) );                
         }
 
-        yamlWorker.createYamlFile(mapForWorker, "pinchStrong", path2saveYaml);
+        yamlWorker.createYamlFile(mapForWorker, "pinchTight", path2saveYaml);
     }
     
-    if (mapOfWeakPinches.size() == 0 ) { 
-        std::cout << "[FINDACTIONS::" << __func__ << "]: I found no weak pinches. This mean that some error happened or that" <<
+    if (mapOfLoosePinches.size() == 0 ) { 
+        std::cout << "[FINDACTIONS::" << __func__ << "]: I found no loose pinches. This mean that some error happened or that" <<
         " all the tips pairs collide with each other for at least one hand configuration." << std::endl;
         
     } else {
@@ -54,7 +54,7 @@ std::pair <  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinc
         ROSEE::YamlWorker yamlWorker;
         std::map < std::set <std::string> , ActionPrimitive* > mapForWorker;  
         
-        for (auto& it : mapOfWeakPinches) {  // auto& and not auto alone!
+        for (auto& it : mapOfLoosePinches) {  // auto& and not auto alone!
 
             ActionPrimitive* pointer = &(it.second);
             std::set < std::string > keys ;
@@ -63,10 +63,10 @@ std::pair <  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinc
             mapForWorker.insert (std::make_pair ( keys, pointer ) );                
         }
 
-        yamlWorker.createYamlFile(mapForWorker, "pinchWeak", path2saveYaml);
+        yamlWorker.createYamlFile(mapForWorker, "pinchLoose", path2saveYaml);
     }
     
-    return std::make_pair(mapOfPinches, mapOfWeakPinches);
+    return std::make_pair(mapOfPinches, mapOfLoosePinches);
 }
 
 std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::findTrig ( ROSEE::ActionPrimitive::Type actionType,
@@ -202,10 +202,10 @@ std::map <std::string, ROSEE::ActionSingleJointMultipleTips> ROSEE::FindActions:
 }
 
 
-std::map<std::set<std::string>, ROSEE::ActionMultiplePinchStrong> ROSEE::FindActions::findMultiplePinch(unsigned int nFinger, std::string path2saveYaml,
+std::map<std::set<std::string>, ROSEE::ActionMultiplePinchTight> ROSEE::FindActions::findMultiplePinch(unsigned int nFinger, std::string path2saveYaml,
                                                                                                         bool strict ) {
     
-    std::map<std::set<std::string>, ROSEE::ActionMultiplePinchStrong> multiplePinchMap;
+    std::map<std::set<std::string>, ROSEE::ActionMultiplePinchTight> multiplePinchMap;
     if (nFinger < 3 ) {
         std::cerr << "[ERROR " << __func__ << "] for this find pass at least 3 as number " <<
         " of fingertips for the pinch" << std::endl;
@@ -237,9 +237,9 @@ std::map<std::set<std::string>, ROSEE::ActionMultiplePinchStrong> ROSEE::FindAct
 /*********************************** PRIVATE FUNCTIONS ***********************************************************************/
 /**************************************** PINCHES ***********************************************************************/
 
-std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong > ROSEE::FindActions::checkCollisions () {
+std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchTight > ROSEE::FindActions::checkCollisions () {
     
-    std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong > mapOfPinches;
+    std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchTight > mapOfPinches;
     
     planning_scene::PlanningScene planning_scene ( parserMoveIt->getRobotModel() );
     collision_detection::CollisionRequest collision_request;
@@ -285,7 +285,7 @@ std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong > ROS
                 JointsInvolvedCount jointsInvolvedCount = setOnlyDependentJoints(cont.first, &jointPos);
 
                 //create the actionPinch
-                ActionPinchStrong pinch (cont.first, jointPos, cont.second.at(0) );
+                ActionPinchTight pinch (cont.first, jointPos, cont.second.at(0) );
                 pinch.setJointsInvolvedCount ( jointsInvolvedCount );
                 auto itFind = mapOfPinches.find ( cont.first );
                 if ( itFind == mapOfPinches.end() ) {
@@ -310,7 +310,7 @@ std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong > ROS
 }
 
 
-void ROSEE::FindActions::checkDistances (std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak >* mapOfWeakPinches) {
+void ROSEE::FindActions::checkDistances (std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchLoose >* mapOfLoosePinches) {
         
     robot_state::RobotState kinematic_state(parserMoveIt->getRobotModel());
         
@@ -319,18 +319,18 @@ void ROSEE::FindActions::checkDistances (std::map < std::pair <std::string, std:
         kinematic_state.setToRandomPositions();
 
         //for each pair remaining in notCollidingTips, check if a new min distance is found
-        for (auto &mapEl : *mapOfWeakPinches) { 
+        for (auto &mapEl : *mapOfLoosePinches) { 
             
                             // restore all joint pos
-            JointPos jointPosWeak = getConvertedJointPos(&kinematic_state);
+            JointPos jointPosLoose = getConvertedJointPos(&kinematic_state);
             
-            JointsInvolvedCount jointsInvolvedCount = setOnlyDependentJoints(mapEl.first, &jointPosWeak);
+            JointsInvolvedCount jointsInvolvedCount = setOnlyDependentJoints(mapEl.first, &jointPosLoose);
             
             Eigen::Affine3d tip1Trasf = kinematic_state.getGlobalLinkTransform(mapEl.first.first);
             Eigen::Affine3d tip2Trasf = kinematic_state.getGlobalLinkTransform(mapEl.first.second);
             double distance = (tip1Trasf.translation() - tip2Trasf.translation() ) .norm() ;
                                 
-            mapEl.second.insertActionState( jointPosWeak, distance ) ;
+            mapEl.second.insertActionState( jointPosLoose, distance ) ;
             mapEl.second.setJointsInvolvedCount ( jointsInvolvedCount );
         }
     }
@@ -338,10 +338,10 @@ void ROSEE::FindActions::checkDistances (std::map < std::pair <std::string, std:
 
 
 void ROSEE::FindActions::removeBoundsOfNotCollidingTips ( 
-    const std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak >* mapOfWeakPinches,
+    const std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchLoose >* mapOfLoosePinches,
     robot_model::RobotModelPtr kinematic_model_noBound) {
 
-    for (auto mapEl : *mapOfWeakPinches ) {
+    for (auto mapEl : *mapOfLoosePinches ) {
         
         //for each joint of first tip...
         /// C++ Question: WHY if I use directly parser....at() in the for the string joint is corrupted?
@@ -361,7 +361,7 @@ void ROSEE::FindActions::removeBoundsOfNotCollidingTips (
             } else if ( type == moveit::core::JointModel::PRISMATIC ) {
                 // we cant set infinite here... lets double the limits?
                 std::cout << "[WARNING FINDACTIONS::" << __func__ << "] I am doubling the bounds for your prismatic joint " 
-                    << "but I am not sure it is enough to make the tips colliding to find the weak pinches " <<
+                    << "but I am not sure it is enough to make the tips colliding to find the loose pinches " <<
                     std::endl;
                 auto bound = jointModel->getVariableBounds().at(0);
                 bound.max_position_ *= 2;
@@ -374,7 +374,7 @@ void ROSEE::FindActions::removeBoundsOfNotCollidingTips (
                 std::cout << "[FINDACTIONS::" << __func__ << "] Why are you using a type " 
                     << kinematic_model_noBound ->getJointModel(joint)->getType()
                     << " joint? Code not ready to temporarily delete the multiple dof bounds"
-                    << " in the working done to find the weak pinches " << std::endl << std::endl;
+                    << " in the working done to find the loose pinches " << std::endl << std::endl;
                 
                 continue;
             }
@@ -397,7 +397,7 @@ void ROSEE::FindActions::removeBoundsOfNotCollidingTips (
             } else if ( type == moveit::core::JointModel::PRISMATIC ) {
                 // we cant set infinite here... lets double the limits?
                 std::cout << "[WARNING FINDACTIONS::" << __func__ << "] I am doubling the bounds for your prismatic joint " 
-                    << "but I am not sure it is enough to make the tips colliding to find the weak pinches " << std::endl;
+                    << "but I am not sure it is enough to make the tips colliding to find the loose pinches " << std::endl;
                 auto bound = jointModel->getVariableBounds().at(0);
                 bound.max_position_ *= 2;
                 bound.min_position_ *= 2;
@@ -409,7 +409,7 @@ void ROSEE::FindActions::removeBoundsOfNotCollidingTips (
                 std::cout << "[FINDACTIONS::" << __func__ << "] Why are you using a type " 
                     << kinematic_model_noBound ->getJointModel(joint)->getType()
                     << " joint? Code not ready to temporarily delete the multiple dof bounds"
-                    << " in the working done to find the weak pinches " << std::endl << std::endl;
+                    << " in the working done to find the loose pinches " << std::endl << std::endl;
                 
                 continue;
             }
@@ -419,16 +419,16 @@ void ROSEE::FindActions::removeBoundsOfNotCollidingTips (
 
 
 void ROSEE::FindActions::checkWhichTipsCollideWithoutBounds (
-    std::map < std::pair <std::string, std::string>, ROSEE::ActionPinchWeak >* mapOfWeakPinches ) {
+    std::map < std::pair <std::string, std::string>, ROSEE::ActionPinchLoose >* mapOfLoosePinches ) {
     
     robot_model::RobotModelPtr kinematic_model_noBound = parserMoveIt->getCopyModel();
     
-    removeBoundsOfNotCollidingTips (mapOfWeakPinches, kinematic_model_noBound );
+    removeBoundsOfNotCollidingTips (mapOfLoosePinches, kinematic_model_noBound );
 
     collision_detection::AllowedCollisionMatrix acm;
     acm.setEntry(kinematic_model_noBound->getLinkModelNames(), 
                  kinematic_model_noBound->getLinkModelNames(), true); //true == not considered collisions
-    for( auto  it : *mapOfWeakPinches) {
+    for( auto  it : *mapOfLoosePinches) {
         //we want to look for collision only on the pair inside the map
         acm.setEntry(it.first.first, it.first.second, false); //false == considered collisions   
     }
@@ -455,10 +455,10 @@ void ROSEE::FindActions::checkWhichTipsCollideWithoutBounds (
         }
     }
 
-    //erase from weak map the not colliding tips 
-    for (auto mapEl = mapOfWeakPinches->cbegin(); mapEl != mapOfWeakPinches->cend() ; /*no increment*/ ) {
+    //erase from loose map the not colliding tips 
+    for (auto mapEl = mapOfLoosePinches->cbegin(); mapEl != mapOfLoosePinches->cend() ; /*no increment*/ ) {
         if (collidingTips.count(mapEl->first) == 0 ) {
-            mapOfWeakPinches->erase(mapEl++);
+            mapOfLoosePinches->erase(mapEl++);
         } else { 
             ++mapEl;
         }
@@ -466,9 +466,9 @@ void ROSEE::FindActions::checkWhichTipsCollideWithoutBounds (
 }
 
 
-std::map<std::set<std::string>, ROSEE::ActionMultiplePinchStrong> ROSEE::FindActions::checkCollisionsForMultiplePinch(unsigned int nFinger, bool strict) {
+std::map<std::set<std::string>, ROSEE::ActionMultiplePinchTight> ROSEE::FindActions::checkCollisionsForMultiplePinch(unsigned int nFinger, bool strict) {
     
-    std::map < std::set <std::string> , ROSEE::ActionMultiplePinchStrong > mapOfMultPinches;
+    std::map < std::set <std::string> , ROSEE::ActionMultiplePinchTight > mapOfMultPinches;
     
     unsigned int nMinCollision =  strict ? 
             ROSEE::Utils::binomial_coefficent(nFinger, 2) : (nFinger-1);
@@ -517,7 +517,7 @@ std::map<std::set<std::string>, ROSEE::ActionMultiplePinchStrong> ROSEE::FindAct
             JointPos jointPos = getConvertedJointPos(&kinematic_state);
             JointsInvolvedCount jointsInvolvedCount = setOnlyDependentJoints(fingerColliding, &jointPos);
 
-            ActionMultiplePinchStrong pinch (fingerColliding, jointPos, depthSum );
+            ActionMultiplePinchTight pinch (fingerColliding, jointPos, depthSum );
             pinch.setJointsInvolvedCount ( jointsInvolvedCount );
             auto itFind = mapOfMultPinches.find ( fingerColliding );
             if ( itFind == mapOfMultPinches.end() ) {
@@ -684,26 +684,26 @@ ROSEE::JointPos ROSEE::FindActions::getConvertedJointPos(const robot_state::Robo
 
 
 void ROSEE::FindActions::fillNotCollidingTips ( 
-    std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchWeak >* mapOfWeakPinches,
-    const std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchStrong >* mapOfPinches) {
+    std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchLoose >* mapOfLoosePinches,
+    const std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchTight >* mapOfPinches) {
     
-    // first fill mapOfWeakPinches with all pairs ...
+    // first fill mapOfLoosePinches with all pairs ...
     for ( auto tip1 : parserMoveIt->getFingertipNames() )  {
         for ( auto tip2 : parserMoveIt->getFingertipNames() ) { 
             
             // important to put in order in the pair, then in the set thing are autoordered
             if (tip1 < tip2) {
-                mapOfWeakPinches->insert (std::make_pair (std::make_pair (tip1, tip2), ActionPinchWeak(tip1, tip2)));
+                mapOfLoosePinches->insert (std::make_pair (std::make_pair (tip1, tip2), ActionPinchLoose(tip1, tip2)));
                 
             } else if (tip1 > tip2) {
-                mapOfWeakPinches->insert (std::make_pair (std::make_pair (tip2, tip1), ActionPinchWeak(tip2, tip1)));
+                mapOfLoosePinches->insert (std::make_pair (std::make_pair (tip2, tip1), ActionPinchLoose(tip2, tip1)));
             }    
         }
     }  
     
     // ... then remove all the colliding tips
     for (const auto mapEl : *mapOfPinches){
-        mapOfWeakPinches->erase(mapEl.first);
+        mapOfLoosePinches->erase(mapEl.first);
     }
 }
 

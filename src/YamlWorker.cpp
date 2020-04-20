@@ -81,12 +81,12 @@ std::map<std::set<std::string>, ROSEE::ActionPrimitive::Ptr> ROSEE::YamlWorker::
     for(YAML::const_iterator it4Action = node.begin(); it4Action != node.end(); ++it4Action) {
         ActionPrimitive::Ptr ptr;
         switch (actionType) {
-        case ActionPrimitive::Type::PinchStrong: {
-            ptr = std::make_shared <ActionPinchStrong>();
+        case ActionPrimitive::Type::PinchTight: {
+            ptr = std::make_shared <ActionPinchTight>();
             break;
         }
-        case ActionPrimitive::Type::PinchWeak: {
-            ptr = std::make_shared <ActionPinchWeak> ();
+        case ActionPrimitive::Type::PinchLoose: {
+            ptr = std::make_shared <ActionPinchLoose> ();
             break;
         }
         case ActionPrimitive::Type::Trig: {
@@ -105,8 +105,8 @@ std::map<std::set<std::string>, ROSEE::ActionPrimitive::Ptr> ROSEE::YamlWorker::
             ptr = std::make_shared <ActionSingleJointMultipleTips>();
             break;
         }
-        case ActionPrimitive::Type::MultiplePinchStrong: {
-            ptr = std::make_shared <ActionMultiplePinchStrong> ();
+        case ActionPrimitive::Type::MultiplePinchTight: {
+            ptr = std::make_shared <ActionMultiplePinchTight> ();
             break;
         }
 
@@ -154,12 +154,12 @@ std::map < std::set < std::string>, ROSEE::ActionPrimitive::Ptr > ROSEE::YamlWor
         //now use emit of specific action
         ActionPrimitive::Ptr ptr;
         switch (type) {
-        case ActionPrimitive::Type::PinchStrong: {
-            ptr = std::make_shared <ActionPinchStrong>();
+        case ActionPrimitive::Type::PinchTight: {
+            ptr = std::make_shared <ActionPinchTight>();
             break;
         }
-        case ActionPrimitive::Type::PinchWeak: {
-            ptr = std::make_shared <ActionPinchWeak> ();
+        case ActionPrimitive::Type::PinchLoose: {
+            ptr = std::make_shared <ActionPinchLoose> ();
             break;
         }
         case ActionPrimitive::Type::Trig: {
@@ -178,8 +178,8 @@ std::map < std::set < std::string>, ROSEE::ActionPrimitive::Ptr > ROSEE::YamlWor
             ptr = std::make_shared <ActionSingleJointMultipleTips>();
             break;
         }
-        case ActionPrimitive::Type::MultiplePinchStrong: {
-            ptr = std::make_shared <ActionMultiplePinchStrong> ();
+        case ActionPrimitive::Type::MultiplePinchTight: {
+            ptr = std::make_shared <ActionMultiplePinchTight> ();
             break;
         }
 

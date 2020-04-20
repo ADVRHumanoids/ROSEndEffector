@@ -163,12 +163,12 @@ std::vector<ROSEE::ActionPrimitive::Ptr> ROSEE::MapActionHandler::getPrimitive(R
     return getPrimitive(type, keySet);
 }
 
-std::map<std::string, std::set<std::string> > ROSEE::MapActionHandler::getPinchStrongPairsMap() const {
-    return pinchStrongPairsMap;
+std::map<std::string, std::set<std::string> > ROSEE::MapActionHandler::getPinchTightPairsMap() const {
+    return pinchTightPairsMap;
 }
 
-std::map<std::string, std::set<std::string> > ROSEE::MapActionHandler::getPinchWeakPairsMap() const {
-    return pinchWeakPairsMap;
+std::map<std::string, std::set<std::string> > ROSEE::MapActionHandler::getPinchLoosePairsMap() const {
+    return pinchLoosePairsMap;
 }
 
 std::shared_ptr<ROSEE::ActionGeneric> ROSEE::MapActionHandler::getGeneric(std::string name) const {
@@ -257,29 +257,29 @@ std::set<std::string> ROSEE::MapActionHandler::getFingertipsForPinch(std::string
     
     switch (pinchType) {
         
-    case ROSEE::ActionPrimitive::Type::PinchStrong : {
+    case ROSEE::ActionPrimitive::Type::PinchTight : {
         
-        auto it = pinchStrongPairsMap.find(finger);
+        auto it = pinchTightPairsMap.find(finger);
         
-        if ( it != pinchStrongPairsMap.end() ) {
+        if ( it != pinchTightPairsMap.end() ) {
             pairedFinger = it->second;
             
         } else {
-            std::cerr << "[WARNING MapActionHandler " << __func__ << "] No companions found to make a strong pinch with " << finger << " finger" 
+            std::cerr << "[WARNING MapActionHandler " << __func__ << "] No companions found to make a tight pinch with " << finger << " finger" 
             << std::endl;
         }
         break;
     }
     
-    case ROSEE::ActionPrimitive::Type::PinchWeak : {
+    case ROSEE::ActionPrimitive::Type::PinchLoose : {
         
-        auto it = pinchWeakPairsMap.find(finger);
+        auto it = pinchLoosePairsMap.find(finger);
         
-        if ( it != pinchWeakPairsMap.end() ) {
+        if ( it != pinchLoosePairsMap.end() ) {
             pairedFinger = it->second;
             
         } else {
-            std::cerr << "[WARNING MapActionHandler " << __func__ << "] No companions found to make a weak pinch with " << finger << " finger" 
+            std::cerr << "[WARNING MapActionHandler " << __func__ << "] No companions found to make a loose pinch with " << finger << " finger" 
             << std::endl;
         } 
         break;
@@ -366,8 +366,8 @@ bool ROSEE::MapActionHandler::parseAllTimeds(std::string pathFolder) {
 
 void ROSEE::MapActionHandler::findPinchPairsMap() {
     
-    //Assume only one pinch strong, it should be like this now.
-    auto maps = getPrimitiveMap(ROSEE::ActionPrimitive::Type::PinchStrong);
+    //Assume only one pinch tight, it should be like this now.
+    auto maps = getPrimitiveMap(ROSEE::ActionPrimitive::Type::PinchTight);
     
     if (maps.size() != 0 ){
         for (ActionPrimitiveMap map : maps) {
@@ -377,41 +377,41 @@ void ROSEE::MapActionHandler::findPinchPairsMap() {
                     
                     //we will insert all the set as value, this means that also will include the key itself,
                     // we remove the key from the values later
-                    if (pinchStrongPairsMap.count(fing) == 0 ) {
-                        pinchStrongPairsMap.insert(std::make_pair(fing, mapEl.first)); 
+                    if (pinchTightPairsMap.count(fing) == 0 ) {
+                        pinchTightPairsMap.insert(std::make_pair(fing, mapEl.first)); 
                     } else {
-                        pinchStrongPairsMap.at(fing).insert (mapEl.first.begin(), mapEl.first.end());
+                        pinchTightPairsMap.at(fing).insert (mapEl.first.begin(), mapEl.first.end());
                     }
                 }
             }
         }  
         //remove the string key from the values.
-        for (auto it : pinchStrongPairsMap) {
+        for (auto it : pinchTightPairsMap) {
             it.second.erase(it.first);
         }
     }
     
-    //now do the same for the weak pinches
-    auto mapsweak = getPrimitiveMap(ROSEE::ActionPrimitive::Type::PinchWeak);
+    //now do the same for the loose pinches
+    auto mapsloose = getPrimitiveMap(ROSEE::ActionPrimitive::Type::PinchLoose);
     
-    if (mapsweak.size() != 0 ) {
-        for (ActionPrimitiveMap map : mapsweak) {
+    if (mapsloose.size() != 0 ) {
+        for (ActionPrimitiveMap map : mapsloose) {
             for (auto mapEl : map) {
         
                 for (auto fing : mapEl.first) { //.first is a set
                     
                     //we will insert all the set as value, this means that also will include the key itself,
                     // we remove the key from the values later
-                    if (pinchWeakPairsMap.count(fing) == 0 ) {
-                        pinchWeakPairsMap.insert(std::make_pair(fing, mapEl.first)); 
+                    if (pinchLoosePairsMap.count(fing) == 0 ) {
+                        pinchLoosePairsMap.insert(std::make_pair(fing, mapEl.first)); 
                     } else {
-                        pinchWeakPairsMap.at(fing).insert (mapEl.first.begin(), mapEl.first.end());
+                        pinchLoosePairsMap.at(fing).insert (mapEl.first.begin(), mapEl.first.end());
                     }
                 }
             }
         }
         //remove the string key from the values.
-        for (auto it : pinchWeakPairsMap) {
+        for (auto it : pinchLoosePairsMap) {
             it.second.erase(it.first);
         }
     }

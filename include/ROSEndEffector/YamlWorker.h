@@ -29,11 +29,11 @@
 
 #include <ROSEndEffector/Action.h>
 #include <ROSEndEffector/ActionPrimitive.h>
-#include <ROSEndEffector/ActionPinchStrong.h>
-#include <ROSEndEffector/ActionPinchWeak.h>
+#include <ROSEndEffector/ActionPinchTight.h>
+#include <ROSEndEffector/ActionPinchLoose.h>
 #include <ROSEndEffector/ActionTrig.h>
 #include <ROSEndEffector/ActionSingleJointMultipleTips.h>
-#include <ROSEndEffector/ActionMultiplePinchStrong.h>
+#include <ROSEndEffector/ActionMultiplePinchTight.h>
 
 #include <ROSEndEffector/ActionComposed.h>
 #include <ROSEndEffector/ActionTimed.h>

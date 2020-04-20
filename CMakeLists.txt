@@ -89,14 +89,14 @@ add_library(ActionPrimitive
     src/ActionPrimitive.cpp
 )
 
-add_library(ActionPinchStrong
-    src/ActionPinchStrong.cpp
+add_library(ActionPinchTight
+    src/ActionPinchTight.cpp
 )
 add_library(ActionPinchGeneric
     src/ActionPinchGeneric.cpp
 )
-add_library(ActionPinchWeak
-    src/ActionPinchWeak.cpp
+add_library(ActionPinchLoose
+    src/ActionPinchLoose.cpp
 )
 add_library(ActionTrig
     src/ActionTrig.cpp
@@ -104,8 +104,8 @@ add_library(ActionTrig
 add_library(ActionSingleJointMultipleTips
     src/ActionSingleJointMultipleTips.cpp
 )
-add_library(ActionMultiplePinchStrong
-    src/ActionMultiplePinchStrong.cpp
+add_library(ActionMultiplePinchTight
+    src/ActionMultiplePinchTight.cpp
 )
 add_library(ActionGeneric
     src/ActionGeneric.cpp 
@@ -164,11 +164,11 @@ target_link_libraries(YamlWorker
     yaml-cpp
     Action
     ActionPrimitive
-    ActionPinchStrong
+    ActionPinchTight
     ActionTrig
-    ActionPinchWeak
+    ActionPinchLoose
     ActionSingleJointMultipleTips
-    ActionMultiplePinchStrong
+    ActionMultiplePinchTight
     ActionComposed
     ActionTimed
 )
@@ -186,7 +186,7 @@ target_link_libraries(RosActionServer
 )
 add_dependencies(RosActionServer rosee_msg_generate_messages_cpp)
 
-target_link_libraries(ActionPinchStrong
+target_link_libraries(ActionPinchTight
     ActionPinchGeneric
 )
 
@@ -194,7 +194,7 @@ target_link_libraries(ActionPinchGeneric
     ActionPrimitive
 )
 
-target_link_libraries(ActionPinchWeak
+target_link_libraries(ActionPinchLoose
     ActionPinchGeneric
 )
 
@@ -206,7 +206,7 @@ target_link_libraries(ActionSingleJointMultipleTips
     ActionPrimitive
 )
 
-target_link_libraries(ActionMultiplePinchStrong
+target_link_libraries(ActionMultiplePinchTight
     ActionPinchGeneric
 )
 
@@ -227,11 +227,11 @@ target_link_libraries(FindActions
     ParserMoveIt
     YamlWorker
     Action
-    ActionPinchStrong
+    ActionPinchTight
     ActionTrig
-    ActionPinchWeak
+    ActionPinchLoose
     ActionSingleJointMultipleTips
-    ActionMultiplePinchStrong
+    ActionMultiplePinchTight
 )
 
 target_link_libraries(ParserMoveIt
@@ -248,8 +248,8 @@ target_link_libraries(UniversalFindActions
     Action
     ActionPrimitive
     ActionTrig
-    ActionPinchStrong
-    ActionPinchWeak
+    ActionPinchTight
+    ActionPinchLoose
     ActionSingleJointMultipleTips
     ActionTimed
     ActionGeneric
@@ -317,8 +317,8 @@ if(CATKIN_ENABLE_TESTING)
         target_link_libraries(FindPinches_test ${catkin_LIBRARIES}
                                                  FindActions
                                                  ActionPrimitive
-                                                 ActionPinchStrong
-                                                 ActionPinchWeak)
+                                                 ActionPinchTight
+                                                 ActionPinchLoose)
     endif()
     
     catkin_add_gtest(FindTrigs_test test/test_find_trigs.cpp)
