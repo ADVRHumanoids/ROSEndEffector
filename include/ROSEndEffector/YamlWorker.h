@@ -32,7 +32,7 @@
 #include <ROSEndEffector/ActionPinchStrong.h>
 #include <ROSEndEffector/ActionPinchWeak.h>
 #include <ROSEndEffector/ActionTrig.h>
-#include <ROSEndEffector/ActionMoreTips.h>
+#include <ROSEndEffector/ActionSingleJointMultipleTips.h>
 #include <ROSEndEffector/ActionMultiplePinchStrong.h>
 
 #include <ROSEndEffector/ActionComposed.h>
@@ -89,7 +89,7 @@ public:
     /**
      * 
      */
-    ROSEE::ActionTimed parseYamlTimed ( std::string fileWithPath);
+    std::shared_ptr < ROSEE::ActionTimed > parseYamlTimed ( std::string fileWithPath);
 
     ROSEE::ActionGeneric::Ptr parseYamlGeneric ( std::string fileWithPath );
     

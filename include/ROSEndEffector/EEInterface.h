@@ -48,7 +48,7 @@ namespace ROSEE {
         /**
          * @brief getter for the fingers name in the current End-Effector
          * 
-         * @return bool existing finger names in the End-Effector
+         * @return std::vector<std::string>& existing finger names in the End-Effector
          */
         const std::vector<std::string>& getFingers();
         
@@ -63,9 +63,9 @@ namespace ROSEE {
         /**
          * @brief getter for the actuated joints of the end-effector
          * 
-         * @return void
+         * @return const std::vector< std::string >& the actuated joint in the End-Effector as a vector of String
          */
-        void getActuatedJoints( std::vector<std::string>& actuated_joints );
+        const std::vector<std::string>& getActuatedJoints();
         
         /**
          * @brief getter for the actuated joints of a finger

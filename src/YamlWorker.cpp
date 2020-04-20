@@ -101,8 +101,8 @@ std::map<std::set<std::string>, ROSEE::ActionPrimitive::Ptr> ROSEE::YamlWorker::
             ptr = std::make_shared <ActionTrig>("fingFlex", ActionPrimitive::Type::FingFlex);
             break;
         }
-        case ActionPrimitive::Type::MoreTips: {
-            ptr = std::make_shared <ActionMoreTips>();
+        case ActionPrimitive::Type::SingleJointMultipleTips: {
+            ptr = std::make_shared <ActionSingleJointMultipleTips>();
             break;
         }
         case ActionPrimitive::Type::MultiplePinchStrong: {
@@ -174,8 +174,8 @@ std::map < std::set < std::string>, ROSEE::ActionPrimitive::Ptr > ROSEE::YamlWor
             ptr = std::make_shared <ActionTrig>("fingFlex", ActionPrimitive::Type::FingFlex);
             break;
         }
-        case ActionPrimitive::Type::MoreTips: {
-            ptr = std::make_shared <ActionMoreTips>();
+        case ActionPrimitive::Type::SingleJointMultipleTips: {
+            ptr = std::make_shared <ActionSingleJointMultipleTips>();
             break;
         }
         case ActionPrimitive::Type::MultiplePinchStrong: {
@@ -280,22 +280,23 @@ ROSEE::ActionGeneric::Ptr ROSEE::YamlWorker::parseYamlGeneric(std::string fileWi
 }
 
 
-ROSEE::ActionTimed ROSEE::YamlWorker::parseYamlTimed (std::string fileWithPath){
+std::shared_ptr < ROSEE::ActionTimed > ROSEE::YamlWorker::parseYamlTimed (std::string fileWithPath){
     
-    ROSEE::ActionTimed parsedAction; 
+    std::shared_ptr < ROSEE::ActionTimed > ptrAction; 
 
     //TODO check elsewhere if file exist or not?
     std::ifstream ifile(fileWithPath);
     if (! ifile) {
         std::cout << "[ERROR YAMLPARSER:: " << __func__ << "]: file " << fileWithPath << " not found. "  << std::endl;
-            return parsedAction;
+            return nullptr;
     }
     
     YAML::Node node = YAML::LoadFile(fileWithPath);
     YAML::const_iterator yamlIt = node.begin();
+    ptrAction = std::make_shared <ActionTimed> ();
 
-    parsedAction.fillFromYaml ( yamlIt );
+    ptrAction->fillFromYaml ( yamlIt );
     
-    return parsedAction;
+    return ptrAction;
     
 }

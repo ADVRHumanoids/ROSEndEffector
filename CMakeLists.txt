@@ -12,69 +12,11 @@ find_package(catkin REQUIRED COMPONENTS srdfdom
                                         roscpp
                                         message_generation 
                                         moveit_ros_planning_interface
+                                        rosee_msg
                                         )
                                                                                
 # find_package(matlogger2 REQUIRED)
-
 find_package(Eigen3 REQUIRED)
-
-
-
-## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
-
-
-## Uncomment this if the package has a setup.py. This macro ensures
-## modules and global scripts declared therein get installed
-## See http://ros.org/doc/api/catkin/html/user_guide/setup_dot_py.html
-# catkin_python_setup()
-
-################################################
-## Declare ROS messages, services and actions ##
-################################################
-
-add_message_files(
-DIRECTORY msgs
-FILES
-EEGraspControl.msg
-)
-
-add_message_files(
-DIRECTORY msgs
-FILES
-EEPinchControl.msg
-)
-
-add_message_files(
-DIRECTORY msgs
-FILES
-EETriggerControl.msg
-)
-
-generate_messages(
-DEPENDENCIES
-std_msgs
-)
-
-################################################
-## Declare ROS dynamic reconfigure parameters ##
-################################################
-
-## To declare and build dynamic reconfigure parameters within this
-## package, follow these steps:
-## * In the file package.xml:
-##   * add a build_depend and a exec_depend tag for "dynamic_reconfigure"
-## * In this file (CMakeLists.txt):
-##   * add "dynamic_reconfigure" to
-##     find_package(catkin REQUIRED COMPONENTS ...)
-##   * uncomment the "generate_dynamic_reconfigure_options" section below
-##     and list every .cfg file to be processed
-
-## Generate dynamic reconfigure parameters in the 'cfg' folder
-# generate_dynamic_reconfigure_options(
-#   cfg/DynReconf1.cfg
-#   cfg/DynReconf2.cfg
-# )
 
 ###################################
 ## catkin specific configuration ##
@@ -86,7 +28,7 @@ std_msgs
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
+  INCLUDE_DIRS include
 #  LIBRARIES ros_end_effector
 #  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
@@ -131,6 +73,10 @@ add_library(YamlWorker
     src/YamlWorker.cpp
 )
 
+add_library(RosActionServer
+    src/RosActionServer.cpp
+)
+
 add_library(MapActionHandler
     src/MapActionHandler.cpp
 )
@@ -155,8 +101,8 @@ add_library(ActionPinchWeak
 add_library(ActionTrig
     src/ActionTrig.cpp
 )
-add_library(ActionMoreTips
-    src/ActionMoreTips.cpp
+add_library(ActionSingleJointMultipleTips
+    src/ActionSingleJointMultipleTips.cpp
 )
 add_library(ActionMultiplePinchStrong
     src/ActionMultiplePinchStrong.cpp
@@ -178,8 +124,8 @@ add_library(ActionTimed
 
 add_executable(UniversalRosEndEffector src/UniversalRosEndEffector.cpp)
 add_executable(UniversalFindActions src/UniversalFindActions.cpp)
-add_dependencies(UniversalRosEndEffectorExecutor ros_end_effector_generate_messages_cpp)
-add_dependencies(UniversalFindActions ros_end_effector_generate_messages_cpp)
+# # add_dependencies(UniversalRosEndEffectorExecutor ros_end_effector_generate_messages_cpp)
+# # add_dependencies(UniversalFindActions ros_end_effector_generate_messages_cpp)
 
 
 ## Add cmake target dependencies of the executable
@@ -207,6 +153,7 @@ target_link_libraries(UniversalRosEndEffectorExecutor
     ROSEEInterface
     YamlWorker
     MapActionHandler
+    RosActionServer
     
     # do it automatically
     DummyHal
@@ -220,7 +167,7 @@ target_link_libraries(YamlWorker
     ActionPinchStrong
     ActionTrig
     ActionPinchWeak
-    ActionMoreTips
+    ActionSingleJointMultipleTips
     ActionMultiplePinchStrong
     ActionComposed
     ActionTimed
@@ -231,7 +178,13 @@ target_link_libraries(MapActionHandler
     ActionPrimitive
     ActionGeneric
     ActionTimed
+    YamlWorker
 )
+
+target_link_libraries(RosActionServer
+    ${catkin_LIBRARIES}
+)
+add_dependencies(RosActionServer rosee_msg_generate_messages_cpp)
 
 target_link_libraries(ActionPinchStrong
     ActionPinchGeneric
@@ -249,7 +202,7 @@ target_link_libraries(ActionTrig
     ActionPrimitive
 )
 
-target_link_libraries(ActionMoreTips
+target_link_libraries(ActionSingleJointMultipleTips
     ActionPrimitive
 )
 
@@ -277,7 +230,7 @@ target_link_libraries(FindActions
     ActionPinchStrong
     ActionTrig
     ActionPinchWeak
-    ActionMoreTips
+    ActionSingleJointMultipleTips
     ActionMultiplePinchStrong
 )
 
@@ -297,7 +250,7 @@ target_link_libraries(UniversalFindActions
     ActionTrig
     ActionPinchStrong
     ActionPinchWeak
-    ActionMoreTips
+    ActionSingleJointMultipleTips
     ActionTimed
     ActionGeneric
     MapActionHandler
@@ -327,11 +280,11 @@ target_link_libraries(UniversalFindActions
 # )
 
 ## Mark cpp header files for installation
-# install(DIRECTORY include/${PROJECT_NAME}/
-#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-#   FILES_MATCHING PATTERN "*.h"
-#   PATTERN ".svn" EXCLUDE
-# )
+install(DIRECTORY include/${PROJECT_NAME}/
+    DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+    FILES_MATCHING PATTERN "*.h"
+    PATTERN ".svn" EXCLUDE
+)
 
 install(DIRECTORY launch/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch

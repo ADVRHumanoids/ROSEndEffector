@@ -1,0 +1,40 @@
+<?xml version="1.0" ?>
+<!--This does not replace URDF, and is not an extension of URDF.
+    This is a format for representing semantic information about the robot structure.
+    A URDF file must exist for this robot as well, where the joints and the links that are referenced are defined
+-->
+<robot name="schunk">
+    <!--GROUPS: Representation of a set of joints and links. This can be useful for specifying DOF to plan for, defining arms, end effectors, etc-->
+    <!--LINKS: When a link is specified, the parent joint of that link (if it exists) is automatically included-->
+    <!--JOINTS: When a joint is specified, the child link of that joint (which will always exist) is automatically included-->
+    <!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group-->
+    <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
+    <group name="thumb">
+        <chain base_link="left_hand_e1" tip_link="left_hand_c"/>
+    </group>
+    <group name="index">
+        <chain base_link="left_hand_h" tip_link="left_hand_t"/>
+    </group>
+    <group name="middle">
+        <chain base_link="left_hand_d" tip_link="left_hand_s"/>
+    </group>
+    <group name="ring">
+        <chain base_link="left_hand_e" tip_link="left_hand_r"/>
+    </group>
+    <group name="pinky">
+        <chain base_link="left_hand_e4" tip_link="left_hand_q"/>
+    </group>
+    
+    <group name="end_effector_fingers">
+      <group name="thumb" />
+      <group name="index" />
+      <group name="middle" />
+      <group name="ring" />
+      <group name="pinky" />
+   </group>
+   
+   <end_effector name="schunk_end_effector" parent_link="base_link" group="end_effector_fingers"/>
+    
+    <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
+    <virtual_joint name="virtualJointWorld" type="fixed" parent_frame="world" child_link="base_link" />
+</robot>

@@ -52,11 +52,16 @@ std::map<std::string, ROSEE::MapActionHandler::ActionPrimitiveMap> ROSEE::MapAct
 ROSEE::ActionPrimitive::Ptr ROSEE::MapActionHandler::getPrimitive(std::string primitiveName, std::set<std::string> key) const {
     
     auto map = getPrimitiveMap(primitiveName);
+    
+    if (map.size() == 0 ) { 
+        return nullptr; //error message already printed in getPrimitiveMap
+    }
+    
     if (map.begin()->second->getKeyForYamlMap().size() != key.size()) {
         std::cerr << "[ERROR MapActionHandler::" << __func__ << "] The action '" 
         << primitiveName << "' has as key a set of dimension " <<
         map.begin()->second->getKeyForYamlMap().size() <<
-        " and not dimension of passed 2nd argument" << key.size() << std::endl;
+        " and not dimension of passed 2nd argument " << key.size() << std::endl;
         return nullptr;
     }
     
@@ -115,7 +120,7 @@ std::vector<ROSEE::ActionPrimitive::Ptr> ROSEE::MapActionHandler::getPrimitive(R
     //now we look, among all the themaps (where key size is the same as the passed arg key)
     // for an action that as effectively the wanted key. We can have more than one action
     // with the wanted key because in theMaps vector we have different primitives (altought 
-    // of same type). This is not possible now (because moretips have as key a joint, so
+    // of same type). This is not possible now (because singleJointMultipleTips have as key a joint, so
     // a joint cant move X fingers and ALSO Y fingers) (and multiplePinch action have all 
     // different key set size ( the number of fing used for multpinch). Anyway a vect is
     // returned because we do not know if in future we will have new type of primitives.
@@ -181,30 +186,30 @@ std::map<std::string, std::shared_ptr<ROSEE::ActionGeneric> > ROSEE::MapActionHa
     return generics;
 }
 
-ROSEE::ActionTimed ROSEE::MapActionHandler::getTimed(std::string name) const {
+std::shared_ptr<ROSEE::ActionTimed> ROSEE::MapActionHandler::getTimed(std::string name) const {
     
     auto it = timeds.find(name);
     if (it == timeds.end() ) {
          std::cerr << "[ERROR MapActionHandler " << __func__ << "] No timed function named" << name << std::endl;    
-        return ActionTimed();
+        return nullptr;
     }
     
     return it->second;
 }
 
-std::map<std::string, ROSEE::ActionTimed> ROSEE::MapActionHandler::getAllTimeds() const {
+std::map<std::string, std::shared_ptr<ROSEE::ActionTimed>> ROSEE::MapActionHandler::getAllTimeds() const {
     return timeds;
 }
 
 
-std::map<std::string, ROSEE::ActionPrimitive::Ptr> ROSEE::MapActionHandler::getPrimitiveMoreTipsMap(unsigned int nFingers) const {
+std::map<std::string, ROSEE::ActionPrimitive::Ptr> ROSEE::MapActionHandler::getPrimitiveSingleJointMultipleTipsMap(unsigned int nFingers) const {
     
     std::map<std::string, ROSEE::ActionPrimitive::Ptr> ret;
     
     for (auto it : primitives) {
         
         if (it.second.begin()->second->getPrimitiveType() ==
-            ROSEE::ActionPrimitive::Type::MoreTips && 
+            ROSEE::ActionPrimitive::Type::SingleJointMultipleTips && 
             it.second.begin()->second->getnFingersInvolved() == nFingers){
             
             //copy the map into one similar but with as key a strign and not a set
@@ -218,7 +223,7 @@ std::map<std::string, ROSEE::ActionPrimitive::Ptr> ROSEE::MapActionHandler::getP
     }
     
     if (ret.size() == 0) {
-        std::cerr << "[WARNING MapActionHandler::" << __func__ << "] Not found any moreTips action that moves " << nFingers << " fingers " << std::endl;
+        std::cerr << "[WARNING MapActionHandler::" << __func__ << "] Not found any singleJointMultipleTips action that moves " << nFingers << " fingers " << std::endl;
     }
     
     return ret;
@@ -231,12 +236,12 @@ ROSEE::Action::Ptr ROSEE::MapActionHandler::getGrasp(unsigned int nFingers, std:
         return it->second;
     }
     
-    auto moreTip = getPrimitiveMoreTipsMap(nFingers);
+    auto moreTip = getPrimitiveSingleJointMultipleTipsMap(nFingers);
     if (moreTip.size() == 1) { //if more than 1 I do not know how to choose the one that effectively "grasp"
         return moreTip.begin()->second;
     }
     
-    std::cerr << "[WARNING MapActionHandler::" << __func__ << "] Not found any grasp named " << graspName << " neither a moretips primitive " 
+    std::cerr << "[WARNING MapActionHandler::" << __func__ << "] Not found any grasp named " << graspName << " neither a singleJointMultipleTips primitive " 
         << "that move all fingers with a single joint, you should create one action for grasp before calling parseAllActions/parseAllGenerics()"
         << std::endl;
 
@@ -330,7 +335,8 @@ bool ROSEE::MapActionHandler::parseAllGenerics(std::string pathFolder) {
     YamlWorker yamlWorker;
     for (auto file : filenames) {
         
-        std::shared_ptr<ROSEE::ActionGeneric> genericPointer = yamlWorker.parseYamlGeneric(pathFolder+file);
+        ROSEE::ActionGeneric::Ptr genericPointer =
+            yamlWorker.parseYamlGeneric(pathFolder+file);
         generics.insert (std::make_pair( genericPointer->getName(), genericPointer) ) ;
     }
     
@@ -346,13 +352,11 @@ bool ROSEE::MapActionHandler::parseAllTimeds(std::string pathFolder) {
     YamlWorker yamlWorker;
     for (auto file : filenames) {
         
-        ROSEE::ActionTimed timed = yamlWorker.parseYamlTimed(pathFolder+file);
-        timeds.insert (std::make_pair( timed.getName(), timed) ) ;
+        std::shared_ptr < ROSEE::ActionTimed > timed = yamlWorker.parseYamlTimed(pathFolder+file);
+        timeds.insert (std::make_pair( timed->getName(), timed) ) ;
     }
     
-    
     return true;
-    
 }
 
 

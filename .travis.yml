@@ -10,6 +10,7 @@ notifications:
     on_failure: always
 
 before_install:
+
 script: 
 
 # install ros
@@ -34,7 +35,20 @@ script:
 - pwd
 - source /opt/ros/kinetic/setup.bash
 
-#Build
+
+# rosee_msgs from sources
+- wget https://github.com/ADVRHumanoids/rosee_msg/archive/v0.1.2.tar.gz
+- tar -xvf v0.1.2.tar.gz && cd rosee_msg-0.1.2/
+- mkdir build && cd build
+# workaround for installing ROS catkin package without catkin_workspace
+- cmake .. -DCMAKE_INSTALL_PREFIX:=/opt/ros/kinetic
+- sudo chmod -R 777 /opt/ros/kinetic
+- make install
+
+# going back to working directory
+- cd ../../
+
+#Build ROSEE
 - mkdir -p build
 - cd build
 - cmake .. -DBUILD_documentation=ON
@@ -42,17 +56,17 @@ script:
 - make dox
 
 #tests
-- roscore & #before the make soo it has time to setup and travis does not give error
+- roscore & #before the make so it has time to setup and travis does not give error
 - make tests
 - source devel/setup.bash
 #test with test_ee hand
 - rosparam set -t $(rospack find ros_end_effector)/configs/urdf/test_ee.urdf robot_description
 - rosparam set -t $(rospack find ros_end_effector)/configs/srdf/test_ee.srdf robot_description_semantic
-- make test ARGS="-V"
+- make test ARGS="-V" -i
 #test with 2_finger hand
 - rosparam set -t $(rospack find ros_end_effector)/configs/urdf/two_finger.urdf robot_description
 - rosparam set -t $(rospack find ros_end_effector)/configs/srdf/two_finger.srdf robot_description_semantic
-- make test ARGS="-V"
+- make test ARGS="-V" -i
 # to test with schunk hand we would need to install its package...
 # add other hand test...
 

@@ -1,3 +1,3 @@
 ROSEndEffector:
   urdf_path: "urdf/schunk.urdf"
-  srdf_path: "srdf/svh-ROSEE.srdf"
+  srdf_path: "srdf/schunk.srdf"

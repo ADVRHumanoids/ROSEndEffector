@@ -31,10 +31,11 @@ protected:
         ros::init ( argc, (char**)argv, "testFindTrigs" );
     
         std::shared_ptr <ROSEE::ParserMoveIt> parserMoveIt = std::make_shared <ROSEE::ParserMoveIt> ();
-        parserMoveIt->init ("robot_description") ;
+        //if return false, models are not found and it is useless to continue the test
+        ASSERT_TRUE(parserMoveIt->init ("robot_description")) ;
         ROSEE::FindActions actionsFinder (parserMoveIt);
         
-        std::string folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/tests" + parserMoveIt->getHandName();
+        std::string folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/tests/" + parserMoveIt->getHandName();
 
         
         trigMap.push_back( actionsFinder.findTrig(ROSEE::ActionPrimitive::Type::Trig, folderForActions + "/primitives/") );

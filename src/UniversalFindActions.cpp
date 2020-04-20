@@ -31,7 +31,10 @@ int main ( int argc, char **argv ) {
     ros::init ( argc, argv, "FindActions" );
     
     std::shared_ptr <ROSEE::ParserMoveIt> parserMoveIt = std::make_shared <ROSEE::ParserMoveIt> ();
-    parserMoveIt->init ("robot_description") ;
+    if (! parserMoveIt->init ("robot_description") ) {
+        ROS_ERROR_STREAM ("FAILED parserMoveit Init, stopping execution");
+        return -1;
+    }
     
     std::string folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/" + parserMoveIt->getHandName();
     
@@ -48,7 +51,10 @@ int main ( int argc, char **argv ) {
     std::map <std::string, ROSEE::ActionTrig> fingFlexMap = actionsFinder.findTrig (ROSEE::ActionPrimitive::Type::FingFlex, 
                                                                                     folderForActions + "/primitives/");
     unsigned int nFinger = 3;
-    std::map < std::string, ROSEE::ActionMoreTips> moreTipsMap = actionsFinder.findMoreTips (nFinger, folderForActions + "/primitives/") ;
+    std::map < std::string, ROSEE::ActionSingleJointMultipleTips> singleJointMultipleTipsMap = actionsFinder.findSingleJointMultipleTips (nFinger, folderForActions + "/primitives/") ;
+    
+    nFinger = 2;
+    std::map < std::string, ROSEE::ActionSingleJointMultipleTips> singleJointMultipleTipsMap2 = actionsFinder.findSingleJointMultipleTips (nFinger, folderForActions + "/primitives/") ;
     
     auto mulPinch = actionsFinder.findMultiplePinch(3, folderForActions + "/primitives/" );
 
@@ -80,8 +86,8 @@ int main ( int argc, char **argv ) {
     for (auto &i : mapsHandler.getPrimitiveMap("fingFlex")) {
         i.second->print();
     }
-    std::cout << "PARSED MAP OF MORETIPS FROM YAML FILE:" << std::endl;
-    for (auto &i : mapsHandler.getPrimitiveMap("moreTips_3")) {
+    std::cout << "PARSED MAP OF SINGLEJOINTMULTIPLETIPS FROM YAML FILE:" << std::endl;
+    for (auto &i : mapsHandler.getPrimitiveMap("singleJointMultipleTips_3")) {
         i.second->print();
     }
     std::cout << "DEBUG MULTIPINCH PARSED: " << std::endl;
@@ -111,72 +117,72 @@ int main ( int argc, char **argv ) {
         std::cout << "PARSED COMPOSEd" << std::endl;
         mapsHandler.getGeneric("grasp")->print();
 
-    } else  { //look if we have a single moreTips_MAXFINGER: it is 99% a grasp
+    } else  { //look if we have a single singleJointMultipleTips_MAXFINGER: it is 99% a grasp
         
-        std::cout << "A moretips that move all fingers: " << std::endl;
+        std::cout << "A singleJointMultipleTips that move all fingers: " << std::endl;
 
-        std::map < std::string, ROSEE::ActionMoreTips> moreTipsMap = actionsFinder.findMoreTips (parserMoveIt->getNFingers(), folderForActions + "/primitives/") ;
+        std::map < std::string, ROSEE::ActionSingleJointMultipleTips> singleJointMultipleTipsMap = actionsFinder.findSingleJointMultipleTips (parserMoveIt->getNFingers(), folderForActions + "/primitives/") ;
         
-        if (moreTipsMap.size() == 1) { //if more, we do not know which is the one for grasping
-            std::cout << "No Composed Grasp with trig but I found a MoreTips that probably is a grasp (ie a joint that move all fingers)" << std::endl;
+        if (singleJointMultipleTipsMap.size() == 1) { //if more, we do not know which is the one for grasping
+            std::cout << "No Composed Grasp with trig but I found a SingleJointMultipleTips that probably is a grasp (ie a joint that move all fingers)" << std::endl;
         }
-        std::cout << "PARSED MAP OF moreTips_MAXFINGER FROM YAML FILE:" << std::endl;
-        for (auto &i : mapsHandler.getPrimitiveMap("moreTips_" + std::to_string(parserMoveIt->getNFingers()) )) {
+        std::cout << "PARSED MAP OF singleJointMultipleTips_MAXFINGER FROM YAML FILE:" << std::endl;
+        for (auto &i : mapsHandler.getPrimitiveMap("singleJointMultipleTips_" + std::to_string(parserMoveIt->getNFingers()) )) {
             i.second->print();
         }
-        
-
-        
     }
    
 
     
     /** **************************** SIMPLE ACTION MANUALLY CREATED ***********************************************    */  
 
-    ROSEE::JointPos jp;
+    /** example only doable if maps is not empty */
+    if (maps.first.size() != 0 ) {
+        ROSEE::JointPos jp;
 
-    //for now copy jp of another action
-    jp = ROSEE::operator*(maps.first.begin()->second.getJointPos(), 2);
-    auto jpc = maps.first.begin()->second.getJointsInvolvedCount();
+        //for now copy jp of another action
+        jp = ROSEE::operator*(maps.first.begin()->second.getJointPos(), 2);
+        auto jpc = maps.first.begin()->second.getJointsInvolvedCount();
 
-    ROSEE::ActionGeneric simpleAction("casual", jp, jpc);
-    std::cout << std::endl << "Casual action manually created: " << std::endl;
+        ROSEE::ActionGeneric simpleAction("casual", jp, jpc);
+        std::cout << std::endl << "Casual action manually created: " << std::endl;
 
-    simpleAction.print();
+        simpleAction.print();
+        
+        yamlWorker.createYamlFile( &simpleAction,  folderForActions + "/generics/" );
+
+        mapsHandler.parseAllGenerics (folderForActions + "/generics/"); //NOTE already called before
+
+        std::cout << "The parsed casual: " << std::endl;
+        mapsHandler.getGeneric("casual")->print();
+    }
+
     
-    yamlWorker.createYamlFile( &simpleAction,  folderForActions + "/generics/" );
-
-    mapsHandler.parseAllGenerics (folderForActions + "/generics/"); //NOTE already called before
-
-    std::cout << "The parsed casual: " << std::endl;
-    mapsHandler.getGeneric("casual")->print();
-  
-
+    /** **************************** TIMED ACTION THINGS *********************************************/
     
-    /** **************************** TIMED ACTION THINGS ***********************************************    
-    ROSEE::ActionTimed actionTimed("wide_grasp");
-    std::set<std::string> one;
-    one.insert ("finger_1_joint_1");
-    actionTimed.insertAction( mapsHandler.getPrimitive("moreTips_3").at(one), 0, 0.2, 0, 0.5, "GRASP");
-    one.clear();
-    one.insert("finger_1_joint_1");
-    actionTimed.insertAction( mapsHandler.getPrimitive(ROSEE::ActionPrimitive::Type::MoreTips).at(0).at(one), 0, 0.2, 0, 1, "GRASP2");
-    
-    one.clear();
-    one.insert("finger_2_link_3");
-    one.insert("finger_middle_link_3");    
-    actionTimed.insertAction( mapsHandler.getPrimitive("pinch").at(one), 0, 0.2, 0, 1, "PINCH");
-    actionTimed.insertAction( mapsHandler.getPrimitive("pinch").at(one), 0, 0.2, 0, 0.5, "PINCH2");
+        
+    /** example only doable if maps is not empty */
+    if (mapsHandler.getPrimitive("singleJointMultipleTips_3", "left_hand_Finger_Spread") != nullptr &&
+        mapsHandler.getPrimitive("pinchStrong", std::make_pair("left_hand_c", "left_hand_q")) != nullptr ) {
+        
+        ROSEE::ActionTimed actionTimed ("timed_random");
 
-    actionTimed.print();
-    
-    yamlWorker.createYamlFile ( &actionTimed, folderForActions + "/timeds/" );
-    mapsHandler.parseAllTimeds(folderForActions + "/timeds/");
+        actionTimed.insertAction( mapsHandler.getPrimitive("singleJointMultipleTips_3", "left_hand_Finger_Spread"), 
+                                0, 0.2, 0, 0.5, "SPREAD");
+        
+        actionTimed.insertAction( mapsHandler.getPrimitive("pinchStrong", 
+            std::make_pair("left_hand_c", "left_hand_q")), 0, 0.2, 0, 1, "PINCH");
 
-    std::cout << "The timed action parsed: " << std::endl;
-    mapsHandler.getTimed("wide_grasp").print();
+        actionTimed.print();
+        
+        yamlWorker.createYamlFile ( &actionTimed, folderForActions + "/timeds/" );
+        mapsHandler.parseAllTimeds(folderForActions + "/timeds/");
 
-*/
+        std::cout << "The timed action parsed: " << std::endl;
+        mapsHandler.getTimed("timed_random")->print();
+    }
+
+
     return 0;
     
 }

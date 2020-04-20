@@ -107,9 +107,6 @@ bool ROSEE::EEInterface::getInternalIdsForFinger ( std::string finger_name, std:
 
 }
 
-
-
-
 const std::vector< std::string >& ROSEE::EEInterface::getFingers() {
     
     return _fingers_names;
@@ -120,9 +117,11 @@ bool ROSEE::EEInterface::isFinger ( std::string finger_name ) {
     return ( _ee_description.count(finger_name) > 0 );
 }
 
-void ROSEE::EEInterface::getActuatedJoints ( std::vector< std::string >& actuated_joints ) {
+
+
+const std::vector< std::string >&  ROSEE::EEInterface::getActuatedJoints () {
     
-    actuated_joints = _actuated_joints;
+    return _actuated_joints;
 }
 
 

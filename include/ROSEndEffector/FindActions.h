@@ -9,7 +9,7 @@
 #include <ROSEndEffector/ActionPinchStrong.h>
 #include <ROSEndEffector/ActionPinchWeak.h>
 #include <ROSEndEffector/ActionTrig.h>
-#include <ROSEndEffector/ActionMoreTips.h>
+#include <ROSEndEffector/ActionSingleJointMultipleTips.h>
 #include <ROSEndEffector/ActionMultiplePinchStrong.h>
 
 
@@ -75,7 +75,7 @@ public:
     std::map <std::string, ROSEE::ActionTrig> findTrig (  ROSEE::ActionPrimitive::Type actionType,
         std::string path2saveYaml );
     
-    std::map < std::string, ROSEE::ActionMoreTips> findMoreTips ( unsigned int nFinger, std::string path2saveYaml );
+    std::map < std::string, ROSEE::ActionSingleJointMultipleTips> findSingleJointMultipleTips ( unsigned int nFinger, std::string path2saveYaml );
     
 private:
     
