@@ -242,6 +242,13 @@ private:
      */
     JointPos getConvertedJointPos(const robot_state::RobotState* kinematic_state);
     
+    
+    /**
+     * @brief set to \ref DEFAULT_JOINT_POS all the passive joints (defined so in
+     * the urdf file)
+     */
+    void setToDefaultPositionPassiveJoints(moveit::core::RobotState * kinematic_state);
+
 
 
 
