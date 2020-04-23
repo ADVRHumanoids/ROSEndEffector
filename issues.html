@@ -174,12 +174,28 @@
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">sudo apt install ros-kinetic-joint-state-publisher-gui</span>
 </pre></div>
 </div>
-<p><strong>NOTE</strong> <em>use_gui</em> is not used anymore by us, but this answer can be useful anyway</p>
+<p><strong>NOTE</strong> <em>use_gui</em> is not used anymore by us, but this answer can be useful anyway
+<span class="raw-html"><br /></span>
+<span class="raw-html"><br /></span></p>
 </li>
 <li><p class="first">With the schunk hand, if we move only the middle finger (base phalange)
 toward the hand, a collision between index tip, middle tip and ring tip is detected.
 Easy reproducible with the <a class="reference external" href="http://docs.ros.org/kinetic/api/moveit_tutorials/html/doc/setup_assistant/setup_assistant_tutorial.html">moveit assistant</a>, in the set pose section (when we move the middle finger it finds a collision when visually is not present)
-I dont know if it is a problem of schunk model, moveit, or both.</p>
+I dont know if it is a problem of schunk model, moveit, or both.
+<span class="raw-html"><br /></span>
+<span class="raw-html"><br /></span></p>
+</li>
+<li><p class="first">Rviz does not visualize my model!</p>
+<ul class="simple">
+<li>Be sure to have <code class="code docutils literal notranslate"><span class="pre">source</span> <span class="pre">devel/setup.bash</span></code> the package with robot meshes
+<span class="raw-html"><br /></span>
+<span class="raw-html"><br /></span></li>
+<li>Be sure to have set the right <em>Fixed Frame</em> in Global Options (usually it is called <em>base_something</em>, or <em>world</em>
+if you have set up your <em>urdf</em> file for Gazebo usage.
+<span class="raw-html"><br /></span>
+<span class="raw-html"><br /></span></li>
+<li>Be sure to have added the RobotModel (it should be present in the right menu)</li>
+</ul>
 </li>
 </ul>
 </div>
