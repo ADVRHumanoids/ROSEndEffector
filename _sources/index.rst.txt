@@ -44,6 +44,7 @@ CI powered by Travis CI (.org)
    :caption: Components
    
    actions
+   nodes
    roseeGui
    roseeGazeboPlugin
    
