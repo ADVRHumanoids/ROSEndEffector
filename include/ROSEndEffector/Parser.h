@@ -130,6 +130,10 @@ namespace ROSEE {
          */
         void printEndEffectorFingerJointsMap() const;
         
+                
+        std::string getUrdfString() const;
+        std::string getSrdfString() const;
+        
     private:
         
         ros::NodeHandle _nh;
@@ -199,6 +203,7 @@ namespace ROSEE {
          * @return bool true if the chain is found in the URDF, false otherwise
          */
         bool getJointsInFinger(std::string base_link, std::string tip_link, std::string finger_name);
+
         
     };
 }
