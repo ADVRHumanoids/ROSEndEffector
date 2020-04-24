@@ -16,8 +16,8 @@
  * limitations under the License.
  */
 
-#ifndef __ROSEE_ACTIONPINCHSTRONG_H
-#define __ROSEE_ACTIONPINCHSTRONG_H
+#ifndef __ROSEE_ACTIONPINCHTIGHT_H
+#define __ROSEE_ACTIONPINCHTIGHT_H
 
 #include <ROSEndEffector/ActionPinchGeneric.h>
 #include <moveit/planning_scene/planning_scene.h>
@@ -28,16 +28,16 @@ namespace ROSEE {
 
 /**
  * @brief The action of pinch with two tips. The two tips must collide for some hand 
- * configuration to mark this configuration as a pinchStrong. All the non involved fingers are set in the 
+ * configuration to mark this configuration as a pinchTight. All the non involved fingers are set in the 
  * default state.
- * A pinchStrong is defined by:
+ * A pinchTight is defined by:
  *  - 2 tips ( that are inside \ref fingersInvolved ), so \ref nFingersInvolved == 2 ( members of base class \ref ActionPrimitive )
  *  - JointStates position: where the collision happens (inside \ref actionStates )
  *  - Optional info (inside \ref actionStates ): the contact of moveit. Now only the member depth is used. 
  *    It is used to order the actions in the \ref actionStates set, to have a "quality" measure 
- *    (make sense if \ref maxStoredActionStates > 1 ): the more the depth of compenetration is, the more we say the pinchStrong is good
+ *    (make sense if \ref maxStoredActionStates > 1 ): the more the depth of compenetration is, the more we say the pinchTight is good
  */
-class ActionPinchStrong : public ActionPinchGeneric
+class ActionPinchTight : public ActionPinchGeneric
 {
     
 public:
@@ -45,10 +45,10 @@ public:
     /** @brief A pair to "link" the JointPos with infos about the collision among the two tips */
     typedef std::pair <JointPos, collision_detection::Contact> StateWithContact; 
     
-    ActionPinchStrong();
-    ActionPinchStrong(unsigned int maxStoredActionStates);
-    ActionPinchStrong (std::pair <std::string, std::string>, JointPos, collision_detection::Contact );
-    ActionPinchStrong (std::string finger1, std::string finger2, JointPos, collision_detection::Contact );
+    ActionPinchTight();
+    ActionPinchTight(unsigned int maxStoredActionStates);
+    ActionPinchTight (std::pair <std::string, std::string>, JointPos, collision_detection::Contact );
+    ActionPinchTight (std::string finger1, std::string finger2, JointPos, collision_detection::Contact );
     
     JointPos getJointPos () const override;
     JointPos getJointPos (unsigned int index) const;
@@ -56,10 +56,10 @@ public:
     std::vector < ROSEE::JointPos > getAllJointPos () const override;
     
     /** 
-     * @brief Specific get for the ActionPinchStrong to return the state with contact info 
+     * @brief Specific get for the ActionPinchTight to return the state with contact info 
      * @return The vector (of size \ref maxStoredActionStates) containing all the StateWithContact objects
      */
-    std::vector < ROSEE::ActionPinchStrong::StateWithContact > getActionStates() const;
+    std::vector < ROSEE::ActionPinchTight::StateWithContact > getActionStates() const;
     
     /** 
      * @brief function to insert a single action in the \ref actionStates set of possible action. 
@@ -109,4 +109,4 @@ private:
 
 }
 
-#endif // __ROSEE_ACTIONPINCHSTRONG_H
+#endif // __ROSEE_ACTIONPINCHTIGHT_H

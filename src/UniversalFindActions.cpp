@@ -66,12 +66,12 @@ int main ( int argc, char **argv ) {
 
         
     /******************************* PRINTS OF PARSED PRIMITIVES *********************************************/
-    std::cout << "PARSED MAP OF PINCHESSTRONG FROM YAML FILE:" << std::endl;
-    for (auto &i : mapsHandler.getPrimitiveMap("pinchStrong")) {
+    std::cout << "PARSED MAP OF PINCHESTIGHT FROM YAML FILE:" << std::endl;
+    for (auto &i : mapsHandler.getPrimitiveMap("pinchTight")) {
         i.second->print();
     }    
-    std::cout << "PARSED MAP OF PINCHESWEAK FROM YAML FILE:" << std::endl;
-    for (auto &i : mapsHandler.getPrimitiveMap("pinchWeak")) {
+    std::cout << "PARSED MAP OF PINCHESLOOSE FROM YAML FILE:" << std::endl;
+    for (auto &i : mapsHandler.getPrimitiveMap("pinchLoose")) {
         i.second->print();
     }
     std::cout << "PARSED MAP OF TRIGS FROM YAML FILE:" << std::endl;
@@ -91,7 +91,7 @@ int main ( int argc, char **argv ) {
         i.second->print();
     }
     std::cout << "DEBUG MULTIPINCH PARSED: " << std::endl;
-    for (auto &it : mapsHandler.getPrimitiveMap("multiplePinchStrong_3")) {
+    for (auto &it : mapsHandler.getPrimitiveMap("multiplePinchTight_3")) {
         it.second->print();
     }
     
@@ -163,14 +163,14 @@ int main ( int argc, char **argv ) {
         
     /** example only doable if maps is not empty */
     if (mapsHandler.getPrimitive("singleJointMultipleTips_3", "left_hand_Finger_Spread") != nullptr &&
-        mapsHandler.getPrimitive("pinchStrong", std::make_pair("left_hand_c", "left_hand_q")) != nullptr ) {
+        mapsHandler.getPrimitive("pinchTight", std::make_pair("left_hand_c", "left_hand_q")) != nullptr ) {
         
         ROSEE::ActionTimed actionTimed ("timed_random");
 
         actionTimed.insertAction( mapsHandler.getPrimitive("singleJointMultipleTips_3", "left_hand_Finger_Spread"), 
                                 0, 0.2, 0, 0.5, "SPREAD");
         
-        actionTimed.insertAction( mapsHandler.getPrimitive("pinchStrong", 
+        actionTimed.insertAction( mapsHandler.getPrimitive("pinchTight", 
             std::make_pair("left_hand_c", "left_hand_q")), 0, 0.2, 0, 1, "PINCH");
 
         actionTimed.print();

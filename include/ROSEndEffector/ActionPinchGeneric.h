@@ -25,7 +25,7 @@
 
 namespace ROSEE {
 /**
- * @brief A base virtual class for the PinchStrong and PinchWeak classes. It includes member and method that are
+ * @brief A base virtual class for the PinchTight and PinchLoose classes. It includes member and method that are
  * in common between the two type of pinches. It derives the more generic \ref ActionPrimitive
  */
 class ActionPinchGeneric : public ActionPrimitive

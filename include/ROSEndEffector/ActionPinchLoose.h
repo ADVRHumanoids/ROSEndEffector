@@ -16,8 +16,8 @@
  * limitations under the License.
  */
 
-#ifndef __ROSEE_ACTIONPINCHWEAK_H
-#define __ROSEE_ACTIONPINCHWEAK_H
+#ifndef __ROSEE_ACTIONPINCHLOOSE_H
+#define __ROSEE_ACTIONPINCHLOOSE_H
 
 #include <ROSEndEffector/ActionPrimitive.h>
 #include <ROSEndEffector/ActionPinchGeneric.h>
@@ -29,18 +29,18 @@ namespace ROSEE {
 
 /**
  * @brief The action of pinch with two tips. The two tips must not collide ever 
- * (otherwise we have a StrongPinch). They only need to move towards each other moving the relative joints.
- * This PinchWeak is created because also if the tips do not collide (i.e. there is not a \ref ActionPinchStrong)
+ * (otherwise we have a TightPinch). They only need to move towards each other moving the relative joints.
+ * This PinchLoose is created because also if the tips do not collide (i.e. there is not a \ref ActionPinchTight)
  * we can have anyway a pinch at least to take object of a certain minimum size.
  * All the non involved fingers are set in the default state.
- * A pinchWeak is defined by:
+ * A pinchLoose is defined by:
  *  - 2 tips ( that are inside \ref fingersInvolved ), so \ref nFingersInvolved == 2 ( members of base class \ref Action )
  *  - JointStates position: where the collision happens (inside \ref actionStates )
  *  - Optional info (inside \ref actionStates ): the minimum distance found between the two tips.
  *    The distance is used to order, the actions in the \ref actionStates set (make sense if \ref maxStoredActionStates > 1 ): 
- *    the less the distance is, the more we say the pinchWeak is good
+ *    the less the distance is, the more we say the pinchLoose is good
  */
-class ActionPinchWeak : public ActionPinchGeneric
+class ActionPinchLoose : public ActionPinchGeneric
 {
     
 public:
@@ -50,10 +50,10 @@ public:
      */
     typedef std::pair <JointPos, double> StateWithDistance; 
     
-    ActionPinchWeak();
-    ActionPinchWeak ( unsigned int maxStoredActionStates );
-    ActionPinchWeak ( std::string tip1, std::string tip2);
-    ActionPinchWeak ( std::pair <std::string, std::string>, JointPos, double distance );
+    ActionPinchLoose();
+    ActionPinchLoose ( unsigned int maxStoredActionStates );
+    ActionPinchLoose ( std::string tip1, std::string tip2);
+    ActionPinchLoose ( std::pair <std::string, std::string>, JointPos, double distance );
     
     JointPos getJointPos () const override;
     JointPos getJointPos (unsigned int index) const;
@@ -64,7 +64,7 @@ public:
      * @brief Specific get for this action to return the state with distance info 
      * @return The vector (of size \ref maxStoredActionStates) containing all the StateWithDistance objects
      */
-    std::vector < ROSEE::ActionPinchWeak::StateWithDistance > getActionStates() const;
+    std::vector < ROSEE::ActionPinchLoose::StateWithDistance > getActionStates() const;
 
     
     /** 
@@ -97,7 +97,7 @@ private:
         
     /** 
      * @brief For each pair, we want a set of action because we want to store (in general) more possible way
-     * to do that action. The PinchWeak among two tips can theoretically be done in infinite ways, we store 
+     * to do that action. The PinchLoose among two tips can theoretically be done in infinite ways, we store 
      * the best ways found (ordering them by the distance between fingertips)
      */
     std::set < StateWithDistance, distComp > actionStates;
@@ -106,4 +106,4 @@ private:
 
 }
 
-#endif // __ROSEE_ACTIONPINCHWEAK_H
+#endif // __ROSEE_ACTIONPINCHLOOSE_H

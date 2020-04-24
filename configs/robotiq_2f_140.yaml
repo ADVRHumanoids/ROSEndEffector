@@ -1,0 +1,3 @@
+ROSEndEffector:
+  urdf_path: "urdf/robotiq_2f_140.urdf"
+  srdf_path: "srdf/robotiq_2f_140.srdf"

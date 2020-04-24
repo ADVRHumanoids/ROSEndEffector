@@ -60,11 +60,13 @@ bool ROSEE::Parser::getJointsInFinger ( std::string base_link,
             if ( is_valid_joint ) {
 
                 _finger_joint_map[finger_name].push_back ( actual_joint.getName() );
+                _joint_finger_map[actual_joint.getName()] = finger_name;
                 _urdf_joint_map[actual_joint.getName()] = _urdf_model->getJoint ( actual_joint.getName() );
 
                 _joints_num++;
 
-                ROS_INFO_STREAM ( actual_joint.getName() );
+                //TODO 4Luca We print this after, because we remove passive joint after
+                //ROS_INFO_STREAM ( actual_joint.getName() );
             }
         }
 
@@ -134,7 +136,8 @@ bool ROSEE::Parser::parseSRDF() {
     for ( int i = 0; i < _fingers_num; i++ ) {
         srdf::Model::Group current_finger_group = srdf_groups[ _fingers_group_id[i] ];
 
-        ROS_INFO_STREAM ( "Actuated joints in finger: " << current_finger_group.name_ );
+        //TODO 4Luca We print this after, because we remove passive joint after
+        //ROS_INFO_STREAM ( "Actuated joints in finger: " << current_finger_group.name_ );
 
         // NOTE only one chain per group
         if ( current_finger_group.chains_.size() != CHAIN_PER_GROUP )  {
@@ -152,8 +155,39 @@ bool ROSEE::Parser::parseSRDF() {
             return false;
         }
     }
-
+    
+    removePassiveJoints();
+    
     return true;
+
+}
+
+bool ROSEE::Parser::removePassiveJoints() {
+    
+    std::vector<srdf::Model::PassiveJoint> passiveJointList = _srdfdom.getPassiveJoints();
+    
+    for (auto passiveJoint : passiveJointList) {
+        //the passive can be also already deleted so we chech if we delete it(e.g. it is also mimic)
+        if (_urdf_joint_map.erase(passiveJoint.name_) > 0) {
+            
+            //we have also to remove it from the other maps
+            std::string fingerOfPassive = _joint_finger_map.at(passiveJoint.name_);
+            _joint_finger_map.erase(passiveJoint.name_);
+            
+            for (auto it = _finger_joint_map.at(fingerOfPassive).begin(); 
+                 it!= _finger_joint_map.at(fingerOfPassive).end(); ++it){
+                
+                if (it->compare(passiveJoint.name_) == 0 ) {
+                    _finger_joint_map.at(fingerOfPassive).erase(it);
+                    break;
+                }
+            }
+
+            _joints_num--;
+        }
+        
+        
+    }
 
 }
 
@@ -339,14 +373,24 @@ std::map< std::string, std::vector< std::string > > ROSEE::Parser::getFingerJoin
     return _finger_joint_map;
 }
 
+std::map< std::string, std::string > ROSEE::Parser::getJointFingerMap() const {
+    
+    return _joint_finger_map;
+}
+
 std::map< std::string, urdf::JointConstSharedPtr > ROSEE::Parser::getUrdfJointMap() const {
 
     return _urdf_joint_map;
 }
 
-void ROSEE::Parser::getActuatedJointsMap ( std::map< std::string, std::vector< std::string > >& finger_joint_map ) {
+void ROSEE::Parser::getFingerJointMap( std::map< std::string, std::vector< std::string > >& finger_joint_map ) const {
 
     finger_joint_map = _finger_joint_map;
+}
+
+void ROSEE::Parser::getJointFingerMap ( std::map< std::string, std::string >& joint_finger_map ) const {
+
+    joint_finger_map = _joint_finger_map;
 }
 
 std::string ROSEE::Parser::getEndEffectorName() const {

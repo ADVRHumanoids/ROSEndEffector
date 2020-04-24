@@ -115,7 +115,7 @@ private:
     // grasping primitives maps
     // TODO still needed? now we have the handler that store them...
     std::map<std::set<std::string>, ROSEE::ActionPrimitive::Ptr> _pinchParsedMap;
-    std::map<std::set<std::string>, ROSEE::ActionPrimitive::Ptr> _pinchWeakParsedMap;
+    std::map<std::set<std::string>, ROSEE::ActionPrimitive::Ptr> _pinchLooseParsedMap;
     std::map<std::set<std::string>, ROSEE::ActionPrimitive::Ptr> _trigParsedMap;
     std::map<std::set<std::string>, ROSEE::ActionPrimitive::Ptr> _tipFlexParsedMap;
     std::map<std::set<std::string>, ROSEE::ActionPrimitive::Ptr> _fingFlexParsedMap;

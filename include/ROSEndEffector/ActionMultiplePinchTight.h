@@ -16,8 +16,8 @@
  * limitations under the License.
  */
 
-#ifndef __ROSEE_ACTIONMULTIPLEPINCHSTRONG_H
-#define __ROSEE_ACTIONMULTIPLEPINCHSTRONG_H
+#ifndef __ROSEE_ACTIONMULTIPLEPINCHTIGHT_H
+#define __ROSEE_ACTIONMULTIPLEPINCHTIGHT_H
 
 #include <ROSEndEffector/ActionPinchGeneric.h>
 #include <moveit/planning_scene/planning_scene.h>
@@ -27,11 +27,11 @@
 namespace ROSEE {
 
 /**
- * @brief Class to describe the action of "pinching" with more than 2 tips (with 2 tips there is the \ref ActionPinchStrong and 
- *   \ref ActionPinchWeak
+ * @brief Class to describe the action of "pinching" with more than 2 tips (with 2 tips there is the \ref ActionPinchTight and 
+ *   \ref ActionPinchLoose
  *   The number of the finger used is fixed when the object is costructed, and it is stored in the father member \ref nFingersInvolved
  * 
- * A pinchMultipleStrong is defined by:
+ * A pinchMultipleTight is defined by:
  *  - X tips ( that are inside \ref fingersInvolved member of \ref Action ), so \ref nFingersInvolved == X ( members of base class \ref ActionPrimitive )
  *  - JointStates position: where the collision among the tips happens (inside \ref actionStates )
  *  - Optional info (inside \ref actionStates ): the sum of the depth of compenetration of all the tip pairs that collide.
@@ -41,11 +41,11 @@ namespace ROSEE {
  *   not all fingertips must collide between each other (causing AT LEAST X-1 collisions). 
  *   The default is the "more strict" condition, because it can find "better looking" mulPinches, even if obviously we find less possible 
  *   way to perform the action. With this, it seems better to order the actionState considering as "best" the position where the tips collide less,
- *   i.e. where the depthSum is lower. This is the opposite from the normal strong pinch.
+ *   i.e. where the depthSum is lower. This is the opposite from the normal tight pinch.
  *   This cause anyway a collision, but not a ugly one where the tips compenetrate too much. This thing can change if we invert the sign in the 
  *   \ref depthComp comparison
  */
-class ActionMultiplePinchStrong : public ActionPinchGeneric
+class ActionMultiplePinchTight : public ActionPinchGeneric
 {
     
 public:
@@ -53,9 +53,9 @@ public:
     /** @brief A pair to "link" the JointPos with the depthSum info to order the StateWithDepth in the actionState set*/
     typedef std::pair <JointPos, double> StateWithDepth; 
     
-    ActionMultiplePinchStrong();
-    ActionMultiplePinchStrong(unsigned int maxStoredActionStates);
-    ActionMultiplePinchStrong (std::set <std::string>, JointPos, double depthSum );
+    ActionMultiplePinchTight();
+    ActionMultiplePinchTight(unsigned int maxStoredActionStates);
+    ActionMultiplePinchTight (std::set <std::string>, JointPos, double depthSum );
     
     JointPos getJointPos () const override;
     JointPos getJointPos (unsigned int index) const;
@@ -63,10 +63,10 @@ public:
     std::vector < ROSEE::JointPos > getAllJointPos () const override;
     
     /** 
-     * @brief Specific get for the ActionMultiplePinchStrong to return the state with the paired depthSum
+     * @brief Specific get for the ActionMultiplePinchTight to return the state with the paired depthSum
      * @return The vector (of size \ref maxStoredActionStates) containing all the StateWithDepth objects
      */
-    std::vector < ROSEE::ActionMultiplePinchStrong::StateWithDepth > getActionStates() const;
+    std::vector < ROSEE::ActionMultiplePinchTight::StateWithDepth > getActionStates() const;
     
     /** 
      * @brief function to insert a single action in the \ref actionStates set of possible action. 
@@ -106,4 +106,4 @@ private:
 
 }
 
-#endif // __ROSEE_ACTIONMULTIPLEPINCHSTRONG_H
+#endif // __ROSEE_ACTIONMULTIPLEPINCHTIGHT_H

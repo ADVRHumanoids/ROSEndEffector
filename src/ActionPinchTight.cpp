@@ -16,17 +16,17 @@
  * limitations under the License.
  */
 
-#include <ROSEndEffector/ActionPinchStrong.h>
+#include <ROSEndEffector/ActionPinchTight.h>
 
-ROSEE::ActionPinchStrong::ActionPinchStrong() : 
-    ActionPinchGeneric ("pinchStrong", 2, 3, ActionPrimitive::Type::PinchStrong) { }
+ROSEE::ActionPinchTight::ActionPinchTight() : 
+    ActionPinchGeneric ("pinchTight", 2, 3, ActionPrimitive::Type::PinchTight) { }
 
-ROSEE::ActionPinchStrong::ActionPinchStrong(unsigned int jointStateSetMaxSize) : 
-    ActionPinchGeneric ("pinchStrong", 2, jointStateSetMaxSize, ActionPrimitive::Type::PinchStrong) { }
+ROSEE::ActionPinchTight::ActionPinchTight(unsigned int jointStateSetMaxSize) : 
+    ActionPinchGeneric ("pinchTight", 2, jointStateSetMaxSize, ActionPrimitive::Type::PinchTight) { }
 
-ROSEE::ActionPinchStrong::ActionPinchStrong (std::pair <std::string, std::string> fingerNamesPair, 
+ROSEE::ActionPinchTight::ActionPinchTight (std::pair <std::string, std::string> fingerNamesPair, 
     JointPos jp, collision_detection::Contact cont) :
-    ActionPinchGeneric ("pinchStrong", 2, 3, ActionPrimitive::Type::PinchStrong )  {
+    ActionPinchGeneric ("pinchTight", 2, 3, ActionPrimitive::Type::PinchTight )  {
 
     //different from insertState, here we are sure the set is empty (we are in costructor)
     fingersInvolved.insert(fingerNamesPair.first);
@@ -34,9 +34,9 @@ ROSEE::ActionPinchStrong::ActionPinchStrong (std::pair <std::string, std::string
     actionStates.insert (std::make_pair (jp, cont) );
 }
 
-ROSEE::ActionPinchStrong::ActionPinchStrong (std::string finger1, std::string finger2, 
+ROSEE::ActionPinchTight::ActionPinchTight (std::string finger1, std::string finger2, 
     JointPos jp, collision_detection::Contact cont) :
-    ActionPinchGeneric ("pinchStrong", 2, 3, ActionPrimitive::Type::PinchStrong )  {
+    ActionPinchGeneric ("pinchTight", 2, 3, ActionPrimitive::Type::PinchTight )  {
 
     //different from insertState, here we are sure the set is empty (we are in costructor)
     fingersInvolved.insert(finger1);
@@ -44,11 +44,11 @@ ROSEE::ActionPinchStrong::ActionPinchStrong (std::string finger1, std::string fi
     actionStates.insert (std::make_pair (jp, cont) );
 }
 
-ROSEE::JointPos ROSEE::ActionPinchStrong::getJointPos() const {
+ROSEE::JointPos ROSEE::ActionPinchTight::getJointPos() const {
     return (actionStates.begin()->first);
 }
 
-ROSEE::JointPos ROSEE::ActionPinchStrong::getJointPos( unsigned int index) const {
+ROSEE::JointPos ROSEE::ActionPinchTight::getJointPos( unsigned int index) const {
     auto it = actionStates.begin();
     unsigned int i = 1;
     while (i < index ) {
@@ -57,7 +57,7 @@ ROSEE::JointPos ROSEE::ActionPinchStrong::getJointPos( unsigned int index) const
     return (it->first);
 }
 
-std::vector < ROSEE::JointPos > ROSEE::ActionPinchStrong::getAllJointPos() const{
+std::vector < ROSEE::JointPos > ROSEE::ActionPinchTight::getAllJointPos() const{
     
     std::vector < JointPos > retVect;
     retVect.reserve ( actionStates.size() );
@@ -70,9 +70,9 @@ std::vector < ROSEE::JointPos > ROSEE::ActionPinchStrong::getAllJointPos() const
 }
 
 
-std::vector < ROSEE::ActionPinchStrong::StateWithContact > ROSEE::ActionPinchStrong::getActionStates () const {
+std::vector < ROSEE::ActionPinchTight::StateWithContact > ROSEE::ActionPinchTight::getActionStates () const {
     
-    std::vector < ROSEE::ActionPinchStrong::StateWithContact > retVect;
+    std::vector < ROSEE::ActionPinchTight::StateWithContact > retVect;
     retVect.reserve ( actionStates.size() );
     
     for (auto it : actionStates ) {
@@ -83,7 +83,7 @@ std::vector < ROSEE::ActionPinchStrong::StateWithContact > ROSEE::ActionPinchStr
     
 }
 
-bool ROSEE::ActionPinchStrong::insertActionState (ROSEE::JointPos jp, collision_detection::Contact cont) {
+bool ROSEE::ActionPinchTight::insertActionState (ROSEE::JointPos jp, collision_detection::Contact cont) {
 
     auto pairRet = actionStates.insert ( std::make_pair (jp, cont) ) ;
     
@@ -112,7 +112,7 @@ bool ROSEE::ActionPinchStrong::insertActionState (ROSEE::JointPos jp, collision_
 }
 
 
-void ROSEE::ActionPinchStrong::print () const {
+void ROSEE::ActionPinchTight::print () const {
     
     std::stringstream output;
     output << "ActionName: " << name << std::endl;
@@ -153,7 +153,7 @@ void ROSEE::ActionPinchStrong::print () const {
 }
 
 
-void ROSEE::ActionPinchStrong::emitYaml ( YAML::Emitter& out ) const {
+void ROSEE::ActionPinchTight::emitYaml ( YAML::Emitter& out ) const {
     
     out << YAML::Key << YAML::Flow << fingersInvolved;
     
@@ -194,7 +194,7 @@ void ROSEE::ActionPinchStrong::emitYaml ( YAML::Emitter& out ) const {
 }
 
 
-bool ROSEE::ActionPinchStrong::fillFromYaml ( YAML::const_iterator yamlIt ) {
+bool ROSEE::ActionPinchTight::fillFromYaml ( YAML::const_iterator yamlIt ) {
         
     std::vector <std::string> fingInvolvedVect = yamlIt->first.as <std::vector < std::string >> ();
     for (const auto &it : fingInvolvedVect) {
@@ -214,7 +214,7 @@ bool ROSEE::ActionPinchStrong::fillFromYaml ( YAML::const_iterator yamlIt ) {
             ROSEE::ActionPrimitive::Type parsedType = static_cast<ROSEE::ActionPrimitive::Type> ( 
                 keyValue->second.as <unsigned int>() );
             if (parsedType != primitiveType ) {
-                std::cerr << "[ERROR ActionPinchStrong::" << __func__ << " parsed a type " << parsedType << 
+                std::cerr << "[ERROR ActionPinchTight::" << __func__ << " parsed a type " << parsedType << 
                     " but this object has primitive type " << primitiveType << std::endl; 
                 return false;
             }
@@ -273,7 +273,7 @@ bool ROSEE::ActionPinchStrong::fillFromYaml ( YAML::const_iterator yamlIt ) {
                     
                 } else {
                     //ERRROr, only joinstates and optional at this level
-                    std::cerr << "[ERROR ActionPinchStrong::" << __func__ << "not know key " 
+                    std::cerr << "[ERROR ActionPinchTight::" << __func__ << "not know key " 
                         << asEl->first.as<std::string>() << 
                         " found in the yaml file at this level" << std::endl; 
                     return false;
@@ -282,7 +282,7 @@ bool ROSEE::ActionPinchStrong::fillFromYaml ( YAML::const_iterator yamlIt ) {
             actionStates.insert ( std::make_pair (jointPos, contact));
             
         } else {
-            std::cerr << "[ERROR ActionPinchStrong::" << __func__ << "not know key " << key << 
+            std::cerr << "[ERROR ActionPinchTight::" << __func__ << "not know key " << key << 
                 " found in the yaml file" << std::endl; 
             return false;
         }
@@ -291,7 +291,7 @@ bool ROSEE::ActionPinchStrong::fillFromYaml ( YAML::const_iterator yamlIt ) {
     return true;
 }
 
-bool ROSEE::ActionPinchStrong::emitYamlForContact (collision_detection::Contact moveitContact, YAML::Emitter& out) const {
+bool ROSEE::ActionPinchTight::emitYamlForContact (collision_detection::Contact moveitContact, YAML::Emitter& out) const {
 
     out << YAML::BeginMap;
         out << YAML::Key << "MoveItContact" << YAML::Value << YAML::BeginMap;

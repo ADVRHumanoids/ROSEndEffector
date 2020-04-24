@@ -100,13 +100,13 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive() {
     // get all action in the handler
     mapActionHandler.parseAllActions(folderForActions);
 
-    // pinch strong
-    _pinchParsedMap = mapActionHandler.getPrimitiveMap("pinchStrong");
+    // pinch tight
+    _pinchParsedMap = mapActionHandler.getPrimitiveMap("pinchTight");
     
-    // pinch weak
-    if (mapActionHandler.getPrimitiveMap(ROSEE::ActionPrimitive::Type::PinchWeak).size()>0) {
+    // pinch loose
+    if (mapActionHandler.getPrimitiveMap(ROSEE::ActionPrimitive::Type::PinchLoose).size()>0) {
         //another method to get the map
-        _pinchWeakParsedMap = mapActionHandler.getPrimitiveMap(ROSEE::ActionPrimitive::Type::PinchWeak).at(0);
+        _pinchLooseParsedMap = mapActionHandler.getPrimitiveMap(ROSEE::ActionPrimitive::Type::PinchLoose).at(0);
     } 
     
     // trig, tip flex and fing flex
@@ -115,12 +115,12 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive() {
     _fingFlexParsedMap = mapActionHandler.getPrimitiveMap("fingFlex");
 
     // NOTE maps useful just to recap
-    ROS_INFO_STREAM ( "PINCHES-STRONG:" );
+    ROS_INFO_STREAM ( "PINCHES-TIGHT:" );
     for ( auto &i : _pinchParsedMap ) {
         i.second->print();
     }
-    ROS_INFO_STREAM ( "PINCHES-WEAK:" );
-    for ( auto &i : _pinchWeakParsedMap ) {
+    ROS_INFO_STREAM ( "PINCHES-LOOSE:" );
+    for ( auto &i : _pinchLooseParsedMap ) {
         i.second->print();
     }
     ROS_INFO_STREAM ( "TRIGGERS:" );
@@ -451,15 +451,15 @@ bool ROSEE::UniversalRosEndEffectorExecutor::selectablePairInfoCallback(
     rosee_msg::SelectablePairInfo::Response& response) {
     
     std::set<std::string> companionFingers;
-    if (request.action_name.compare ("pinchStrong") == 0) {
+    if (request.action_name.compare ("pinchTight") == 0) {
         companionFingers =
             mapActionHandler.getFingertipsForPinch(request.element_name,
-                ROSEE::ActionPrimitive::Type::PinchStrong) ;
+                ROSEE::ActionPrimitive::Type::PinchTight) ;
                 
-    } else if (request.action_name.compare ("pinchWeak") == 0) {
+    } else if (request.action_name.compare ("pinchLoose") == 0) {
         companionFingers =
             mapActionHandler.getFingertipsForPinch(request.element_name,
-                ROSEE::ActionPrimitive::Type::PinchWeak) ;
+                ROSEE::ActionPrimitive::Type::PinchLoose) ;
                 
     } else {
         ROS_ERROR_STREAM ( "Received" << request.action_name << " that is not" <<
