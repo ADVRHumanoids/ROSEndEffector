@@ -36,6 +36,9 @@ int main ( int argc, char **argv ) {
     parser.init();
     nh.setParam("robot_description", parser.getUrdfString());
     nh.setParam("robot_description_semantic", parser.getSrdfString());
+    std::string confFileName;
+    nh.getParam("ros_ee_config_path", confFileName); 
+    ROS_INFO_STREAM("FINDACTIONS: Set urdf and srdf file in the param server from config file " << confFileName);
     
     std::shared_ptr <ROSEE::ParserMoveIt> parserMoveIt = std::make_shared <ROSEE::ParserMoveIt> ();
     if (! parserMoveIt->init ("robot_description") ) {
