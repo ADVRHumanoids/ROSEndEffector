@@ -345,17 +345,18 @@ int main ( int argc, char **argv ) {
     ros::init ( argc, argv, "testFindTrigs" );
     
     //fill ros param with file models, needed by moveit parserMoveIt
-    std::string modelPath = ROSEE::Utils::getPackagePath() + "configs/urdf/" + HAND_NAME_TEST;
+    std::string modelPathURDF = ROSEE::Utils::getPackagePath() + "configs/urdf/" + HAND_NAME_TEST;
+    std::string modelPathSRDF = ROSEE::Utils::getPackagePath() + "configs/srdf/" + HAND_NAME_TEST;
 
     //Is there a better way to parse?
-    std::ifstream urdf(modelPath + ".urdf");
-    std::ifstream srdf(modelPath + ".srdf");
+    std::ifstream urdf(modelPathURDF + ".urdf");
+    std::ifstream srdf(modelPathSRDF + ".srdf");
     std::stringstream sUrdf, sSrdf;
     sUrdf << urdf.rdbuf();
     sSrdf << srdf.rdbuf();
 
     ros::param::set("robot_description" , sUrdf.str());
-    ros::param::set("robot_description_semantic" , sUrdf.str());
+    ros::param::set("robot_description_semantic" , sSrdf.str());
     
     ::testing::InitGoogleTest ( &argc, argv );
     return RUN_ALL_TESTS();
