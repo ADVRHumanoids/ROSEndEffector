@@ -1,13 +1,15 @@
 #include <gtest/gtest.h>
+#include "testUtils.h"
 
 #include <ros/ros.h>
 #include <ros/console.h>
-
 
 #include <ROSEndEffector/FindActions.h>
 #include <ROSEndEffector/ParserMoveIt.h>
 #include <ROSEndEffector/ActionPrimitive.h>
 #include <ROSEndEffector/ActionTrig.h>
+
+#define HAND_NAME_TEST "two_finger";
 
 namespace {
 
@@ -24,11 +26,6 @@ protected:
 
     virtual void SetUp() override {
 
-        const char *argv[] = {"testFindTrigs", "arg"};
-        int argc = sizeof(argv) / sizeof(char*) - 1;
-        
-        //is this cast correct?
-        ros::init ( argc, (char**)argv, "testFindTrigs" );
     
         std::shared_ptr <ROSEE::ParserMoveIt> parserMoveIt = std::make_shared <ROSEE::ParserMoveIt> ();
         //if return false, models are not found and it is useless to continue the test
@@ -333,6 +330,33 @@ TEST_F ( testFindTrigs, checkFlexsSingleJoint ) {
 } //namespace
 
 int main ( int argc, char **argv ) {
+    
+    /* Run tests on an isolated roscore */
+    if(setenv("ROS_MASTER_URI", "http://localhost:11322", 1) == -1)
+    {
+        perror("setenv");
+        return 1;
+    }
+    
+    //run roscore
+    std::unique_ptr<ROSEE::TestUtils::Process> roscore;
+    roscore.reset(new ROSEE::TestUtils::Process({"roscore", "-p", "11322"}));
+    
+    ros::init ( argc, argv, "testFindTrigs" );
+    
+    //fill ros param with file models, needed by moveit parserMoveIt
+    std::string modelPath = ROSEE::Utils::getPackagePath() + "configs/urdf/" + HAND_NAME_TEST;
+
+    //Is there a better way to parse?
+    std::ifstream urdf(modelPath + ".urdf");
+    std::ifstream srdf(modelPath + ".srdf");
+    std::stringstream sUrdf, sSrdf;
+    sUrdf << urdf.rdbuf();
+    sSrdf << srdf.rdbuf();
+
+    ros::param::set("robot_description" , sUrdf.str());
+    ros::param::set("robot_description_semantic" , sUrdf.str());
+    
     ::testing::InitGoogleTest ( &argc, argv );
     return RUN_ALL_TESTS();
 }

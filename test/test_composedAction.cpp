@@ -27,24 +27,6 @@ protected:
 
     virtual void SetUp() override {
         
-        //run roscore
-        _roscore.reset(new ROSEE::TestUtils::Process({"roscore", "-p", "11322"}));
-        
-        //fill ros param with file models, needed by moveit parserMoveIt
-        std::string modelPath = ROSEE::Utils::getPackagePath() + "configs/urdf/" + HAND_NAME_TEST;
-        
-        //Is there a better way to parse?
-        std::ifstream urdf(modelPath + ".urdf");
-        std::ifstream srdf(modelPath + ".srdf");
-        std::stringstream sUrdf, sSrdf;
-        sUrdf << urdf.rdbuf();
-        sSrdf << srdf.rdbuf();
-        
-        ROS_WARN_STREAM ("SETTING PARAMS!!!!!");
-        
-        ros::param::set("robot_description" , sUrdf.str());
-        ros::param::set("robot_description_semantic" , sUrdf.str());
-        
         std::shared_ptr <ROSEE::ParserMoveIt> parserMoveIt = std::make_shared <ROSEE::ParserMoveIt> ();
 
         //if return false, models are not found and it is useless to continue the test
@@ -67,15 +49,11 @@ protected:
         
         //Parsing
         graspParsed = yamlWorker.parseYamlComposed (folderForActions + "/generics/grasp.yaml");
-
-       
     }
 
     virtual void TearDown() {
     }
     
-    std::unique_ptr<ROSEE::TestUtils::Process> _roscore;
-
     std::map < std::string , ROSEE::ActionTrig > trigMap;
     ROSEE::ActionComposed grasp;
     ROSEE::ActionComposed graspParsed;
@@ -129,7 +107,24 @@ int main ( int argc, char **argv ) {
         return 1;
     }
     
+    //run roscore
+    std::unique_ptr<ROSEE::TestUtils::Process> roscore;
+    roscore.reset(new ROSEE::TestUtils::Process({"roscore", "-p", "11322"}));
+    
     ros::init ( argc, argv, "testComposedAction" );
+    
+    //fill ros param with file models, needed by moveit parserMoveIt
+    std::string modelPath = ROSEE::Utils::getPackagePath() + "configs/urdf/" + HAND_NAME_TEST;
+
+    //Is there a better way to parse?
+    std::ifstream urdf(modelPath + ".urdf");
+    std::ifstream srdf(modelPath + ".srdf");
+    std::stringstream sUrdf, sSrdf;
+    sUrdf << urdf.rdbuf();
+    sSrdf << srdf.rdbuf();
+
+    ros::param::set("robot_description" , sUrdf.str());
+    ros::param::set("robot_description_semantic" , sUrdf.str());
     
     ::testing::InitGoogleTest ( &argc, argv );
     return RUN_ALL_TESTS();
