@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include "testUtils.h"
 
 #include <ros/ros.h>
 #include <ros/console.h>
@@ -8,6 +9,8 @@
 #include <ROSEndEffector/ActionComposed.h>
 #include <ROSEndEffector/ActionPrimitive.h>
 #include <ROSEndEffector/ActionTrig.h>
+
+#define HAND_NAME_TEST "two_finger";
 
 namespace {
 
@@ -24,15 +27,29 @@ protected:
 
     virtual void SetUp() override {
         
-        const char *argv[] = {"testComposedAction", "arg"};
-        int argc = sizeof(argv) / sizeof(char*) - 1;
+        //run roscore
+        _roscore.reset(new ROSEE::TestUtils::Process({"roscore", "-p", "11322"}));
         
-        //is this cast correct?
-        ros::init ( argc, (char**)argv, "testComposedAction" );
-    
+        //fill ros param with file models, needed by moveit parserMoveIt
+        std::string modelPath = ROSEE::Utils::getPackagePath() + "configs/urdf/" + HAND_NAME_TEST;
+        
+        //Is there a better way to parse?
+        std::ifstream urdf(modelPath + ".urdf");
+        std::ifstream srdf(modelPath + ".srdf");
+        std::stringstream sUrdf, sSrdf;
+        sUrdf << urdf.rdbuf();
+        sSrdf << srdf.rdbuf();
+        
+        ROS_WARN_STREAM ("SETTING PARAMS!!!!!");
+        
+        ros::param::set("robot_description" , sUrdf.str());
+        ros::param::set("robot_description_semantic" , sUrdf.str());
+        
         std::shared_ptr <ROSEE::ParserMoveIt> parserMoveIt = std::make_shared <ROSEE::ParserMoveIt> ();
+
         //if return false, models are not found and it is useless to continue the test
         ASSERT_TRUE(parserMoveIt->init ("robot_description")) ;
+        
         ROSEE::FindActions actionsFinder (parserMoveIt);
         
         std::string folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/tests/" + parserMoveIt->getHandName();
@@ -56,6 +73,8 @@ protected:
 
     virtual void TearDown() {
     }
+    
+    std::unique_ptr<ROSEE::TestUtils::Process> _roscore;
 
     std::map < std::string , ROSEE::ActionTrig > trigMap;
     ROSEE::ActionComposed grasp;
@@ -102,6 +121,16 @@ TEST_F ( testComposedAction, checkIndependence ) {
 } //namespace
 
 int main ( int argc, char **argv ) {
+    
+    /* Run tests on an isolated roscore */
+    if(setenv("ROS_MASTER_URI", "http://localhost:11322", 1) == -1)
+    {
+        perror("setenv");
+        return 1;
+    }
+    
+    ros::init ( argc, argv, "testComposedAction" );
+    
     ::testing::InitGoogleTest ( &argc, argv );
     return RUN_ALL_TESTS();
 }
