@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<robot name="heri_II_real" xmlns:xacro="http://ros.org/wiki/xacro">
+<robot name="heri_II" xmlns:xacro="http://ros.org/wiki/xacro">
 
   <!-- Import all Gazebo-customization elements, including Gazebo colors -->
   <xacro:include filename="$(find ros_end_effector)/configs/urdf/iit_heri_ros.gazebo" />
 
   <!-- Import Rviz colors -->
-  <xacro:include filename="$(find heri_description)/urdf/materials.xacro" />
+  <xacro:include filename="$(find ros_end_effector)/configs/urdf/materials.xacro" />
 
   <!-- ///////////////////////////////////////   Short Finger   ////////////////////////////////////////// -->
   <!-- ///////////////////////////////////////   base_link   ////////////////////////////////////////// -->
@@ -28,7 +28,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://heri_description/meshes/base_heri_ii.STL" />
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/base_heri_ii.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -37,7 +37,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://heri_description/meshes/base_link.STL" />
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/base_heri_ii.STL" />
       </geometry>
     </collision>
   </link>
@@ -52,7 +52,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://heri_description/meshes/SFB1.STL" />
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/SFB1.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -61,7 +61,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://heri_description/meshes/SFB1.STL" />
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/SFB1.STL" />
       </geometry>
     </collision>
   </link>
@@ -86,7 +86,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://heri_description/meshes/SFB1_1.STL" />
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/SFB1_1.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -95,7 +95,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://heri_description/meshes/SFB1_1.STL" />
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/SFB1_1.STL" />
       </geometry>
     </collision>
   </link>
@@ -120,7 +120,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://heri_description/meshes/SFP1_2.STL" />
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/SFP1_2.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -129,7 +129,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://heri_description/meshes/SFP1_2.STL" />
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/SFP1_2.STL" />
       </geometry>
     </collision>
   </link>
@@ -161,7 +161,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://heri_description/meshes/LFB1.STL" />
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFB1.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -170,7 +170,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://heri_description/meshes/LFB1.STL" />
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFB1.STL" />
       </geometry>
     </collision>
   </link>
@@ -195,7 +195,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://heri_description/meshes/LFP1_1.STL" />
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFP1_1.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -204,7 +204,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://heri_description/meshes/LFP1_1.STL" />
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFP1_1.STL" />
       </geometry>
     </collision>
   </link>
@@ -229,7 +229,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://heri_description/meshes/LFP1_2.STL" />
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFP1_2.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -238,7 +238,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://heri_description/meshes/LFP1_2.STL" />
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFP1_2.STL" />
       </geometry>
     </collision>
   </link>
@@ -268,7 +268,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://heri_description/meshes/LFP1_3.STL" />
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFP1_3.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -277,7 +277,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://heri_description/meshes/LFP1_3.STL" />
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFP1_3.STL" />
       </geometry>
     </collision>
   </link>
@@ -310,7 +310,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://heri_description/meshes/LFB2.STL" />
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFB2.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -319,7 +319,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://heri_description/meshes/LFB2.STL" />
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFB2.STL" />
       </geometry>
     </collision>
   </link>
@@ -344,7 +344,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://heri_description/meshes/LFP2_1.STL" />
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFP2_1.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -353,7 +353,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://heri_description/meshes/LFP2_1.STL" />
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFP2_1.STL" />
       </geometry>
     </collision>
   </link>
@@ -378,7 +378,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://heri_description/meshes/LFP2_2.STL" />
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFP2_2.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -387,7 +387,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://heri_description/meshes/LFP2_2.STL" />
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFP2_2.STL" />
       </geometry>
     </collision>
   </link>
@@ -419,7 +419,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://heri_description/meshes/LFP2_3.STL" />
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFP2_3.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -428,7 +428,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://heri_description/meshes/LFP2_3.STL" />
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFP2_3.STL" />
       </geometry>
     </collision>
   </link>
@@ -461,7 +461,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://heri_description/meshes/LFB3.STL" />
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFB3.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -470,7 +470,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://heri_description/meshes/LFB3.STL" />
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFB3.STL" />
       </geometry>
     </collision>
   </link>
@@ -495,7 +495,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://heri_description/meshes/LFP3_1.STL" />
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFP3_1.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -504,7 +504,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://heri_description/meshes/LFP3_1.STL" />
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFP3_1.STL" />
       </geometry>
     </collision>
   </link>
@@ -529,7 +529,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://heri_description/meshes/LFP3_2.STL" />
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFP3_2.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -538,7 +538,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://heri_description/meshes/LFP3_2.STL" />
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFP3_2.STL" />
       </geometry>
     </collision>
   </link>
@@ -567,7 +567,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://heri_description/meshes/LFP3_3.STL" />
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFP3_3.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -576,7 +576,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://heri_description/meshes/LFP3_3.STL" />
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFP3_3.STL" />
       </geometry>
     </collision>
   </link>

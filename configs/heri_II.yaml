@@ -1,0 +1,3 @@
+ROSEndEffector:
+  urdf_path: "urdf/heri_II.urdf"
+  srdf_path: "srdf/heri_II.srdf"

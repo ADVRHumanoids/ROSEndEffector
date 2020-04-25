@@ -3,7 +3,7 @@
     This is a format for representing semantic information about the robot structure.
     A URDF file must exist for this robot as well, where the joints and the links that are referenced are defined
 -->
-<robot name="heri">
+<robot name="heri_II">
     <!--GROUPS: Representation of a set of joints and links. This can be useful for specifying DOF to plan for, defining arms, end effectors, etc-->
     <!--LINKS: When a link is specified, the parent joint of that link (if it exists) is automatically included-->
     <!--JOINTS: When a joint is specified, the child link of that joint (which will always exist) is automatically included-->
@@ -15,6 +15,9 @@
     <group name="finger_2">
         <chain base_link="base_link" tip_link="LFP2_3" />
     </group>
+    <group name="finger_3">
+        <chain base_link="base_link" tip_link="LFP3_3" />
+    </group>
     <group name="thumb">
         <chain base_link="base_link" tip_link="SFP1_2" />
     </group>
@@ -22,6 +25,7 @@
     <group name="end_effector_fingers">
       <group name="finger_1" />
       <group name="finger_2" />
+      <group name="finger_3" />
       <group name="thumb" />
    </group>
 
@@ -31,6 +35,7 @@
     <!--PASSIVE JOINT: Purpose: this element is used to mark joints that are not actuated-->
     <passive_joint name="BASE__LFB1" />
     <passive_joint name="BASE__LFB2" />
+    <passive_joint name="BASE__LFB3" />
     <passive_joint name="BASE__SFB1" />
 
 </robot>
