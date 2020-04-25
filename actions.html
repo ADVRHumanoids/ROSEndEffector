@@ -1,0 +1,321 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ROS End-Effector Grasping Actions &mdash; ROSEndEffector 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="FindActions &amp; Executor node" href="nodes.html" />
+    <link rel="prev" title="Ready to use examples with tested hands" href="examples.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ROSEndEffector
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">How to use ROS End-Effector with your End-Effector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Ready to use examples with tested hands</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Components</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">ROS End-Effector Grasping Actions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#primitive-actions">Primitive Actions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#generic-actions">Generic Actions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#timed-actions">Timed Actions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="nodes.html">FindActions &amp; Executor node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roseeGui.html">ROS End-Effector GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roseeGazeboPlugin.html">ROS End-Effector Gazebo Plugins</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Other</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="issues.html">Possible Issues</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Advanced</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="googleTests.html">How to run the google tests present in the package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ROSEndEffector</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>ROS End-Effector Grasping Actions</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/actions.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="ros-end-effector-grasping-actions">
+<span id="actions"></span><h1>ROS End-Effector Grasping Actions<a class="headerlink" href="#ros-end-effector-grasping-actions" title="Permalink to this headline">¶</a></h1>
+<p><strong>TODO</strong> check explain better this page, put examples for create actions</p>
+<p>In ROS End-Effector, an <em>Action</em> is a movement that the end effector can be commanded to do. In practice, an action is a container that include the position for all the involved joints. There are three main categories of Action:</p>
+<ul class="simple">
+<li><a class="reference internal" href="#primitive-actions">Primitive Actions</a></li>
+<li><a class="reference internal" href="#generic-actions">Generic Actions</a></li>
+<li><a class="reference internal" href="#timed-actions">Timed Actions</a></li>
+</ul>
+<div class="section" id="primitive-actions">
+<span id="id1"></span><h2>Primitive Actions<a class="headerlink" href="#primitive-actions" title="Permalink to this headline">¶</a></h2>
+<p>Referred as <em>ActionPrimitive</em> in the code, this kind of actions is the one that is automatically detected thanks to
+the <em>FindAction</em> node (during the offline phase). Until now the following primitives have been defined:</p>
+<table border="1" class="colwidths-given docutils" id="id4">
+<caption><span class="caption-text">Primitive Table</span><a class="headerlink" href="#id4" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="20%" />
+<col width="20%" />
+<col width="20%" />
+<col width="20%" />
+<col width="20%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Primitive</th>
+<th class="head">Fingers</th>
+<th class="head">Joints</th>
+<th class="head">Description</th>
+<th class="head">Constraints</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><strong>Trig</strong></td>
+<td>1</td>
+<td>1+</td>
+<td>Move all finger joints toward their bound</td>
+<td>At least one joint that moves only one finger</td>
+</tr>
+<tr class="row-odd"><td><strong>TipFlex</strong></td>
+<td>1</td>
+<td>1</td>
+<td>Move the last joint of the finger toward its bound</td>
+<td>At least 2 joints that moves only one finger</td>
+</tr>
+<tr class="row-even"><td><strong>FingFlex</strong></td>
+<td>1</td>
+<td>1</td>
+<td>Move the first joint of the finger toward its bound</td>
+<td>At least 2 joints that moves only one finger</td>
+</tr>
+<tr class="row-odd"><td><strong>PinchTight</strong></td>
+<td>2</td>
+<td>1+</td>
+<td>Collision between two fingertip links</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>PinchWeak</strong></td>
+<td>2</td>
+<td>1+</td>
+<td>Movement of two fingertips links towards each other but without collision</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><strong>MultiPinchTight_N</strong></td>
+<td>N (<span class="math notranslate nohighlight">\(\geq\)</span> 3)</td>
+<td>1+</td>
+<td>Collision between N (<span class="math notranslate nohighlight">\(\geq\)</span> 3) fingertip links</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><strong>SingleJointMultipleTips_N</strong></td>
+<td>N (<span class="math notranslate nohighlight">\(\geq\)</span> 2)</td>
+<td>1</td>
+<td>Move a joint that move more than one finger toward its bound</td>
+<td>A joint that move more than one finger (e.g. grasp for lot of hands</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="generic-actions">
+<span id="id2"></span><h2>Generic Actions<a class="headerlink" href="#generic-actions" title="Permalink to this headline">¶</a></h2>
+<p><em>ActionGeneric</em> are the customizable type. With ROSEE, you can add a custom action and then command the end-effector to do that action many time you want during the execution.
+Generic Action can be built in 2 different ways:</p>
+<ul class="simple">
+<li>You can write by hand a <em>yaml</em> file (see files in <em>config/generic</em></li>
+<li>You can fill c++ structures with your code, and then emit the yaml file (or use directly the action as command)</li>
+</ul>
+<p>There is also a third possibility: creating a <em>ActionComposed</em> object. This is a class that permit you to define
+an action as sum of other actions. For example, a grasp can be see as a sum of <em>trig</em> of each finger.</p>
+</div>
+<div class="section" id="timed-actions">
+<span id="id3"></span><h2>Timed Actions<a class="headerlink" href="#timed-actions" title="Permalink to this headline">¶</a></h2>
+<p>ActionTimed are a special type of actions that permit you to execute more inner actions <em>one after the other</em>.
+As an example, this can be useful to perform a <em>wide grasp</em>. First we want the finger to spread, and then perform the clousure toward the palm.
+These type of action are creable in the code, using the class functions.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="nodes.html" class="btn btn-neutral float-right" title="FindActions &amp; Executor node" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="examples.html" class="btn btn-neutral float-left" title="Ready to use examples with tested hands" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Davide Torielli
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

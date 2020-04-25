@@ -1,0 +1,346 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>How to use ROS End-Effector with your End-Effector &mdash; ROSEndEffector 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Ready to use examples with tested hands" href="examples.html" />
+    <link rel="prev" title="Installation" href="install.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ROSEndEffector
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Usage</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">How to use ROS End-Effector with your End-Effector</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#creating-srdf-files">Creating SRDF files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#find-grasping-actions-offline-phase">Find Grasping Actions (offline phase)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#control-your-end-effector-with-rosee-online-phase">Control your End-Effector with ROSEE (online phase)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#dynamic-simulation-with-gazebo">Dynamic Simulation with Gazebo</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Ready to use examples with tested hands</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Components</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="actions.html">ROS End-Effector Grasping Actions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nodes.html">FindActions &amp; Executor node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roseeGui.html">ROS End-Effector GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roseeGazeboPlugin.html">ROS End-Effector Gazebo Plugins</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Other</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="issues.html">Possible Issues</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Advanced</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="googleTests.html">How to run the google tests present in the package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ROSEndEffector</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>How to use ROS End-Effector with your End-Effector</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/usage.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="how-to-use-ros-end-effector-with-your-end-effector">
+<span id="usage"></span><h1>How to use ROS End-Effector with your End-Effector<a class="headerlink" href="#how-to-use-ros-end-effector-with-your-end-effector" title="Permalink to this headline">¶</a></h1>
+<p>ROS End-Effector allows you to control your end-effector with minimal inital set-up</p>
+<ul>
+<li><p class="first">If you want to use also gazebo and <a class="reference internal" href="roseeGazeboPlugin.html#roseegazeboplugin"><span class="std std-ref">ROS End-Effector Gazebo plugin</span></a>, please prepare correctly your <em>.urdf</em> model following the steps <a class="reference internal" href="roseeGazeboPlugin.html#prepare4gazebo"><span class="std std-ref">here</span></a></p>
+</li>
+<li><p class="first">Put <em>.urdf</em> and <em>.srdf</em> files in <em>ROSEndEffector/configs/urdf/</em> and <em>ROSEndEffector/configs/srdf/</em> respectively.
+See below for information on how to proper write your <em>.srdf</em> file
+Be sure that the files are named like the name of the robot tag of <em>.urdf</em> and <em>.srdf</em></p>
+<blockquote>
+<div><p><strong>E.G.</strong> <em>my_hand.urdf</em>, <em>my_hand.srdf</em>, with tags in the files like : <code class="code docutils literal notranslate"><span class="pre">&lt;robot</span> <span class="pre">name=&quot;my_hand&quot;</span> <span class="pre">[...]</span> <span class="pre">&gt;</span></code></p>
+</div></blockquote>
+<p>The meshes can be kept on your hand_description folder, only be sure to <code class="code docutils literal notranslate"><span class="pre">source</span></code> that <em>setup.bash</em> before run ROSEE nodes.</p>
+</li>
+<li><p class="first">Create a yaml config file to tell where the <em>.urdf</em> and <em>.srdf</em> files are, and put in <em>ROSEndEffector/configs/</em> folder, like this one:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">ROSEndEffector</span><span class="p">:</span>
+  <span class="nt">urdf_path</span><span class="p">:</span> <span class="s">&quot;urdf/my_hand.urdf&quot;</span>
+  <span class="nt">srdf_path</span><span class="p">:</span> <span class="s">&quot;srdf/my_hand.srdf&quot;</span>
+</pre></div>
+</div>
+<p>In future we will use this file in a better way so you will not need to put urdf and srdf file in ROSEE folder, and you will be able to specify custom path for these files</p>
+</li>
+</ul>
+<div class="section" id="creating-srdf-files">
+<h2>Creating SRDF files<a class="headerlink" href="#creating-srdf-files" title="Permalink to this headline">¶</a></h2>
+<p>Both <em>moveit</em> and this <em>ROSEE node</em> refers to SRDF file to explore your hand. So it is important to provide a compatible SRDF file.
+<span class="raw-html"><br /></span>
+The convention used is that each finger is a <em>group</em> (from the base of the finger to the tip).
+Even for very complicated hand like schunk hand, this file is easy to create (see the one for the schunk hand <a class="reference external" href="https://github.com/ADVRHumanoids/ROSEndEffector/blob/devel/configs/srdf/schunk.srdf">here</a>).
+<span class="raw-html"><br /></span>
+You must simply add a chain for every group. Take care to include in the chain all the joint that move that group (i.e. that finger). The chain can also have a common root. You can refer to already present srdf to understand how to write this file</p>
+<p>If you don’t want to create this by hand, you can use the <a class="reference external" href="http://docs.ros.org/kinetic/api/moveit_tutorials/html/doc/setup_assistant/setup_assistant_tutorial.html">moveit setup assistant</a> , which will help to create SRDF files (among the other things) through a GUI. Only be sure to create the group as <em>chain</em> (use <em>add_chain</em> and not <em>add_joint</em> not <em>add_link</em>)</p>
+<p>In the <em>SRDF</em> file you can also indicate some joints as passive in this way:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;passive_joint</span> <span class="na">name=</span><span class="s">&quot;NOME_JOINT&quot;</span> <span class="nt">/&gt;</span>
+</pre></div>
+</div>
+<p>See for example the <em>robotiq_3f.srdf</em> file. Please <strong>DO NOT</strong> add the passive tag for joint that are mimic.  This can cause problem and it is useless, because mimic joints are already considered as non-actuated by ROSEE.
+Instead, the passive tag can be useful to indicate that a non-fixed joint is not actuated (for example, it can move only if some external forces is received, in a compliant way).
+It is not necessary to set the passive tag for fixed joints.</p>
+<p><strong>TODO</strong> link schunk srdf not on internet but on interal package file?</p>
+</div>
+<div class="section" id="find-grasping-actions-offline-phase">
+<h2>Find Grasping Actions (offline phase)<a class="headerlink" href="#find-grasping-actions-offline-phase" title="Permalink to this headline">¶</a></h2>
+<p>First thing is to let <strong>UniversalFindActions</strong> explore your model and extract the grasping primitives.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">#</span> <span class="nb">source</span> the setup.bash of package where robot meshes are
+<span class="go">roslaunch ros_end_effector findActions.launch hand_name:=my_hand</span>
+</pre></div>
+</div>
+<p>The findActions node will generate yaml files in the <em>config/action/my_hand/</em> folder.
+The same yaml files are also parsed by the same node to test (and print) the correctness.</p>
+<p><strong>WARNING</strong> old action <em>yaml</em> files will be ovewritten every time you run again the node.
+Also, take care to generate correctly the SRDF (as described above).</p>
+</div>
+<div class="section" id="control-your-end-effector-with-rosee-online-phase">
+<h2>Control your End-Effector with ROSEE (online phase)<a class="headerlink" href="#control-your-end-effector-with-rosee-online-phase" title="Permalink to this headline">¶</a></h2>
+<p>Now you can run the main controller.
+This node will take grasping actions command (received as <em>ROS actions</em>) and will send joint positions to the simulation/real robot.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">#</span> <span class="nb">source</span> the setup.bash of package where robot meshes are
+<span class="go">roslaunch ros_end_effector rosee_startup.launch hand_name:=my_hand</span>
+</pre></div>
+</div>
+<p>This command will load ROSEE controller node, togheter with rviz for visualization purposes.</p>
+<blockquote>
+<div><strong>Note</strong> You can add the argument <code class="code docutils literal notranslate"><span class="pre">inSlider:=true</span></code> if you want to not run ROSEE controller but load a joint publisher GUI to command directly each joint position.</div></blockquote>
+<p>In another terminal, you can run the GUI to easy send the action parsed before. Only be sure to have rosee_gui installed (one of the optional dependencies indicated in <a class="reference internal" href="install.html#install"><span class="std std-ref">Installation</span></a> section).</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">roslaunch rosee_gui gui.launch #no hand name is needed</span>
+</pre></div>
+</div>
+<p>This will load the GUI dynamically, visualizing only the action specific for the end effector launched before.</p>
+<p>You can also send commands directly throught <em>ROS actions</em> (that is what GUI does).
+You can simply <code class="code docutils literal notranslate"><span class="pre">pub</span></code> a <em>rosee_msg/ROSEECommandActionGoal</em> message on <em>/ros_end_effector/action_command/goal</em> topic, and <code class="code docutils literal notranslate"><span class="pre">echo</span></code> on /<em>ros_end_effector/action_command/feedback</em> to receive the feedback.</p>
+<p>For example, to publish:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">rostopic pub /ros_end_effector/action_command/goal rosee_msg/ROSEECommandActionGoal &quot;header:</span>
+<span class="go">  seq: 0</span>
+<span class="go">    stamp:</span>
+<span class="go">      secs: 0</span>
+<span class="go">      nsecs: 0</span>
+<span class="go">  frame_id: &#39;&#39;</span>
+<span class="go">goal_id:</span>
+<span class="go">  stamp:</span>
+<span class="go">    secs: 0</span>
+<span class="go">    nsecs: 0</span>
+<span class="go">  id: &#39;&#39;</span>
+<span class="go">goal:</span>
+<span class="hll"><span class="go">  goal_action:</span>
+</span><span class="hll"><span class="go">    seq: 0</span>
+</span><span class="hll"><span class="go">    stamp: {secs: 0, nsecs: 0}</span>
+</span><span class="hll"><span class="go">    action_name: &#39;pinchTight&#39;</span>
+</span><span class="hll"><span class="go">    action_type: 0</span>
+</span><span class="hll"><span class="go">    actionPrimitive_type: 0</span>
+</span><span class="hll"><span class="go">    selectable_items: [&#39;left_hand_c&#39;, &#39;left_hand_s&#39;]</span>
+</span><span class="hll"><span class="go">    percentage: 1.0&quot;</span>
+</span></pre></div>
+</div>
+<p><strong>NOTE</strong> the important lines are the last ones.</p>
+<p>To receive feedback:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">rostopic echo /ros_end_effector/action_command/feedback</span>
+</pre></div>
+</div>
+<div class="section" id="dynamic-simulation-with-gazebo">
+<h3>Dynamic Simulation with Gazebo<a class="headerlink" href="#dynamic-simulation-with-gazebo" title="Permalink to this headline">¶</a></h3>
+<p>Be sure to have installed the rosee_gazebo_plugin (one of the optional dependencies indicated in <a class="reference internal" href="install.html#install"><span class="std std-ref">Installation</span></a> section) and your urdf model ready to be used with Gazebo (TODO see plugingazebo section).</p>
+<blockquote>
+<div><strong>Note</strong> Also remember that you have to run the <em>offline phase</em> if you have never run it for your hand.</div></blockquote>
+<p>Launch the main node with the <code class="code docutils literal notranslate"><span class="pre">gazebo:=true</span></code> argument, like this way:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">#</span> <span class="nb">source</span> the setup.bash of package where robot meshes are
+<span class="go">roslaunch ros_end_effector rosee_startup.launch hand_name:=my_hand gazebo:=true</span>
+</pre></div>
+</div>
+<p>As before, you can use the ROSEE GUI to send grasping action commands:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">roslaunch rosee_gui gui.launch #no hand name is needed</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="examples.html" class="btn btn-neutral float-right" title="Ready to use examples with tested hands" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="install.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Davide Torielli
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

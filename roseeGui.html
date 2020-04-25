@@ -1,0 +1,260 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ROS End-Effector GUI &mdash; ROSEndEffector 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ROS End-Effector Gazebo Plugins" href="roseeGazeboPlugin.html" />
+    <link rel="prev" title="FindActions &amp; Executor node" href="nodes.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ROSEndEffector
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">How to use ROS End-Effector with your End-Effector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Ready to use examples with tested hands</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Components</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="actions.html">ROS End-Effector Grasping Actions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nodes.html">FindActions &amp; Executor node</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">ROS End-Effector GUI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#prerequisite">Prerequisite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-to-install">How To Install</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#details">Details</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#how-it-works-code-structure-improvable-obviously">How it works - code structure (improvable obviously)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="roseeGazeboPlugin.html">ROS End-Effector Gazebo Plugins</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Other</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="issues.html">Possible Issues</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Advanced</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="googleTests.html">How to run the google tests present in the package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ROSEndEffector</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>ROS End-Effector GUI</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/roseeGui.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="ros-end-effector-gui">
+<span id="roseegui"></span><h1>ROS End-Effector GUI<a class="headerlink" href="#ros-end-effector-gui" title="Permalink to this headline">¶</a></h1>
+<p>The GUI package is hosted on <em>github</em> <a class="reference external" href="https://github.com/ADVRHumanoids/rosee_gui">here</a>.</p>
+<div class="section" id="prerequisite">
+<h2>Prerequisite<a class="headerlink" href="#prerequisite" title="Permalink to this headline">¶</a></h2>
+<p>QT5 (I am not sure if this is given with ROS, if this is necessary only to compile, I will check)</p>
+</div>
+<div class="section" id="how-to-install">
+<h2>How To Install<a class="headerlink" href="#how-to-install" title="Permalink to this headline">¶</a></h2>
+<p><strong>NOTE</strong> You probably already installed this if you have followed the steps in <a class="reference internal" href="install.html#install"><span class="std std-ref">Install</span></a> section</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">git clone -b &lt;branch_you_want&gt; https://github.com/ADVRHumanoids/rosee_gui</span>
+
+<span class="go">compile with catkin_make</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="details">
+<h2>Details<a class="headerlink" href="#details" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="how-it-works-code-structure-improvable-obviously">
+<h3>How it works - code structure (improvable obviously)<a class="headerlink" href="#how-it-works-code-structure-improvable-obviously" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><strong>main.cpp</strong> : It handles ROS (creating the nodehandle) and the Qapplication. It creates the Window object</li>
+<li><strong>Window.cpp</strong> a <em>QWidget</em> derived class which refers to the gui Window. It has as member a <em>QGridLayout</em>, and it creates all the inner <em>QGridLayout</em> (one for each action)</li>
+<li><strong>ActionLayout.cpp</strong> <em>QGridLayout</em> derived class, which contain labels buttons and other widgets. It also send message to ros topic, handling a ros publisher with a nodehandle passed to its costructor</li>
+<li><strong>ActionBoxesLayout.cpp</strong> Derived class from above, it includes checkboxes to select finger/joint and send them also with topics.</li>
+<li><strong>ActionTimedLayout.cpp</strong>, <strong>ActionTimedElement.cpp</strong> Container and element for the timed action, which per definition is composed by other actions executed one after another with some time margins. Each element has three progress bar so in the future we can take feedback and display a progress of the action execution, included time margins</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="roseeGazeboPlugin.html" class="btn btn-neutral float-right" title="ROS End-Effector Gazebo Plugins" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="nodes.html" class="btn btn-neutral float-left" title="FindActions &amp; Executor node" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Davide Torielli
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,293 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Installation &mdash; ROSEndEffector 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="How to use ROS End-Effector with your End-Effector" href="usage.html" />
+    <link rel="prev" title="Welcome to ROS End-Effector’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ROSEndEffector
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Usage</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#install-external-system-dependencies">Install External System Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#install-ros-end-effector-package-from-sources">Install ROS End-Effector package from sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation-issues">Installation issues</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">How to use ROS End-Effector with your End-Effector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Ready to use examples with tested hands</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Components</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="actions.html">ROS End-Effector Grasping Actions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nodes.html">FindActions &amp; Executor node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roseeGui.html">ROS End-Effector GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roseeGazeboPlugin.html">ROS End-Effector Gazebo Plugins</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Other</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="issues.html">Possible Issues</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Advanced</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="googleTests.html">How to run the google tests present in the package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ROSEndEffector</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Installation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/install.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <span class="target" id="install"></span><div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p>ROS-EndEffector is a ROS package tested on ROS kinetic with Ubuntu 16.04</p>
+<p><strong>Note</strong> We are going to use the abreviation ROSEE for the ROS End-Effector from now on</p>
+<div class="section" id="install-external-system-dependencies">
+<h2>Install External System Dependencies<a class="headerlink" href="#install-external-system-dependencies" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">sudo apt-get install ros-kinetic-moveit #moveit</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="install-ros-end-effector-package-from-sources">
+<h2>Install ROS End-Effector package from sources<a class="headerlink" href="#install-ros-end-effector-package-from-sources" title="Permalink to this headline">¶</a></h2>
+<p><strong>Note</strong> A .rosinstall file will be available in future for a single-command way to install all</p>
+<p><strong>IMPORTANT</strong> : ROSEE is a project under development. When cloning, be sure to download the branch you really want. Currently the newest features can be found in the <em>devel</em> branch (so, in the commands below substitute &lt;branch_you_want&gt; with devel. Note that also the other ROSEEE related packages should be used with the right branch.</p>
+<p>The next steps will guide you to the creation of a new catkin_workspace, for clone all the necessary repository and compile them all</p>
+<ul>
+<li><p class="first">Create a catkin workspace</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">mkdir ~/ROSEE</span>
+<span class="go">cd ROSEE</span>
+<span class="go">mkdir src</span>
+<span class="go">cd src</span>
+<span class="go">catkin_init_workspace</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Clone Necessary dependencies:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">git clone -b &lt;branch_you_want&gt; https://github.com/ADVRHumanoids/rosee_msg.git</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Clone Optional dependencies:</p>
+<ul>
+<li><p class="first">GUI</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">git clone -b &lt;branch_you_want&gt; https://github.com/ADVRHumanoids/rosee_gui.git</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Gazebo Plugin (more info in the dedicated <a class="reference internal" href="roseeGazeboPlugin.html#roseegazeboplugin"><span class="std std-ref">section</span></a>)</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">git clone https://github.com/roboticsgroup/roboticsgroup_gazebo_plugins.git #necessary external plugin</span>
+<span class="go">git clone -b &lt;branch_you_want&gt; https://github.com/ADVRHumanoids/rosee_gazebo_plugins.git</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p><strong>TODO</strong> you can see details on each optional plugin in their relative page of this doc
+<span class="raw-html"><br /></span>
+<span class="raw-html"><br /></span></p>
+</li>
+<li><p class="first">Clone Core Package</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">git clone -b &lt;branch_you_want&gt; https://github.com/ADVRHumanoids/ROSEndEffector</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Compile them all!</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">cd ~/ROSEE</span>
+<span class="go">catkin_make</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="installation-issues">
+<h2>Installation issues<a class="headerlink" href="#installation-issues" title="Permalink to this headline">¶</a></h2>
+<p>Not found (for now…)</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="usage.html" class="btn btn-neutral float-right" title="How to use ROS End-Effector with your End-Effector" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to ROS End-Effector’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Davide Torielli
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
