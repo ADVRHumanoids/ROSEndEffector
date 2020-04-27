@@ -157,6 +157,12 @@ bool ROSEE::Parser::parseSRDF() {
     }
     
     removePassiveJoints();
+
+    // save srdf as string 
+    std::ifstream t_srdf ( _srdf_path );
+    std::stringstream buffer_srdf;
+    buffer_srdf << t_srdf.rdbuf();
+    _srdf_string = buffer_srdf.str();
     
     return true;
 
@@ -396,6 +402,14 @@ void ROSEE::Parser::getJointFingerMap ( std::map< std::string, std::string >& jo
 std::string ROSEE::Parser::getEndEffectorName() const {
 
     return _urdf_model->getName();
+}
+
+std::string ROSEE::Parser::getUrdfString() const {
+    return _urdf_string;
+}
+
+std::string ROSEE::Parser::getSrdfString() const {
+    return _srdf_string;
 }
 
 
