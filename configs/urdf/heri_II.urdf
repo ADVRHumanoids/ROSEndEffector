@@ -669,8 +669,4 @@
       <maxEffort>10.0</maxEffort>
     </plugin>
   </gazebo>
-  <gazebo>
-    <plugin filename="libRoseePlugin.so" name="heri_II_real_controller">
-    </plugin>
-  </gazebo>
 </robot>

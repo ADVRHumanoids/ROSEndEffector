@@ -596,13 +596,4 @@
     parent_joint="LFB3__LFP3_1" mimic_joint="LFP3_2__LFP3_3"
     has_pid="false" multiplier="1.0" max_effort="10.0" />
 
-
-  <gazebo>
-    <plugin name="heri_II_real_controller" filename="libRoseePlugin.so">
-    </plugin>
-  </gazebo>
-
-
-  
-
 </robot>
