@@ -23,12 +23,22 @@
 #include <ROSEndEffector/ActionTimed.h>
 #include <ROSEndEffector/ActionGeneric.h>
 #include <ROSEndEffector/ParserMoveIt.h>
+#include <ROSEndEffector/Parser.h> //to take urdf from conf file
 
 #include <ROSEndEffector/MapActionHandler.h>
 
 int main ( int argc, char **argv ) {
 
     ros::init ( argc, argv, "FindActions" );
+    
+    ros::NodeHandle nh;
+    ROSEE::Parser parser(nh);
+    parser.init();
+    nh.setParam("robot_description", parser.getUrdfString());
+    nh.setParam("robot_description_semantic", parser.getSrdfString());
+    std::string confFileName;
+    nh.getParam("ros_ee_config_path", confFileName); 
+    ROS_INFO_STREAM("FINDACTIONS: Set urdf and srdf file in the param server from config file " << confFileName);
     
     std::shared_ptr <ROSEE::ParserMoveIt> parserMoveIt = std::make_shared <ROSEE::ParserMoveIt> ();
     if (! parserMoveIt->init ("robot_description") ) {
