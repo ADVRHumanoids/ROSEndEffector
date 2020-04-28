@@ -40,6 +40,12 @@ bool ROSEE::Parser::getJointsInFinger ( std::string base_link,
                                         std::string finger_name
                                       ) {
 
+    //we add here the finger to the map because later is added only if the joint is actuated.
+    //Instead we want in the map all the fingers, even if they have no actuated joint in.
+    //this is necessary to not cause later problem due to have the right number of finger
+    _finger_joint_map.insert(std::make_pair(finger_name, std::vector<std::string>())); 
+    
+    
     KDL::Chain actual_chain;
     if ( _robot_tree.getChain ( base_link, tip_link, actual_chain ) ) {
 
@@ -381,8 +387,17 @@ void ROSEE::Parser::printEndEffectorFingerJointsMap() const {
         for ( auto& chain_joints: _finger_joint_map ) {
             ROS_INFO_STREAM ( chain_joints.first );
 
-            for ( int i = 0; i <  chain_joints.second.size(); i++ ) {
-                ROS_INFO_STREAM ( chain_joints.second.at ( i ) );
+            int nJointInFinger = chain_joints.second.size();
+            
+            if ( nJointInFinger == 0 ) {
+                
+                ROS_INFO_STREAM ( "No actuated joint in this finger" );
+                
+            } else {
+                
+                for ( int i = 0; i < nJointInFinger ; i++ ) {
+                    ROS_INFO_STREAM ( chain_joints.second.at ( i ) );
+                }
             }
 
             ROS_INFO_STREAM ( "-------------------------" );
