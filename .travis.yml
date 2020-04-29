@@ -58,7 +58,7 @@ script:
 #tests
 - make tests
 - source devel/setup.bash
-- make test ARGS="-V" -i
+- ctest --verbose
 # OLD WAY to test with roscore needed in this file. test with test_ee hand
 #- rosparam set -t $(rospack find ros_end_effector)/configs/urdf/test_ee.urdf robot_description
 #- rosparam set -t $(rospack find ros_end_effector)/configs/srdf/test_ee.srdf robot_description_semantic
