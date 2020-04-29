@@ -349,7 +349,7 @@ if(CATKIN_ENABLE_TESTING)
         
             add_test(
                 NAME ${testEx}_${hand}
-               COMMAND ${testEx} ${hand}
+                COMMAND ${testEx} ${hand}
             )
 
         endforeach()    

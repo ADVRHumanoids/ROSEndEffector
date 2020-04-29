@@ -9,8 +9,6 @@
 #include <ROSEndEffector/ActionPrimitive.h>
 #include <ROSEndEffector/ActionTrig.h>
 
-#define HAND_NAME_TEST "two_finger";
-
 namespace {
 
 class testFindTrigs: public ::testing::Test {
@@ -34,15 +32,29 @@ protected:
         
         std::string folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/tests/" + parserMoveIt->getHandName();
 
-        
-        trigMap.push_back( actionsFinder.findTrig(ROSEE::ActionPrimitive::Type::Trig, folderForActions + "/primitives/") );
-        trigMap.push_back( actionsFinder.findTrig(ROSEE::ActionPrimitive::Type::TipFlex, folderForActions + "/primitives/") );
-        trigMap.push_back( actionsFinder.findTrig(ROSEE::ActionPrimitive::Type::FingFlex, folderForActions + "/primitives/") );
-
         ROSEE::YamlWorker yamlWorker;
-        trigParsedMap.push_back( yamlWorker.parseYamlPrimitive ( folderForActions + "/primitives/" + "trig.yaml" ) );
-        trigParsedMap.push_back( yamlWorker.parseYamlPrimitive ( folderForActions + "/primitives/" + "tipFlex.yaml" ) );
-        trigParsedMap.push_back( yamlWorker.parseYamlPrimitive ( folderForActions + "/primitives/" + "fingFlex.yaml" ) );
+        
+        auto trig = actionsFinder.findTrig(ROSEE::ActionPrimitive::Type::Trig, folderForActions + "/primitives/");
+        if (trig.size() > 0) {
+
+            trigMap.push_back( trig );
+            trigParsedMap.push_back( yamlWorker.parseYamlPrimitive ( folderForActions + "/primitives/" + "trig.yaml" ) );
+        }
+        
+        auto tipFlex = actionsFinder.findTrig(ROSEE::ActionPrimitive::Type::TipFlex, folderForActions + "/primitives/");
+        if (tipFlex.size() > 0) {
+
+            trigMap.push_back( tipFlex );
+            trigParsedMap.push_back( yamlWorker.parseYamlPrimitive ( folderForActions + "/primitives/" + "tipFlex.yaml" ) );
+        }
+        
+        auto fingFlex = actionsFinder.findTrig(ROSEE::ActionPrimitive::Type::FingFlex, folderForActions + "/primitives/");
+        if (fingFlex.size() > 0) {
+            
+            trigMap.push_back( fingFlex );
+            trigParsedMap.push_back( yamlWorker.parseYamlPrimitive ( folderForActions + "/primitives/" + "fingFlex.yaml" ) );
+
+        }
     }
 
     virtual void TearDown() override {
@@ -100,9 +112,10 @@ TEST_F ( testFindTrigs, checkNameTypeConsistency ) {
     
     for (int k = 0; k < trigMap.size(); ++k) {
         
-        ROSEE::ActionPrimitive::Type actionType = trigMap.at(k).begin()->second.getPrimitiveType(); 
-    
+        ROSEE::ActionPrimitive::Type actionType = trigMap.at(k).begin()->second.getPrimitiveType();
+        
         for (auto &mapEl: trigMap.at(k) ) {
+            
             EXPECT_EQ (actionType, mapEl.second.getPrimitiveType() ); //in the map all el must be of same ActionType
 
             switch (mapEl.second.getPrimitiveType()) {
@@ -119,11 +132,11 @@ TEST_F ( testFindTrigs, checkNameTypeConsistency ) {
                 FAIL() << mapEl.second.getPrimitiveType() << " not a know type" << std::endl ;
             }
         }
-    
+        
         actionType = trigParsedMap.at(k).begin()->second->getPrimitiveType(); 
         for (auto &mapEl: trigParsedMap.at(k) ) {
-            EXPECT_EQ (actionType, mapEl.second->getPrimitiveType() ); //in the map all el must be of same ActionType
 
+            EXPECT_EQ (actionType, mapEl.second->getPrimitiveType() ); //in the map all el must be of same ActionType
 
             switch (mapEl.second->getPrimitiveType()) {
             case ROSEE::ActionPrimitive::Type::Trig : 
@@ -193,29 +206,35 @@ TEST_F ( testFindTrigs, checkEmitParse ) {
  */
 TEST_F ( testFindTrigs, checkJointPosTipAndFing ) {
     
-    // we assume the order in trigmap : 0 = trig, 1 = tipflex, 2 = fingflex
-    // otherwise we have to check which one is what that is useless
-    ASSERT_EQ ( trigMap.at(0).begin()->second.getPrimitiveType(), ROSEE::ActionPrimitive::Type::Trig);
-    ASSERT_EQ ( trigMap.at(1).begin()->second.getPrimitiveType(), ROSEE::ActionPrimitive::Type::TipFlex);
-    ASSERT_EQ ( trigMap.at(2).begin()->second.getPrimitiveType(), ROSEE::ActionPrimitive::Type::FingFlex);
-    
-    //compare tip and fing flex
-    for (auto &mapTipEl: trigMap.at(1) ) {
+    if (trigMap.size() != 0 &&
+        trigMap.at(0).size() != 0 && 
+        trigMap.at(1).size() != 0 && 
+        trigMap.at(2).size() != 0 ) 
+    {
+        // we assume the order in trigmap : 0 = trig, 1 = tipflex, 2 = fingflex
+        // otherwise we have to check which one is what that is useless
+        ASSERT_EQ ( trigMap.at(0).begin()->second.getPrimitiveType(), ROSEE::ActionPrimitive::Type::Trig);
+        ASSERT_EQ ( trigMap.at(1).begin()->second.getPrimitiveType(), ROSEE::ActionPrimitive::Type::TipFlex);
+        ASSERT_EQ ( trigMap.at(2).begin()->second.getPrimitiveType(), ROSEE::ActionPrimitive::Type::FingFlex);
         
-        ROSEE::JointPos tipJs = mapTipEl.second.getJointPos();
-        
-        for (auto &mapFingEl : trigMap.at(2) ) {
-            
-            ROSEE::JointPos fingJs = mapFingEl.second.getJointPos();
-            ASSERT_EQ ( tipJs.size(), fingJs.size() );
-            
-            for (auto tipJoint: tipJs) {
+        //compare tip and fing flex
+        for (auto &mapTipEl: trigMap.at(1) ) {
+
+            ROSEE::JointPos tipJs = mapTipEl.second.getJointPos();
+
+            for (auto &mapFingEl : trigMap.at(2) ) {
                 
-                //at(0): 1dof joint
-                if (tipJoint.second.at(0) != 0.0) {
-                    //if so, it is the setted joint, and the correspondent of fingerAction must be zero
-                    EXPECT_EQ ( fingJs.at(tipJoint.first).at(0), 0.0);
-                } 
+                ROSEE::JointPos fingJs = mapFingEl.second.getJointPos();
+                ASSERT_EQ ( tipJs.size(), fingJs.size() );
+                
+                for (auto tipJoint: tipJs) {
+                    
+                    //at(0): 1dof joint
+                    if (tipJoint.second.at(0) != 0.0) {
+                        //if so, it is the setted joint, and the correspondent of fingerAction must be zero
+                        EXPECT_EQ ( fingJs.at(tipJoint.first).at(0), 0.0);
+                    } 
+                }
             }
         }
     }
@@ -237,54 +256,61 @@ TEST_F ( testFindTrigs, checkJointPosTipAndFing ) {
  */
 TEST_F ( testFindTrigs, checkJointPosFlexsAndTrig ) {
     
-    // we assume the order in trigmap : 0 = trig, 1 = tipflex, 2 = fingflex
-    // otherwise we have to check which one is what that is useless
-    ASSERT_EQ ( trigMap.at(0).begin()->second.getPrimitiveType(), ROSEE::ActionPrimitive::Type::Trig);
-    ASSERT_EQ ( trigMap.at(1).begin()->second.getPrimitiveType(), ROSEE::ActionPrimitive::Type::TipFlex);
-    ASSERT_EQ ( trigMap.at(2).begin()->second.getPrimitiveType(), ROSEE::ActionPrimitive::Type::FingFlex);
-    
-    
-   // If a tipFlex is present, the unique setted joint must be also setted (equal pos) in the trig action 
-    for (auto &mapTipEl: trigMap.at(1) ) {                
-        for ( auto &tipJs : mapTipEl.second.getJointPos() ) {
-            if (tipJs.second.at(0) != 0 ) {
-                //if a tipFlex exist for a tip, also a trig for that tip exist
-                EXPECT_TRUE (trigMap.at(0).find ( mapTipEl.first ) != trigMap.at(0).end());
-                EXPECT_DOUBLE_EQ ( tipJs.second.at(0),
-                        trigMap.at(0).at(mapTipEl.first).getJointPos().at(tipJs.first).at(0) );
-            }
-            
-        }
-    }
-    
-    // If a FingFlex is present, the unique setted joint must be also setted (equal pos) in the trig action 
-    for (auto &mapFingEl: trigMap.at(2) ) {                
-        for ( auto &fingJs : mapFingEl.second.getJointPos() ) {
-            if (fingJs.second.at(0) != 0 ) {
-                //if a fingFlex exist for a tip, also a trig for that tip exist
-                EXPECT_TRUE ( trigMap.at(0).find ( mapFingEl.first ) != trigMap.at(0).end() );
-                EXPECT_DOUBLE_EQ ( fingJs.second.at(0),
-                        trigMap.at(0).at(mapFingEl.first).getJointPos().at(fingJs.first).at(0) );
-            }
-        }
-    }
-    
-    // If some joint is not setted in the trig, it must be also non setted in 
-    // the tipAction of the same fingertip
-    for (auto &mapTrigEl: trigMap.at(0) ) {    
-        for ( auto &trigJs : mapTrigEl.second.getJointPos() ) {
-            if (trigJs.second.at(0) == 0.0 ) {
-                
-                // if a trig exist, it is not assured that a tip flex exist for that tip
-                if (trigMap.at(1).find ( mapTrigEl.first ) != trigMap.at(1).end()) {
-                    EXPECT_EQ ( 0.0,
-                            trigMap.at(1).at(mapTrigEl.first).getJointPos().at(trigJs.first).at(0) );
+
+    if (trigMap.size() != 0 &&
+        trigMap.at(0).size() != 0 && 
+        trigMap.at(1).size() != 0 && 
+        trigMap.at(2).size() != 0 ) 
+    {
+        // we assume the order in trigmap : 0 = trig, 1 = tipflex, 2 = fingflex
+        // otherwise we have to check which one is what that is useless
+        ASSERT_EQ ( trigMap.at(0).begin()->second.getPrimitiveType(), ROSEE::ActionPrimitive::Type::Trig);
+        ASSERT_EQ ( trigMap.at(1).begin()->second.getPrimitiveType(), ROSEE::ActionPrimitive::Type::TipFlex);
+        ASSERT_EQ ( trigMap.at(2).begin()->second.getPrimitiveType(), ROSEE::ActionPrimitive::Type::FingFlex);
+        
+        
+    // If a tipFlex is present, the unique setted joint must be also setted (equal pos) in the trig action 
+        for (auto &mapTipEl: trigMap.at(1) ) {                
+            for ( auto &tipJs : mapTipEl.second.getJointPos() ) {
+                if (tipJs.second.at(0) != 0 ) {
+                    //if a tipFlex exist for a tip, also a trig for that tip exist
+                    EXPECT_TRUE (trigMap.at(0).find ( mapTipEl.first ) != trigMap.at(0).end());
+                    EXPECT_DOUBLE_EQ ( tipJs.second.at(0),
+                            trigMap.at(0).at(mapTipEl.first).getJointPos().at(tipJs.first).at(0) );
                 }
                 
-                // if a trig exist, it is not assured that a fing flex exist for that tip
-                if (trigMap.at(2).find ( mapTrigEl.first ) != trigMap.at(2).end()) {
-                    EXPECT_EQ ( 0.0,
-                            trigMap.at(2).at(mapTrigEl.first).getJointPos().at(trigJs.first).at(0) );
+            }
+        }
+        
+        // If a FingFlex is present, the unique setted joint must be also setted (equal pos) in the trig action 
+        for (auto &mapFingEl: trigMap.at(2) ) {                
+            for ( auto &fingJs : mapFingEl.second.getJointPos() ) {
+                if (fingJs.second.at(0) != 0 ) {
+                    //if a fingFlex exist for a tip, also a trig for that tip exist
+                    EXPECT_TRUE ( trigMap.at(0).find ( mapFingEl.first ) != trigMap.at(0).end() );
+                    EXPECT_DOUBLE_EQ ( fingJs.second.at(0),
+                            trigMap.at(0).at(mapFingEl.first).getJointPos().at(fingJs.first).at(0) );
+                }
+            }
+        }
+        
+        // If some joint is not set in the trig, it must be also non setted in 
+        // the tipAction of the same fingertip
+        for (auto &mapTrigEl: trigMap.at(0) ) {    
+            for ( auto &trigJs : mapTrigEl.second.getJointPos() ) {
+                if (trigJs.second.at(0) == 0.0 ) {
+                    
+                    // if a trig exist, it is not assured that a tip flex exist for that tip
+                    if (trigMap.at(1).find ( mapTrigEl.first ) != trigMap.at(1).end()) {
+                        EXPECT_EQ ( 0.0,
+                                trigMap.at(1).at(mapTrigEl.first).getJointPos().at(trigJs.first).at(0) );
+                    }
+                    
+                    // if a trig exist, it is not assured that a fing flex exist for that tip
+                    if (trigMap.at(2).find ( mapTrigEl.first ) != trigMap.at(2).end()) {
+                        EXPECT_EQ ( 0.0,
+                                trigMap.at(2).at(mapTrigEl.first).getJointPos().at(trigJs.first).at(0) );
+                    }
                 }
             }
         }

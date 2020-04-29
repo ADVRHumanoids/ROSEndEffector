@@ -36,17 +36,20 @@ protected:
         
         trigMap = actionsFinder.findTrig(ROSEE::ActionPrimitive::Type::Trig, folderForActions + "/primitives/") ;  
 
-        for (auto trig : trigMap) {
-            std::shared_ptr <ROSEE::ActionPrimitive> pointer = 
-                std::make_shared <ROSEE::ActionTrig> ( trig.second );
-            grasp.sumAction ( pointer );  
-        }
+        if (trigMap.size() > 0){
+            for (auto trig : trigMap) {
+                std::shared_ptr <ROSEE::ActionPrimitive> pointer = 
+                    std::make_shared <ROSEE::ActionTrig> ( trig.second );
+                grasp.sumAction ( pointer );  
+            }
 
-        ROSEE::YamlWorker yamlWorker;
-        yamlWorker.createYamlFile (&grasp, folderForActions + "/generics/");
-        
-        //Parsing
-        graspParsed = yamlWorker.parseYamlComposed (folderForActions + "/generics/grasp.yaml");
+            ROSEE::YamlWorker yamlWorker;
+            yamlWorker.createYamlFile (&grasp, folderForActions + "/generics/");
+            
+            //Parsing
+            graspParsed = yamlWorker.parseYamlComposed (folderForActions + "/generics/grasp.yaml");
+            
+        } 
     }
 
     virtual void TearDown() {

@@ -39,8 +39,14 @@ protected:
 
         ROSEE::YamlWorker yamlWorker;
 
-        pinchParsedMap = yamlWorker.parseYamlPrimitive(folderForActions + "/primitives/" + "pinchTight.yaml" );
-        pinchLooseParsedMap = yamlWorker.parseYamlPrimitive(folderForActions + "/primitives/" + "pinchLoose.yaml");
+        if (pinchMap.size() > 0 ) {
+            pinchParsedMap = yamlWorker.parseYamlPrimitive(folderForActions + "/primitives/" + "pinchTight.yaml" );
+        }
+        
+        if (pinchLooseMap.size() > 0 ) {
+            pinchLooseParsedMap = yamlWorker.parseYamlPrimitive(folderForActions + "/primitives/" + "pinchLoose.yaml");
+        }
+        
     }
 
     virtual void TearDown() {
