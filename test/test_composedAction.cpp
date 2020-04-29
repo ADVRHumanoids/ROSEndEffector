@@ -72,19 +72,22 @@ TEST_F ( testComposedAction, checkNumberPrimitives ) {
 
 TEST_F ( testComposedAction, checkEmitParse ) {
     
-    EXPECT_EQ (grasp.getName(), graspParsed.getName() );
-    EXPECT_EQ (grasp.numberOfInnerActions(), graspParsed.numberOfInnerActions() );
-    EXPECT_EQ (grasp.isIndependent(), graspParsed.isIndependent() );
-    EXPECT_EQ (grasp.getFingersInvolved(), graspParsed.getFingersInvolved() );
-    
-    for (auto joint: grasp.getJointPos() ) {
+    if (trigMap.size() > 0) { //if empty, no grasp is defined in the setup so test without meaning
         
-        //compare size of joint (number of dofs)
-        ASSERT_EQ (joint.second.size(), graspParsed.getJointPos().at(joint.first).size() );
-        //loop the eventually multiple joint pos (when dofs > 1)
-        for (int j = 0; j < joint.second.size(); ++j ){
-            EXPECT_DOUBLE_EQ ( joint.second.at(j), graspParsed.getJointPos().at(joint.first).at(j) ); 
-        }     
+        EXPECT_EQ (grasp.getName(), graspParsed.getName() );
+        EXPECT_EQ (grasp.numberOfInnerActions(), graspParsed.numberOfInnerActions() );
+        EXPECT_EQ (grasp.isIndependent(), graspParsed.isIndependent() );
+        EXPECT_EQ (grasp.getFingersInvolved(), graspParsed.getFingersInvolved() );
+        
+        for (auto joint: grasp.getJointPos() ) {
+            
+            //compare size of joint (number of dofs)
+            ASSERT_EQ (joint.second.size(), graspParsed.getJointPos().at(joint.first).size() );
+            //loop the eventually multiple joint pos (when dofs > 1)
+            for (int j = 0; j < joint.second.size(); ++j ){
+                EXPECT_DOUBLE_EQ ( joint.second.at(j), graspParsed.getJointPos().at(joint.first).at(j) ); 
+            }     
+        }
     }
 }
 
