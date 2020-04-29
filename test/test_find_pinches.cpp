@@ -10,8 +10,6 @@
 #include <ROSEndEffector/ActionPinchTight.h>
 #include <ROSEndEffector/ActionPinchLoose.h>
 
-#define HAND_NAME_TEST "two_finger";
-
 namespace {
 
 class testFindPinches: public ::testing::Test {
@@ -383,32 +381,29 @@ TEST_F ( testFindPinches, checkTightLooseExclusion ) {
 
 int main ( int argc, char **argv ) {
     
+    if (argc < 2 ){
+        
+        std::cout << "[TEST ERROR] Insert hand name as argument" << std::endl;
+        return -1;
+    }
+    
     /* Run tests on an isolated roscore */
     if(setenv("ROS_MASTER_URI", "http://localhost:11322", 1) == -1)
     {
         perror("setenv");
         return 1;
     }
-    
+
     //run roscore
     std::unique_ptr<ROSEE::TestUtils::Process> roscore;
-    roscore.reset(new ROSEE::TestUtils::Process({"roscore", "-p", "11322"}));
+    roscore.reset(new ROSEE::TestUtils::Process({"roscore", "-p", "11322"}));    
     
-    ros::init ( argc, argv, "testFindPinches" );
+    if ( ROSEE::TestUtils::prepareROSForTests ( argc, argv, "testFindPinches" ) != 0 ) {
+        
+        std::cout << "[TEST ERROR] Prepare Funcion failed" << std::endl;
+        return -1;
+    }
     
-    //fill ros param with file models, needed by moveit parserMoveIt
-    std::string modelPathURDF = ROSEE::Utils::getPackagePath() + "configs/urdf/" + HAND_NAME_TEST;
-    std::string modelPathSRDF = ROSEE::Utils::getPackagePath() + "configs/srdf/" + HAND_NAME_TEST;
-
-    //Is there a better way to parse?
-    std::ifstream urdf(modelPathURDF + ".urdf");
-    std::ifstream srdf(modelPathSRDF + ".srdf");
-    std::stringstream sUrdf, sSrdf;
-    sUrdf << urdf.rdbuf();
-    sSrdf << srdf.rdbuf();
-
-    ros::param::set("robot_description" , sUrdf.str());
-    ros::param::set("robot_description_semantic" , sSrdf.str());
     
     ::testing::InitGoogleTest ( &argc, argv );
     return RUN_ALL_TESTS();

@@ -7,6 +7,11 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+//for the function prepareROSForTests
+#include <ros/ros.h>
+#include <ROSEndEffector/Utils.h>
+
+
 /** Utils funcion to create process to run roscore,
  * gently copied from https://github.com/ADVRHumanoids/CartesianInterface/blob/refactor2020/tests/testutils.h
  */
@@ -81,6 +86,41 @@ Process::~Process()
     kill(SIGINT);
     wait();
 }
+
+/**
+ * @brief Function to be called in the main of each test, it runs roscore and fill
+ * parameter server with robot models
+ * 
+ * @return a not 0 if some error happens
+ */
+int prepareROSForTests ( int argc, char **argv, std::string testName ) {
+    
+    ros::init ( argc, argv, testName );
+        
+    //ros::Time::init();
+    //while (!ros::master::check()) //wait for roscore to be ready
+    //{
+    //    std::cout << "waiting for roscore..." << std::endl;
+    //    ros::Duration(0.2).sleep();
+    //}
+    
+    //fill ros param with file models, needed by moveit parserMoveIt
+    std::string modelPathURDF = ROSEE::Utils::getPackagePath() + "configs/urdf/" + argv[1];
+    std::string modelPathSRDF = ROSEE::Utils::getPackagePath() + "configs/srdf/" + argv[1];
+
+    //Is there a better way to parse?
+    std::ifstream urdf(modelPathURDF + ".urdf");
+    std::ifstream srdf(modelPathSRDF + ".srdf");
+    std::stringstream sUrdf, sSrdf;
+    sUrdf << urdf.rdbuf();
+    sSrdf << srdf.rdbuf();
+
+    ros::param::set("robot_description" , sUrdf.str());
+    ros::param::set("robot_description_semantic" , sSrdf.str());
+    
+    return 0;
+}
+
 
 } //namespace TestUtils
 
