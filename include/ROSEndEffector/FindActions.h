@@ -161,6 +161,20 @@ private:
     void fillNotCollidingTips ( std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchLoose >* mapOfLoosePinches,
         const std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchTight >* mapOfPinches );
     
+    /**
+     * @brief this function take the two tight and loose maps and change the keys from fingertips
+     *  names to their finger names. 
+     * 
+     * @param mapOfLoosePinches [out] Pointer to the map of \ref ActionPinchLoose
+     * @param mapOfPinches [out] pointer to the map of \ref ActionPinchTight
+     * 
+     * @warning The order in the pair is lexicographical so the first finger in the 
+     *  pair can refer to the second tip in the old key pair
+     */
+    void changeFingertipsToFingerNames ( 
+        std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchTight >* mapOfPinches, 
+        std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchLoose >* mapOfLoosePinches) ;
+
     
    /** 
     * @brief trig is the action of closing a SINGLE finger towards the palm.
@@ -248,6 +262,23 @@ private:
      * the urdf file)
      */
     void setToDefaultPositionPassiveJoints(moveit::core::RobotState * kinematic_state);
+    
+    /**
+     * @brief Giving as argument a pair of fingertips, this function return a pair of fingers that
+     *   are the fingers which the two tips belong to.
+     *  
+     * @return a pair of string containing the fingers which the passed tips belong to
+     */
+    std::pair < std::string, std::string > getFingersPair (std::pair <std::string, std::string> tipsPair) const;
+    
+    /**
+     * @brief Given the \ref fingersPair, this function return the pair of their fingers, in 
+     *   lexicographical order
+     * 
+     * @return a pair of string containing the fingers which the passed tips belong to
+     * 
+     */
+    std::pair < std::string, std::string > getFingertipsPair (std::pair <std::string, std::string> fingersPair) const;
 
 
 

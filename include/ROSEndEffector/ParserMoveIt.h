@@ -95,6 +95,28 @@ public:
     
     std::map < std::string, std::vector<std::string> > getFingertipsOfJointMap () const;
     std::map < std::string, std::vector<std::string> > getJointsOfFingertipMap () const;
+    std::map < std::string, std::string > getFingerOfFingertipMap () const;
+    std::map < std::string, std::string > getFingertipOfFingerMap () const;
+    
+    /**
+     * @brief This function returns the name of the finger which the passed \ref tipName
+     *   belongs to
+     * @param tipName the name of the tip
+     * @return the name of the finger which the tip belongs to, empty string if the tipName
+     *   is not in the map
+     * @note use \ref getFingerOfFingertipMap to get the full map
+     */
+    std::string getFingerOfFingertip (std::string tipName) const;
+    
+    /**
+     * @brief This function returns the name of the fingertip that belongs to the passed \ref fingerName
+     * @param fingerName the name of the tip
+     * @return the name of the fingertip that belongs to the finger, empty string if the fingerName
+     *   is not in the map
+     * @note use \ref getFingertipOfFingerMap to get the full map
+     */
+    std::string getFingertipOfFinger (std::string fingerName) const;
+
     
     /** 
      * @brief This function reload another model, same as the one loaded in \ref init but this one can be
@@ -223,6 +245,14 @@ private:
     
     /** @brief The map with as key the name of the actuated joint and as value all the fingertips which pose can be modified by the joint */
     std::map<std::string, std::vector<std::string>> fingertipsOfJointMap;
+    
+    /** @brief The map with as key the name of the finger (defined in srdf file) and as
+     *    value the fingertip (the last (not virtual) link of the joint) */
+    std::map<std::string, std::string> fingerOfFingertipMap;
+    
+    /** @brief The map with as key the name of the fingertip (the last (not virtual) link of a finger)
+     *  and as value the finger name (defined in the srdf) */
+    std::map<std::string, std::string> fingertipOfFingerMap;
     
     /**
      * @brief This function explore the robot_model (which was built from urdf and srdf files), 

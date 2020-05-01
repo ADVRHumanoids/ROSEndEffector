@@ -168,12 +168,12 @@ int main ( int argc, char **argv ) {
     }
 
     
-    /** **************************** TIMED ACTION THINGS *********************************************/
+    /** **************************** TIMED ACTION THINGS*****************************
+     *************************EXAMPLE ONLY VALID FOR SCHUNK HAND *********************************************/
     
-        
     /** example only doable if maps is not empty */
     if (mapsHandler.getPrimitive("singleJointMultipleTips_3", "left_hand_Finger_Spread") != nullptr &&
-        mapsHandler.getPrimitive("pinchTight", std::make_pair("left_hand_c", "left_hand_q")) != nullptr ) {
+        mapsHandler.getPrimitive("pinchTight", std::make_pair("pinky", "thumb")) != nullptr ) {
         
         ROSEE::ActionTimed actionTimed ("timed_random");
 
@@ -181,7 +181,7 @@ int main ( int argc, char **argv ) {
                                 0, 0.2, 0, 0.5, "SPREAD");
         
         actionTimed.insertAction( mapsHandler.getPrimitive("pinchTight", 
-            std::make_pair("left_hand_c", "left_hand_q")), 0, 0.2, 0, 1, "PINCH");
+            std::make_pair("thumb", "pinky")), 0, 0.2, 0, 1, "PINCH");
 
         actionTimed.print();
         
