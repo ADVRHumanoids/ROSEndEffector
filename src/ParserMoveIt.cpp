@@ -24,7 +24,7 @@ ROSEE::ParserMoveIt::~ParserMoveIt() {
 
 }
 
-bool ROSEE::ParserMoveIt::init ( std::string robot_description ) {
+bool ROSEE::ParserMoveIt::init ( std::string robot_description, bool verbose ) {
     
     if (robot_model != nullptr ) {
         std::cerr << "[PARSER::"  << __func__ << "]: init() already called by someone " << std::endl;;
@@ -48,7 +48,7 @@ bool ROSEE::ParserMoveIt::init ( std::string robot_description ) {
     
     handName = robot_model->getName();
     
-    lookForFingertips();
+    lookForFingertips(verbose);
     lookForActiveJoints();
     lookForPassiveJoints();
     lookForDescendants();
@@ -351,7 +351,7 @@ std::string ROSEE::ParserMoveIt::getFirstActuatedJointInFinger (std::string link
 
 
 /*********************************** PRIVATE FUNCTIONS **********************************************************/
-void ROSEE::ParserMoveIt::lookForFingertips() {
+void ROSEE::ParserMoveIt::lookForFingertips(bool verbose) {
      for (auto it: robot_model->getJointModelGroups()) {
         
         std::string logGroupInfo;
@@ -399,7 +399,10 @@ void ROSEE::ParserMoveIt::lookForFingertips() {
             }
 
         }
-        std::cout << logGroupInfo << std::endl;
+        
+        if (verbose) {
+            std::cout << logGroupInfo << std::endl;
+        }
     }
     nFingers = fingertipNames.size();
 }

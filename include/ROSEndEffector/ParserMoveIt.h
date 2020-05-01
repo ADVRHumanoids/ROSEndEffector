@@ -41,10 +41,13 @@ public:
     
     /**
      * @brief Init the parser, fill the structures
-     * @param robot_description 
+     * @param robot_description a string containing the name given to the param set in
+     *   ROS server for the urdf file. The srdf file must have the same param name but 
+     *   with a trailing "_semantic"
+     * @param verbose pass false to reduce the quantity of informative prints
      * 
      */
-    bool init (std::string robot_description) ;
+    bool init (std::string robot_description, bool verbose = true) ;
     std::string getHandName () const;
     unsigned int getNFingers () const ;
     std::vector <std::string> getFingertipNames () const; 
@@ -232,10 +235,11 @@ private:
      *  - It is the last link of the group AND has a mesh or some visual geometry (if not, 
      *    it is probably a virtual link). If the second condition is not valid, it is taken the 
      *    last link of the group that has a mesh (so it will not be a "leaf")
+     * @param verbose set it to false to not print explored hand info
      * @warning Only link belonging to a group are explored (and printed), so other links (if present) 
      *  are not considered 
      */
-    void lookForFingertips();
+    void lookForFingertips(bool verbose = true);
     
     
     /**
