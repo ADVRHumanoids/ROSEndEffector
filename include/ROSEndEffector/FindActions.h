@@ -272,6 +272,15 @@ private:
     std::pair < std::string, std::string > getFingersPair (std::pair <std::string, std::string> tipsPair) const;
     
     /**
+     * @brief Function used when looking for multiple pinches. It returns the set containing
+     *   the fingers of the passed fingertips. 
+     * @param tipsSet the set of fingertips names
+     * @return the set of fingers. Empty set if the some tips in the \ref tipsSet are in
+     *   the same finger (that is an error)
+     */
+    std::set <std::string> getFingersSet (std::set <std::string> tipsSet) const;
+    
+    /**
      * @brief Given the \ref fingersPair, this function return the pair of their fingers, in 
      *   lexicographical order
      * 

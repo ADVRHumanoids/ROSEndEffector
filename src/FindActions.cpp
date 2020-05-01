@@ -3,16 +3,6 @@
 ROSEE::FindActions::FindActions ( std::shared_ptr < ROSEE::ParserMoveIt > parserMoveIt ){
 
     this->parserMoveIt = parserMoveIt;
-    
-//     for (auto it : parserMoveIt->getFingerOfFingertipMap()) {
-//         std::cout << " key " << it.first <<
-//           "    value " << it.second << std::endl;
-//     }
-//     
-//     for (auto it : parserMoveIt->getFingertipOfFingerMap()) {
-//         std::cout << " key " << it.first <<
-//           "    value " << it.second << std::endl;
-//     }
 }
 
 
@@ -146,6 +136,12 @@ std::map <std::string, ROSEE::ActionSingleJointMultipleTips> ROSEE::FindActions:
     
     std::map <std::string, ROSEE::ActionSingleJointMultipleTips> mapOfSingleJointMultipleTips;
     
+    if (nFinger <= 0) {
+        std::cout << "[ERROR FINDACTIONS::" << __func__ << "] please pass a positive number " << 
+        " as number of fingers. You passed " << nFinger << " ! " << std::endl;
+        return mapOfSingleJointMultipleTips; 
+    }
+    
     if (nFinger == 1) {
         std::cout << "[ERROR FINDACTIONS::" << __func__ << "]  with 1 finger, you are looking for a ActionTrig, "
             << "and not a ActionSingleJointMultipleTips. Returning an empty map" << std::endl;
@@ -180,10 +176,12 @@ std::map <std::string, ROSEE::ActionSingleJointMultipleTips> ROSEE::FindActions:
         jpFar.at ( mapEl.first ) = furtherPos;
         jpNear.at ( mapEl.first ) = nearerPos;
         
-        ActionSingleJointMultipleTips action (actionName, mapEl.second, mapEl.first, jpFar, jpNear);
-        //"convert" vector to set 
-        std::set <std::string> setFingers;
-        setFingers.insert (mapEl.second.begin(), mapEl.second.end() );
+        std::vector<std::string> fingersInvolved;
+        for (auto tip : mapEl.second){
+            fingersInvolved.push_back(parserMoveIt->getFingerOfFingertip (tip) );
+        }
+        
+        ActionSingleJointMultipleTips action (actionName, fingersInvolved, mapEl.first, jpFar, jpNear);
         
         mapOfSingleJointMultipleTips.insert (std::make_pair(mapEl.first, action));
     }
@@ -526,23 +524,25 @@ std::map<std::set<std::string>, ROSEE::ActionMultiplePinchTight> ROSEE::FindActi
         if (collision_result.contacts.size() >= nMinCollision ) { 
         
             double depthSum = 0;
-            std::set <std::string> fingerColliding;
+            std::set <std::string> tipsColliding;
             for (auto cont : collision_result.contacts){
                 
-                fingerColliding.insert(cont.first.first);
-                fingerColliding.insert(cont.first.second);
+                tipsColliding.insert(cont.first.first);
+                tipsColliding.insert(cont.first.second);
                 depthSum += std::abs(cont.second.at(0).depth);
             }
             
             //eg with 2 collision we can have 4 finger colliding because there are two
             //normal distinct pinch and not a 3-pinch... so we exlude these collisions
-            if (fingerColliding.size() != nFinger) {
+            if (tipsColliding.size() != nFinger) {
                 continue;
             }
                 
             //store joint states
             JointPos jointPos = getConvertedJointPos(&kinematic_state);
-            JointsInvolvedCount jointsInvolvedCount = setOnlyDependentJoints(fingerColliding, &jointPos);
+            JointsInvolvedCount jointsInvolvedCount = setOnlyDependentJoints(tipsColliding, &jointPos);
+            
+            auto fingerColliding = getFingersSet(tipsColliding);
 
             ActionMultiplePinchTight pinch (fingerColliding, jointPos, depthSum );
             pinch.setJointsInvolvedCount ( jointsInvolvedCount );
@@ -586,7 +586,7 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::trig() {
         double trigMax = parserMoveIt->getBiggerBoundFromZero(mapEl.first).at(0) ;
 
         ActionTrig action ("trig", ActionPrimitive::Type::Trig);
-        action.setFingerInvolved (mapEl.second.at(0)) ;
+        action.setFingerInvolved ( parserMoveIt->getFingerOfFingertip( mapEl.second.at(0)) ) ;
 
         // mapEl.second.at(0) : sure to have only 1 element for the if before
         insertJointPosForTrigInMap(trigMap, action, mapEl.first, trigMax); 
@@ -600,19 +600,19 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::tipFlex() {
     
     std::map <std::string, ROSEE::ActionTrig> tipFlexMap;
     
-    for (auto fingerName : parserMoveIt->getFingertipNames() ) {
+    for (auto tipName : parserMoveIt->getFingertipNames() ) {
 
-        if (parserMoveIt->getNExclusiveJointsOfTip ( fingerName, false ) < 2 ) { 
+        if (parserMoveIt->getNExclusiveJointsOfTip ( tipName, false ) < 2 ) { 
         //if so, we have a simple trig (or none if 0) and not also a tip/finger flex
             continue;
         }
 
-        std::string theInterestingJoint = parserMoveIt->getFirstActuatedParentJoint ( fingerName, false );
+        std::string theInterestingJoint = parserMoveIt->getFirstActuatedParentJoint ( tipName, false );
         double tipFlexMax = parserMoveIt->getBiggerBoundFromZero ( theInterestingJoint ).at(0) ;
         
         
         ActionTrig action ("tipFlex", ActionPrimitive::Type::TipFlex);
-        action.setFingerInvolved (fingerName) ;
+        action.setFingerInvolved (parserMoveIt->getFingerOfFingertip(tipName)) ;
 
         if (! insertJointPosForTrigInMap(tipFlexMap, action, theInterestingJoint, tipFlexMax) ) {
             //if here, we have updated the joint position for a action that was already present in the map.
@@ -632,18 +632,18 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::fingFlex() {
     
     std::map <std::string, ROSEE::ActionTrig> fingFlexMap;
     
-    for (auto fingerName : parserMoveIt->getFingertipNames() ) {
+    for (auto tipName : parserMoveIt->getFingertipNames() ) {
         
-        if (parserMoveIt->getNExclusiveJointsOfTip ( fingerName, false ) < 2 ) { 
+        if (parserMoveIt->getNExclusiveJointsOfTip ( tipName, false ) < 2 ) { 
         //if so, we have a simple trig (or none if 0) and not also a tip/finger flex
             continue;
         }
 
-        std::string theInterestingJoint = parserMoveIt->getFirstActuatedJointInFinger ( fingerName );
+        std::string theInterestingJoint = parserMoveIt->getFirstActuatedJointInFinger ( tipName );
         double fingFlexMax = parserMoveIt->getBiggerBoundFromZero ( theInterestingJoint ).at(0) ;
 
         ActionTrig action ("fingFlex", ActionPrimitive::Type::FingFlex);
-        action.setFingerInvolved (fingerName) ;
+        action.setFingerInvolved ( parserMoveIt->getFingerOfFingertip ( tipName) ) ;
         if (! insertJointPosForTrigInMap(fingFlexMap, action, theInterestingJoint, fingFlexMax) ) {
             //if here, we have updated the joint position for a action that was already present in the map.
             //this is ok for normal trig because more joints are included in the action, but for the
@@ -663,7 +663,7 @@ bool ROSEE::FindActions::insertJointPosForTrigInMap ( std::map <std::string, Act
     
     auto itMap = trigMap.find ( action.getFingerInvolved() );
     if ( itMap == trigMap.end() ) {
-        //still no action for this tip in the map
+        //still no action for this finger in the map
 
         JointPos jp;
         for (auto it : parserMoveIt->getActiveJointModels()){
@@ -837,6 +837,26 @@ std::pair <std::string, std::string> ROSEE::FindActions::getFingersPair (std::pa
     }
     
     return fingersPair;
+}
+
+std::set <std::string> ROSEE::FindActions::getFingersSet (std::set <std::string> tipsSet) const {
+    
+    std::set <std::string> fingersSet;
+    for (auto it : tipsSet) {
+        
+        fingersSet.insert ( parserMoveIt->getFingerOfFingertip ( it ) );
+    }
+
+    //If size is less, there is a finger that we have try to insert more than once.
+    if ( fingersSet.size() < tipsSet.size() ) {
+        std::cout << "[FINDACTIONS " << __func__ << "] STRANGE ERROR: " <<
+            "the tipsSet passed has some fingertips that belong to the same finger."  
+            << " I will return an empty set " << std::endl;
+            
+        return std::set <std::string>();
+    }
+    
+    return fingersSet;
 }
 
 std::pair <std::string, std::string> ROSEE::FindActions::getFingertipsPair (std::pair <std::string, std::string> fingersPair) const {
