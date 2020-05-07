@@ -130,9 +130,27 @@ namespace ROSEE {
          */
         void printEndEffectorFingerJointsMap() const;
         
-                
+        /**
+         * @brief get the whole urdf file parsed as a string
+         *
+         * @return a string containg the urdf file parsed
+         */     
         std::string getUrdfString() const;
+        
+        /**
+         * @brief get the whole srdf file parsed as a string
+         *
+         * @return a string containg the srdf file parsed
+         */    
         std::string getSrdfString() const;
+        
+        /**
+         * @brief get the filename (with path) of the yaml config file. 
+         *   Useful get to print infos about file parsed outside this class
+         * 
+         * @return a string that is the filepath of yaml config file
+         */
+        std::string getRoseeConfigPath() const;
         
     private:
         
@@ -186,6 +204,11 @@ namespace ROSEE {
          * @return bool true if the SRDF requested exists, false otherwise
          */
         bool parseSRDF();
+        
+        /**
+         * 
+         */
+        void addNotInFingerJoints();
         
         /**
          * @brief Function to remove the passive joints from the filled maps

@@ -1,7 +1,7 @@
 left_hand_Finger_Spread:
   PrimitiveType: 6
-  ActionName: moreTips_3
-  FingersInvolved: [left_hand_q, left_hand_r, left_hand_t]
+  ActionName: singleJointMultipleTips_3
+  FingersInvolved: [index, pinky, ring]
   JointPosFurther:
     left_hand_Finger_Spread: [0.5829]
     left_hand_Index_Finger_Distal: [0]
@@ -25,8 +25,8 @@ left_hand_Finger_Spread:
 
 left_hand_Thumb_Opposition:
   PrimitiveType: 6
-  ActionName: moreTips_3
-  FingersInvolved: [left_hand_c, left_hand_q, left_hand_r]
+  ActionName: singleJointMultipleTips_3
+  FingersInvolved: [pinky, ring, thumb]
   JointPosFurther:
     left_hand_Finger_Spread: [0]
     left_hand_Index_Finger_Distal: [0]

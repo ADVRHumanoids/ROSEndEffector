@@ -102,6 +102,38 @@ std::map<std::string, std::vector<std::string> > ROSEE::ParserMoveIt::getJointsO
     return jointsOfFingertipMap;
 }
 
+std::map < std::string, std::string> ROSEE::ParserMoveIt::getFingerOfFingertipMap() const {
+    return fingerOfFingertipMap;
+}
+
+std::string ROSEE::ParserMoveIt::getFingerOfFingertip (std::string tipName) const {
+    
+    auto it = fingerOfFingertipMap.find(tipName);
+    
+    if (it != fingerOfFingertipMap.end() ) {
+        return (it->second);
+        
+    } else {
+        return "";
+    }
+}
+
+std::map < std::string, std::string> ROSEE::ParserMoveIt::getFingertipOfFingerMap() const {
+    return fingertipOfFingerMap;
+}
+
+std::string ROSEE::ParserMoveIt::getFingertipOfFinger (std::string fingerName) const {
+    
+    auto it = fingertipOfFingerMap.find(fingerName);
+    
+    if (it != fingertipOfFingerMap.end() ) {
+        return (it->second);
+        
+    } else {
+        return "";
+    }
+}
+
 robot_model::RobotModelPtr ROSEE::ParserMoveIt::getCopyModel() const {
     robot_model_loader::RobotModelLoader robot_model_loader(robot_description); 
     return robot_model_loader.getModel();
@@ -396,8 +428,9 @@ void ROSEE::ParserMoveIt::lookForFingertips(bool verbose) {
                 
             } else {
                 fingertipNames.push_back(theTip);
+                fingerOfFingertipMap.insert( std::make_pair(theTip, it->getName()));
+                fingertipOfFingerMap.insert( std::make_pair(it->getName(), theTip));
             }
-
         }
         
         if (verbose) {

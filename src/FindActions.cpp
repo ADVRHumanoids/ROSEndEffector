@@ -20,7 +20,6 @@ std::pair <  std::map < std::pair <std::string, std::string> , ROSEE::ActionPinc
         checkDistances (&mapOfLoosePinches) ;
     }
     
-
     /// EMITTING PART ................
     if (mapOfPinches.size() == 0 ) {  //print if no collision at all
         std::cout << "[FINDACTIONS::" << __func__ << "]: I found no collisions between tips. Are you sure your hand"
@@ -137,6 +136,12 @@ std::map <std::string, ROSEE::ActionSingleJointMultipleTips> ROSEE::FindActions:
     
     std::map <std::string, ROSEE::ActionSingleJointMultipleTips> mapOfSingleJointMultipleTips;
     
+    if (nFinger <= 0) {
+        std::cout << "[ERROR FINDACTIONS::" << __func__ << "] please pass a positive number " << 
+        " as number of fingers. You passed " << nFinger << " ! " << std::endl;
+        return mapOfSingleJointMultipleTips; 
+    }
+    
     if (nFinger == 1) {
         std::cout << "[ERROR FINDACTIONS::" << __func__ << "]  with 1 finger, you are looking for a ActionTrig, "
             << "and not a ActionSingleJointMultipleTips. Returning an empty map" << std::endl;
@@ -171,10 +176,12 @@ std::map <std::string, ROSEE::ActionSingleJointMultipleTips> ROSEE::FindActions:
         jpFar.at ( mapEl.first ) = furtherPos;
         jpNear.at ( mapEl.first ) = nearerPos;
         
-        ActionSingleJointMultipleTips action (actionName, mapEl.second, mapEl.first, jpFar, jpNear);
-        //"convert" vector to set 
-        std::set <std::string> setFingers;
-        setFingers.insert (mapEl.second.begin(), mapEl.second.end() );
+        std::vector<std::string> fingersInvolved;
+        for (auto tip : mapEl.second){
+            fingersInvolved.push_back(parserMoveIt->getFingerOfFingertip (tip) );
+        }
+        
+        ActionSingleJointMultipleTips action (actionName, fingersInvolved, mapEl.first, jpFar, jpNear);
         
         mapOfSingleJointMultipleTips.insert (std::make_pair(mapEl.first, action));
     }
@@ -285,13 +292,17 @@ std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchTight > ROSE
 
                 JointsInvolvedCount jointsInvolvedCount = setOnlyDependentJoints(cont.first, &jointPos);
 
-                //create the actionPinch
-                ActionPinchTight pinch (cont.first, jointPos, cont.second.at(0) );
+                ///create the actionPinch
+                
+                // get the finger name
+                auto fingerPair = getFingersPair(cont.first);
+
+                ActionPinchTight pinch (fingerPair, jointPos, cont.second.at(0) );
                 pinch.setJointsInvolvedCount ( jointsInvolvedCount );
-                auto itFind = mapOfPinches.find ( cont.first );
+                auto itFind = mapOfPinches.find ( fingerPair );
                 if ( itFind == mapOfPinches.end() ) {
                     //if here, we have to create store the new created action
-                    mapOfPinches.insert ( std::make_pair (cont.first, pinch) );
+                    mapOfPinches.insert ( std::make_pair (fingerPair, pinch) );
                     logCollision << ", NEW INSERTION";
 
                 } else { //Check if it is the best depth among the found collision among that pair
@@ -323,13 +334,15 @@ void ROSEE::FindActions::checkDistances (std::map < std::pair <std::string, std:
         //for each pair remaining in notCollidingTips, check if a new min distance is found
         for (auto &mapEl : *mapOfLoosePinches) { 
             
-                            // restore all joint pos
+            // restore all joint pos
             JointPos jointPosLoose = getConvertedJointPos(&kinematic_state);
             
-            JointsInvolvedCount jointsInvolvedCount = setOnlyDependentJoints(mapEl.first, &jointPosLoose);
+            auto tips = getFingertipsPair(mapEl.first);
             
-            Eigen::Affine3d tip1Trasf = kinematic_state.getGlobalLinkTransform(mapEl.first.first);
-            Eigen::Affine3d tip2Trasf = kinematic_state.getGlobalLinkTransform(mapEl.first.second);
+            JointsInvolvedCount jointsInvolvedCount = setOnlyDependentJoints(tips, &jointPosLoose);
+            
+            Eigen::Affine3d tip1Trasf = kinematic_state.getGlobalLinkTransform(tips.first);
+            Eigen::Affine3d tip2Trasf = kinematic_state.getGlobalLinkTransform(tips.second);
             double distance = (tip1Trasf.translation() - tip2Trasf.translation() ) .norm() ;
                                 
             mapEl.second.insertActionState( jointPosLoose, distance ) ;
@@ -346,8 +359,9 @@ void ROSEE::FindActions::removeBoundsOfNotCollidingTips (
     for (auto mapEl : *mapOfLoosePinches ) {
         
         //for each joint of first tip...
+        auto tips = getFingertipsPair(mapEl.first);
         /// C++ Question: WHY if I use directly parser....at() in the for the string joint is corrupted?
-        auto joints = parserMoveIt->getJointsOfFingertipMap().at (mapEl.first.first);
+        auto joints = parserMoveIt->getJointsOfFingertipMap().at (tips.first);
         for ( std::string joint : joints ) { 
             auto jointModel = kinematic_model_noBound ->getJointModel(joint);
 
@@ -376,14 +390,14 @@ void ROSEE::FindActions::removeBoundsOfNotCollidingTips (
                 std::cout << "[FINDACTIONS::" << __func__ << "] Why are you using a type " 
                     << kinematic_model_noBound ->getJointModel(joint)->getType()
                     << " joint? Code not ready to temporarily delete the multiple dof bounds"
-                    << " in the working done to find the loose pinches " << std::endl << std::endl;
+                    << " in the job done to find the loose pinches " << std::endl << std::endl;
                 
                 continue;
             }
         }
         
         //for each joint of second tip...
-        auto joints2 = parserMoveIt->getJointsOfFingertipMap().at (mapEl.first.second);
+        auto joints2 = parserMoveIt->getJointsOfFingertipMap().at (tips.second);
         for ( auto joint : joints2 ) { 
             
             auto jointModel = kinematic_model_noBound ->getJointModel(joint);
@@ -430,9 +444,13 @@ void ROSEE::FindActions::checkWhichTipsCollideWithoutBounds (
     collision_detection::AllowedCollisionMatrix acm;
     acm.setEntry(kinematic_model_noBound->getLinkModelNames(), 
                  kinematic_model_noBound->getLinkModelNames(), true); //true == not considered collisions
+    
     for( auto  it : *mapOfLoosePinches) {
         //we want to look for collision only on the pair inside the map
-        acm.setEntry(it.first.first, it.first.second, false); //false == considered collisions   
+        //take the tip from the keys (that now are fingers)
+        std::string tip1 = parserMoveIt->getFingertipOfFinger(it.first.first);
+        std::string tip2 = parserMoveIt->getFingertipOfFinger(it.first.second);
+        acm.setEntry(tip1, tip2, false); //false == considered collisions   
     }
 
     planning_scene::PlanningScene planning_scene(kinematic_model_noBound);
@@ -445,7 +463,7 @@ void ROSEE::FindActions::checkWhichTipsCollideWithoutBounds (
     robot_state::RobotState kinematic_state(kinematic_model_noBound);
 
     // similar to checkcollisions here, but we dont want to store anything, only check if collision happen
-    std::set < std::pair<std::string, std::string> > collidingTips ;
+    std::set < std::pair<std::string, std::string> > collidingFingers ;
     for (int i = 0; i < N_EXP_COLLISION; i++){
         collision_result.clear();
         kinematic_state.setToRandomPositions();
@@ -454,14 +472,15 @@ void ROSEE::FindActions::checkWhichTipsCollideWithoutBounds (
         planning_scene.checkSelfCollision(collision_request, collision_result, kinematic_state, acm);
         
         for (auto cont : collision_result.contacts){
-            //moveit contacts is a map between a pair (2 strings with link names) and a vector of Contact object 
-            collidingTips.insert ( std::make_pair (cont.first.first, cont.first.second ) );   
+            //moveit contacts is a map between a pair (2 strings with link names) and a vector of Contact object , so cont.first contain the pair of fingerTIPS which collide.
+            collidingFingers.insert ( getFingersPair (cont.first) );   
         }
     }
 
-    //erase from loose map the not colliding tips 
+    //erase from loose map the not colliding tips (: not colliding even without bounds)
     for (auto mapEl = mapOfLoosePinches->cbegin(); mapEl != mapOfLoosePinches->cend() ; /*no increment*/ ) {
-        if (collidingTips.count(mapEl->first) == 0 ) {
+
+        if (collidingFingers.count(mapEl->first) == 0 ) {
             mapOfLoosePinches->erase(mapEl++);
         } else { 
             ++mapEl;
@@ -505,23 +524,25 @@ std::map<std::set<std::string>, ROSEE::ActionMultiplePinchTight> ROSEE::FindActi
         if (collision_result.contacts.size() >= nMinCollision ) { 
         
             double depthSum = 0;
-            std::set <std::string> fingerColliding;
+            std::set <std::string> tipsColliding;
             for (auto cont : collision_result.contacts){
                 
-                fingerColliding.insert(cont.first.first);
-                fingerColliding.insert(cont.first.second);
+                tipsColliding.insert(cont.first.first);
+                tipsColliding.insert(cont.first.second);
                 depthSum += std::abs(cont.second.at(0).depth);
             }
             
             //eg with 2 collision we can have 4 finger colliding because there are two
             //normal distinct pinch and not a 3-pinch... so we exlude these collisions
-            if (fingerColliding.size() != nFinger) {
+            if (tipsColliding.size() != nFinger) {
                 continue;
             }
                 
             //store joint states
             JointPos jointPos = getConvertedJointPos(&kinematic_state);
-            JointsInvolvedCount jointsInvolvedCount = setOnlyDependentJoints(fingerColliding, &jointPos);
+            JointsInvolvedCount jointsInvolvedCount = setOnlyDependentJoints(tipsColliding, &jointPos);
+            
+            auto fingerColliding = getFingersSet(tipsColliding);
 
             ActionMultiplePinchTight pinch (fingerColliding, jointPos, depthSum );
             pinch.setJointsInvolvedCount ( jointsInvolvedCount );
@@ -565,7 +586,7 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::trig() {
         double trigMax = parserMoveIt->getBiggerBoundFromZero(mapEl.first).at(0) ;
 
         ActionTrig action ("trig", ActionPrimitive::Type::Trig);
-        action.setFingerInvolved (mapEl.second.at(0)) ;
+        action.setFingerInvolved ( parserMoveIt->getFingerOfFingertip( mapEl.second.at(0)) ) ;
 
         // mapEl.second.at(0) : sure to have only 1 element for the if before
         insertJointPosForTrigInMap(trigMap, action, mapEl.first, trigMax); 
@@ -579,19 +600,19 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::tipFlex() {
     
     std::map <std::string, ROSEE::ActionTrig> tipFlexMap;
     
-    for (auto fingerName : parserMoveIt->getFingertipNames() ) {
+    for (auto tipName : parserMoveIt->getFingertipNames() ) {
 
-        if (parserMoveIt->getNExclusiveJointsOfTip ( fingerName, false ) < 2 ) { 
+        if (parserMoveIt->getNExclusiveJointsOfTip ( tipName, false ) < 2 ) { 
         //if so, we have a simple trig (or none if 0) and not also a tip/finger flex
             continue;
         }
 
-        std::string theInterestingJoint = parserMoveIt->getFirstActuatedParentJoint ( fingerName, false );
+        std::string theInterestingJoint = parserMoveIt->getFirstActuatedParentJoint ( tipName, false );
         double tipFlexMax = parserMoveIt->getBiggerBoundFromZero ( theInterestingJoint ).at(0) ;
         
         
         ActionTrig action ("tipFlex", ActionPrimitive::Type::TipFlex);
-        action.setFingerInvolved (fingerName) ;
+        action.setFingerInvolved (parserMoveIt->getFingerOfFingertip(tipName)) ;
 
         if (! insertJointPosForTrigInMap(tipFlexMap, action, theInterestingJoint, tipFlexMax) ) {
             //if here, we have updated the joint position for a action that was already present in the map.
@@ -611,18 +632,18 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::fingFlex() {
     
     std::map <std::string, ROSEE::ActionTrig> fingFlexMap;
     
-    for (auto fingerName : parserMoveIt->getFingertipNames() ) {
+    for (auto tipName : parserMoveIt->getFingertipNames() ) {
         
-        if (parserMoveIt->getNExclusiveJointsOfTip ( fingerName, false ) < 2 ) { 
+        if (parserMoveIt->getNExclusiveJointsOfTip ( tipName, false ) < 2 ) { 
         //if so, we have a simple trig (or none if 0) and not also a tip/finger flex
             continue;
         }
 
-        std::string theInterestingJoint = parserMoveIt->getFirstActuatedJointInFinger ( fingerName );
+        std::string theInterestingJoint = parserMoveIt->getFirstActuatedJointInFinger ( tipName );
         double fingFlexMax = parserMoveIt->getBiggerBoundFromZero ( theInterestingJoint ).at(0) ;
 
         ActionTrig action ("fingFlex", ActionPrimitive::Type::FingFlex);
-        action.setFingerInvolved (fingerName) ;
+        action.setFingerInvolved ( parserMoveIt->getFingerOfFingertip ( tipName) ) ;
         if (! insertJointPosForTrigInMap(fingFlexMap, action, theInterestingJoint, fingFlexMax) ) {
             //if here, we have updated the joint position for a action that was already present in the map.
             //this is ok for normal trig because more joints are included in the action, but for the
@@ -642,7 +663,7 @@ bool ROSEE::FindActions::insertJointPosForTrigInMap ( std::map <std::string, Act
     
     auto itMap = trigMap.find ( action.getFingerInvolved() );
     if ( itMap == trigMap.end() ) {
-        //still no action for this tip in the map
+        //still no action for this finger in the map
 
         JointPos jp;
         for (auto it : parserMoveIt->getActiveJointModels()){
@@ -694,15 +715,15 @@ void ROSEE::FindActions::fillNotCollidingTips (
     const std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchTight >* mapOfPinches) {
     
     // first fill mapOfLoosePinches with all pairs ...
-    for ( auto tip1 : parserMoveIt->getFingertipNames() )  {
-        for ( auto tip2 : parserMoveIt->getFingertipNames() ) { 
+    for ( auto fingerEl1 : parserMoveIt->getFingertipOfFingerMap() )  {
+        for ( auto fingerEl2 : parserMoveIt->getFingertipOfFingerMap() ) { 
             
             // important to put in order in the pair, then in the set thing are autoordered
-            if (tip1 < tip2) {
-                mapOfLoosePinches->insert (std::make_pair (std::make_pair (tip1, tip2), ActionPinchLoose(tip1, tip2)));
+            if (fingerEl1.first < fingerEl2.first) {
+                mapOfLoosePinches->insert (std::make_pair (std::make_pair (fingerEl1.first, fingerEl2.first), ActionPinchLoose(fingerEl1.first, fingerEl2.first)));
                 
-            } else if (tip1 > tip2) {
-                mapOfLoosePinches->insert (std::make_pair (std::make_pair (tip2, tip1), ActionPinchLoose(tip2, tip1)));
+            } else if (fingerEl1.first > fingerEl2.first) {
+                mapOfLoosePinches->insert (std::make_pair (std::make_pair (fingerEl2.first, fingerEl1.first), ActionPinchLoose(fingerEl2.first, fingerEl1.first)));
             }    
         }
     }  
@@ -796,3 +817,66 @@ void ROSEE::FindActions::setToDefaultPositionPassiveJoints(moveit::core::RobotSt
     
 }
 
+std::pair <std::string, std::string> ROSEE::FindActions::getFingersPair (std::pair <std::string, std::string> tipsPair) const {
+    
+    std::pair <std::string, std::string> fingersPair = std::make_pair (
+        parserMoveIt->getFingerOfFingertip(tipsPair.first),
+        parserMoveIt->getFingerOfFingertip(tipsPair.second)  );
+
+    //So we have the key pair always in lexicographical order
+    if ( fingersPair.first.compare (fingersPair.second) > 0 ) {
+        auto temp = fingersPair.first;
+        fingersPair.first = fingersPair.second;
+        fingersPair.second = temp;
+        
+    } else if (fingersPair.first.compare (fingersPair.second) == 0 ) {
+        std::cout << "[FINDACTIONS " << __func__ << "] STRANGE ERROR: '" << tipsPair.first <<
+          "' and '" << tipsPair.second << "' are in the same finger '" << fingersPair.first <<
+          "' so this pair can't perform a pinch" << std::endl;
+        return std::pair<std::string, std::string>();
+    }
+    
+    return fingersPair;
+}
+
+std::set <std::string> ROSEE::FindActions::getFingersSet (std::set <std::string> tipsSet) const {
+    
+    std::set <std::string> fingersSet;
+    for (auto it : tipsSet) {
+        
+        fingersSet.insert ( parserMoveIt->getFingerOfFingertip ( it ) );
+    }
+
+    //If size is less, there is a finger that we have try to insert more than once.
+    if ( fingersSet.size() < tipsSet.size() ) {
+        std::cout << "[FINDACTIONS " << __func__ << "] STRANGE ERROR: " <<
+            "the tipsSet passed has some fingertips that belong to the same finger."  
+            << " I will return an empty set " << std::endl;
+            
+        return std::set <std::string>();
+    }
+    
+    return fingersSet;
+}
+
+std::pair <std::string, std::string> ROSEE::FindActions::getFingertipsPair (std::pair <std::string, std::string> fingersPair) const {
+    
+    std::pair <std::string, std::string> tipsPair = std::make_pair (
+        parserMoveIt->getFingertipOfFinger(fingersPair.first),
+        parserMoveIt->getFingertipOfFinger(fingersPair.second)  );
+
+    //So we have the key pair always in lexicographical order
+    if ( tipsPair.first.compare (tipsPair.second) > 0 ) {
+        auto temp = tipsPair.first;
+        tipsPair.first = tipsPair.second;
+        tipsPair.second = temp;
+        
+    } else if (tipsPair.first.compare (tipsPair.second) == 0 ) {
+        std::cout << "[FINDACTIONS " << __func__ << "] STRANGE ERROR: '" << fingersPair.first <<
+          "' and '" << fingersPair.second << "' have the same fingertip '" << tipsPair.first <<
+          "' so this pair can't perform a pinch" << std::endl;
+        return std::pair<std::string, std::string>();
+    }
+    
+    return tipsPair;
+}
