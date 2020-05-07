@@ -412,6 +412,10 @@ std::string ROSEE::Parser::getSrdfString() const {
     return _srdf_string;
 }
 
+std::string ROSEE::Parser::getRoseeConfigPath() const {
+    return _ros_ee_config_path;
+}
+
 
 
 
