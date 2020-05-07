@@ -1,0 +1,60 @@
+[finger_1]:
+  PrimitiveType: 3
+  ActionName: trig
+  JointsInvolvedCount:
+    LFB1__LFP1_1: 1
+    LFB2__LFP2_1: 0
+    LFB3__LFP3_1: 0
+    SFB1__SFP1_1: 0
+  ActionState_1:
+    JointPos:
+      LFB1__LFP1_1: [0.5]
+      LFB2__LFP2_1: [0]
+      LFB3__LFP3_1: [0]
+      SFB1__SFP1_1: [0]
+
+[finger_2]:
+  PrimitiveType: 3
+  ActionName: trig
+  JointsInvolvedCount:
+    LFB1__LFP1_1: 0
+    LFB2__LFP2_1: 1
+    LFB3__LFP3_1: 0
+    SFB1__SFP1_1: 0
+  ActionState_1:
+    JointPos:
+      LFB1__LFP1_1: [0]
+      LFB2__LFP2_1: [0.5]
+      LFB3__LFP3_1: [0]
+      SFB1__SFP1_1: [0]
+
+[finger_3]:
+  PrimitiveType: 3
+  ActionName: trig
+  JointsInvolvedCount:
+    LFB1__LFP1_1: 0
+    LFB2__LFP2_1: 0
+    LFB3__LFP3_1: 1
+    SFB1__SFP1_1: 0
+  ActionState_1:
+    JointPos:
+      LFB1__LFP1_1: [0]
+      LFB2__LFP2_1: [0]
+      LFB3__LFP3_1: [0.5]
+      SFB1__SFP1_1: [0]
+
+[thumb]:
+  PrimitiveType: 3
+  ActionName: trig
+  JointsInvolvedCount:
+    LFB1__LFP1_1: 0
+    LFB2__LFP2_1: 0
+    LFB3__LFP3_1: 0
+    SFB1__SFP1_1: 1
+  ActionState_1:
+    JointPos:
+      LFB1__LFP1_1: [0]
+      LFB2__LFP2_1: [0]
+      LFB3__LFP3_1: [0]
+      SFB1__SFP1_1: [0.5]
+
