@@ -124,8 +124,8 @@ add_library(ActionTimed
 
 add_executable(UniversalRosEndEffector src/UniversalRosEndEffector.cpp)
 add_executable(UniversalFindActions src/UniversalFindActions.cpp)
-add_dependencies(UniversalRosEndEffectorExecutor ${catkin_EXPORTED_TARGETS})
-add_dependencies(UniversalFindActions ${catkin_EXPORTED_TARGETS})
+#add_dependencies(UniversalRosEndEffectorExecutor ${catkin_EXPORTED_TARGETS})
+#add_dependencies(UniversalFindActions ${catkin_EXPORTED_TARGETS})
 
 
 ## Add cmake target dependencies of the executable
