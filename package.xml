@@ -27,6 +27,7 @@
     <depend>srdfdom</depend>
     <depend>moveit_ros_planning_interface</depend>
     <depend>kdl_parser</depend>
+    <build_depend>rosee_msg</build_depend>
   <!--   Note that this is equivalent to the following: -->
   <!--   <build_depend>roscpp</build_depend> -->
   <!--   <exec_depend>roscpp</exec_depend> -->
