@@ -206,6 +206,11 @@ namespace ROSEE {
         bool parseSRDF();
         
         /**
+         * 
+         */
+        void addNotInFingerJoints();
+        
+        /**
          * @brief Function to remove the passive joints from the filled maps
          * 
          * @return bool is everything works correctly

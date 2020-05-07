@@ -40,6 +40,12 @@ bool ROSEE::Parser::getJointsInFinger ( std::string base_link,
                                         std::string finger_name
                                       ) {
 
+    //we add here the finger to the map because later is added only if the joint is actuated.
+    //Instead we want in the map all the fingers, even if they have no actuated joint in.
+    //this is necessary to not cause later problem due to have the right number of finger
+    _finger_joint_map.insert(std::make_pair(finger_name, std::vector<std::string>())); 
+    
+    
     KDL::Chain actual_chain;
     if ( _robot_tree.getChain ( base_link, tip_link, actual_chain ) ) {
 
@@ -55,9 +61,13 @@ bool ROSEE::Parser::getJointsInFinger ( std::string base_link,
             is_valid_joint = actual_joint.getTypeName() == "RotAxis";   
             
 //                              || actual_joint.getTypeName() == "TransAxis";
+            
+            auto urdf_joint = _urdf_model->getJoint(actual_joint.getName());
+            bool is_mimic_joint = (urdf_joint->mimic == nullptr) ? false : true;
+            
 
-            // if the joint is revolute or prismatic
-            if ( is_valid_joint ) {
+            // if the joint is revolute or prismatic AND not a mimic (mimic joint is a not actuated joint)
+            if ( is_valid_joint && (!is_mimic_joint) ) {
 
                 _finger_joint_map[finger_name].push_back ( actual_joint.getName() );
                 _joint_finger_map[actual_joint.getName()] = finger_name;
@@ -65,8 +75,6 @@ bool ROSEE::Parser::getJointsInFinger ( std::string base_link,
 
                 _joints_num++;
 
-                //TODO 4Luca We print this after, because we remove passive joint after
-                //ROS_INFO_STREAM ( actual_joint.getName() );
             }
         }
 
@@ -136,9 +144,6 @@ bool ROSEE::Parser::parseSRDF() {
     for ( int i = 0; i < _fingers_num; i++ ) {
         srdf::Model::Group current_finger_group = srdf_groups[ _fingers_group_id[i] ];
 
-        //TODO 4Luca We print this after, because we remove passive joint after
-        //ROS_INFO_STREAM ( "Actuated joints in finger: " << current_finger_group.name_ );
-
         // NOTE only one chain per group
         if ( current_finger_group.chains_.size() != CHAIN_PER_GROUP )  {
 
@@ -156,6 +161,8 @@ bool ROSEE::Parser::parseSRDF() {
         }
     }
     
+    addNotInFingerJoints();
+    
     removePassiveJoints();
 
     // save srdf as string 
@@ -166,6 +173,30 @@ bool ROSEE::Parser::parseSRDF() {
     
     return true;
 
+}
+
+void ROSEE::Parser::addNotInFingerJoints() {
+    
+    for (auto it : _urdf_model->joints_) { //this contains all joints
+        
+        if (it.second->mimic == nullptr) { //not a mimic joint...
+        
+            if (it.second->type == urdf::Joint::CONTINUOUS ||
+                it.second->type == urdf::Joint::REVOLUTE ) {
+                //it.second->type == urdf::Joint::PRISMATIC
+            
+                if (_urdf_joint_map.find(it.second->name) == _urdf_joint_map.end() ) {
+                    
+                    _urdf_joint_map.insert(std::make_pair(it.second->name, it.second));
+                    _finger_joint_map["virtual_finger"].push_back ( it.second->name );
+                    _joint_finger_map[it.second->name] = "virtual_finger";
+                    _joints_num++;
+                }
+            }
+        }
+        
+    }
+    
 }
 
 bool ROSEE::Parser::removePassiveJoints() {
@@ -190,11 +221,10 @@ bool ROSEE::Parser::removePassiveJoints() {
             }
 
             _joints_num--;
-        }
-        
-        
+        }   
     }
 
+    return true;
 }
 
 
@@ -357,8 +387,17 @@ void ROSEE::Parser::printEndEffectorFingerJointsMap() const {
         for ( auto& chain_joints: _finger_joint_map ) {
             ROS_INFO_STREAM ( chain_joints.first );
 
-            for ( int i = 0; i <  chain_joints.second.size(); i++ ) {
-                ROS_INFO_STREAM ( chain_joints.second.at ( i ) );
+            int nJointInFinger = chain_joints.second.size();
+            
+            if ( nJointInFinger == 0 ) {
+                
+                ROS_INFO_STREAM ( "No actuated joint in this finger" );
+                
+            } else {
+                
+                for ( int i = 0; i < nJointInFinger ; i++ ) {
+                    ROS_INFO_STREAM ( chain_joints.second.at ( i ) );
+                }
             }
 
             ROS_INFO_STREAM ( "-------------------------" );

@@ -94,7 +94,7 @@ int main ( int argc, char **argv ) {
     for (auto &i : mapsHandler.getPrimitiveMap("fingFlex")) {
         i.second->print();
     }
-    std::cout << "PARSED MAP OF SINGLEJOINTMULTIPLETIPS FROM YAML FILE:" << std::endl;
+    std::cout << "PARSED MAP OF SINGLEJOINTMULTIPLETIPS_3 FROM YAML FILE:" << std::endl;
     for (auto &i : mapsHandler.getPrimitiveMap("singleJointMultipleTips_3")) {
         i.second->print();
     }
@@ -132,9 +132,10 @@ int main ( int argc, char **argv ) {
         std::map < std::string, ROSEE::ActionSingleJointMultipleTips> singleJointMultipleTipsMap = actionsFinder.findSingleJointMultipleTips (parserMoveIt->getNFingers(), folderForActions + "/primitives/") ;
         
         if (singleJointMultipleTipsMap.size() == 1) { //if more, we do not know which is the one for grasping
-            std::cout << "No Composed Grasp with trig but I found a SingleJointMultipleTips that probably is a grasp (ie a joint that move all fingers)" << std::endl;
+            std::cout << "No Composed Grasp with trig but I found a SingleJointMultipleTips_" <<
+            parserMoveIt->getNFingers() <<" that probably is a grasp (ie a joint that move all fingers)" << std::endl;
         }
-        std::cout << "PARSED MAP OF singleJointMultipleTips_MAXFINGER FROM YAML FILE:" << std::endl;
+        std::cout << "PARSED MAP OF singleJointMultipleTips_" << parserMoveIt->getNFingers() << "  FROM YAML FILE:" << std::endl;
         for (auto &i : mapsHandler.getPrimitiveMap("singleJointMultipleTips_" + std::to_string(parserMoveIt->getNFingers()) )) {
             i.second->print();
         }
