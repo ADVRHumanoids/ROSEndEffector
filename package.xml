@@ -25,6 +25,9 @@
   <!-- Use depend as a shortcut for packages that are both build and exec dependencies -->
     <depend>roscpp</depend>
     <depend>srdfdom</depend>
+    <depend>moveit_ros_planning_interface</depend>
+    <depend>rosee_msg</depend>
+    <depend>kdl_parser</depend>
   <!--   Note that this is equivalent to the following: -->
   <!--   <build_depend>roscpp</build_depend> -->
   <!--   <exec_depend>roscpp</exec_depend> -->
