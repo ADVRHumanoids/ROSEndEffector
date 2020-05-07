@@ -6,7 +6,7 @@ notifications:
   email:
     recipients:
       - luca.muratore89@gmail.com
-      - davide.torrielli@iit.it
+      - davide.torielli@iit.it
     on_success: never
     on_failure: always
 
