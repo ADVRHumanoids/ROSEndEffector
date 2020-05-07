@@ -124,8 +124,8 @@ add_library(ActionTimed
 
 add_executable(UniversalRosEndEffector src/UniversalRosEndEffector.cpp)
 add_executable(UniversalFindActions src/UniversalFindActions.cpp)
-# # add_dependencies(UniversalRosEndEffectorExecutor ros_end_effector_generate_messages_cpp)
-# # add_dependencies(UniversalFindActions ros_end_effector_generate_messages_cpp)
+add_dependencies(UniversalRosEndEffectorExecutor rosee_msg_generate_messages_cpp)
+add_dependencies(UniversalFindActions rosee_msg_generate_messages_cpp)
 
 
 ## Add cmake target dependencies of the executable
