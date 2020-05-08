@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <ROSEndEffector/ParserMoveIt.h>
+#include <ros_end_effector/ParserMoveIt.h>
 
 ROSEE::ParserMoveIt::ParserMoveIt() {
 

@@ -15,13 +15,7 @@
  * limitations under the License.
 */
 
-#include <ROSEndEffector/Parser.h>
-#include <ROSEndEffector/Utils.h>
-
-#include <ros/console.h>
-
-#include <iostream>
-#include <fstream>
+#include <ros_end_effector/Parser.h>
 
 #define CHAIN_PER_GROUP 1
 
@@ -103,7 +97,7 @@ bool ROSEE::Parser::parseSRDF() {
         return false;
     }
 
-    ROS_INFO_STREAM ( "ROSEndEffector Parser found end_effector: " << srdf_end_effectors.at ( 0 ).name_ );
+    ROS_INFO_STREAM ( "ros_end_effector Parser found end_effector: " << srdf_end_effectors.at ( 0 ).name_ );
 
     // get all the groups in the SRDF
     std::vector<srdf::Model::Group> srdf_groups = _srdfdom.getGroups();
@@ -118,7 +112,7 @@ bool ROSEE::Parser::parseSRDF() {
     for ( int i = 0; i < group_num; i++ ) {
         if ( srdf_groups[i].name_ == end_effector_group_name ) {
             fingers_group = srdf_groups[i];
-            ROS_INFO_STREAM ( "ROSEndEffector Parser found group: " << end_effector_group_name << " in the SRDF with the following fingers: " );
+            ROS_INFO_STREAM ( "ros_end_effector Parser found group: " << end_effector_group_name << " in the SRDF with the following fingers: " );
         }
     }
 
@@ -282,14 +276,14 @@ bool ROSEE::Parser::getROSEndEffectorConfig() {
         // load the node for the _ros_ee_config_path
         YAML::Node cfg = YAML::LoadFile ( _ros_ee_config_path );
 
-        // find the internal node ROSEndEffector
+        // find the internal node ros_end_effector
         YAML::Node ros_ee_node;
-        if ( cfg["ROSEndEffector"] ) {
+        if ( cfg["ros_end_effector"] ) {
 
-            ros_ee_node = cfg["ROSEndEffector"];
+            ros_ee_node = cfg["ros_end_effector"];
         } else {
 
-            ROS_ERROR_STREAM ( "in " << __func__ << " : YAML file  " << _ros_ee_config_path << " does not contain ROSEndEffector mandatory node!!" );
+            ROS_ERROR_STREAM ( "in " << __func__ << " : YAML file  " << _ros_ee_config_path << " does not contain ros_end_effector mandatory node!!" );
             success = false;
         }
 
@@ -298,10 +292,10 @@ bool ROSEE::Parser::getROSEndEffectorConfig() {
 
             // TBD relative path in more elegant way
             _urdf_path = ROSEE::Utils::getPackagePath() + "/configs/" + ros_ee_node["urdf_path"].as<std::string>();
-            ROS_INFO_STREAM ( "ROSEndEffector Parser found URDF path: " << _urdf_path );
+            ROS_INFO_STREAM ( "ros_end_effector Parser found URDF path: " << _urdf_path );
         } else {
 
-            ROS_ERROR_STREAM ( "in " << __func__ << " : ROSEndEffector node of  " << _ros_ee_config_path << " does not contain urdf_path mandatory node!!" );
+            ROS_ERROR_STREAM ( "in " << __func__ << " : ros_end_effector node of  " << _ros_ee_config_path << " does not contain urdf_path mandatory node!!" );
             success = false;
         }
 
@@ -310,10 +304,10 @@ bool ROSEE::Parser::getROSEndEffectorConfig() {
 
             // TBD relative path in more elegant way
             _srdf_path = ROSEE::Utils::getPackagePath() + "/configs/" + ros_ee_node["srdf_path"].as<std::string>();
-            ROS_INFO_STREAM ( "ROSEndEffector Parser found SRDF path: " << _srdf_path );
+            ROS_INFO_STREAM ( "ros_end_effector Parser found SRDF path: " << _srdf_path );
         } else {
 
-            ROS_ERROR_STREAM ( "in " << __func__ << " : ROSEndEffector node of  " << _ros_ee_config_path << " does not contain srdf_path mandatory node!!" );
+            ROS_ERROR_STREAM ( "in " << __func__ << " : ros_end_effector node of  " << _ros_ee_config_path << " does not contain srdf_path mandatory node!!" );
             success = false;
         }
     }

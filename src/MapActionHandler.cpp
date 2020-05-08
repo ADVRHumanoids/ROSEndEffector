@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <ROSEndEffector/MapActionHandler.h>
+#include <ros_end_effector/MapActionHandler.h>
 
 ROSEE::MapActionHandler::MapActionHandler() {}
 

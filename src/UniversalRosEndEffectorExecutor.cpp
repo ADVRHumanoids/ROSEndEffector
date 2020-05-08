@@ -15,7 +15,7 @@
  * limitations under the License.
 */
 
-#include <ROSEndEffector/UniversalRosEndEffectorExecutor.h>
+#include <ros_end_effector/UniversalRosEndEffectorExecutor.h>
 
 
 ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::string ns ) : _nh ( ns ) {

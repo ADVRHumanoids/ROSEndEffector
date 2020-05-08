@@ -18,7 +18,7 @@
 #ifndef __ROSEE_DUMMY_HAL__
 #define __ROSEE_DUMMY_HAL__
 
-#include <ROSEndEffector/EEHal.h>
+#include <ros_end_effector/EEHal.h>
 
 #include <string>
 #include <memory>

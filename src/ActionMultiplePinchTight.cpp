@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-#include <ROSEndEffector/ActionMultiplePinchTight.h>
+#include <ros_end_effector/ActionMultiplePinchTight.h>
 
 ROSEE::ActionMultiplePinchTight::ActionMultiplePinchTight() : 
     ActionPinchGeneric ("multiplePinchTight", 3, ActionPrimitive::Type::MultiplePinchTight) { }

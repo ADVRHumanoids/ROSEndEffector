@@ -19,7 +19,7 @@
 #ifndef __ROSEE_ACTIONTRIG_H
 #define __ROSEE_ACTIONTRIG_H
 
-#include <ROSEndEffector/ActionPrimitive.h>
+#include <ros_end_effector/ActionPrimitive.h>
 #include <yaml-cpp/yaml.h>
 #include <iostream>
 

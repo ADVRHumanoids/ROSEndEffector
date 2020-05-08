@@ -15,7 +15,7 @@
  * limitations under the License.
 */
 
-#include <ROSEndEffector/DummyHal.h>
+#include <ros_end_effector/DummyHal.h>
 
 ROSEE::DummyHal::DummyHal ( ROSEE::EEInterface::Ptr ee_interface ) : EEHal ( ee_interface ) {
 

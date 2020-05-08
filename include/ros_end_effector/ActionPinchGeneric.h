@@ -19,7 +19,7 @@
 #ifndef __ROSEE_ACTIONPINCHGENERIC_H
 #define __ROSEE_ACTIONPINCHGENERIC_H
 
-#include <ROSEndEffector/ActionPrimitive.h>
+#include <ros_end_effector/ActionPrimitive.h>
 #include <yaml-cpp/yaml.h>
 #include <iostream>
 

@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-#include <ROSEndEffector/ActionPrimitive.h>
+#include <ros_end_effector/ActionPrimitive.h>
 
 ROSEE::ActionPrimitive::ActionPrimitive(std::string name,  unsigned int maxStoredActionStates, ActionPrimitive::Type primitiveType) : 
     Action(name, Action::Type::Primitive), maxStoredActionStates(maxStoredActionStates), primitiveType(primitiveType) {};
