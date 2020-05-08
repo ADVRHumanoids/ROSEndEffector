@@ -4,10 +4,10 @@
 #include <ros/console.h>
 
 
-#include <ROSEndEffector/FindActions.h>
-#include <ROSEndEffector/ParserMoveIt.h>
-#include <ROSEndEffector/ActionPrimitive.h>
-#include <ROSEndEffector/ActionTrig.h>
+#include <ros_end_effector/FindActions.h>
+#include <ros_end_effector/ParserMoveIt.h>
+#include <ros_end_effector/ActionPrimitive.h>
+#include <ros_end_effector/ActionTrig.h>
 
 namespace {
 

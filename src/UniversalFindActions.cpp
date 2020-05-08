@@ -16,16 +16,16 @@
  */
 
 #include <ros/ros.h>
-#include <ROSEndEffector/UniversalRosEndEffectorExecutor.h>
-#include <ROSEndEffector/FindActions.h>
-#include <ROSEndEffector/Action.h>
-#include <ROSEndEffector/ActionComposed.h>
-#include <ROSEndEffector/ActionTimed.h>
-#include <ROSEndEffector/ActionGeneric.h>
-#include <ROSEndEffector/ParserMoveIt.h>
-#include <ROSEndEffector/Parser.h> //to take urdf from conf file
+#include <ros_end_effector/UniversalRosEndEffectorExecutor.h>
+#include <ros_end_effector/FindActions.h>
+#include <ros_end_effector/Action.h>
+#include <ros_end_effector/ActionComposed.h>
+#include <ros_end_effector/ActionTimed.h>
+#include <ros_end_effector/ActionGeneric.h>
+#include <ros_end_effector/ParserMoveIt.h>
+#include <ros_end_effector/Parser.h> //to take urdf from conf file
 
-#include <ROSEndEffector/MapActionHandler.h>
+#include <ros_end_effector/MapActionHandler.h>
 
 int main ( int argc, char **argv ) {
 
@@ -34,8 +34,8 @@ int main ( int argc, char **argv ) {
     ros::NodeHandle nh;
     ROSEE::Parser parser(nh);
     parser.init();
-    nh.setParam("robot_description", parser.getUrdfString());
-    nh.setParam("robot_description_semantic", parser.getSrdfString());
+    nh.setParam("/robot_description", parser.getUrdfString());
+    nh.setParam("/robot_description_semantic", parser.getSrdfString());
     ROS_INFO_STREAM("FINDACTIONS: Set urdf and srdf file in the param server from config file " << parser.getRoseeConfigPath());
     
     std::shared_ptr <ROSEE::ParserMoveIt> parserMoveIt = std::make_shared <ROSEE::ParserMoveIt> ();

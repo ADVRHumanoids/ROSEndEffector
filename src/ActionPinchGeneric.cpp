@@ -21,7 +21,7 @@
  *
  */
 
-#include <ROSEndEffector/ActionPinchGeneric.h>
+#include <ros_end_effector/ActionPinchGeneric.h>
 
 ROSEE::ActionPinchGeneric::ActionPinchGeneric(std::string name, ActionPrimitive::Type type) : 
     ActionPrimitive (name, 3, type) { }

@@ -3,14 +3,14 @@
 
 #include <moveit/planning_scene/planning_scene.h>
 
-#include <ROSEndEffector/YamlWorker.h>
-#include <ROSEndEffector/ParserMoveIt.h>
-#include <ROSEndEffector/Action.h>
-#include <ROSEndEffector/ActionPinchTight.h>
-#include <ROSEndEffector/ActionPinchLoose.h>
-#include <ROSEndEffector/ActionTrig.h>
-#include <ROSEndEffector/ActionSingleJointMultipleTips.h>
-#include <ROSEndEffector/ActionMultiplePinchTight.h>
+#include <ros_end_effector/YamlWorker.h>
+#include <ros_end_effector/ParserMoveIt.h>
+#include <ros_end_effector/Action.h>
+#include <ros_end_effector/ActionPinchTight.h>
+#include <ros_end_effector/ActionPinchLoose.h>
+#include <ros_end_effector/ActionTrig.h>
+#include <ros_end_effector/ActionSingleJointMultipleTips.h>
+#include <ros_end_effector/ActionMultiplePinchTight.h>
 
 
 #define N_EXP_COLLISION 5000 //5000 is ok

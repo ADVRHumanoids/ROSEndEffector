@@ -18,9 +18,9 @@
 #ifndef __ROSEE_EE_HAL__
 #define __ROSEE_EE_HAL__
 
-#include <ROSEndEffector/IMotor.h>
+#include <ros_end_effector/IMotor.h>
 
-#include <ROSEndEffector/EEInterface.h>
+#include <ros_end_effector/EEInterface.h>
 
 #include <string>
 #include <memory>

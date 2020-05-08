@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-#include <ROSEndEffector/Action.h>
+#include <ros_end_effector/Action.h>
 
 /******************************** OPERATORS OVERLOAD FOR TYPEDEFS ***********************************/
 

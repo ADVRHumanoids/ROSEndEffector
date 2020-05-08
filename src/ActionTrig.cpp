@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-#include <ROSEndEffector/ActionTrig.h>
+#include <ros_end_effector/ActionTrig.h>
 
 ROSEE::ActionTrig::ActionTrig (std::string actionName, ActionPrimitive::Type actionType) :
     ActionPrimitive ( actionName, 1, 1, actionType ) { }

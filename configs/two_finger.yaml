@@ -1,3 +1,3 @@
-ROSEndEffector:
+ros_end_effector:
   urdf_path: "urdf/two_finger.urdf"
   srdf_path: "srdf/two_finger.srdf"

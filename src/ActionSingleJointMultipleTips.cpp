@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <ROSEndEffector/ActionSingleJointMultipleTips.h>
+#include <ros_end_effector/ActionSingleJointMultipleTips.h>
 
 ROSEE::ActionSingleJointMultipleTips::ActionSingleJointMultipleTips() : 
     ActionPrimitive ( "singleJointMultipleTips", 1, ROSEE::ActionPrimitive::Type::SingleJointMultipleTips ) {}

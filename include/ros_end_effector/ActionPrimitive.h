@@ -25,7 +25,7 @@
 #include <vector>
 #include <iostream>
 
-#include <ROSEndEffector/Action.h>
+#include <ros_end_effector/Action.h>
 
 #include <yaml-cpp/yaml.h>
 

@@ -25,18 +25,18 @@
 #include <yaml-cpp/yaml.h>
 
 //to create directories
-#include <ROSEndEffector/Utils.h>
+#include <ros_end_effector/Utils.h>
 
-#include <ROSEndEffector/Action.h>
-#include <ROSEndEffector/ActionPrimitive.h>
-#include <ROSEndEffector/ActionPinchTight.h>
-#include <ROSEndEffector/ActionPinchLoose.h>
-#include <ROSEndEffector/ActionTrig.h>
-#include <ROSEndEffector/ActionSingleJointMultipleTips.h>
-#include <ROSEndEffector/ActionMultiplePinchTight.h>
+#include <ros_end_effector/Action.h>
+#include <ros_end_effector/ActionPrimitive.h>
+#include <ros_end_effector/ActionPinchTight.h>
+#include <ros_end_effector/ActionPinchLoose.h>
+#include <ros_end_effector/ActionTrig.h>
+#include <ros_end_effector/ActionSingleJointMultipleTips.h>
+#include <ros_end_effector/ActionMultiplePinchTight.h>
 
-#include <ROSEndEffector/ActionComposed.h>
-#include <ROSEndEffector/ActionTimed.h>
+#include <ros_end_effector/ActionComposed.h>
+#include <ros_end_effector/ActionTimed.h>
 
 namespace ROSEE
 {

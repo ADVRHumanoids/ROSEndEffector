@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <ROSEndEffector/ActionGeneric.h>
+#include <ros_end_effector/ActionGeneric.h>
 
 
 ROSEE::ActionGeneric::ActionGeneric () {}

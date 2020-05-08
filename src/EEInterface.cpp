@@ -15,7 +15,7 @@
  * limitations under the License.
 */
 
-#include <ROSEndEffector/EEInterface.h>
+#include <ros_end_effector/EEInterface.h>
 
 ROSEE::EEInterface::EEInterface ( const ROSEE::Parser& p  ) {
     

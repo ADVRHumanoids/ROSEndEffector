@@ -22,13 +22,13 @@
 #include <set>
 #include <memory>
 
-#include <ROSEndEffector/YamlWorker.h>
-#include <ROSEndEffector/Utils.h>
+#include <ros_end_effector/YamlWorker.h>
+#include <ros_end_effector/Utils.h>
 
-#include <ROSEndEffector/Action.h>
-#include <ROSEndEffector/ActionPrimitive.h>
-#include <ROSEndEffector/ActionTimed.h>
-#include <ROSEndEffector/ActionGeneric.h>
+#include <ros_end_effector/Action.h>
+#include <ros_end_effector/ActionPrimitive.h>
+#include <ros_end_effector/ActionTimed.h>
+#include <ros_end_effector/ActionGeneric.h>
 
 
 

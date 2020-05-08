@@ -19,8 +19,8 @@
 #ifndef __ROSEE_ACTIONPINCHLOOSE_H
 #define __ROSEE_ACTIONPINCHLOOSE_H
 
-#include <ROSEndEffector/ActionPrimitive.h>
-#include <ROSEndEffector/ActionPinchGeneric.h>
+#include <ros_end_effector/ActionPrimitive.h>
+#include <ros_end_effector/ActionPinchGeneric.h>
 #include <moveit/planning_scene/planning_scene.h>
 #include <yaml-cpp/yaml.h>
 #include <iostream>
