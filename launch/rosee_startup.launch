@@ -3,12 +3,12 @@
     <arg name="gazebo" default="false" />
     <arg name="hand_name"/> 
     
-    <!-- this param is need by c++ (universalroseeexec) to take states from gazebo or joint state publisher (which deal with mimic joints) --> 
-    <param unless="$(arg gazebo)" name = "/rosee/joint_states_topic" value="/js_publisher/joint_states" />
-    <param if="$(arg gazebo)" name = "/rosee/joint_states_topic" value="/rosee_gazebo_plugin/joint_states" />
     <!-- arg is needed by this launch file itself to run the robot state publisher below -->
     <arg unless="$(arg gazebo)" name = "jointState4robotState" value="/js_publisher/joint_states" />
     <arg if="$(arg gazebo)" name = "jointState4robotState" value="/rosee_gazebo_plugin/joint_states" />
+    
+    <!-- this rosparam is need by c++ (universalroseeexec) to take states from gazebo or joint state publisher (which deal with mimic joints) --> 
+    <rosparam param = "/rosee/joint_states_topic" subst_value="True">$(arg jointState4robotState)</rosparam>
 
     <param name="ros_ee_config_path" value="$(find ros_end_effector)/configs/$(arg hand_name).yaml"/> 
     <param name="rate" value="100.0"/>
