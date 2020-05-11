@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <launch>
-    <arg name="inSlider" default="false" />
     <arg name="gazebo" default="false" />
     <arg name="hand_name"/> 
     
@@ -14,7 +13,7 @@
     <param name="ros_ee_config_path" value="$(find ros_end_effector)/configs/$(arg hand_name).yaml"/> 
     <param name="rate" value="100.0"/>
     
-    <node unless="$(arg inSlider)" type="UniversalRosEndEffector" name="UniversalRosEndEffector" pkg="ros_end_effector" output="screen"/>
+    <node type="UniversalRosEndEffector" name="UniversalRosEndEffector" pkg="ros_end_effector" output="screen"/>
      
     <!-- Joint state publisher is necessary for mimic joint, not used if gazebo is used because there is the gazebo_ros_plugin which handles the mimic -->
     <node unless="$(arg gazebo)" name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
@@ -35,14 +34,6 @@
         
     <include if="$(arg gazebo)" file="$(find rosee_gazebo_plugins)/launch/gazebo.launch"> 
     	  <arg name="hand_name" value="$(arg hand_name)"/>
-    </include>
-    
-    
-    
-    <!-- sliders for control single joints, debug purpose only, without gazebo always-->
-    <node if="$(arg inSlider)" name="input_joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
-        <remap from="joint_states" to="ros_end_effector/joint_commands" />
-        <param name="use_gui" value="true" />
-    </node>
+    </include>   
 
 </launch>
