@@ -2,7 +2,7 @@
 <launch>
     <arg name="gazebo" default="false" />
     <arg name="hand_name"/> 
-    <arg name="gdb" default="false"/>
+    <arg name="gdb" default="false"/> <!-- for debug with gdb -->
 
     
     <!-- arg is needed by this launch file itself to run the robot state publisher below -->
