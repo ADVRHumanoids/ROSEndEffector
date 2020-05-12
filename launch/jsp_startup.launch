@@ -8,7 +8,7 @@
       <param name="use_gui" value="true" />
     </node>
      
-    <!-- start robot state publisher to transform joint pos into tf for rviz, so it is always on, gazebo or not -->
+    <!-- start robot state publisher to transform joint pos into tf for rviz -->
     <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" output="screen" >
         <param name="publish_frequency" type="double" value="200.0" />
     </node> 
