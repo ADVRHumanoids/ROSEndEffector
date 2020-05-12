@@ -7,6 +7,6 @@ ros_end_effector:
 rosee_gazebo_plugins_args: #robot name
   #Controller for each joint. type now is only JointPositionControllerfor JointVelocityController
   qbhand_synergy_joint:
-  	type: JointPositionController
-  	joint_name: qbhand_synergy_joint
-  	pid: {p: 0.0000005, i: 0.0000001, d: 0.00000005}
+    type: JointPositionController
+    joint_name: qbhand_synergy_joint
+    pid: {p: 0.0000005, i: 0.0000001, d: 0.00000005}
