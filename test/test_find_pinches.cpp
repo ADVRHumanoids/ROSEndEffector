@@ -1,14 +1,15 @@
 #include <gtest/gtest.h>
+#include "testUtils.h"
 
 #include <ros/ros.h>
 #include <ros/console.h>
-
 
 #include <ros_end_effector/FindActions.h>
 #include <ros_end_effector/ParserMoveIt.h>
 #include <ros_end_effector/ActionPrimitive.h>
 #include <ros_end_effector/ActionPinchTight.h>
 #include <ros_end_effector/ActionPinchLoose.h>
+
 
 namespace {
 
@@ -24,12 +25,6 @@ protected:
     }
 
     virtual void SetUp() override {
-
-        const char *argv[] = {"testFindPinches", "arg"};
-        int argc = sizeof(argv) / sizeof(char*) - 1;
-        
-        //is this cast correct?
-        ros::init ( argc, (char**)argv, "testFindPinches" );
     
         std::shared_ptr <ROSEE::ParserMoveIt> parserMoveIt = std::make_shared <ROSEE::ParserMoveIt> ();
         //if return false, models are not found and it is useless to continue the test
@@ -45,8 +40,14 @@ protected:
 
         ROSEE::YamlWorker yamlWorker;
 
-        pinchParsedMap = yamlWorker.parseYamlPrimitive(folderForActions + "/primitives/" + "pinchTight.yaml" );
-        pinchLooseParsedMap = yamlWorker.parseYamlPrimitive(folderForActions + "/primitives/" + "pinchLoose.yaml");
+        if (pinchMap.size() > 0 ) {
+            pinchParsedMap = yamlWorker.parseYamlPrimitive(folderForActions + "/primitives/" + "pinchTight.yaml" );
+        }
+        
+        if (pinchLooseMap.size() > 0 ) {
+            pinchLooseParsedMap = yamlWorker.parseYamlPrimitive(folderForActions + "/primitives/" + "pinchLoose.yaml");
+        }
+        
     }
 
     virtual void TearDown() {
@@ -386,6 +387,31 @@ TEST_F ( testFindPinches, checkTightLooseExclusion ) {
 } //namespace
 
 int main ( int argc, char **argv ) {
+    
+    if (argc < 2 ){
+        
+        std::cout << "[TEST ERROR] Insert hand name as argument" << std::endl;
+        return -1;
+    }
+    
+    /* Run tests on an isolated roscore */
+    if(setenv("ROS_MASTER_URI", "http://localhost:11322", 1) == -1)
+    {
+        perror("setenv");
+        return 1;
+    }
+
+    //run roscore
+    std::unique_ptr<ROSEE::TestUtils::Process> roscore;
+    roscore.reset(new ROSEE::TestUtils::Process({"roscore", "-p", "11322"}));    
+    
+    if ( ROSEE::TestUtils::prepareROSForTests ( argc, argv, "testFindPinches" ) != 0 ) {
+        
+        std::cout << "[TEST ERROR] Prepare Funcion failed" << std::endl;
+        return -1;
+    }
+    
+    
     ::testing::InitGoogleTest ( &argc, argv );
     return RUN_ALL_TESTS();
 }
