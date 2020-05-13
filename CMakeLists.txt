@@ -10,6 +10,7 @@ add_compile_options(-std=c++11)
 find_package(catkin REQUIRED COMPONENTS srdfdom 
                                         kdl_parser
                                         roscpp
+                                        rospy
                                         message_generation 
                                         moveit_ros_planning_interface
                                         rosee_msg
