@@ -33,12 +33,6 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
     ROSEE::Parser p ( _nh );
     p.init (); //TBD check return
     p.printEndEffectorFingerJointsMap();
-    
-    //load to param server the urdf and srdf model
-    _nh.setParam("/robot_description", p.getUrdfString());
-    _nh.setParam("/robot_description_semantic", p.getSrdfString());
-     ROS_INFO_STREAM("Set urdf and srdf file in the param server from config file " << p.getRoseeConfigPath());
-
 
     // retrieve the ee interface
     _ee = std::make_shared<ROSEE::EEInterface> ( p );

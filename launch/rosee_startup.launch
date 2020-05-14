@@ -4,6 +4,10 @@
     <arg name="hand_name"/> 
     <arg name="gdb" default="false"/> <!-- for debug with gdb -->
 
+    <!-- send urdf to parameter server. This is necessary because sometimes UniversalRosEndEffector can not put them in time and joint state pub crashes-->
+    <!-- BE SURE that the values are the same in the ros_ee_config_path file -->
+    <param name="robot_description" textfile="$(find ros_end_effector)/configs/urdf/$(arg hand_name).urdf"/>
+    <param name="robot_description_semantic" textfile="$(find ros_end_effector)/configs/srdf/$(arg hand_name).srdf" />
     
     <!-- arg is needed by this launch file itself to run the robot state publisher below -->
     <arg unless="$(arg gazebo)" name = "jointState4robotState" value="/js_publisher/joint_states" />
