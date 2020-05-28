@@ -11,7 +11,7 @@
     
     <!-- arg is needed by this launch file itself to run the robot state publisher below -->
     <arg unless="$(arg gazebo)" name = "jointState4robotState" value="/js_publisher/joint_states" />
-    <arg if="$(arg gazebo)" name = "jointState4robotState" value="/rosee_gazebo_plugin/joint_states" />
+    <arg if="$(arg gazebo)" name = "jointState4robotState" value="/rosee_gazebo_plugins/joint_states" />
     
     <!-- this rosparam is need by c++ (universalroseeexec) to take states from gazebo or joint state publisher (which deal with mimic joints) --> 
     <param name = "/rosee/joint_states_topic" value="$(arg jointState4robotState)" />
