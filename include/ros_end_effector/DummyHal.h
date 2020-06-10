@@ -48,7 +48,7 @@ namespace ROSEE {
         virtual bool setPositionReference( std::string joint_name, double position_reference );
                 
         
-        
+        virtual bool init();
         virtual bool sense();
         virtual bool move();
         

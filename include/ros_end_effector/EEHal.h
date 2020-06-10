@@ -42,6 +42,8 @@ namespace ROSEE {
         EEHal( ROSEE::EEInterface::Ptr ee_interface );
         virtual ~EEHal();
         
+        virtual bool init() = 0;
+        
         virtual bool sense() = 0;
         
         virtual bool move() = 0;

@@ -42,6 +42,9 @@ include_directories(
   include
   ${catkin_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIRS}
+  
+  # TODO do it automatically
+  ${Heri2EEHal_INCLUDE_DIRS}
 )
 
 add_library(ROSEEParser
@@ -50,6 +53,10 @@ add_library(ROSEEParser
 
 add_library(ROSEEInterface
     src/EEInterface.cpp
+)
+
+add_library(EEHal
+    src/EEHal.cpp
 )
 
 add_library(DummyHal
@@ -154,9 +161,13 @@ target_link_libraries(UniversalRosEndEffectorExecutor
     YamlWorker
     MapActionHandler
     RosActionServer
+    EEHal
     
-    # do it automatically
-    DummyHal
+    # TODO HACK do it automatically
+# #     DummyHal
+
+    Heri2EEHal
+    
     
 )
 
@@ -292,6 +303,12 @@ install(DIRECTORY launch/
   FILES_MATCHING PATTERN "*.launch"
 )
 
+# installing just the EEHal
+# Add cmake dir and include custom macros
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
+include(MacroInstallLibrary)
+library_install(EEHal 1 0 0)
+
 ## Mark other files for installation (e.g. launch and bag files, etc.)
 # install(FILES
 #   # myfile1
@@ -358,3 +375,5 @@ macro(optional_build name path ONOFF)
 endmacro(optional_build name path ONOFF)
 
 optional_build(documentation doc ON)
+
+add_subdirectory(hal)

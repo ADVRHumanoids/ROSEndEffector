@@ -21,6 +21,11 @@ ROSEE::DummyHal::DummyHal ( ROSEE::EEInterface::Ptr ee_interface ) : EEHal ( ee_
 
 }
 
+bool ROSEE::DummyHal::init() {
+    
+    return true;
+}
+
 
 bool ROSEE::DummyHal::getMotorPosition ( std::string joint_name, double& motor_position ) {
 

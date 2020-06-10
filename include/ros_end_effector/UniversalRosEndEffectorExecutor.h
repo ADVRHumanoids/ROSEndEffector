@@ -29,7 +29,10 @@
 #include <ros_end_effector/Parser.h>
 #include <ros_end_effector/EEInterface.h>
 #include <ros_end_effector/EEHal.h>
-#include <ros_end_effector/DummyHal.h>
+
+// #include <ros_end_effector/DummyHal.h>
+#include <heri_2_ee_hal.h>
+
 #include <ros_end_effector/Utils.h>
 #include <ros_end_effector/MapActionHandler.h>
 #include <ros_end_effector/YamlWorker.h>

@@ -56,7 +56,10 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
     _js_msg.effort.resize ( _joint_num );
 
     // allocate HAL TBD get from parser the lib to load
-    _hal = std::make_shared<ROSEE::DummyHal> ( _ee );
+//     _hal = std::make_shared<ROSEE::DummyHal> ( _ee );
+    _hal = std::make_shared<ROSEE::Heri2EEHal> (p.getRoseeConfigPath().c_str(), _ee );
+    // initialize hal 
+    _hal->init();
 
     // filter TBD select filter profile
     const double DAMPING_FACT = 1.0;
