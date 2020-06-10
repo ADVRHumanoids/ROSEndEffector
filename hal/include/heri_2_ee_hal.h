@@ -32,13 +32,13 @@ public:
                  ROSEE::EEInterface::Ptr ee_interface );
     virtual ~Heri2EEHal();
      
-    virtual bool init();
-    virtual bool sense();
-    virtual bool move();
+    virtual bool init() override;
+    virtual bool sense() override;
+    virtual bool move() override;
     
-    virtual bool getMotorPosition( std::string joint_name, double& motor_position );
-    virtual bool getMotorVelocity( std::string joint_name, double& motor_velocity );
-    virtual bool getMotorEffort( std::string joint_name, double& motor_effort );
+    virtual bool getMotorPosition( std::string joint_name, double& motor_position ) override;
+    virtual bool getMotorVelocity( std::string joint_name, double& motor_velocity ) override;
+    virtual bool getMotorEffort( std::string joint_name, double& motor_effort ) override;
         
     virtual bool setPositionReference( std::string joint_name, double position_reference );
 
