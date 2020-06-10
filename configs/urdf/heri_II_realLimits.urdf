@@ -197,7 +197,7 @@
     <axis xyz="0 0 -1"/>
     <limit effort="10" lower="-0.1" upper="0.5" velocity="1"/>
     <dynamics damping="0.003" friction="0.003"/>
-    <mimic joint="SFB1__SFP1_1" multiplier="0.3" offset="0"/>
+    <mimic joint="SFB1__SFP1_1" multiplier="0.3" offset="0.2"/>
   </joint>
   <gazebo>
     <plugin filename="libroboticsgroup_gazebo_mimic_joint_plugin.so" name="SFP1_1__SFP1_2_jointmimic_joint_plugin">
@@ -298,7 +298,7 @@
       </geometry>
     </collision>
   </link>
-  <!-- ///////////////////////////////////////   Joint of base_link and the first phalanx of the short finger   ////////////////////////////////////////// -->
+  <!-- ///////////////////////////////////////   Joint of base_link and the first phalanx of the long finger   ////////////////////////////////////////// -->
   <joint name="LFP1_1__LFP1_2" type="revolute">
     <origin rpy="0 0 0" xyz="0.035 0 0"/>
     <parent link="LFP1_1"/>
@@ -306,14 +306,14 @@
     <axis xyz="0 0 -1"/>
     <limit effort="10" lower="-0.1" upper="0.5" velocity="1"/>
     <dynamics damping="0.06" friction="0.05"/>
-    <mimic joint="LFB1__LFP1_1" multiplier="1" offset="0"/>
+    <mimic joint="LFB1__LFP1_1" multiplier="1" offset="0.1"/>
   </joint>
   <gazebo>
     <plugin filename="libroboticsgroup_gazebo_mimic_joint_plugin.so" name="LFP1_1__LFP1_2_jointmimic_joint_plugin">
       <joint>LFB1__LFP1_1</joint>
       <mimicJoint>LFP1_1__LFP1_2</mimicJoint>
       <multiplier>1.0</multiplier>
-      <offset>0</offset>
+      <offset>0.1</offset>
       <sensitiveness>0.0</sensitiveness>
       <!-- if absolute difference between setpoint and process value is below this threshold, do nothing; 0.0 = disable [rad] -->
       <maxEffort>10.0</maxEffort>
@@ -350,7 +350,7 @@
     <axis xyz="0 0 -1"/>
     <limit effort="10" lower="-0.1" upper="0.5" velocity="1"/>
     <dynamics damping="0.003" friction="0.003"/>
-    <mimic joint="LFB1__LFP1_1" multiplier="0.5" offset="0"/>
+    <mimic joint="LFB1__LFP1_1" multiplier="0.5" offset="0.2"/>
   </joint>
   <gazebo>
     <plugin filename="libroboticsgroup_gazebo_mimic_joint_plugin.so" name="LFP1_1__LFP1_3_jointmimic_joint_plugin">
@@ -459,7 +459,7 @@
     <axis xyz="0 0 -1"/>
     <limit effort="10" lower="-0.1" upper="0.5" velocity="1"/>
     <dynamics damping="0.003" friction="0.003"/>
-    <mimic joint="LFB2__LFP2_1" multiplier="1" offset="0"/>
+    <mimic joint="LFB2__LFP2_1" multiplier="1" offset="0.1"/>
   </joint>
   <gazebo>
     <plugin filename="libroboticsgroup_gazebo_mimic_joint_plugin.so" name="LFP2_1__LFP2_2_jointmimic_joint_plugin">
@@ -503,7 +503,7 @@
     <axis xyz="0 0 -1"/>
     <limit effort="10" lower="-0.1" upper="0.5" velocity="1"/>
     <dynamics damping="0.06" friction="0.05"/>
-    <mimic joint="LFB2__LFP2_1" multiplier="0.5" offset="0"/>
+    <mimic joint="LFB2__LFP2_1" multiplier="0.5" offset="0.2"/>
   </joint>
   <gazebo>
     <plugin filename="libroboticsgroup_gazebo_mimic_joint_plugin.so" name="LFP2_2__LFP2_3_jointmimic_joint_plugin">
@@ -612,7 +612,7 @@
     <axis xyz="0 0 -1"/>
     <limit effort="10" lower="-0.1" upper="0.5" velocity="1"/>
     <dynamics damping="0.003" friction="0.003"/>
-    <mimic joint="LFB3__LFP3_1" multiplier="1" offset="0"/>
+    <mimic joint="LFB3__LFP3_1" multiplier="1" offset="0.1"/>
   </joint>
   <gazebo>
     <plugin filename="libroboticsgroup_gazebo_mimic_joint_plugin.so" name="LFP3_1__LFP3_2_jointmimic_joint_plugin">
@@ -656,7 +656,7 @@
     <axis xyz="0 0 -1"/>
     <limit effort="10" lower="-0.1" upper="0.5" velocity="1"/>
     <dynamics damping="0.003" friction="0.003"/>
-    <mimic joint="LFB3__LFP3_1" multiplier="0.5" offset="0"/>
+    <mimic joint="LFB3__LFP3_1" multiplier="0.5" offset="0.2"/>
   </joint>
   <gazebo>
     <plugin filename="libroboticsgroup_gazebo_mimic_joint_plugin.so" name="LFP3_2__LFP3_3_jointmimic_joint_plugin">
