@@ -54,7 +54,7 @@ void ROSEE::Heri2EEHal::base_init()
         moto = item.second;
         moto->readSDO_byname("motor_pos", motor_pos);
         moto->readSDO_byname("motor_pos_2", motor_pos_2);
-
+        
         moto->readSDO_byname("Min_pos", aux);
         min_pos[slave_id] = aux;
         moto->readSDO_byname("Max_pos", aux);
@@ -63,6 +63,7 @@ void ROSEE::Heri2EEHal::base_init()
         min_pos_2[slave_id] = aux;
         moto->readSDO_byname("Max_pos_2", aux);
         max_pos_2[slave_id] = aux;
+
 
         //////////////////////////////////////////////////////////////////////////
         // start controller :

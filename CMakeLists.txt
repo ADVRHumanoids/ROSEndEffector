@@ -377,3 +377,15 @@ endmacro(optional_build name path ONOFF)
 optional_build(documentation doc ON)
 
 add_subdirectory(hal)
+
+# TODO check here 
+# automatically call the sh for permission things
+macro(set_cap_build_from_top target)
+  #message(STATUS "set_cap.sh ${target_location}")
+  add_custom_command(TARGET ${target} POST_BUILD COMMAND 
+      #get_property(target_location TARGET target PROPERTY LOCATION)
+      ${CMAKE_SOURCE_DIR}/ROSEndEffector/hal/scripts/set_cap.sh ${CATKIN_DEVEL_PREFIX}/lib/ros_end_effector/UniversalRosEndEffector
+  )
+endmacro(set_cap_build_from_top)
+
+set_cap_build_from_top("UniversalRosEndEffector")
