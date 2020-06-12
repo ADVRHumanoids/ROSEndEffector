@@ -48,13 +48,17 @@ namespace ROSEE {
         
         virtual bool move() = 0;
         
+        // TODO public or protected?
+        virtual bool getJointPosition( std::string joint_name, double& joint_position);
+
+        
     protected:
         
         virtual bool setJointPosition( std::string joint_name, double joint_position);
         virtual bool setJointVelocity( std::string joint_name, double joint_velocity);
         virtual bool setJointEffort( std::string joint_name, double joint_effort);
         
-        virtual bool getJointPosition( std::string joint_name, double& joint_position);
+       // virtual bool getJointPosition( std::string joint_name, double& joint_position);
         virtual bool getJointVelocity( std::string joint_name, double& joint_velocity);
         virtual bool getJointEffort( std::string joint_name, double& joint_effort);
         

@@ -17,6 +17,16 @@ ROSEE::Heri2EEHal::Heri2EEHal(const char* config_yaml,
 {
 
     XBot::Logger::info(XBot::Logger::Severity::HIGH) << "Low Level Config file in use is: " << config_yaml << XBot::Logger::endl();
+    
+    //TODO do not fill this hardcoded
+    jointName_to_motorId["LFB1__LFP1_1"] = 
+        std::make_pair<unsigned short int, unsigned short int>(112, 1);
+    jointName_to_motorId["LFB2__LFP2_1"] = 
+        std::make_pair<unsigned short int, unsigned short int>(112, 2);
+    jointName_to_motorId["LFB3__LFP3_1"] = 
+        std::make_pair<unsigned short int, unsigned short int>(113, 1);
+    jointName_to_motorId["SFB1__SFP1_1"] = 
+        std::make_pair<unsigned short int, unsigned short int>(113, 2);
 }
 
 ROSEE::Heri2EEHal::~Heri2EEHal()
@@ -159,26 +169,21 @@ bool ROSEE::Heri2EEHal::getMotorPosition(std::string joint_name, double& motor_p
     iit::ecat::advr::HeriHandEscPdoTypes::pdo_rx hand_pdo_rx;
     iit::ecat::advr::HeriHandESC * finger;
         
-    // HACK do proper mapping
+    // HACK do proper mapping. Is it ok now?
     int finger_id = -1;
     int motor_in_finger_id = -1;
+    
+    auto it = jointName_to_motorId.find(joint_name);
+    
+    if (it == jointName_to_motorId.end()) {
+        XBot::Logger::error ( ">> Joint_name %s does not exists \n",
+                                joint_name);
+        return false;
+    }
+    
+    finger_id = it->second.first;
+    motor_in_finger_id = it->second.second;
 
-    if(joint_name == "LFB1__LFP1_1" ) {
-        finger_id = 112;
-        motor_in_finger_id = 1;
-    }
-    else if(joint_name == "LFB2__LFP2_1" ) {
-        finger_id = 112;
-        motor_in_finger_id = 2;
-    }
-    else if(joint_name == "LFB3__LFP3_1" ) {
-        finger_id = 113;
-        motor_in_finger_id = 1;
-    }
-    else if(joint_name == "SFB1__SFP1_1" ) {
-        finger_id = 113;
-        motor_in_finger_id = 2;
-    }
     /////////////////////////////////////
     
     finger = fingers.at(rid2Pos(finger_id));
@@ -198,6 +203,15 @@ bool ROSEE::Heri2EEHal::getMotorPosition(std::string joint_name, double& motor_p
     return true;
 }
 
+bool ROSEE::Heri2EEHal::getJointPosition(std::string joint_name, double& joint_position)
+{
+    double moto_pos = 0.0
+    this->getMotorPosition ( joint_name, moto_pos);
+    actuatorToJointPosition ( joint_name, moto_pos, joint_position);
+    
+    return true;
+}
+
 bool ROSEE::Heri2EEHal::getMotorEffort(std::string joint_name, double& motor_effort)
 {
     return false;
@@ -209,28 +223,29 @@ bool ROSEE::Heri2EEHal::getMotorVelocity(std::string joint_name, double& motor_v
 }
 
 bool ROSEE::Heri2EEHal::setPositionReference(std::string joint_name, 
-                                             double position_reference)
+                                             double joint_position_reference)
 {
 
-    // HACK do proper mapping
+    // HACK do proper mapping. Is it ok like this?
     int finger_id = -1;
+    int motor_in_finger_id = -1;
     
-    if(joint_name == "LFB1__LFP1_1" ) {
-        finger_id = 112;
-        move_finger(finger_id, 1, position_reference);
+    auto it = jointName_to_motorId.find(joint_name);
+    
+    if (it == jointName_to_motorId.end()) {
+        XBot::Logger::error ( ">> Joint_name %s does not exists \n",
+                                joint_name);
+        return false;
     }
-    else if(joint_name == "LFB2__LFP2_1" ) {
-        finger_id = 112;
-        move_finger(finger_id, 2, position_reference);
-    }
-    else if(joint_name == "LFB3__LFP3_1" ) {
-        finger_id = 113;
-        move_finger(finger_id, 1, position_reference);
-    }
-    else if(joint_name == "SFB1__SFP1_1" ) {
-        finger_id = 113;
-        move_finger(finger_id, 2, position_reference);
-    }
+    
+    finger_id = it->second.first;
+    motor_in_finger_id = it->second.second;
+    
+    double moto_position_reference = 0.0;
+    jointToActuatorPosition(joint_name, joint_position_reference, moto_position_reference);
+    
+    move_finger(finger_id, motor_in_finger_id, moto_position_reference);
+    
     /////////////////////////////////////////////////////
 
     return true;
@@ -261,4 +276,65 @@ bool ROSEE::Heri2EEHal::move_finger(int finger_id,
     return true;
 }
 
+
+//TODO check this... Should be the implementation of an abstract method of ROSEE::EEHal?
+//TODO check joint and motor limits somewhere
+bool ROSEE::Heri2EEHal::jointToActuatorPosition(std::string joint_name, 
+                                               double joint_pos, 
+                                               double& actuator_pos) {
+    
+    //TODO store somewhere the mechanical reduction (and offset eventually)
+    // or convert more precisely with a non linear relation
+    
+    //NOTE tori safe limits are considered for motors
+    if(joint_name == "LFB1__LFP1_1" ) {
+        //moto [0;1.6]  urdf joint [0; 0.9]
+        actuator_pos = (1.6/0.9) * joint_pos;
+    }
+    else if(joint_name == "LFB2__LFP2_1" ) {
+        //moto [0;1.45]  urdf joint [0; 0.73]
+        actuator_pos = (1.45/0.73) * joint_pos;
+    }
+    else if(joint_name == "LFB3__LFP3_1" ) {
+        //moto [0;1.35]  urdf joint [0; 0.9]
+        actuator_pos = (1.35/0.9) * joint_pos;
+    }
+    else if(joint_name == "SFB1__SFP1_1" ) {
+        //moto [0;1.5]  urdf joint [0; 1.3]
+        actuator_pos = (1.5/1.3) * joint_pos;
+    }
+    
+    return true;
+    
+}
+
+bool ROSEE::Heri2EEHal::actuatorToJointPosition(std::string joint_name, 
+                                               double actuator_pos, 
+                                               double& joint_pos) {
+    
+    //TODO store somewhere the mechanical reduction (and offset eventually)
+    // or convert more precisely with a non linear relation
+    
+    //NOTE tori safe limits are considered for motors
+    if(joint_name == "LFB1__LFP1_1" ) {
+        //moto [0;1.6]  urdf joint [0; 0.9]
+        joint_pos = (0.9/1.6) * actuator_pos;
+    }
+    else if(joint_name == "LFB2__LFP2_1" ) {
+        //moto [0;1.45]  urdf joint [0; 0.73]
+        joint_pos = (0.73/1.45) * actuator_pos;
+    }
+    else if(joint_name == "LFB3__LFP3_1" ) {
+        //moto [0;1.35]  urdf joint [0; 0.9]
+        joint_pos = (0.9/1.35) * actuator_pos;
+    }
+    else if(joint_name == "SFB1__SFP1_1" ) {
+        //moto [0;1.5]  urdf joint [0; 1.3]
+        joint_pos = (1.3/1.5) * actuator_pos;
+    }
+    
+    return true;
+
+    
+}
 

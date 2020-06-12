@@ -39,14 +39,24 @@ public:
     virtual bool getMotorPosition( std::string joint_name, double& motor_position ) override;
     virtual bool getMotorVelocity( std::string joint_name, double& motor_velocity ) override;
     virtual bool getMotorEffort( std::string joint_name, double& motor_effort ) override;
+    
+    bool getJointPosition(std::string joint_name, double& joint_position) override;
+
         
-    virtual bool setPositionReference( std::string joint_name, double position_reference );
+    virtual bool setPositionReference( std::string joint_name, double joint_position_reference );
 
 
 protected :
 
-    iit::ecat::stat_t  s_loop;
+    iit::ecat::stat_t  s_loop;::
     uint64_t start_time, tNow, tPre;
+    
+    // TODO override from a virtual of hal?
+    bool jointToActuatorPosition(std::string joint_name, double joint_pos, double& actuator_pos);
+    bool actuatorToJointPosition(std::string joint_name,  double actuator_pos, double& joint_pos);
+    
+    std::map<std::string, std::pair<unsigned short int, unsigned short int>> jointName_to_motorId;
+    //std::map<std::pair<unsigned short int, unsigned short int>, std::string> motorId_to_jointName;
    
 private:
     

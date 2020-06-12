@@ -498,7 +498,10 @@ void ROSEE::UniversalRosEndEffectorExecutor::fill_publish_joint_states() {
 
             _js_msg.name[c] = j;
 
-            _hal->getMotorPosition ( j, value );
+            //TODO question for @luca : why here there is getMotorPos and not getJointPos?
+            //we call a getmotor but we are filling a j state message...
+           // _hal->getMotorPosition ( j, value );
+            _hal->getJointPosition ( j, value );
             _js_msg.position[c] = value;
 
             _hal->getMotorVelocity ( j, value );
