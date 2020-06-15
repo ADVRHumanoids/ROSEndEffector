@@ -244,6 +244,14 @@ bool ROSEE::Heri2EEHal::setPositionReference(std::string joint_name,
     double moto_position_reference = 0.0;
     jointToActuatorPosition(joint_name, joint_position_reference, moto_position_reference);
     
+    //TODO DELETE DEBUG PRINT
+    //std::cout << "finger_id    " << finger_id << std::endl;
+    //std::cout << "motor_in_finger_id    " << motor_in_finger_id << std::endl;
+    //std::cout << "JOINTTTTTTTTTTT POSSSSSSSSSSSSSSSSSS    " << joint_position_reference << std::endl;
+    //std::cout << "MOTOOOOOOOOOOOOOOOOOOOOO POSSSSSSSSSSSSSSSSSS     " << moto_position_reference << std::endl << std::endl;
+    
+
+    
     move_finger(finger_id, motor_in_finger_id, moto_position_reference);
     
     /////////////////////////////////////////////////////
@@ -288,8 +296,8 @@ bool ROSEE::Heri2EEHal::jointToActuatorPosition(std::string joint_name,
     
     //NOTE tori safe limits are considered for motors
     if(joint_name == "LFB1__LFP1_1" ) {
-        //moto [0;1.6]  urdf joint [0; 0.9]
-        actuator_pos = (1.6/0.9) * joint_pos;
+        //moto [0;1.95]  urdf joint [0; 0.9]
+        actuator_pos = (1.95/0.9) * joint_pos;
     }
     else if(joint_name == "LFB2__LFP2_1" ) {
         //moto [0;1.45]  urdf joint [0; 0.73]
@@ -300,8 +308,8 @@ bool ROSEE::Heri2EEHal::jointToActuatorPosition(std::string joint_name,
         actuator_pos = (1.35/0.9) * joint_pos;
     }
     else if(joint_name == "SFB1__SFP1_1" ) {
-        //moto [0;1.5]  urdf joint [0; 1.3]
-        actuator_pos = (1.5/1.3) * joint_pos;
+        //moto [0;1.7]  urdf joint [0; 0.9]
+        actuator_pos = (1.85/0.9) * joint_pos;
     }
     
     return true;
@@ -317,8 +325,8 @@ bool ROSEE::Heri2EEHal::actuatorToJointPosition(std::string joint_name,
     
     //NOTE tori safe limits are considered for motors
     if(joint_name == "LFB1__LFP1_1" ) {
-        //moto [0;1.6]  urdf joint [0; 0.9]
-        joint_pos = (0.9/1.6) * actuator_pos;
+        //moto [0;1.95]  urdf joint [0; 0.9]
+        joint_pos = (0.9/1.95) * actuator_pos;
     }
     else if(joint_name == "LFB2__LFP2_1" ) {
         //moto [0;1.45]  urdf joint [0; 0.73]
@@ -329,8 +337,8 @@ bool ROSEE::Heri2EEHal::actuatorToJointPosition(std::string joint_name,
         joint_pos = (0.9/1.35) * actuator_pos;
     }
     else if(joint_name == "SFB1__SFP1_1" ) {
-        //moto [0;1.5]  urdf joint [0; 1.3]
-        joint_pos = (1.3/1.5) * actuator_pos;
+        //moto [0;1.7]  urdf joint [0; 0.9]
+        joint_pos = (0.9/1.85) * actuator_pos;
     }
     
     return true;
