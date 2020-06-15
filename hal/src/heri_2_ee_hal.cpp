@@ -205,7 +205,7 @@ bool ROSEE::Heri2EEHal::getMotorPosition(std::string joint_name, double& motor_p
 
 bool ROSEE::Heri2EEHal::getJointPosition(std::string joint_name, double& joint_position)
 {
-    double moto_pos = 0.0
+    double moto_pos = 0.0;
     this->getMotorPosition ( joint_name, moto_pos);
     actuatorToJointPosition ( joint_name, moto_pos, joint_position);
     
