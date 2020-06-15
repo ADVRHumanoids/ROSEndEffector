@@ -106,7 +106,7 @@
     <parent link="SFB1" />
     <child link="SFB1_1" />
     <axis xyz="0 0 -1" />
-    <limit lower="-0.1" upper="1.3" effort="10" velocity="1" />
+    <limit lower="-0.1" upper="0.9" effort="10" velocity="1" />
     <dynamics damping="0.003" friction="0.003"/>
   </joint>
 
@@ -140,14 +140,14 @@
     <parent link="SFB1_1" />
     <child link="SFP1_2" />
     <axis xyz="0 0 -1" />
-    <limit lower="-0.1" upper="0.5" effort="10" velocity="1" />
+    <limit lower="-0.1" upper="1.2" effort="10" velocity="1" />
     <dynamics damping="0.003" friction="0.003"/>
-    <mimic joint="SFB1__SFP1_1" multiplier="0.3" offset="0.2"/>
+    <mimic joint="SFB1__SFP1_1" multiplier="1.2" offset="0.2"/>
   </joint>
   
       <xacro:mimic_joint_plugin_gazebo name_prefix="SFP1_1__SFP1_2_joint"
     parent_joint="SFB1__SFP1_1" mimic_joint="SFP1_1__SFP1_2"
-    has_pid="false" multiplier="0.3" max_effort="10.0" offset="0.2"/>
+    has_pid="false" multiplier="1.2" max_effort="10.0" offset="0.2"/>
 
 <!-- ///////////////////////////////////////   Long finger 1   ////////////////////////////////////////// -->
 
