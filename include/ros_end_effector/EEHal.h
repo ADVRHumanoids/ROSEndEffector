@@ -50,6 +50,8 @@ namespace ROSEE {
         
         // TODO public or protected?
         virtual bool getJointPosition( std::string joint_name, double& joint_position);
+        virtual bool getPressure(std::string sensor_name, double& sensor_value);
+
 
         
     protected:

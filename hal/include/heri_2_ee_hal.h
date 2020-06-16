@@ -41,8 +41,9 @@ public:
     virtual bool getMotorEffort( std::string joint_name, double& motor_effort ) override;
     
     bool getJointPosition(std::string joint_name, double& joint_position) override;
+    
+    bool getPressure(std::string sensor_name, double& sensor_value) override;
 
-        
     virtual bool setPositionReference( std::string joint_name, double joint_position_reference );
 
 
@@ -56,6 +57,7 @@ protected :
     bool actuatorToJointPosition(std::string joint_name,  double actuator_pos, double& joint_pos);
     
     std::map<std::string, std::pair<unsigned short int, unsigned short int>> jointName_to_motorId;
+    std::map<std::string, std::tuple<unsigned short int, unsigned short int, unsigned short int>> sensorName_to_motorId;
     //std::map<std::pair<unsigned short int, unsigned short int>, std::string> motorId_to_jointName;
    
 private:

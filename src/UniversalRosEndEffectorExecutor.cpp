@@ -55,9 +55,11 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
     _js_msg.velocity.resize ( _joint_num );
     _js_msg.effort.resize ( _joint_num );
 
+
     // allocate HAL TBD get from parser the lib to load
 //     _hal = std::make_shared<ROSEE::DummyHal> ( _ee );
     _hal = std::make_shared<ROSEE::Heri2EEHal> (p.getRoseeConfigPath().c_str(), _ee );
+
     // initialize hal 
     _hal->init();
 
@@ -76,10 +78,8 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
     _qref.setZero();
     // reset filter
     _filt_q.reset ( _qref );
-
     // primitives
     init_grapsing_primitive();
-    
     // actions
     init_action_server();
     timed_requested = false;
@@ -537,6 +537,25 @@ void ROSEE::UniversalRosEndEffectorExecutor::timer_callback ( const ros::TimerEv
     //TODO check the order of these functions...
     
     _hal->sense();
+    
+    //TODO check here
+    double presValue[11];
+    _hal->getPressure("Finger1_Sensor1", presValue[0]);
+    _hal->getPressure("Finger1_Sensor2", presValue[1]);
+    _hal->getPressure("Finger1_Sensor3", presValue[2]);
+    _hal->getPressure("Finger2_Sensor1", presValue[3]);
+    _hal->getPressure("Finger2_Sensor2", presValue[4]);
+    _hal->getPressure("Finger2_Sensor3", presValue[5]);
+    _hal->getPressure("Finger3_Sensor1", presValue[6]);
+    _hal->getPressure("Finger3_Sensor2", presValue[7]);
+    _hal->getPressure("Finger3_Sensor3", presValue[8]);
+    _hal->getPressure("Thumb_Sensor1", presValue[9]);
+    _hal->getPressure("Thumb_Sensor2", presValue[10]);
+
+    for (int i = 0 ; i<11; i++) {
+        ROS_WARN_STREAM (presValue[i]);
+    }
+    std::cout << std::endl;
 
     fill_publish_joint_states();
     

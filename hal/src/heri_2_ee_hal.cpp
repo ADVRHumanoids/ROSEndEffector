@@ -27,6 +27,21 @@ ROSEE::Heri2EEHal::Heri2EEHal(const char* config_yaml,
         std::make_pair<unsigned short int, unsigned short int>(113, 1);
     jointName_to_motorId["SFB1__SFP1_1"] = 
         std::make_pair<unsigned short int, unsigned short int>(113, 2);
+        
+    sensorName_to_motorId["Finger1_Sensor1"] =  std::make_tuple<unsigned short int, unsigned short int, unsigned short int>(112, 1, 1);
+    sensorName_to_motorId["Finger1_Sensor2"] =  std::make_tuple<unsigned short int, unsigned short int, unsigned short int>(112, 1, 2);
+    sensorName_to_motorId["Finger1_Sensor3"] =  std::make_tuple<unsigned short int, unsigned short int, unsigned short int>(112, 1, 3);
+    
+    sensorName_to_motorId["Finger2_Sensor1"] =  std::make_tuple<unsigned short int, unsigned short int, unsigned short int>(112, 2, 1);
+    sensorName_to_motorId["Finger2_Sensor2"] =  std::make_tuple<unsigned short int, unsigned short int, unsigned short int>(112, 2, 2);
+    sensorName_to_motorId["Finger2_Sensor3"] =  std::make_tuple<unsigned short int, unsigned short int, unsigned short int>(112, 2, 3);
+    
+    sensorName_to_motorId["Finger3_Sensor1"] =  std::make_tuple<unsigned short int, unsigned short int, unsigned short int>(113, 1, 1);
+    sensorName_to_motorId["Finger3_Sensor2"] =  std::make_tuple<unsigned short int, unsigned short int, unsigned short int>(113, 1, 2);
+    sensorName_to_motorId["Finger3_Sensor3"] =  std::make_tuple<unsigned short int, unsigned short int, unsigned short int>(113, 1, 3);
+    
+    sensorName_to_motorId["Thumb_Sensor1"] =  std::make_tuple<unsigned short int, unsigned short int, unsigned short int>(113, 2, 1);
+    sensorName_to_motorId["Thumb_Sensor2"] =  std::make_tuple<unsigned short int, unsigned short int, unsigned short int>(113, 2, 2);
 }
 
 ROSEE::Heri2EEHal::~Heri2EEHal()
@@ -39,7 +54,6 @@ ROSEE::Heri2EEHal::~Heri2EEHal()
 
 void ROSEE::Heri2EEHal::base_init()
 {
-
     const YAML::Node config = get_config_YAML_Node();
 
     // init Ec_Boards_ctrl
@@ -83,8 +97,6 @@ void ROSEE::Heri2EEHal::base_init()
                                 pos2Rid(slave_pos));
         }
     }
-
-
 }
 
 int ROSEE::Heri2EEHal::base_start()
@@ -196,7 +208,7 @@ bool ROSEE::Heri2EEHal::getMotorPosition(std::string joint_name, double& motor_p
         motor_position = hand_pdo_rx.motor_pos_2;
     }
     else {
-        XBot::Logger::error ( ">> Joint_id %d Error while calling get_finger_motor_position() on HERI hand ESC: the finger_id must be 1 or 2. \n",
+        XBot::Logger::error ( ">> Joint_id %d Error while calling get_finger_motor_position() on HERI hand ESC: the motor_in_finger_id must be 1 or 2. \n",
                                 motor_in_finger_id);
     }
     
@@ -220,6 +232,80 @@ bool ROSEE::Heri2EEHal::getMotorEffort(std::string joint_name, double& motor_eff
 bool ROSEE::Heri2EEHal::getMotorVelocity(std::string joint_name, double& motor_velocity)
 {
     return false;
+}
+
+bool ROSEE::Heri2EEHal::getPressure(std::string sensor_name, double& sensor_value) {
+    
+    iit::ecat::advr::HeriHandEscPdoTypes::pdo_rx hand_pdo_rx;
+    iit::ecat::advr::HeriHandESC * finger;
+    
+    int finger_id = -1;
+    int motor_in_finger_id = -1;
+    int sensor_in_motor_id = -1;
+    
+    auto it = sensorName_to_motorId.find(sensor_name);
+    
+    if (it == sensorName_to_motorId.end()) {
+        XBot::Logger::error ( ">> sensor Name %s does not exists \n",
+                                sensor_name);
+        return false;
+    }
+    
+    auto value = it->second;
+    
+    finger_id = std::get<0>(value);
+    motor_in_finger_id = std::get<1>(value);
+    sensor_in_motor_id = std::get<2>(value);
+    
+    finger = fingers.at(rid2Pos(finger_id));
+    hand_pdo_rx = finger->getRxPDO();
+    
+    if( motor_in_finger_id == 1 ) {
+        if (sensor_in_motor_id == 1 ) {
+            
+            sensor_value = hand_pdo_rx.m1_an_1;
+            
+        } else if (sensor_in_motor_id == 2 ) {
+            
+            sensor_value = hand_pdo_rx.m1_an_2;
+            
+        } else if (sensor_in_motor_id == 3 ) {
+            
+            sensor_value = hand_pdo_rx.m1_an_3;
+            
+        } else {
+            XBot::Logger::error ( ">> sensor_in_motor_id %d Error while calling getPressure on HERI hand ESC: the sensor_in_motor_id must be 1 or 2 or 3. \n",
+                                sensor_in_motor_id);
+        }
+
+    }
+    else if ( motor_in_finger_id == 2 ) {
+        if (sensor_in_motor_id == 1 ) {
+            
+            sensor_value = hand_pdo_rx.m2_an_1;
+            
+        } else if (sensor_in_motor_id == 2 ) {
+            
+            sensor_value = hand_pdo_rx.m2_an_2;
+            
+        } else if (sensor_in_motor_id == 3 ) {
+            
+            sensor_value = hand_pdo_rx.m2_an_3;
+            
+        } else {
+            XBot::Logger::error ( ">> sensor_in_motor_id %d Error while calling getPressure on HERI hand ESC: the sensor_in_motor_id must be 1 or 2 or 3. \n",
+                                sensor_in_motor_id);
+        }
+    }
+    else {
+        XBot::Logger::error ( ">> Joint_id %d Error while calling getPressure on HERI hand ESC: the motor_in_finger_id must be 1 or 2. \n",
+                                motor_in_finger_id);\
+                               
+    }
+        
+    return true;
+    
+    
 }
 
 bool ROSEE::Heri2EEHal::setPositionReference(std::string joint_name, 
@@ -307,9 +393,27 @@ bool ROSEE::Heri2EEHal::jointToActuatorPosition(std::string joint_name,
         //moto [0;1.35]  urdf joint [0; 0.9]
         actuator_pos = (1.35/0.9) * joint_pos;
     }
+    //NOTE for the thumb an offset here is necessary: the cable initially only move the tip,
+    //the first phalange starts moving visibily only when the tip is at is limit
     else if(joint_name == "SFB1__SFP1_1" ) {
-        //moto [0;1.7]  urdf joint [0; 0.9]
-        actuator_pos = (1.85/0.9) * joint_pos;
+        //moto [0;1.7]  urdf joint [0; 0.2]
+        
+        actuator_pos = (1.65/0.2) * (joint_pos);
+
+        // with OFFSET...
+        //if (joint_pos <= 0.001 ) {
+        //    actuator_pos = 0;
+            
+        //} else {
+        //    actuator_pos = (1.65/0.2) * (joint_pos + 0.15);
+            //put to safe limit if it exceeds
+        //    if (actuator_pos > 1.65) {
+        //        actuator_pos = 1.65;
+        //    } 
+        //}
+        
+       // ROS_WARN_STREAM ("SENDING ACT COMMAND:: Act pos:" << actuator_pos << "   joint post " << joint_pos);
+           
     }
     
     return true;
@@ -337,8 +441,21 @@ bool ROSEE::Heri2EEHal::actuatorToJointPosition(std::string joint_name,
         joint_pos = (0.9/1.35) * actuator_pos;
     }
     else if(joint_name == "SFB1__SFP1_1" ) {
-        //moto [0;1.7]  urdf joint [0; 0.9]
-        joint_pos = (0.9/1.85) * actuator_pos;
+        //moto [0;1.7]  urdf joint [0; 0.2]
+        
+        joint_pos = ((0.2/1.65) * actuator_pos);
+
+        // OFFSET...
+       // joint_pos = ((0.2/1.65) * actuator_pos)- 0.15;
+        //HACK with offset, joint pos will never be at 0.2, but we say so to fill the feedback of the action...
+        //if ( actuator_pos >= 1.63 ) {
+        //    joint_pos = 0.2;
+        //}
+        
+       // ROS_WARN_STREAM ("RECEIVING ACT FEEDBACK:: Act pos:" << actuator_pos << "   joint post " << joint_pos);
+
+        
+     
     }
     
     return true;

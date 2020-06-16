@@ -99,6 +99,10 @@ bool ROSEE::EEHal::getJointEffort ( std::string joint_name, double& joint_effort
 
 }
 
+bool ROSEE::EEHal::getPressure(std::string sensor_name, double& sensor_value) {
+    return false;
+}
+
 
 
 ROSEE::EEHal::~EEHal() {
