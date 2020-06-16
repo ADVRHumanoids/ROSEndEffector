@@ -41,9 +41,11 @@ namespace ROSEE {
         virtual ~DummyHal();
         
         
-        virtual bool getMotorPosition( std::string joint_name, double& motor_position );
-        virtual bool getMotorVelocity( std::string joint_name, double& motor_velocity );
-        virtual bool getMotorEffort( std::string joint_name, double& motor_effort );
+        virtual bool getMotorPosition( std::string joint_name, double& motor_position ) override;
+        virtual bool getMotorVelocity( std::string joint_name, double& motor_velocity ) override;
+        virtual bool getMotorEffort( std::string joint_name, double& motor_effort ) override;
+        virtual bool getMotorCurrent ( std::string joint_name, double& motor_current );
+
         
         virtual bool setPositionReference( std::string joint_name, double position_reference );
                 

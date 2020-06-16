@@ -42,6 +42,11 @@ bool ROSEE::DummyHal::getMotorEffort ( std::string joint_name, double& motor_eff
     return getJointEffort(joint_name, motor_effort);
 }
 
+bool ROSEE::DummyHal::getMotorCurrent ( std::string joint_name, double& motor_current ) {
+
+    return false;
+}
+
 
 bool ROSEE::DummyHal::setPositionReference ( std::string joint_name, double position_reference ) {
 

@@ -552,10 +552,10 @@ void ROSEE::UniversalRosEndEffectorExecutor::timer_callback ( const ros::TimerEv
     _hal->getPressure("Thumb_Sensor1", presValue[9]);
     _hal->getPressure("Thumb_Sensor2", presValue[10]);
 
-    for (int i = 0 ; i<11; i++) {
-        ROS_WARN_STREAM (presValue[i]);
-    }
-    std::cout << std::endl;
+    //for (int i = 0 ; i<11; i++) {
+    //    ROS_WARN_STREAM (presValue[i]);
+    //}
+    //std::cout << std::endl;
 
     fill_publish_joint_states();
     

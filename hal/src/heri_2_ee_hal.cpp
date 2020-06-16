@@ -212,6 +212,11 @@ bool ROSEE::Heri2EEHal::getMotorPosition(std::string joint_name, double& motor_p
                                 motor_in_finger_id);
     }
     
+    //ROS_WARN_STREAM("CURRENT 1 " << hand_pdo_rx.m1_curr);
+    //ROS_WARN_STREAM("CURRENT 2 " << hand_pdo_rx.m2_curr);
+    //std::cout << std::endl;
+
+    
     return true;
 }
 
@@ -233,6 +238,48 @@ bool ROSEE::Heri2EEHal::getMotorVelocity(std::string joint_name, double& motor_v
 {
     return false;
 }
+/*
+bool ROSEE::Heri2EEHal::getMotorCurrent(std::string joint_name, double& motor_current)
+{
+    
+    iit::ecat::advr::HeriHandEscPdoTypes::pdo_rx hand_pdo_rx;
+    iit::ecat::advr::HeriHandESC * finger;
+        
+    // HACK do proper mapping. Is it ok now?
+    int finger_id = -1;
+    int motor_in_finger_id = -1;
+    
+    auto it = jointName_to_motorId.find(joint_name);
+    
+    if (it == jointName_to_motorId.end()) {
+        XBot::Logger::error ( ">> Joint_name %s does not exists \n",
+                                joint_name);
+        return false;
+    }
+    
+    finger_id = it->second.first;
+    motor_in_finger_id = it->second.second;
+
+    /////////////////////////////////////
+    
+    finger = fingers.at(rid2Pos(finger_id));
+    hand_pdo_rx = finger->getRxPDO();
+    
+    if( motor_in_finger_id == 1 ) {
+        motor_current = hand_pdo_rx.m1_curr;
+    }
+    else if ( motor_in_finger_id == 2 ) {
+        motor_current = hand_pdo_rx.m2_curr;
+    }
+    else {
+        XBot::Logger::error ( ">> Joint_id %d Error while calling getMotorCurrent() on HERI hand ESC: the motor_in_finger_id must be 1 or 2. \n",
+                                motor_in_finger_id);
+        return false;
+    }
+    
+    return true;
+}
+**/
 
 bool ROSEE::Heri2EEHal::getPressure(std::string sensor_name, double& sensor_value) {
     

@@ -39,6 +39,8 @@ public:
     virtual bool getMotorPosition( std::string joint_name, double& motor_position ) override;
     virtual bool getMotorVelocity( std::string joint_name, double& motor_velocity ) override;
     virtual bool getMotorEffort( std::string joint_name, double& motor_effort ) override;
+    //virtual bool getMotorCurrent ( std::string joint_name, double& motor_current ) override;
+    
     
     bool getJointPosition(std::string joint_name, double& joint_position) override;
     
