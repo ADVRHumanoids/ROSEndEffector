@@ -82,6 +82,36 @@ Eigen::VectorXd ROSEE::EEInterface::getUpperPositionLimits() {
     return _upper_limits;
 }
 
+double ROSEE::EEInterface::getUpperPositionLimit(std::string joint_name) {
+    
+    int joint_id;
+    if (! getInternalIdForJoint(joint_name, joint_id)) {
+        ROS_ERROR_STREAM ("EEInterface: " << __func__ << " '" << joint_name << "' is not a"
+            << " joint of the robot");
+        return 0.0;
+    }
+    
+    return _upper_limits[joint_id];
+    
+}
+
+double ROSEE::EEInterface::getLowerPositionLimit(std::string joint_name) {
+    
+    int joint_id;
+    if (! getInternalIdForJoint(joint_name, joint_id)) {
+        ROS_ERROR_STREAM ("EEInterface: " << __func__ << " '" << joint_name << "' is not a"
+            << " joint of the robot");
+        return 0.0;
+    }
+    
+    return _lower_limits[joint_id];
+    
+}
+
+double ROSEE::EEInterface::getLowerPositionLimit(std::string joint_name) {
+    
+}
+
 bool ROSEE::EEInterface::getInternalIdForJoint ( std::string joint_name, int& internal_id ) {
         
     if ( _joints_internal_id_map.count(joint_name) ) {

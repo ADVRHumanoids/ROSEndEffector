@@ -104,6 +104,10 @@ namespace ROSEE {
          */
         Eigen::VectorXd getLowerPositionLimits();
         
+        /** useful to have,right? so we take directly the limit **/
+        double getUpperPositionLimit(std::string joint_name);
+        double getLowerPositionLimit(std::string joint_name);
+        
         /**
          * @brief getter for the internal ids (position in the EEInterface vectors) of joints in a certain finger
          * 

@@ -18,7 +18,40 @@ ROSEE::Heri2EEHal::Heri2EEHal(const char* config_yaml,
 
     XBot::Logger::info(XBot::Logger::Severity::HIGH) << "Low Level Config file in use is: " << config_yaml << XBot::Logger::endl();
     
-    //TODO do not fill this hardcoded
+    YAML::Node node = YAML::LoadFile(config_yaml);
+
+    for (auto joint_it : node["Joint_Actuation_Info"]) {
+        
+        std::string jointName = joint_it.first.as<std::string>();
+        auto values = joint_it.second;
+        JointActuationInfo jai;
+        jai.board_id = values["board_id"];
+        jai.finger_in_board_id = values["finger_in_board_id"];
+        jai.motor_lower_limit = values ["motor_lower_limit"];
+        jai.motor_upper_limit = values ["motor_upper_limit"];
+        jai.joint_to_moto_slope = 
+          (jai.motor_upper_limit - jai.motor_lower_limit) / 
+            (ee_interface.getUpperPositionLimit(jointName) - ee_interface.getLowerPositionLimit(jointName));
+        
+        jai.moto_to_joint_slope = 1/jai.joint_to_moto_slope;
+        
+        
+        _joint_actuation_info[joint_it.first] = jai;
+        
+    }
+    
+    
+    for (auto joint_it : node["Pressure_Sensor_Info"]) {
+    
+       sensorName_to_motorId[it.first.as<std::string>()] =  
+            std::make_tuple<unsigned short int, unsigned short int, unsigned short int>(
+                it.second["board_id"],
+                it.second["finger_in_board_id"],
+                it.second["sensor_in_finger_id"]); 
+    }
+    
+    
+    //TODO OBSOLETE DELETE THESEE do not fill this hardcoded
     jointName_to_motorId["LFB1__LFP1_1"] = 
         std::make_pair<unsigned short int, unsigned short int>(112, 1);
     jointName_to_motorId["LFB2__LFP2_1"] = 
@@ -185,6 +218,17 @@ bool ROSEE::Heri2EEHal::getMotorPosition(std::string joint_name, double& motor_p
     int finger_id = -1;
     int motor_in_finger_id = -1;
     
+    auto it = _joint_actuation_info.find(joint_name);
+    if (it == jointName_to_motorId.end()) {
+        XBot::Logger::error ( ">> Joint_name %s does not exists \n",
+                                joint_name);
+        return false;
+    }
+    
+    finger_id = it->second.board_id;
+    motor_in_finger_id = it->second.finger_in_board_id;
+    
+    /////////////  TODO deprecaaated below
     auto it = jointName_to_motorId.find(joint_name);
     
     if (it == jointName_to_motorId.end()) {
@@ -363,6 +407,18 @@ bool ROSEE::Heri2EEHal::setPositionReference(std::string joint_name,
     int finger_id = -1;
     int motor_in_finger_id = -1;
     
+    
+        auto it = _joint_actuation_info.find(joint_name);
+    if (it == jointName_to_motorId.end()) {
+        XBot::Logger::error ( ">> Joint_name %s does not exists \n",
+                                joint_name);
+        return false;
+    }
+    
+    finger_id = it->second.board_id;
+    motor_in_finger_id = it->second.finger_in_board_id;
+    
+    ////////////////////////TODO deprecaaated
     auto it = jointName_to_motorId.find(joint_name);
     
     if (it == jointName_to_motorId.end()) {
@@ -373,6 +429,7 @@ bool ROSEE::Heri2EEHal::setPositionReference(std::string joint_name,
     
     finger_id = it->second.first;
     motor_in_finger_id = it->second.second;
+    //////////////////////////
     
     double moto_position_reference = 0.0;
     jointToActuatorPosition(joint_name, joint_position_reference, moto_position_reference);
@@ -403,6 +460,7 @@ bool ROSEE::Heri2EEHal::move_finger(int finger_id,
 
     if (motor_in_finger_id == 1) {
         // TBD check pos_ref in range  max_pos.at(finger_id) and min_pos.at(finger_id)
+        // TBD Lesser than max pos stored in the low code or use the value of yaml config??s
 //         XBot::Logger::info("HERI: Pos ref: [%d - %d] %f\n", finger_id, motor_in_finger_id, pos_ref);
         finger->set_posRef(pos_ref);
     } else if (motor_in_finger_id == 2) {
@@ -419,14 +477,27 @@ bool ROSEE::Heri2EEHal::move_finger(int finger_id,
 
 
 //TODO check this... Should be the implementation of an abstract method of ROSEE::EEHal?
-//TODO check joint and motor limits somewhere
 bool ROSEE::Heri2EEHal::jointToActuatorPosition(std::string joint_name, 
                                                double joint_pos, 
                                                double& actuator_pos) {
     
-    //TODO store somewhere the mechanical reduction (and offset eventually)
-    // or convert more precisely with a non linear relation
+    //NOTE for now, this relation is linear, even if in truth it is not like that.
     
+    auto it = _joint_actuation_info.find(joint_name);
+    if (it == jointName_to_motorId.end()) {
+        XBot::Logger::error ( ">> Joint_name %s does not exists \n",
+                                joint_name);
+        return false;
+    }
+    
+    actuator_pos = it.second.motor_lower_limit + it.second.joint_to_moto_slope * 
+        (joint_pos - _ee_inteface->getLowerPositionLimit(joint_name));
+        
+        
+        
+        
+    
+    // TODO DEPRECAAATED BELOW
     //NOTE tori safe limits are considered for motors
     if(joint_name == "LFB1__LFP1_1" ) {
         //moto [0;1.95]  urdf joint [0; 0.9]
@@ -471,26 +542,39 @@ bool ROSEE::Heri2EEHal::actuatorToJointPosition(std::string joint_name,
                                                double actuator_pos, 
                                                double& joint_pos) {
     
-    //TODO store somewhere the mechanical reduction (and offset eventually)
-    // or convert more precisely with a non linear relation
+    auto it = _joint_actuation_info.find(joint_name);
+    if (it == jointName_to_motorId.end()) {
+        XBot::Logger::error ( ">> Joint_name %s does not exists \n",
+                                joint_name);
+        return false;
+    }s
     
+    joint_pos = _ee_inteface->getLowerPositionLimit(joint_name) + it.second.moto_to_joint_slope *
+        (actuator_pos - it.second.motor_lower_limit);
+        
+        
+        
+// TODO deprecaaaaaaaaaaated below
+    
+    double jointLimit = _ee_inteface->getUpperPositionLimit(joint_name);
+     
     //NOTE tori safe limits are considered for motors
     if(joint_name == "LFB1__LFP1_1" ) {
         //moto [0;1.95]  urdf joint [0; 0.9]
-        joint_pos = (0.9/1.95) * actuator_pos;
+        joint_pos = (jointLimit/1.95) * actuator_pos;
     }
     else if(joint_name == "LFB2__LFP2_1" ) {
         //moto [0;1.45]  urdf joint [0; 0.73]
-        joint_pos = (0.73/1.45) * actuator_pos;
+        joint_pos = (jointLimit/1.45) * actuator_pos;
     }
     else if(joint_name == "LFB3__LFP3_1" ) {
         //moto [0;1.35]  urdf joint [0; 0.9]
-        joint_pos = (0.9/1.35) * actuator_pos;
+        joint_pos = (jointLimit/1.35) * actuator_pos;
     }
     else if(joint_name == "SFB1__SFP1_1" ) {
         //moto [0;1.7]  urdf joint [0; 0.2]
         
-        joint_pos = ((0.2/1.65) * actuator_pos);
+        joint_pos = (jointLimit/1.65) * actuator_pos;
 
         // OFFSET...
        // joint_pos = ((0.2/1.65) * actuator_pos)- 0.15;

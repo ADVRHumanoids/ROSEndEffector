@@ -17,11 +17,23 @@
 
 #include <ros_end_effector/EEHal.h>
 
+#include <yaml-cpp/yaml.h>
+
 #include <queue>
 #include <iostream>
 #define ECAT_PTHREAD_STACK_SIZE (16*1024*1024) // 16MB
 
 namespace ROSEE{
+    
+struct JointActuationInfo {
+    std::string joint_name;
+    unsigned short int board_id;
+    unsigned short int finger_in_board_id;
+    double motor_lower_limit;
+    double motor_upper_limit;
+    double joint_to_moto_slope; // motor_upper - motor_lower / joint_upper - joint_lower
+    double moto_to_joint_slope; // joint_upper - joint_lower / motor_upper - motor_lower
+}
     
 class Heri2EEHal : public ROSEE::EEHal,
                    public iit::ecat::advr::Ec_Boards_ctrl 
@@ -77,6 +89,9 @@ private:
     iit::ecat::ec_timing_t timing;
     int _wkc = -1;
     
+    std::map<std::string, JointActuationInfo> _joint_actuation_info;
+    
+    //TODO obsolete remove
     std::map<int, iit::ecat::advr::HeriHandESC*>  fingers;
     std::map<int, float> min_pos, max_pos, min_pos_2, max_pos_2;
     

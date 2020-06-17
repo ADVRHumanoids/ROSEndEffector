@@ -85,6 +85,82 @@ HeriHandESC_X:
   control_mode : 3B_motor_pos_ctrl
   pid :
     position: [100000.0 , 0.0 , 1.0]
-    
+    s
 
 
+#############################
+## HERI II necessary motors info
+#############################
+
+Joint_Actuation_Info:
+    SFB1__SFP1_1:
+        board_id : 113
+        finger_in_board_id : 2
+        motor_lower_limit : 0
+        motor_upper_limit : 1.65
+    LFB1__LFP1_1:
+        board_id : 112
+        finger_in_board_id : 1
+        motor_lower_limit : 0
+        motor_upper_limit : 1.95
+    LFB2__LFP2_1:
+        board_id : 112
+        finger_in_board_id : 2
+        motor_lower_limit : 0
+        motor_upper_limit : 1.45
+    LFB3__LFP3_1:
+        board_id : 113
+        finger_in_board_id : 1
+        motor_lower_limit : 0
+        motor_upper_limit : 1.35
+
+Pressure_Sensor_Info:
+    Finger1_Sensor1:
+        board_id: 112
+        finger_in_board_id: 1
+        sensor_in_finger_id: 1
+    Finger1_Sensor2:
+        board_id: 112
+        finger_in_board_id: 1 
+        sensor_in_finger_id: 2       
+    Finger1_Sensor3:
+        board_id: 112
+        finger_in_board_id: 1 
+        sensor_in_finger_id: 3        
+    Finger2_Sensor1:
+        board_id: 112
+        finger_in_board_id: 2 
+        sensor_in_finger_id: 1        
+    Finger2_Sensor2:
+        board_id: 112 
+        finger_in_board_id: 2 
+        sensor_in_finger_id: 2        
+    Finger2_Sensor3:
+        board_id: 112
+        finger_in_board_id: 2 
+        sensor_in_finger_id: 3
+    Finger3_Sensor1:
+        board_id: 113
+        finger_in_board_id: 1 
+        sensor_in_finger_id: 1       
+    Finger3_Sensor2:
+        board_id: 113 
+        finger_in_board_id: 1 
+        sensor_in_finger_id: 2        
+    Finger3_Sensor3:
+        board_id: 113
+        finger_in_board_id: 1 
+        sensor_in_finger_id: 3        
+    Thumb_Sensor1:
+        board_id: 113
+        finger_in_board_id: 2 
+        sensor_in_finger_id: 1
+    Thumb_Sensor2: 
+        board_id: 113
+        finger_in_board_id: 2
+        sensor_in_finger_id: 2          
+        
+        
+        
+        
+        
