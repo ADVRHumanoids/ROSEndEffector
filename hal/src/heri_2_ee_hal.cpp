@@ -20,34 +20,33 @@ ROSEE::Heri2EEHal::Heri2EEHal(const char* config_yaml,
     
     YAML::Node node = YAML::LoadFile(config_yaml);
 
-    for (auto joint_it : node["Joint_Actuation_Info"]) {
+    for(YAML::const_iterator joint_it = node["Joint_Actuation_Info"].begin(); joint_it != node["Joint_Actuation_Info"].end(); ++joint_it) {
         
-        std::string jointName = joint_it.first.as<std::string>();
-        auto values = joint_it.second;
+        std::string jointName = joint_it->first.as<std::string>();
+        auto values = joint_it->second;
         JointActuationInfo jai;
-        jai.board_id = values["board_id"];
-        jai.finger_in_board_id = values["finger_in_board_id"];
-        jai.motor_lower_limit = values ["motor_lower_limit"];
-        jai.motor_upper_limit = values ["motor_upper_limit"];
+        jai.board_id = values["board_id"].as<short unsigned int>();
+        jai.finger_in_board_id = values["finger_in_board_id"].as<short unsigned int>();
+        jai.motor_lower_limit = values ["motor_lower_limit"].as<double>();
+        jai.motor_upper_limit = values ["motor_upper_limit"].as<double>();
         jai.joint_to_moto_slope = 
           (jai.motor_upper_limit - jai.motor_lower_limit) / 
-            (ee_interface.getUpperPositionLimit(jointName) - ee_interface.getLowerPositionLimit(jointName));
+            (ee_interface->getUpperPositionLimit(jointName) - ee_interface->getLowerPositionLimit(jointName)); 
         
         jai.moto_to_joint_slope = 1/jai.joint_to_moto_slope;
         
         
-        _joint_actuation_info[joint_it.first] = jai;
+        _joint_actuation_info[joint_it->first.as<std::string>()] = jai;
         
     }
     
+    for(YAML::const_iterator joint_it = node["Pressure_Sensor_Info"].begin(); joint_it != node["Pressure_Sensor_Info"].end(); ++joint_it) {
     
-    for (auto joint_it : node["Pressure_Sensor_Info"]) {
-    
-       sensorName_to_motorId[it.first.as<std::string>()] =  
-            std::make_tuple<unsigned short int, unsigned short int, unsigned short int>(
-                it.second["board_id"],
-                it.second["finger_in_board_id"],
-                it.second["sensor_in_finger_id"]); 
+       sensorName_to_motorId[joint_it->first.as<std::string>()] =  
+            std::make_tuple<short unsigned  int, short unsigned int, short unsigned int>(
+                joint_it->second["board_id"].as<short unsigned int>(),
+                joint_it->second["finger_in_board_id"].as<short unsigned int>(),
+                joint_it->second["sensor_in_finger_id"].as<short unsigned int>()); 
     }
     
     
@@ -218,15 +217,15 @@ bool ROSEE::Heri2EEHal::getMotorPosition(std::string joint_name, double& motor_p
     int finger_id = -1;
     int motor_in_finger_id = -1;
     
-    auto it = _joint_actuation_info.find(joint_name);
-    if (it == jointName_to_motorId.end()) {
+    auto joint_it = _joint_actuation_info.find(joint_name);
+    if (joint_it == _joint_actuation_info.end()) {
         XBot::Logger::error ( ">> Joint_name %s does not exists \n",
                                 joint_name);
         return false;
     }
     
-    finger_id = it->second.board_id;
-    motor_in_finger_id = it->second.finger_in_board_id;
+    finger_id = joint_it->second.board_id;
+    motor_in_finger_id = joint_it->second.finger_in_board_id;
     
     /////////////  TODO deprecaaated below
     auto it = jointName_to_motorId.find(joint_name);
@@ -408,15 +407,15 @@ bool ROSEE::Heri2EEHal::setPositionReference(std::string joint_name,
     int motor_in_finger_id = -1;
     
     
-        auto it = _joint_actuation_info.find(joint_name);
-    if (it == jointName_to_motorId.end()) {
+    auto joint_it = _joint_actuation_info.find(joint_name);
+    if (joint_it == _joint_actuation_info.end()) {
         XBot::Logger::error ( ">> Joint_name %s does not exists \n",
                                 joint_name);
         return false;
     }
     
-    finger_id = it->second.board_id;
-    motor_in_finger_id = it->second.finger_in_board_id;
+    finger_id = joint_it->second.board_id;
+    motor_in_finger_id = joint_it->second.finger_in_board_id;
     
     ////////////////////////TODO deprecaaated
     auto it = jointName_to_motorId.find(joint_name);
@@ -484,13 +483,13 @@ bool ROSEE::Heri2EEHal::jointToActuatorPosition(std::string joint_name,
     //NOTE for now, this relation is linear, even if in truth it is not like that.
     
     auto it = _joint_actuation_info.find(joint_name);
-    if (it == jointName_to_motorId.end()) {
+    if (it == _joint_actuation_info.end()) {
         XBot::Logger::error ( ">> Joint_name %s does not exists \n",
                                 joint_name);
         return false;
     }
     
-    actuator_pos = it.second.motor_lower_limit + it.second.joint_to_moto_slope * 
+    actuator_pos = it->second.motor_lower_limit + it->second.joint_to_moto_slope * 
         (joint_pos - _ee_inteface->getLowerPositionLimit(joint_name));
         
         
@@ -543,14 +542,14 @@ bool ROSEE::Heri2EEHal::actuatorToJointPosition(std::string joint_name,
                                                double& joint_pos) {
     
     auto it = _joint_actuation_info.find(joint_name);
-    if (it == jointName_to_motorId.end()) {
+    if (it == _joint_actuation_info.end()) {
         XBot::Logger::error ( ">> Joint_name %s does not exists \n",
                                 joint_name);
         return false;
-    }s
+    }
     
-    joint_pos = _ee_inteface->getLowerPositionLimit(joint_name) + it.second.moto_to_joint_slope *
-        (actuator_pos - it.second.motor_lower_limit);
+    joint_pos = _ee_inteface->getLowerPositionLimit(joint_name) + it->second.moto_to_joint_slope *
+        (actuator_pos - it->second.motor_lower_limit);
         
         
         

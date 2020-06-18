@@ -108,10 +108,6 @@ double ROSEE::EEInterface::getLowerPositionLimit(std::string joint_name) {
     
 }
 
-double ROSEE::EEInterface::getLowerPositionLimit(std::string joint_name) {
-    
-}
-
 bool ROSEE::EEInterface::getInternalIdForJoint ( std::string joint_name, int& internal_id ) {
         
     if ( _joints_internal_id_map.count(joint_name) ) {

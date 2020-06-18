@@ -33,7 +33,7 @@ struct JointActuationInfo {
     double motor_upper_limit;
     double joint_to_moto_slope; // motor_upper - motor_lower / joint_upper - joint_lower
     double moto_to_joint_slope; // joint_upper - joint_lower / motor_upper - motor_lower
-}
+};
     
 class Heri2EEHal : public ROSEE::EEHal,
                    public iit::ecat::advr::Ec_Boards_ctrl 
