@@ -31,6 +31,8 @@ struct JointActuationInfo {
     unsigned short int finger_in_board_id;
     double motor_lower_limit;
     double motor_upper_limit;
+    double joint_lower_limit;
+    double joint_upper_limit;
     double joint_to_moto_slope; // motor_upper - motor_lower / joint_upper - joint_lower
     double moto_to_joint_slope; // joint_upper - joint_lower / motor_upper - motor_lower
 };
@@ -70,9 +72,7 @@ protected :
     bool jointToActuatorPosition(std::string joint_name, double joint_pos, double& actuator_pos);
     bool actuatorToJointPosition(std::string joint_name,  double actuator_pos, double& joint_pos);
     
-    std::map<std::string, std::pair<unsigned short int, unsigned short int>> jointName_to_motorId;
     std::map<std::string, std::tuple<unsigned short int, unsigned short int, unsigned short int>> sensorName_to_motorId;
-    //std::map<std::pair<unsigned short int, unsigned short int>, std::string> motorId_to_jointName;
    
 private:
     

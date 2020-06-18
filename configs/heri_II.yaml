@@ -85,7 +85,6 @@ HeriHandESC_X:
   control_mode : 3B_motor_pos_ctrl
   pid :
     position: [100000.0 , 0.0 , 1.0]
-    s
 
 
 #############################
@@ -98,22 +97,34 @@ Joint_Actuation_Info:
         finger_in_board_id : 2
         motor_lower_limit : 0
         motor_upper_limit : 1.65
+        # Joint safer limit, thez can be lesser that limit in urdf
+        joint_lower_limit : 0
+        joint_upper_limit : 0.2
     LFB1__LFP1_1:
         board_id : 112
         finger_in_board_id : 1
         motor_lower_limit : 0
         motor_upper_limit : 1.95
+        # Joint safer limit, thez can be lesser that limit in urdf
+        joint_lower_limit : 0
+        joint_upper_limit : 0.9
     LFB2__LFP2_1:
         board_id : 112
         finger_in_board_id : 2
         motor_lower_limit : 0
         motor_upper_limit : 1.45
+        # Joint safer limit, thez can be lesser that limit in urdf
+        joint_lower_limit : 0
+        joint_upper_limit : 0.73
     LFB3__LFP3_1:
         board_id : 113
         finger_in_board_id : 1
         motor_lower_limit : 0
         motor_upper_limit : 1.35
-
+        # Joint safer limit, thez can be lesser that limit in urdf
+        joint_lower_limit : 0
+        joint_upper_limit : 0.9
+        
 Pressure_Sensor_Info:
     Finger1_Sensor1:
         board_id: 112
@@ -158,9 +169,5 @@ Pressure_Sensor_Info:
     Thumb_Sensor2: 
         board_id: 113
         finger_in_board_id: 2
-        sensor_in_finger_id: 2          
-        
-        
-        
-        
-        
+        sensor_in_finger_id: 2
+
