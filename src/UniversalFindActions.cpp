@@ -167,9 +167,10 @@ int main ( int argc, char **argv ) {
     }
 
     
-    /** **************************** TIMED ACTION THINGS*****************************
-     *************************EXAMPLE ONLY VALID FOR SCHUNK HAND *********************************************/
-    
+    /** **************************** TIMED ACTION THINGS***************************** /
+     
+     
+     /*************************EXAMPLE ONLY VALID FOR SCHUNK HAND *********************************************/
     /** example only doable if maps is not empty */
     if (mapsHandler.getPrimitive("singleJointMultipleTips_3", "left_hand_Finger_Spread") != nullptr &&
         mapsHandler.getPrimitive("pinchTight", std::make_pair("pinky", "thumb")) != nullptr ) {
@@ -189,6 +190,35 @@ int main ( int argc, char **argv ) {
 
         std::cout << "The timed action parsed: " << std::endl;
         mapsHandler.getTimed("timed_random")->print();
+    }
+    
+    //heri activate drill action
+    if (parserMoveIt->getHandName().compare("heri_II") == 0 ) {
+        
+        
+        //first, we create the "grasp without trigger finger (the third one)
+        
+        //TODO correct way to do this?
+        ROSEE::Action::Ptr grasp3f = std::make_shared<ROSEE::ActionComposed>("grasp3f", true);
+        std::shared_ptr<ROSEE::ActionComposed> grasp3f_casted = std::dynamic_pointer_cast<ROSEE::ActionComposed> (grasp3f);
+        
+        grasp3f_casted->sumAction(mapsHandler.getPrimitive("trig", "finger_1"));
+        grasp3f_casted->sumAction(mapsHandler.getPrimitive("trig", "finger_2"));
+        grasp3f_casted->sumAction(mapsHandler.getPrimitive("trig", "thumb"));
+   
+       // yamlWorker.createYamlFile (&grasp3f_casted, folderForActions + "/generics/");
+        
+        ROSEE::ActionTimed actionTimed ("drill");
+
+        actionTimed.insertAction( grasp3f, 0, 0, 0, 1, "GRASP3f");
+        actionTimed.insertAction( mapsHandler.getPrimitive("trig", "finger_3"), 3, 0, 0, 1, "TrigOn");
+        actionTimed.insertAction( mapsHandler.getPrimitive("trig", "finger_3"), 4, 0, 0, 0, "TrigOff");
+        
+        yamlWorker.createYamlFile ( &actionTimed, folderForActions + "/timeds/" );
+        mapsHandler.parseAllTimeds(folderForActions + "/timeds/");
+
+        std::cout << "The timed action parsed: " << std::endl;
+        mapsHandler.getTimed("drill")->print();
     }
 
 
