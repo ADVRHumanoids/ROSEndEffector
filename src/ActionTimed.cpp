@@ -293,7 +293,7 @@ bool ROSEE::ActionTimed::insertAction(ROSEE::Action::Ptr action, double marginBe
         return false;
     }
     
-    if (percentJointPos <=0 || percentJointPos > 1) {
+    if (percentJointPos <0 || percentJointPos > 1) {
         std::cerr << "[ACTIONTIMED:: " << __func__ << "] Please insert percentage for jointpos between 0 and 1. Passed: " 
             << percentJointPos << std::endl;
         return false;
