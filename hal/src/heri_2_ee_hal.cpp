@@ -216,9 +216,9 @@ bool ROSEE::Heri2EEHal::getMotorPosition(std::string joint_name, double& motor_p
                                 motor_in_finger_id);
     }
     
-    //ROS_WARN_STREAM("CURRENT 1 " << hand_pdo_rx.m1_curr);
-    //ROS_WARN_STREAM("CURRENT 2 " << hand_pdo_rx.m2_curr);
-    //std::cout << std::endl;
+    ROS_WARN_STREAM("CURRENT 1 " << hand_pdo_rx.m1_curr);
+    ROS_WARN_STREAM("CURRENT 2 " << hand_pdo_rx.m2_curr);
+    std::cout << std::endl;
 
     
     return true;
@@ -385,8 +385,9 @@ bool ROSEE::Heri2EEHal::setPositionReference(std::string joint_name,
     //std::cout << "finger_id    " << finger_id << std::endl;
     //std::cout << "motor_in_finger_id    " << motor_in_finger_id << std::endl;
    // std::cout << "JOINTTTTTTTTTTT POSSSSSSSSSSSSSSSSSS    " << joint_position_reference << std::endl;
-    //std::cout << "MOTOOOOOOOOOOOOOOOOOOOOO POSSSSSSSSSSSSSSSSSS     " << moto_position_reference << std::endl << std::endl;
-    
+    if (finger_id == 113 && motor_in_finger_id == 1){
+        std::cout << "MOTOOOOOOOOOOOOOOOOOOOOO POSSSSSSSSSSSSSSSSSS     " << moto_position_reference << std::endl << std::endl;
+    }
     move_finger(finger_id, motor_in_finger_id, moto_position_reference);
     
     /////////////////////////////////////////////////////

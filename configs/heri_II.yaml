@@ -96,7 +96,7 @@ Joint_Actuation_Info:
         board_id : 113
         finger_in_board_id : 2
         motor_lower_limit : 0
-        motor_upper_limit : 1.65
+        motor_upper_limit : 2 #1.65
         # Joint safer limit, thez can be lesser that limit in urdf
         joint_lower_limit : 0
         joint_upper_limit : 0.2
@@ -104,7 +104,7 @@ Joint_Actuation_Info:
         board_id : 112
         finger_in_board_id : 1
         motor_lower_limit : 0
-        motor_upper_limit : 1.95
+        motor_upper_limit : 2.5 #1.95
         # Joint safer limit, thez can be lesser that limit in urdf
         joint_lower_limit : 0
         joint_upper_limit : 0.9
@@ -112,7 +112,7 @@ Joint_Actuation_Info:
         board_id : 112
         finger_in_board_id : 2
         motor_lower_limit : 0
-        motor_upper_limit : 1.45
+        motor_upper_limit : 2.5 #1.45
         # Joint safer limit, thez can be lesser that limit in urdf
         joint_lower_limit : 0
         joint_upper_limit : 0.73
@@ -120,7 +120,7 @@ Joint_Actuation_Info:
         board_id : 113
         finger_in_board_id : 1
         motor_lower_limit : 0
-        motor_upper_limit : 1.35
+        motor_upper_limit : 2.5 #1.35
         # Joint safer limit, thez can be lesser that limit in urdf
         joint_lower_limit : 0
         joint_upper_limit : 0.9
