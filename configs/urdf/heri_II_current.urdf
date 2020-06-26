@@ -9,9 +9,6 @@
     <plugin filename="libHeriIIPlugin.so" name="heri_controller">
       </plugin>
   </gazebo>
-  <gazebo reference="">
-    <self_collide>1</self_collide>
-  </gazebo>
   <!-- /////////////////////////////////   Gazebo   ////////////////////////////////////// -->
   <gazebo reference="base_link">
     <fudgeFactor value="0.5"/>
