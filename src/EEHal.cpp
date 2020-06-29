@@ -103,6 +103,11 @@ bool ROSEE::EEHal::getPressure(std::string sensor_name, double& sensor_value) {
     return false;
 }
 
+bool ROSEE::EEHal::getMotorCurrent( std::string motor_name, double& motor_current) {
+    return false;
+}
+
+
 
 
 ROSEE::EEHal::~EEHal() {

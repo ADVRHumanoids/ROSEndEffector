@@ -49,6 +49,9 @@
 #include <rosee_msg/ROSEEActionControl.h> //msg
 #include <rosee_msg/ROSEECommandAction.h> //action
 
+#include <rosee_msg/MotorCurrent.h>
+#include <boost/circular_buffer.hpp>
+
 namespace ROSEE
 {
 
@@ -99,6 +102,13 @@ private:
 
     ros::Publisher _joint_state_pub;
     sensor_msgs::JointState _js_msg;
+    
+    //TODO pub motor current should be done in the hal???
+    ros::Publisher _motor_current_pub;
+    rosee_msg::MotorCurrent _motor_current_msg;
+    int _motor_current_seq_id = 0;
+    std::vector<boost::circular_buffer<double>> _motor_current_buffers; //to store old values and make a mean
+    void fill_publish_motor_current();
 
     int _joint_num = 0;
     int _seq_id = 0;

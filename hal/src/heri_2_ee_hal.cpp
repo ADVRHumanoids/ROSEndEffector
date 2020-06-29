@@ -216,11 +216,6 @@ bool ROSEE::Heri2EEHal::getMotorPosition(std::string joint_name, double& motor_p
                                 motor_in_finger_id);
     }
     
-    ROS_WARN_STREAM("CURRENT 1 " << hand_pdo_rx.m1_curr);
-    ROS_WARN_STREAM("CURRENT 2 " << hand_pdo_rx.m2_curr);
-    std::cout << std::endl;
-
-    
     return true;
 }
 
@@ -242,27 +237,27 @@ bool ROSEE::Heri2EEHal::getMotorVelocity(std::string joint_name, double& motor_v
 {
     return false;
 }
-/*
-bool ROSEE::Heri2EEHal::getMotorCurrent(std::string joint_name, double& motor_current)
+
+bool ROSEE::Heri2EEHal::getMotorCurrent(std::string motor_name, double& motor_current)
 {
     
     iit::ecat::advr::HeriHandEscPdoTypes::pdo_rx hand_pdo_rx;
     iit::ecat::advr::HeriHandESC * finger;
-        
-    // HACK do proper mapping. Is it ok now?
+    
+    //NOTE we use as motor name the joint name
     int finger_id = -1;
     int motor_in_finger_id = -1;
     
-    auto it = jointName_to_motorId.find(joint_name);
+    auto joint_it = _joint_actuation_info.find(motor_name);
     
-    if (it == jointName_to_motorId.end()) {
-        XBot::Logger::error ( ">> Joint_name %s does not exists \n",
-                                joint_name);
+    if (joint_it == _joint_actuation_info.end()) {
+        XBot::Logger::error ( ">> motor_name %s does not exists. Please note that for HERI II the names of the motor are the names of the first phalanges joint\n",
+                                motor_name);
         return false;
     }
     
-    finger_id = it->second.first;
-    motor_in_finger_id = it->second.second;
+    finger_id = joint_it->second.board_id;
+    motor_in_finger_id = joint_it->second.finger_in_board_id;
 
     /////////////////////////////////////
     
@@ -283,7 +278,6 @@ bool ROSEE::Heri2EEHal::getMotorCurrent(std::string joint_name, double& motor_cu
     
     return true;
 }
-**/
 
 bool ROSEE::Heri2EEHal::getPressure(std::string sensor_name, double& sensor_value) {
     

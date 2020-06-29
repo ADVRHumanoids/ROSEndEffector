@@ -51,6 +51,9 @@ namespace ROSEE {
         // TODO public or protected?
         virtual bool getJointPosition( std::string joint_name, double& joint_position);
         virtual bool getPressure(std::string sensor_name, double& sensor_value);
+        
+        //This should be in Imotor, but it gives me errors idk why
+        virtual bool getMotorCurrent( std::string motor_name, double& motor_current);
 
 
         

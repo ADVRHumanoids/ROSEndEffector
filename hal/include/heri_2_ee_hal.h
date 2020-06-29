@@ -53,7 +53,9 @@ public:
     virtual bool getMotorPosition( std::string joint_name, double& motor_position ) override;
     virtual bool getMotorVelocity( std::string joint_name, double& motor_velocity ) override;
     virtual bool getMotorEffort( std::string joint_name, double& motor_effort ) override;
-    //virtual bool getMotorCurrent ( std::string joint_name, double& motor_current ) override;
+    
+    //TODO override this from IMotor, I dont know why but it gives error if I put this as pure virtual in Imotor. For now it is in EEHAL
+    virtual bool getMotorCurrent ( std::string motor_name, double& motor_current ) override;
     
     
     bool getJointPosition(std::string joint_name, double& joint_position) override;
@@ -89,6 +91,7 @@ private:
     iit::ecat::ec_timing_t timing;
     int _wkc = -1;
     
+    /** map with key the joint name and with value joint and motor information*/
     std::map<std::string, JointActuationInfo> _joint_actuation_info;
     
     //TODO obsolete remove

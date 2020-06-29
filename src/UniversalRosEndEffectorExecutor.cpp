@@ -16,7 +16,7 @@
 */
 
 #include <ros_end_effector/UniversalRosEndEffectorExecutor.h>
-
+#define CIRCBUFFSIZE 100
 
 ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::string ns ) : _nh ( ns ) {
 
@@ -54,6 +54,17 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
     _js_msg.position.resize ( _joint_num );
     _js_msg.velocity.resize ( _joint_num );
     _js_msg.effort.resize ( _joint_num );
+    
+    //TODO check this, should be in the hal?
+    //TODO topic name from config?
+    _motor_current_pub = _nh.advertise<rosee_msg::MotorCurrent> ("/ros_end_effector/motor_current", 10);
+    _motor_current_msg.motor_name.resize(_joint_num);
+    _motor_current_msg.current.resize(_joint_num);\
+    _motor_current_seq_id = 0;
+    _motor_current_buffers.resize(_joint_num);
+    for (int i = 0; i<_joint_num; i++) {
+        _motor_current_buffers[i] = boost::circular_buffer<double>(CIRCBUFFSIZE);
+    }
 
 
     // allocate HAL TBD get from parser the lib to load
@@ -518,6 +529,39 @@ void ROSEE::UniversalRosEndEffectorExecutor::fill_publish_joint_states() {
     _joint_state_pub.publish ( _js_msg );
 }
 
+//TODO this should be in the hal???
+void ROSEE::UniversalRosEndEffectorExecutor::fill_publish_motor_current() {
+    
+    _motor_current_msg.seq = _motor_current_seq_id++;
+    _motor_current_msg.stamp = ros::Time::now();
+    
+    int c = 0;
+    for ( auto& f : _ee->getFingers() ) {
+
+        _ee->getActuatedJointsInFinger ( f, _joints );
+
+        double value = 0;
+        for ( auto& j : _joints ) {
+
+            _motor_current_msg.motor_name[c] = j;
+            
+            _hal->getMotorCurrent(j, value);
+            _motor_current_buffers[c].push_front(value);
+            double mean = std::accumulate(_motor_current_buffers[c].begin(), _motor_current_buffers[c].end(), 0.0); //initialize the sum to 0
+            mean /= _motor_current_buffers[c].size();
+            _motor_current_msg.current[c] = mean;
+
+            c++;
+        }
+        _joints.clear();
+    }
+
+    _motor_current_pub.publish ( _motor_current_msg );
+    
+    
+}
+
+
 void ROSEE::UniversalRosEndEffectorExecutor::set_references() {
 
     _qref_filtered = _filt_q.process ( _qref );
@@ -558,6 +602,8 @@ void ROSEE::UniversalRosEndEffectorExecutor::timer_callback ( const ros::TimerEv
     //std::cout << std::endl;
 
     fill_publish_joint_states();
+    
+    fill_publish_motor_current();
     
     //this is true only when a new goal has arrived... so new goal ovewrite the old one
     if (_ros_action_server->hasNewGoal()) {
