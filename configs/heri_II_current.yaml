@@ -188,6 +188,4 @@ Motor_actuation_info:
     113-2: 
         joint_1 : SFB1__SFP1_1
         joint_2 : SFP1_1__SFP1_2
-        joint_3 : 
-        
 

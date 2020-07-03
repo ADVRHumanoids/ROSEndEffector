@@ -129,13 +129,13 @@
     </collision>
   </link>
   <!-- ///////////////////////////////////////   Joint of BASE and the base_link of the short finger   ////////////////////////////////////////// -->
-  <joint name="BASE__SFB1" type="revolute">
+  <joint name="BASE__SFB1" type="fixed">
     <origin rpy="1.5708 -1.5708 0" xyz="7.6421E-05 -0.031634 0.1213"/>
     <parent link="base_link"/>
     <child link="SFB1"/>
     <axis xyz="0 0 1"/>
     <limit effort="10" lower="-0.1" upper="0.1" velocity="1"/>
-    <dynamics damping="0.003" friction="0.003"/>
+    <dynamics damping="0.03" friction="0.03"/>
   </joint>
   <!-- ///////////////////////////////////////   First phalanx of the Short_Finger   ////////////////////////////////////////// -->
   <link name="SFB1_1">
@@ -227,13 +227,13 @@
     </collision>
   </link>
   <!-- ///////////////////////////////////////   Joint of BASE and the base_link of the short finger   ////////////////////////////////////////// -->
-  <joint name="BASE__LFB1" type="revolute">
+  <joint name="BASE__LFB1" type="fixed">
     <origin rpy="1.5708 -1.5708 3.1415927" xyz="-0.031002 0.025903 0.1213"/>
     <parent link="base_link"/>
     <child link="LFB1"/>
     <axis xyz="0 0 1"/>
     <limit effort="10" lower="-0.1" upper="0.1" velocity="1"/>
-    <dynamics damping="0.003" friction="0.003"/>
+    <dynamics damping="0.08" friction="0.08"/>     <!-- <dynamics damping="0.03" friction="0.03"/> -->
   </joint>
   <!-- ///////////////////////////////////////   First phalanx of the Long_Finger   ////////////////////////////////////////// -->
   <link name="LFP1_1">
@@ -265,7 +265,7 @@
     <child link="LFP1_1"/>
     <axis xyz="0 0 -1"/>
     <limit effort="10" lower="-0.1" upper="0.9" velocity="1"/>
-    <dynamics damping="0.003" friction="0.003"/>
+    <dynamics damping="0.3" friction="0.3"/>
   </joint>
   <!-- ///////////////////////////////////////   Second phalanx of the Long_Finger   ////////////////////////////////////////// -->
   <link name="LFP1_2">
@@ -296,8 +296,8 @@
     <parent link="LFP1_1"/>
     <child link="LFP1_2"/>
     <axis xyz="0 0 -1"/>
-    <limit effort="10" lower="-0.1" upper="0.5" velocity="1"/>
-    <dynamics damping="0.06" friction="0.05"/>
+    <limit effort="10" lower="-0.1" upper="1.1" velocity="1"/> <!-- upper was 0.5-->
+    <dynamics damping="0.3" friction="0.3"/>
     <mimic joint="LFB1__LFP1_1" multiplier="1" offset="0.1"/>
   </joint>
   <!-- ///////////////////////////////////////   Tip phalanx of the long finger   ////////////////////////////////////////// -->
@@ -329,8 +329,8 @@
     <parent link="LFP1_2"/>
     <child link="LFP1_3"/>
     <axis xyz="0 0 -1"/>
-    <limit effort="10" lower="-0.1" upper="0.5" velocity="1"/>
-    <dynamics damping="0.003" friction="0.003"/>
+    <limit effort="10" lower="-0.1" upper="1.1" velocity="1"/> <!-- upper was 0.5-->
+    <dynamics damping="0.3" friction="0.3"/>
     <mimic joint="LFB1__LFP1_1" multiplier="0.5" offset="0.2"/>
   </joint>
 
@@ -359,13 +359,13 @@
     </collision>
   </link>
   <!-- ///////////////////////////////////////   Joint of BASE and the base_link of the short finger   ////////////////////////////////////////// -->
-  <joint name="BASE__LFB2" type="revolute">
+  <joint name="BASE__LFB2" type="fixed">
     <origin rpy="1.5708 -1.5708 3.1415927" xyz="0 0.031903 0.1213"/>
     <parent link="base_link"/>
     <child link="LFB2"/>
     <axis xyz="0 0 1"/>
     <limit effort="10" lower="-0.1" upper="0.1" velocity="1"/>
-    <dynamics damping="0.003" friction="0.003"/>
+    <dynamics damping="0.03" friction="0.03"/>
   </joint>
   <!-- ///////////////////////////////////////   First phalanx of the Long_Finger   ////////////////////////////////////////// -->
   <link name="LFP2_1">
@@ -492,13 +492,13 @@
     </collision>
   </link>
   <!-- ///////////////////////////////////////   Joint of BASE and the base_link of the short finger   ////////////////////////////////////////// -->
-  <joint name="BASE__LFB3" type="revolute">
+  <joint name="BASE__LFB3" type="fixed">
     <origin rpy="1.5708 -1.5708 3.1415927" xyz="0.030998 0.025903 0.1213"/>
     <parent link="base_link"/>
     <child link="LFB3"/>
     <axis xyz="0 0 1"/>
     <limit effort="10" lower="-0.1" upper="0.1" velocity="1"/>
-    <dynamics damping="0.003" friction="0.003"/>
+    <dynamics damping="0.03" friction="0.03"/>
   </joint>
   <!-- ///////////////////////////////////////   First phalanx of the Long_Finger   ////////////////////////////////////////// -->
   <link name="LFP3_1">

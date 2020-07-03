@@ -13,7 +13,7 @@
 #include <iit/ecat/advr/ec_boards_iface.h>
 
 #include <XBotCore-interfaces/XDomainCommunication.h>
-#include <XBotCore/HALBase.h>
+//#include <XBotCore/HALBase.h>
 
 #include <ros_end_effector/EEHal.h>
 
@@ -63,6 +63,10 @@ public:
     bool getPressure(std::string sensor_name, double& sensor_value) override;
 
     virtual bool setPositionReference( std::string joint_name, double joint_position_reference );
+    
+    // TODO override from a virtual of hal?
+    bool jointToActuatorPosition(std::string joint_name, double joint_pos, double& actuator_pos);
+    bool actuatorToJointPosition(std::string joint_name,  double actuator_pos, double& joint_pos);
 
 
 protected :
@@ -70,9 +74,7 @@ protected :
     iit::ecat::stat_t  s_loop;::
     uint64_t start_time, tNow, tPre;
     
-    // TODO override from a virtual of hal?
-    bool jointToActuatorPosition(std::string joint_name, double joint_pos, double& actuator_pos);
-    bool actuatorToJointPosition(std::string joint_name,  double actuator_pos, double& joint_pos);
+
     
     std::map<std::string, std::tuple<unsigned short int, unsigned short int, unsigned short int>> sensorName_to_motorId;
    

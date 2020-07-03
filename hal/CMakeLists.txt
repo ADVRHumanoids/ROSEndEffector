@@ -81,3 +81,4 @@ target_link_libraries(${PROJECT_NAME} ${COMMON_LIBS}
 library_install(${PROJECT_NAME} 1 0 0)
 
 # TODO automatic set set_cap -> remember to ./set_cap.sh ~/src/ROSEndEffectorPackageManager/devel/lib/ros_end_effector/UniversalRosEndEffector
+# Done in main cmakelists, check there

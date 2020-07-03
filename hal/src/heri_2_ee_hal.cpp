@@ -18,7 +18,7 @@ ROSEE::Heri2EEHal::Heri2EEHal(const char* config_yaml,
 
     XBot::Logger::info(XBot::Logger::Severity::HIGH) << "Low Level Config file in use is: " << config_yaml << XBot::Logger::endl();
     
-    YAML::Node node = YAML::LoadFile(config_yaml);
+    const YAML::Node node = YAML::LoadFile(config_yaml);
 
     for(YAML::const_iterator joint_it = node["Joint_Actuation_Info"].begin(); joint_it != node["Joint_Actuation_Info"].end(); ++joint_it) {
         
@@ -40,7 +40,7 @@ ROSEE::Heri2EEHal::Heri2EEHal(const char* config_yaml,
         _joint_actuation_info[joint_it->first.as<std::string>()] = jai;
         
     }
-
+    
     for(YAML::const_iterator joint_it = node["Pressure_Sensor_Info"].begin(); joint_it != node["Pressure_Sensor_Info"].end(); ++joint_it) {
     
        sensorName_to_motorId[joint_it->first.as<std::string>()] =  
@@ -183,25 +183,37 @@ bool ROSEE::Heri2EEHal::move()
     return true;
 }
 
-bool ROSEE::Heri2EEHal::getMotorPosition(std::string joint_name, double& motor_position)
+bool ROSEE::Heri2EEHal::getMotorPosition(std::string motor_name, double& motor_position)
 {
     iit::ecat::advr::HeriHandEscPdoTypes::pdo_rx hand_pdo_rx;
     iit::ecat::advr::HeriHandESC * finger;
-        
-    // HACK do proper mapping. Is it ok now?
+    
     int finger_id = -1;
     int motor_in_finger_id = -1;
     
-    auto joint_it = _joint_actuation_info.find(joint_name);
-    if (joint_it == _joint_actuation_info.end()) {
-        XBot::Logger::error ( ">> Joint_name %s does not exists \n",
-                                joint_name);
+    if (motor_name.compare("112-1") == 0) {
+        finger_id = 112;
+        motor_in_finger_id = 1;
+        
+    } else if (motor_name.compare("112-2") == 0) {
+        finger_id = 112;
+        motor_in_finger_id = 2;
+        
+    } else if (motor_name.compare("113-1") == 0) {
+        finger_id = 113;
+        motor_in_finger_id = 1;
+                
+    } else if (motor_name.compare("113-2") == 0) {
+        finger_id = 113;
+        motor_in_finger_id = 2;
+        
+    } else  {
+        
+        XBot::Logger::error ( ">> Motor_name %s does not exists \n",
+                                motor_name);
         return false;
     }
-    
-    finger_id = joint_it->second.board_id;
-    motor_in_finger_id = joint_it->second.finger_in_board_id;
-    
+       
     finger = fingers.at(rid2Pos(finger_id));
     hand_pdo_rx = finger->getRxPDO();
     
@@ -222,7 +234,25 @@ bool ROSEE::Heri2EEHal::getMotorPosition(std::string joint_name, double& motor_p
 bool ROSEE::Heri2EEHal::getJointPosition(std::string joint_name, double& joint_position)
 {
     double moto_pos = 0.0;
-    this->getMotorPosition ( joint_name, moto_pos);
+    
+    // HACK do proper mapping. Is it ok now?
+    int finger_id = -1;
+    int motor_in_finger_id = -1;
+    
+    auto joint_it = _joint_actuation_info.find(joint_name);
+    if (joint_it == _joint_actuation_info.end()) {
+        XBot::Logger::error ( ">> Joint_name %s does not exists \n",
+                                joint_name);
+        return false;
+    }
+    
+    finger_id = joint_it->second.board_id;
+    motor_in_finger_id = joint_it->second.finger_in_board_id;
+    
+    //TODO make a function to convert fin id and moto id in a string OR add motor name in joint actuation info
+    std::string motor_name = std::to_string(finger_id) + "-" + std::to_string(motor_in_finger_id);
+    
+    this->getMotorPosition ( motor_name, moto_pos);
     actuatorToJointPosition ( joint_name, moto_pos, joint_position);
     
     return true;
@@ -244,22 +274,31 @@ bool ROSEE::Heri2EEHal::getMotorCurrent(std::string motor_name, double& motor_cu
     iit::ecat::advr::HeriHandEscPdoTypes::pdo_rx hand_pdo_rx;
     iit::ecat::advr::HeriHandESC * finger;
     
-    //NOTE we use as motor name the joint name
     int finger_id = -1;
     int motor_in_finger_id = -1;
     
-    auto joint_it = _joint_actuation_info.find(motor_name);
-    
-    if (joint_it == _joint_actuation_info.end()) {
-        XBot::Logger::error ( ">> motor_name %s does not exists. Please note that for HERI II the names of the motor are the names of the first phalanges joint\n",
+    if (motor_name.compare("112-1") == 0) {
+        finger_id = 112;
+        motor_in_finger_id = 1;
+        
+    } else if (motor_name.compare("112-2") == 0) {
+        finger_id = 112;
+        motor_in_finger_id = 2;
+        
+    } else if (motor_name.compare("113-1") == 0) {
+        finger_id = 113;
+        motor_in_finger_id = 1;
+                
+    } else if (motor_name.compare("113-2") == 0) {
+        finger_id = 113;
+        motor_in_finger_id = 2;
+        
+    } else  {
+        
+        XBot::Logger::error ( ">> Motor_name %s does not exists \n",
                                 motor_name);
         return false;
     }
-    
-    finger_id = joint_it->second.board_id;
-    motor_in_finger_id = joint_it->second.finger_in_board_id;
-
-    /////////////////////////////////////
     
     finger = fingers.at(rid2Pos(finger_id));
     hand_pdo_rx = finger->getRxPDO();
@@ -379,9 +418,7 @@ bool ROSEE::Heri2EEHal::setPositionReference(std::string joint_name,
     //std::cout << "finger_id    " << finger_id << std::endl;
     //std::cout << "motor_in_finger_id    " << motor_in_finger_id << std::endl;
    // std::cout << "JOINTTTTTTTTTTT POSSSSSSSSSSSSSSSSSS    " << joint_position_reference << std::endl;
-    if (finger_id == 113 && motor_in_finger_id == 1){
-        std::cout << "MOTOOOOOOOOOOOOOOOOOOOOO POSSSSSSSSSSSSSSSSSS     " << moto_position_reference << std::endl << std::endl;
-    }
+
     move_finger(finger_id, motor_in_finger_id, moto_position_reference);
     
     /////////////////////////////////////////////////////

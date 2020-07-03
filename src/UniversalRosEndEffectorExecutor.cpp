@@ -55,21 +55,63 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
     _js_msg.velocity.resize ( _joint_num );
     _js_msg.effort.resize ( _joint_num );
     
+    /*********************************************  MOTO CURRENT-POSITION STUFF ************************************************/
+    
+    /*
+    //parse motor names from yaml file
+     std::string configFileName;
+
+    if (! _nh.getParam("/ros_ee_config_path", configFileName) ) {
+        ROS_ERROR_STREAM ("[ERROR HERI gazebo plugin]: parameter '/ros_ee_config_path'" <<
+            " not loaded on parameter server");
+        return ;
+    }
+    YAML::Node node = YAML::LoadFile(configFileName);
+    for(YAML::const_iterator moto_it = node["Motor_actuation_info"].begin(); moto_it != node["Motor_actuation_info"].end(); ++moto_it) {
+        
+        std::string motor_name = moto_it->first.as<std::string>();
+       _motor_current_names.push_back(motor_name);
+
+    }
+    */
+    //TODO Code does not like to parse a lot of times the config file... It seems that if parsed as above the loadfile inside the Heri2EEHAl
+    //crash almost always (memory corrupted). SOLVE THIS
+    _motor_names.push_back("112-1");
+    _motor_names.push_back("112-2");
+    _motor_names.push_back("113-1");
+    _motor_names.push_back("113-2");
+    
     //TODO check this, should be in the hal?
     //TODO topic name from config?
     _motor_current_pub = _nh.advertise<rosee_msg::MotorCurrent> ("/ros_end_effector/motor_current", 10);
     _motor_current_msg.motor_name.resize(_joint_num);
-    _motor_current_msg.current.resize(_joint_num);\
+    _motor_current_msg.current.resize(_joint_num);
     _motor_current_seq_id = 0;
     _motor_current_buffers.resize(_joint_num);
     for (int i = 0; i<_joint_num; i++) {
         _motor_current_buffers[i] = boost::circular_buffer<double>(CIRCBUFFSIZE);
     }
+    
+    //HACK use same kind of message, fields are the same.
+    //TODO add field position to motor msg
+    _motor_position_pub = _nh.advertise<rosee_msg::MotorCurrent> ("/ros_end_effector/motor_position", 10);
+    _motor_position_msg.motor_name.resize(_joint_num);
+    _motor_position_msg.current.resize(_joint_num);
+    _motor_position_seq_id = 0;
+    
+    //TODO necessary for now to publish motor position desired (sent to the hand)
+    _motor_positionDesired_pub = _nh.advertise<sensor_msgs::JointState> ("/ros_end_effector/motor_position_command", 10);
+    
+    
+    /*********************************************  MOTO CURRENT-POSITION STUFF END ************************************************/
 
 
     // allocate HAL TBD get from parser the lib to load
 //     _hal = std::make_shared<ROSEE::DummyHal> ( _ee );
     _hal = std::make_shared<ROSEE::Heri2EEHal> (p.getRoseeConfigPath().c_str(), _ee );
+    //trying to solve memory coruption yamlcpp::loadfile problem
+    //_hal = std::make_shared<ROSEE::Heri2EEHal> ("/home/pilot/src/ROSEndEffectorPackageManager/src/ROSEndEffector/configs/heri_II_low_param.yaml", _ee );
+
 
     // initialize hal 
     _hal->init();
@@ -101,6 +143,8 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
 
     // this should be done by hal?
     init_robotState_sub();
+    
+
 }
 
 bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive() {
@@ -529,38 +573,57 @@ void ROSEE::UniversalRosEndEffectorExecutor::fill_publish_joint_states() {
     _joint_state_pub.publish ( _js_msg );
 }
 
-//TODO this should be in the hal???
+//TODO this should be in the hal??? **************************************************************************88
 void ROSEE::UniversalRosEndEffectorExecutor::fill_publish_motor_current() {
     
     _motor_current_msg.seq = _motor_current_seq_id++;
     _motor_current_msg.stamp = ros::Time::now();
     
     int c = 0;
-    for ( auto& f : _ee->getFingers() ) {
+    for ( auto& moto :_motor_names ) {
 
-        _ee->getActuatedJointsInFinger ( f, _joints );
+        _motor_current_msg.motor_name[c] = moto;
+        
+        double value;
+        _hal->getMotorCurrent(moto, value);
+        _motor_current_buffers[c].push_front(value);
+        double mean = std::accumulate(_motor_current_buffers[c].begin(), _motor_current_buffers[c].end(), 0.0); //initialize the sum to 0
+        mean /= _motor_current_buffers[c].size();
+        mean /= 1000;         //heri feedback is in mA, but models want A
+        _motor_current_msg.current[c] = mean;
 
-        double value = 0;
-        for ( auto& j : _joints ) {
+        c++;
 
-            _motor_current_msg.motor_name[c] = j;
-            
-            _hal->getMotorCurrent(j, value);
-            _motor_current_buffers[c].push_front(value);
-            double mean = std::accumulate(_motor_current_buffers[c].begin(), _motor_current_buffers[c].end(), 0.0); //initialize the sum to 0
-            mean /= _motor_current_buffers[c].size();
-            _motor_current_msg.current[c] = mean;
-
-            c++;
-        }
-        _joints.clear();
     }
 
-    _motor_current_pub.publish ( _motor_current_msg );
-    
+    _motor_current_pub.publish ( _motor_current_msg );  
     
 }
 
+void ROSEE::UniversalRosEndEffectorExecutor::fill_publish_motor_position() {
+    
+    _motor_position_msg.seq = _motor_position_seq_id++;
+    _motor_position_msg.stamp = ros::Time::now();
+    
+    int c = 0;
+    for ( auto& moto :_motor_names ) {
+
+        _motor_position_msg.motor_name[c] = moto;
+        
+        double value;
+        _hal->getMotorPosition(moto, value);
+        _motor_position_msg.current[c] = value;
+
+        c++;
+
+    }
+
+    _motor_position_pub.publish ( _motor_position_msg );  
+}
+    
+
+
+/******************************************************************/
 
 void ROSEE::UniversalRosEndEffectorExecutor::set_references() {
 
@@ -571,7 +634,35 @@ void ROSEE::UniversalRosEndEffectorExecutor::set_references() {
 
         _ee->getInternalIdForJoint ( j, id );
         _hal->setPositionReference ( j, _qref_filtered[id] );
+        
+        //TODO not nice this but we need for now
+        std::shared_ptr<ROSEE::Heri2EEHal> halHeri = std::static_pointer_cast <ROSEE::Heri2EEHal > (_hal) ;
+        if ( halHeri != 0 ) {
+            
+            sensor_msgs::JointState motorDesiredPos;
+            
+            double moto_pos_sent;
+  
+            halHeri->jointToActuatorPosition ( "ciulo", 0, moto_pos_sent);
+            //halHeri->getJointPosition("ciulo", moto_pos_sent);
+
+            
+            motorDesiredPos.name.push_back(j);
+            motorDesiredPos.position.push_back( moto_pos_sent );
+            motorDesiredPos.velocity.push_back( 0 );
+            motorDesiredPos.position.push_back( 0 );
+            
+            _motor_positionDesired_pub.publish (motorDesiredPos);     
+            
+        } else {
+            
+            ROS_ERROR_STREAM ("DOWNCAST FAILED! Aborting");
+            exit(-1);
+            
+        }
     }
+    
+
 
 }
 
@@ -604,6 +695,7 @@ void ROSEE::UniversalRosEndEffectorExecutor::timer_callback ( const ros::TimerEv
     fill_publish_joint_states();
     
     fill_publish_motor_current();
+    fill_publish_motor_position();
     
     //this is true only when a new goal has arrived... so new goal ovewrite the old one
     if (_ros_action_server->hasNewGoal()) {
