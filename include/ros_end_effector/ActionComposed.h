@@ -45,6 +45,9 @@ class ActionComposed : public ActionGeneric
 {
     
 public: 
+    typedef std::shared_ptr<ActionComposed> Ptr;
+    typedef std::shared_ptr<const ActionComposed> ConstPtr;
+    
     ActionComposed();
     ActionComposed(std::string name);
     ActionComposed(std::string name, bool independent);
