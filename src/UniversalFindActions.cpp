@@ -231,7 +231,32 @@ int main ( int argc, char **argv ) {
 
         yamlWorker.createYamlFile ( &actionTimed, folderForActions + "/timeds/" );
 
-     }
+     } else  if (parserMoveIt->getHandName().compare("heri_II") == 0 ) {
+        
+        //first, we create the "grasp without trigger finger (the third one)
+        
+        //TODO correct way to do this?
+        ROSEE::Action::Ptr grasp3f = std::make_shared<ROSEE::ActionComposed>("grasp3f", true);
+        std::shared_ptr<ROSEE::ActionComposed> grasp3f_casted = std::dynamic_pointer_cast<ROSEE::ActionComposed> (grasp3f);
+        
+        grasp3f_casted->sumAction(mapsHandler.getPrimitive("trig", "finger_1"));
+        grasp3f_casted->sumAction(mapsHandler.getPrimitive("trig", "finger_2"));
+        grasp3f_casted->sumAction(mapsHandler.getPrimitive("trig", "thumb"));
+   
+       // yamlWorker.createYamlFile (&grasp3f_casted, folderForActions + "/generics/");
+        
+        ROSEE::ActionTimed actionTimed ("drill");
+
+        actionTimed.insertAction( grasp3f, 0, 0, 0, 1, "GRASP3f");
+        actionTimed.insertAction( mapsHandler.getPrimitive("trig", "finger_3"), 3, 0, 0, 1, "TrigOn");
+        actionTimed.insertAction( mapsHandler.getPrimitive("trig", "finger_3"), 4, 0, 0, 0, "TrigOff");
+        
+        yamlWorker.createYamlFile ( &actionTimed, folderForActions + "/timeds/" );
+        mapsHandler.parseAllTimeds(folderForActions + "/timeds/");
+
+        std::cout << "The timed action parsed: " << std::endl;
+        mapsHandler.getTimed("drill")->print();
+    }
 
      return 0;
 }
