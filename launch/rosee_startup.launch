@@ -1,26 +1,29 @@
 <?xml version="1.0"?>
 <launch>
-    <arg name="inSlider" default="false" />
     <arg name="gazebo" default="false" />
     <arg name="hand_name"/> 
+    <arg name="gdb" default="false"/> <!-- for debug with gdb -->
+
+    <!-- send urdf to parameter server. This is necessary because sometimes UniversalRosEndEffector can not put them in time and joint state pub crashes-->
+    <!-- BE SURE that the values are the same in the ros_ee_config_path file -->
+    <param name="robot_description" textfile="$(find ros_end_effector)/configs/urdf/$(arg hand_name).urdf"/>
+    <param name="robot_description_semantic" textfile="$(find ros_end_effector)/configs/srdf/$(arg hand_name).srdf" />
     
-    <!-- this param is need by c++ (universalroseeexec) to take states from gazebo or joint state publisher (which deal with mimic joints) --> 
-    <param unless="$(arg gazebo)" name = "/rosee/joint_states_topic" value="/js_publisher/joint_states" />
-    <param if="$(arg gazebo)" name = "/rosee/joint_states_topic" value="/rosee_gazebo_plugin/joint_states" />
     <!-- arg is needed by this launch file itself to run the robot state publisher below -->
     <arg unless="$(arg gazebo)" name = "jointState4robotState" value="/js_publisher/joint_states" />
-    <arg if="$(arg gazebo)" name = "jointState4robotState" value="/rosee_gazebo_plugin/joint_states" />
+    <arg if="$(arg gazebo)" name = "jointState4robotState" value="/rosee_gazebo_plugins/joint_states" />
+    
+    <!-- this rosparam is need by c++ (universalroseeexec) to take states from gazebo or joint state publisher (which deal with mimic joints) --> 
+    <param name = "/rosee/joint_states_topic" value="$(arg jointState4robotState)" />
 
-    <!-- send the test_ee robot XML to param server -->
-    <param name="robot_description" textfile="$(find ros_end_effector)/configs/urdf/$(arg hand_name).urdf"/>
-    <!-- inSlider is param to only see the hand in rviz with sliders to control each joint, srdf and yaml are 
-    not necessary -->
-    <param unless="$(arg inSlider)" name="robot_description_semantic" textfile="$(find ros_end_effector)/configs/srdf/$(arg hand_name).srdf" />
-		<param unless="$(arg inSlider)" name="ros_ee_config_path" value="$(find ros_end_effector)/configs/$(arg hand_name).yaml"/>   --> 
+    <param name="ros_ee_config_path" value="$(find ros_end_effector)/configs/$(arg hand_name).yaml"/> 
     <param name="rate" value="100.0"/>
-
+    
+    <node unless="$(arg gdb)" type="UniversalRosEndEffector" name="UniversalRosEndEffector" pkg="ros_end_effector" output="screen"/>
+    <!-- the debug mode -->
+    <node if="$(arg gdb)" type="UniversalRosEndEffector" name="UniversalRosEndEffector" pkg="ros_end_effector" output="screen" launch-prefix="xterm -e gdb --args"/>
      
-    <!-- Joint state publisher is necessary for mimic joint, not used if gazebo is used because there is the gazebo_ros_plugin which handle the mimic -->
+    <!-- Joint state publisher is necessary for mimic joint, not used if gazebo is used because there is the gazebo_ros_plugin which handles the mimic -->
     <node unless="$(arg gazebo)" name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
         <!-- Input -->
         <rosparam param="source_list">["ros_end_effector/joint_commands"] </rosparam>
@@ -39,16 +42,6 @@
         
     <include if="$(arg gazebo)" file="$(find rosee_gazebo_plugins)/launch/gazebo.launch"> 
     	  <arg name="hand_name" value="$(arg hand_name)"/>
-    </include>
-    
-    <node unless="$(arg inSlider)" type="UniversalRosEndEffector" name="UniversalRosEndEffector" pkg="ros_end_effector" output="screen"/>
-    
-    
-    
-    <!-- sliders for control single joints, debug purpose only, without gazebo always-->
-    <node if="$(arg inSlider)" name="input_joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
-        <remap from="joint_states" to="ros_end_effector/joint_commands" />
-        <param name="use_gui" value="true" />
-    </node>
+    </include>   
 
 </launch>

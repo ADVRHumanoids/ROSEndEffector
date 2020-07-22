@@ -5,9 +5,9 @@
 
 #include <sensor_msgs/JointState.h>
 
-#include <ROSEndEffector/Parser.h>
-#include <ROSEndEffector/EEInterface.h>
-#include <ROSEndEffector/Utils.h>
+#include <ros_end_effector/Parser.h>
+#include <ros_end_effector/EEInterface.h>
+#include <ros_end_effector/Utils.h>
 
 namespace {
 
