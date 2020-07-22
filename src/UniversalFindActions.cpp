@@ -34,6 +34,7 @@ int main ( int argc, char **argv ) {
     ros::NodeHandle nh;
     ROSEE::Parser parser(nh);
     parser.init();
+    //Load the ROS Server with urdf and srdf 
     nh.setParam("/robot_description", parser.getUrdfString());
     nh.setParam("/robot_description_semantic", parser.getSrdfString());
     ROS_INFO_STREAM("FINDACTIONS: Set urdf and srdf file in the param server from config file " << parser.getRoseeConfigPath());
@@ -59,10 +60,16 @@ int main ( int argc, char **argv ) {
     std::map <std::string, ROSEE::ActionTrig> fingFlexMap = actionsFinder.findTrig (ROSEE::ActionPrimitive::Type::FingFlex, 
                                                                                     folderForActions + "/primitives/");
     unsigned int nFinger = 3;
-    std::map < std::string, ROSEE::ActionSingleJointMultipleTips> singleJointMultipleTipsMap = actionsFinder.findSingleJointMultipleTips (nFinger, folderForActions + "/primitives/") ;
+    std::map < std::string, ROSEE::ActionSingleJointMultipleTips> singleJointMultipleTipsMap = 
+        actionsFinder.findSingleJointMultipleTips (nFinger, folderForActions + "/primitives/") ;
     
     nFinger = 2;
-    std::map < std::string, ROSEE::ActionSingleJointMultipleTips> singleJointMultipleTipsMap2 = actionsFinder.findSingleJointMultipleTips (nFinger, folderForActions + "/primitives/") ;
+    std::map < std::string, ROSEE::ActionSingleJointMultipleTips> singleJointMultipleTipsMap2 = 
+        actionsFinder.findSingleJointMultipleTips (nFinger, folderForActions + "/primitives/") ;
+        
+    nFinger = 5;
+    std::map < std::string, ROSEE::ActionSingleJointMultipleTips> singleJointMultipleTipsMap5 = 
+        actionsFinder.findSingleJointMultipleTips (nFinger, folderForActions + "/primitives/") ;
     
     auto mulPinch = actionsFinder.findMultiplePinch(3, folderForActions + "/primitives/" );
 
@@ -231,6 +238,7 @@ int main ( int argc, char **argv ) {
 
         yamlWorker.createYamlFile ( &actionTimed, folderForActions + "/timeds/" );
 
+        
      } else  if (parserMoveIt->getHandName().compare("heri_II") == 0 ) {
         
         //first, we create the "grasp without trigger finger (the third one)
@@ -247,7 +255,7 @@ int main ( int argc, char **argv ) {
         
         ROSEE::ActionTimed actionTimed ("drill");
 
-        actionTimed.insertAction( grasp3f, 0, 0, 0, 1, "GRASP3f");
+        actionTimed.insertAction( grasp3f, 0, 0, 0, 1, "Grasp3f");
         actionTimed.insertAction( mapsHandler.getPrimitive("trig", "finger_3"), 3, 0, 0, 1, "TrigOn");
         actionTimed.insertAction( mapsHandler.getPrimitive("trig", "finger_3"), 4, 0, 0, 0, "TrigOff");
         
