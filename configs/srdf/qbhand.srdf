@@ -38,9 +38,8 @@
    </group>
 
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
-    <virtual_joint name="virtualJointWorld" type="fixed" parent_frame="world" child_link="root_link" />
+    <virtual_joint name="virtualFixed" type="fixed" parent_frame="world" child_link="root_link" />
     
     <end_effector name="qbhand_end_effector" parent_link="root_link" group="end_effector_fingers"/>
-    <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
-    <virtual_joint name="virtualJointWorld" type="fixed" parent_frame="world" child_link="root_link" />
+
 </robot>

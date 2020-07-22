@@ -15,6 +15,28 @@
     <plugin filename="libRoseePlugin.so" name="robotiq3f_controller">
       </plugin>
   </gazebo>
+
+  <gazebo reference="robotiq_arg2f_base_link">
+    <fudgeFactor value="0.1"/>
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+  <gazebo reference="left_outer_knuckle">
+    <fudgeFactor value="0.1"/>
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+  <gazebo reference="right_outer_knuckle">
+    <fudgeFactor value="0.1"/>
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+  <gazebo reference="left_inner_knuckle">
+    <fudgeFactor value="0.1"/>
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+  <gazebo reference="right_inner_knuckle">
+    <fudgeFactor value="0.1"/>
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+
   
   <link name="robotiq_arg2f_base_link">
     <inertial>
