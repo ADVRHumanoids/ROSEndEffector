@@ -226,7 +226,7 @@ public:
      */
     std::string getFirstActuatedJointInFinger (std::string linkName) const ;
     
-    std::map<std::pair<std::string, std::string>, std::string> getNonLinearMimicRelations(std::string xml);
+    std::map<std::string, std::pair<std::string, std::string>>  getNonLinearMimicRelations(std::string xml);
 
     
 private:

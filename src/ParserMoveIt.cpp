@@ -530,8 +530,10 @@ void ROSEE::ParserMoveIt::getRealDescendantLinkModelsRecursive (
 
 
 //parse urdf string directly to detect the nlFunVel tag inside the mimic joint
-std::map<std::pair<std::string, std::string>, std::string>  
+std::map<std::string, std::pair<std::string, std::string>>  
     ROSEE::ParserMoveIt::getNonLinearMimicRelations (std::string xml) {
+        
+        std::map<std::string, std::pair<std::string, std::string>>  relationMap;
         
         TiXmlDocument tiDoc;
         tiDoc.Parse(xml.c_str());
@@ -539,25 +541,22 @@ std::map<std::pair<std::string, std::string>, std::string>
                
         while (jointEl) {
             
+            std::string jointName = jointEl->Attribute("name");
             auto mimicEl = jointEl->FirstChildElement("mimic");
             if (mimicEl) {
                 auto nlAttr = mimicEl->Attribute("nlFunPos");
                 if (nlAttr) {
-                    std::cout << nlAttr;
+                    //std::cout << jointName << std::endl;
+                    //std::cout << nlAttr << std::endl;
+                    //std::cout << mimicEl->Attribute("joint") << std::endl;
+                    std::string fatherName = mimicEl->Attribute("joint");
+                    relationMap.insert ( std::make_pair( jointName,
+                                                         std::make_pair(fatherName, nlAttr)) );
                 }
             }
             
-            jointEl = jointEl->NextSiblingElement();
-        }
-                
-        //std::cout << firstEl->ToText() << "   aaaaa" << std::endl;
-        
-        
-        for (auto mimModel : robot_model->getMimicJointModels()) {
-            mimModel->getName();
-        }
+            jointEl = jointEl->NextSiblingElement("joint");
+        }                
     
-    
-        return std::map<std::pair<std::string, std::string>, std::string>();  
- 
+        return relationMap;
 }
