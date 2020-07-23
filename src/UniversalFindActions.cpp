@@ -45,6 +45,12 @@ int main ( int argc, char **argv ) {
         return -1;
     }
     
+    //IN DEVELopmente
+    parserMoveIt->getNonLinearMimicRelations(parser.getUrdfString());
+    
+    
+    ///////////
+    
     std::string folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/" + parserMoveIt->getHandName();
     
     ROSEE::FindActions actionsFinder (parserMoveIt);

@@ -442,7 +442,8 @@ void ROSEE::ParserMoveIt::lookForFingertips(bool verbose) {
 
 void ROSEE::ParserMoveIt::lookForActiveJoints() { 
     
-    for (auto joint : robot_model->getActiveJointModels() ) { //this function return not fixed not mimic but CAN return PASSIVE joints
+    for (auto joint : robot_model->getActiveJointModels() ) { 
+        // robot_model->getActiveJointModels() returns not fixed not mimic but CAN return PASSIVE joints
         if (! joint->isPassive() ) {
             activeJointNames.push_back(joint->getName());
             activeJointModels.push_back(joint);
@@ -525,4 +526,38 @@ void ROSEE::ParserMoveIt::getRealDescendantLinkModelsRecursive (
         getRealDescendantLinkModelsRecursive( cj->getChildLinkModel(), linksVect, cj, jointsVect );
     }
     
+}
+
+
+//parse urdf string directly to detect the nlFunVel tag inside the mimic joint
+std::map<std::pair<std::string, std::string>, std::string>  
+    ROSEE::ParserMoveIt::getNonLinearMimicRelations (std::string xml) {
+        
+        TiXmlDocument tiDoc;
+        tiDoc.Parse(xml.c_str());
+        TiXmlElement* jointEl = tiDoc.FirstChildElement("robot")->FirstChildElement("joint") ;
+               
+        while (jointEl) {
+            
+            auto mimicEl = jointEl->FirstChildElement("mimic");
+            if (mimicEl) {
+                auto nlAttr = mimicEl->Attribute("nlFunPos");
+                if (nlAttr) {
+                    std::cout << nlAttr;
+                }
+            }
+            
+            jointEl = jointEl->NextSiblingElement();
+        }
+                
+        //std::cout << firstEl->ToText() << "   aaaaa" << std::endl;
+        
+        
+        for (auto mimModel : robot_model->getMimicJointModels()) {
+            mimModel->getName();
+        }
+    
+    
+        return std::map<std::pair<std::string, std::string>, std::string>();  
+ 
 }

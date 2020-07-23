@@ -4,7 +4,7 @@
     
   	<param name="robot_description" textfile="$(find ros_end_effector)/configs/urdf/$(arg hand_name).urdf"/>
     
-    <node name="input_joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+    <node name="input_joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" output="screen">
       <param name="use_gui" value="true" />
     </node>
      

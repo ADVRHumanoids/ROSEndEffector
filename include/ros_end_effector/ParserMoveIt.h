@@ -24,6 +24,10 @@
 
 #include <moveit/robot_model_loader/robot_model_loader.h>
 
+//parse customized urdf with non linear mimic
+#include <tinyxml.h>
+
+
 namespace ROSEE {
 /**
  * @brief class to parse urdf and srdf with moveit classes and to give information about the model parsed
@@ -221,6 +225,9 @@ public:
      * @return std::string the name of the wanted joint
      */
     std::string getFirstActuatedJointInFinger (std::string linkName) const ;
+    
+    std::map<std::pair<std::string, std::string>, std::string> getNonLinearMimicRelations(std::string xml);
+
     
 private:
     

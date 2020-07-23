@@ -197,7 +197,7 @@
     <axis xyz="0 0 -1"/>
     <limit effort="10" lower="-0.1" upper="1.2" velocity="1"/>
     <dynamics damping="0.003" friction="0.003"/>
-    <mimic joint="SFB1__SFP1_1" multiplier="1.2" offset="0.2"/>
+    <mimic joint="SFB1__SFP1_1" multiplier="1.2" offset="0.2" nlFunPos="pow(x,2)"/>
   </joint>
   <gazebo>
     <plugin filename="libroboticsgroup_gazebo_mimic_joint_plugin.so" name="SFP1_1__SFP1_2_jointmimic_joint_plugin">

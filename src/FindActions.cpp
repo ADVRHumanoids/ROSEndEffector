@@ -271,6 +271,19 @@ std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchTight > ROSE
         std::stringstream logCollision;
         collision_result.clear();
         kinematic_state.setToRandomPositions();
+        
+        //setToRandomPositions(kinematic_state);
+        
+                       // std::cout << "before" << std::endl;
+                       // kinematic_state.printStatePositions();
+                        //std::vector<double> one_dof;
+                       // one_dof.push_back (1);
+                      // kinematic_state.setJointPositions("SFP1_1__SFP1_2", one_dof);
+                       // std::cout << "after" << std::endl;
+                       // kinematic_state.printStatePositions();
+
+
+
         setToDefaultPositionPassiveJoints(&kinematic_state);
         planning_scene.checkSelfCollision(collision_request, collision_result, kinematic_state, acm);
         
