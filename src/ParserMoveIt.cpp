@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <ROSEndEffector/ParserMoveIt.h>
+#include <ros_end_effector/ParserMoveIt.h>
 
 ROSEE::ParserMoveIt::ParserMoveIt() {
 
@@ -24,7 +24,7 @@ ROSEE::ParserMoveIt::~ParserMoveIt() {
 
 }
 
-bool ROSEE::ParserMoveIt::init ( std::string robot_description ) {
+bool ROSEE::ParserMoveIt::init ( std::string robot_description, bool verbose ) {
     
     if (robot_model != nullptr ) {
         std::cerr << "[PARSER::"  << __func__ << "]: init() already called by someone " << std::endl;;
@@ -48,7 +48,7 @@ bool ROSEE::ParserMoveIt::init ( std::string robot_description ) {
     
     handName = robot_model->getName();
     
-    lookForFingertips();
+    lookForFingertips(verbose);
     lookForActiveJoints();
     lookForPassiveJoints();
     lookForDescendants();
@@ -100,6 +100,38 @@ std::map<std::string, std::vector<std::string> > ROSEE::ParserMoveIt::getFingert
 
 std::map<std::string, std::vector<std::string> > ROSEE::ParserMoveIt::getJointsOfFingertipMap() const {
     return jointsOfFingertipMap;
+}
+
+std::map < std::string, std::string> ROSEE::ParserMoveIt::getFingerOfFingertipMap() const {
+    return fingerOfFingertipMap;
+}
+
+std::string ROSEE::ParserMoveIt::getFingerOfFingertip (std::string tipName) const {
+    
+    auto it = fingerOfFingertipMap.find(tipName);
+    
+    if (it != fingerOfFingertipMap.end() ) {
+        return (it->second);
+        
+    } else {
+        return "";
+    }
+}
+
+std::map < std::string, std::string> ROSEE::ParserMoveIt::getFingertipOfFingerMap() const {
+    return fingertipOfFingerMap;
+}
+
+std::string ROSEE::ParserMoveIt::getFingertipOfFinger (std::string fingerName) const {
+    
+    auto it = fingertipOfFingerMap.find(fingerName);
+    
+    if (it != fingertipOfFingerMap.end() ) {
+        return (it->second);
+        
+    } else {
+        return "";
+    }
 }
 
 robot_model::RobotModelPtr ROSEE::ParserMoveIt::getCopyModel() const {
@@ -351,7 +383,7 @@ std::string ROSEE::ParserMoveIt::getFirstActuatedJointInFinger (std::string link
 
 
 /*********************************** PRIVATE FUNCTIONS **********************************************************/
-void ROSEE::ParserMoveIt::lookForFingertips() {
+void ROSEE::ParserMoveIt::lookForFingertips(bool verbose) {
      for (auto it: robot_model->getJointModelGroups()) {
         
         std::string logGroupInfo;
@@ -396,10 +428,14 @@ void ROSEE::ParserMoveIt::lookForFingertips() {
                 
             } else {
                 fingertipNames.push_back(theTip);
+                fingerOfFingertipMap.insert( std::make_pair(theTip, it->getName()));
+                fingertipOfFingerMap.insert( std::make_pair(it->getName(), theTip));
             }
-
         }
-        std::cout << logGroupInfo << std::endl;
+        
+        if (verbose) {
+            std::cout << logGroupInfo << std::endl;
+        }
     }
     nFingers = fingertipNames.size();
 }

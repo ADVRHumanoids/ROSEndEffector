@@ -28,6 +28,75 @@
   <material name="qbhand/default">
     <color rgba="0.35 0.35 0.35 1.0"/>
   </material>
+
+  <gazebo reference="qbhand_base_link">
+    <fudgeFactor value="0.5"/>
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+  <gazebo reference="qbhand_palm_link">
+    <fudgeFactor value="0.5"/>
+    <material>Gazebo/Blue</material>
+  </gazebo>
+  <gazebo reference="qbhand_thumb_distal_link">
+    <fudgeFactor value="0.5"/>
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+  <gazebo reference="qbhand_thumb_proximal_link">
+    <fudgeFactor value="0.5"/>
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+  <gazebo reference="qbhand_thumb_knuckle_link">
+    <fudgeFactor value="0.5"/>
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+  <gazebo reference="qbhand_index_proximal_link">
+    <fudgeFactor value="0.5"/>
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+  <gazebo reference="qbhand_index_middle_link">
+    <fudgeFactor value="0.5"/>
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+  <gazebo reference="qbhand_index_distal_link">
+    <fudgeFactor value="0.5"/>
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+  <gazebo reference="qbhand_middle_proximal_link">
+    <fudgeFactor value="0.5"/>
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+  <gazebo reference="qbhand_middle_middle_link">
+    <fudgeFactor value="0.5"/>
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+  <gazebo reference="qbhand_middle_distal_link">
+    <fudgeFactor value="0.5"/>
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+  <gazebo reference="qbhand_ring_proximal_link">
+    <fudgeFactor value="0.5"/>
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+  <gazebo reference="qbhand_ring_middle_link">
+    <fudgeFactor value="0.5"/>
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+  <gazebo reference="qbhand_ring_distal_link">
+    <fudgeFactor value="0.5"/>
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+  <gazebo reference="qbhand_little_proximal_link">
+    <fudgeFactor value="0.5"/>
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+  <gazebo reference="qbhand_little_middle_link">
+    <fudgeFactor value="0.5"/>
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+  <gazebo reference="qbhand_little_distal_link">
+    <fudgeFactor value="0.5"/>
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
   
   <link name="world"/>
   <joint name="virtualFixed" type="fixed">

@@ -244,6 +244,7 @@ target_link_libraries(UniversalRosEndEffector
 
 target_link_libraries(UniversalFindActions
     ParserMoveIt
+    ROSEEParser
     FindActions
     Action
     ActionPrimitive

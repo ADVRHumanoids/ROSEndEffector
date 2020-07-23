@@ -1,0 +1,65 @@
+timed_random:
+# 0.000000 -----> SPREAD -----> 0.200000 + 0.000000 -----> PINCH -----> 0.200000
+  Type: 3
+  FingersInvolved: [index, pinky, ring, thumb]
+  JointsInvolvedCount:
+    left_hand_Finger_Spread: 2
+    left_hand_Index_Finger_Distal: 0
+    left_hand_Index_Finger_Proximal: 0
+    left_hand_Middle_Finger_Distal: 0
+    left_hand_Middle_Finger_Proximal: 0
+    left_hand_Pinky: 1
+    left_hand_Ring_Finger: 0
+    left_hand_Thumb_Flexion: 1
+    left_hand_Thumb_Opposition: 1
+  ActionsNamesOrdered: [SPREAD, PINCH]
+  ActionsTimeMargins:
+    SPREAD:
+      marginBefore: 0
+      marginAfter: 0.2
+    PINCH:
+      marginBefore: 0
+      marginAfter: 0.2
+  ActionsJointPos:
+    SPREAD:
+      left_hand_Finger_Spread: [0.29145]
+      left_hand_Index_Finger_Distal: [0]
+      left_hand_Index_Finger_Proximal: [0]
+      left_hand_Middle_Finger_Distal: [0]
+      left_hand_Middle_Finger_Proximal: [0]
+      left_hand_Pinky: [0]
+      left_hand_Ring_Finger: [0]
+      left_hand_Thumb_Flexion: [0]
+      left_hand_Thumb_Opposition: [0]
+    PINCH:
+      left_hand_Finger_Spread: [0.1072969385766657]
+      left_hand_Index_Finger_Distal: [0]
+      left_hand_Index_Finger_Proximal: [0]
+      left_hand_Middle_Finger_Distal: [0]
+      left_hand_Middle_Finger_Proximal: [0]
+      left_hand_Pinky: [0.8202896917251056]
+      left_hand_Ring_Finger: [0]
+      left_hand_Thumb_Flexion: [0.6851510112022982]
+      left_hand_Thumb_Opposition: [0.9533863933348563]
+  ActionsJointCount:
+    SPREAD:
+      left_hand_Finger_Spread: 1
+      left_hand_Index_Finger_Distal: 0
+      left_hand_Index_Finger_Proximal: 0
+      left_hand_Middle_Finger_Distal: 0
+      left_hand_Middle_Finger_Proximal: 0
+      left_hand_Pinky: 0
+      left_hand_Ring_Finger: 0
+      left_hand_Thumb_Flexion: 0
+      left_hand_Thumb_Opposition: 0
+    PINCH:
+      left_hand_Finger_Spread: 1
+      left_hand_Index_Finger_Distal: 0
+      left_hand_Index_Finger_Proximal: 0
+      left_hand_Middle_Finger_Distal: 0
+      left_hand_Middle_Finger_Proximal: 0
+      left_hand_Pinky: 1
+      left_hand_Ring_Finger: 0
+      left_hand_Thumb_Flexion: 1
+      left_hand_Thumb_Opposition: 1
+
