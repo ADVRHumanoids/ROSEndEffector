@@ -44,12 +44,9 @@ int main ( int argc, char **argv ) {
         ROS_ERROR_STREAM ("FAILED parserMoveit Init, stopping execution");
         return -1;
     }
-    
-    //IN DEVELopmente
-    parserMoveIt->getNonLinearMimicRelations(parser.getUrdfString());
-    
-    
-    ///////////
+    //xml is necessary... but parsermoveit has no access to it, so we must pass it here
+    parserMoveIt->parseNonLinearMimicRelations(parser.getUrdfString());
+
     
     std::string folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/" + parserMoveIt->getHandName();
     

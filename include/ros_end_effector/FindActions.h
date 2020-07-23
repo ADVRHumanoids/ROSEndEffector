@@ -12,6 +12,8 @@
 #include <ros_end_effector/ActionSingleJointMultipleTips.h>
 #include <ros_end_effector/ActionMultiplePinchTight.h>
 
+#include <muParser.h>
+
 
 #define N_EXP_COLLISION 5000 //5000 is ok
 #define N_EXP_DISTANCES 5000 //? is ok
@@ -80,6 +82,9 @@ public:
 private:
     
     std::shared_ptr < ROSEE::ParserMoveIt > parserMoveIt;
+    
+    //lets store this, we access at each setRandomPos
+    std::map<std::string, std::pair<std::string, std::string>> mimicNLRelMap;
     
     /**
      * @brief principal function which check for collisions with moveit functions when looking for tight pinches
@@ -290,6 +295,7 @@ private:
     std::pair < std::string, std::string > getFingertipsPair (std::pair <std::string, std::string> fingersPair) const;
 
 
+    void setToRandomPositions(robot_state::RobotState* kinematic_state);
 
 
 };

@@ -3,6 +3,8 @@
 ROSEE::FindActions::FindActions ( std::shared_ptr < ROSEE::ParserMoveIt > parserMoveIt ){
 
     this->parserMoveIt = parserMoveIt;
+    
+    this->mimicNLRelMap = parserMoveIt->getMimicNonLinearMap();
 }
 
 
@@ -250,7 +252,13 @@ std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchTight > ROSE
     
     planning_scene::PlanningScene planning_scene ( parserMoveIt->getRobotModel() );
     collision_detection::CollisionRequest collision_request;
-    collision_detection::CollisionResult collision_result;
+    collision_detection::CollisionResult collision_result;                       // std::cout << "before" << std::endl;
+                       // kinematic_state.printStatePositions();
+                        //std::vector<double> one_dof;
+                       // one_dof.push_back (1);
+                      // kinematic_state.setJointPositions("SFP1_1__SFP1_2", one_dof);
+                       // std::cout << "after" << std::endl;
+                       // kinematic_state.printStatePositions();
     collision_request.contacts = true;  //set to compute collisions
     collision_request.max_contacts = 1000;
     
@@ -270,17 +278,11 @@ std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchTight > ROSE
         
         std::stringstream logCollision;
         collision_result.clear();
-        kinematic_state.setToRandomPositions();
         
-        //setToRandomPositions(kinematic_state);
-        
-                       // std::cout << "before" << std::endl;
-                       // kinematic_state.printStatePositions();
-                        //std::vector<double> one_dof;
-                       // one_dof.push_back (1);
-                      // kinematic_state.setJointPositions("SFP1_1__SFP1_2", one_dof);
-                       // std::cout << "after" << std::endl;
-                       // kinematic_state.printStatePositions();
+        setToRandomPositions(&kinematic_state);
+        //kinematic_state.setToRandomPositions();
+          
+
 
 
 
@@ -341,7 +343,8 @@ void ROSEE::FindActions::checkDistances (std::map < std::pair <std::string, std:
         
     for (int i = 0; i < N_EXP_DISTANCES; i++){
         
-        kinematic_state.setToRandomPositions();
+        setToRandomPositions(&kinematic_state);
+        //kinematic_state.setToRandomPositions();
         setToDefaultPositionPassiveJoints(&kinematic_state);
 
         //for each pair remaining in notCollidingTips, check if a new min distance is found
@@ -479,7 +482,8 @@ void ROSEE::FindActions::checkWhichTipsCollideWithoutBounds (
     std::set < std::pair<std::string, std::string> > collidingFingers ;
     for (int i = 0; i < N_EXP_COLLISION; i++){
         collision_result.clear();
-        kinematic_state.setToRandomPositions();
+        setToRandomPositions(&kinematic_state);
+        //kinematic_state.setToRandomPositions();
         setToDefaultPositionPassiveJoints(&kinematic_state);
 
         planning_scene.checkSelfCollision(collision_request, collision_result, kinematic_state, acm);
@@ -529,7 +533,8 @@ std::map<std::set<std::string>, ROSEE::ActionMultiplePinchTight> ROSEE::FindActi
     for (int i = 0; i < N_EXP_COLLISION_MULTPINCH; i++){
         
         collision_result.clear();
-        kinematic_state.setToRandomPositions();
+        setToRandomPositions(&kinematic_state);
+        //kinematic_state.setToRandomPositions();
         setToDefaultPositionPassiveJoints(&kinematic_state);
 
         planning_scene.checkSelfCollision(collision_request, collision_result, kinematic_state, acm);
@@ -828,6 +833,53 @@ void ROSEE::FindActions::setToDefaultPositionPassiveJoints(moveit::core::RobotSt
         kinematic_state->setJointPositions(joint, &pos);
     }
     
+}
+
+void ROSEE::FindActions::setToRandomPositions(moveit::core::RobotState * kinematic_state) {
+
+    kinematic_state->setToRandomPositions();
+    
+    //when setting a joint pos (also a single one) moveit call also updateMimic using the standard linear params
+    //we cant take the single functions inside the setJoint pos of moveit, because are private, so we
+    //must always bear the updateMimic. So, here the joint pos of nonlinear mimic joint are ovewritten
+    //with the correct non linear function
+    
+    if (mimicNLRelMap.size() > 0 ) { //necessary if we have the for immediately after? faster?
+        
+        for (auto el : mimicNLRelMap) {
+            
+            double mimPos = 0;
+            
+            try {
+                //HACK single dof joint
+                double fatherPos = kinematic_state->getJointPositions(el.second.first)[0];
+                
+                mu::Parser p;
+                //we assume that there is always a x in the expression
+                p.DefineVar("x", &fatherPos);
+                p.SetExpr(el.second.second);
+                mimPos = p.Eval();
+            }
+
+            catch (mu::Parser::exception_type &e)
+            {
+                std::cout << e.GetMsg() << std::endl;
+                std::cout << "[FINDACTIONS " << __func__ << "] Parsing of non linear function for mimic joint "
+                 << "'" << el.first << "'. Please be sure to put characther 'x' as (unique) variable for father position" 
+                 << "in the expression. Have you used syntax valid for muparser?. Expression found: '" 
+                 << el.second.second << "'" << std::endl;
+                 
+                
+            }
+            
+            std::vector<double> one_dof ;
+            one_dof.push_back(mimPos);
+            kinematic_state->setJointPositions(el.first, one_dof);
+        }
+        
+    }
+    
+
 }
 
 std::pair <std::string, std::string> ROSEE::FindActions::getFingersPair (std::pair <std::string, std::string> tipsPair) const {

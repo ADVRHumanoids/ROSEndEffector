@@ -226,8 +226,17 @@ public:
      */
     std::string getFirstActuatedJointInFinger (std::string linkName) const ;
     
-    std::map<std::string, std::pair<std::string, std::string>>  getNonLinearMimicRelations(std::string xml);
-
+    /**
+     * @todo make docs
+     * @WARNING as convention, in the equation there must exist only the variable x, that is, the 
+     *     position of the father joint
+     */
+    void parseNonLinearMimicRelations(std::string xml);
+    
+    //TODO docs
+    std::pair<std::string, std::string> getMimicNonLinearRel(std::string mimicNLJointName) const;
+    std::map<std::string, std::pair<std::string, std::string>> getMimicNonLinearMap() const;
+    
     
 private:
     
@@ -260,6 +269,17 @@ private:
     /** @brief The map with as key the name of the fingertip (the last (not virtual) link of a finger)
      *  and as value the finger name (defined in the srdf) */
     std::map<std::string, std::string> fingertipOfFingerMap;
+    
+    /**
+     * @brief This map contain as key the name of the mimic joint which position follows a non linear
+     *   relationship with a father joint. As value there is a pair: first element is the name
+     *   of the father joint, second element is the non linear equation
+     *   
+     * @WARNING as convention, in the equation there must exist only the variable x, that is, the 
+     *     position of the father joint
+     */
+    std::map<std::string, std::pair<std::string, std::string>>  mimicNonLinearRelMap;
+
     
     /**
      * @brief This function explore the robot_model (which was built from urdf and srdf files), 
@@ -326,6 +346,9 @@ private:
      */
     void getRealDescendantLinkModelsRecursive ( const moveit::core::LinkModel* link,  std::vector< const moveit::core::LinkModel* > & linksVect,
                                                 const moveit::core::JointModel* joint,  std::vector< const moveit::core::JointModel* > & jointsVect ) const;
+    
+                                                
+
         
 
 

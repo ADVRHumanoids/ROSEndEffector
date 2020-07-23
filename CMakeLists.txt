@@ -17,6 +17,8 @@ find_package(catkin REQUIRED COMPONENTS srdfdom
                                                                                
 # find_package(matlogger2 REQUIRED)
 find_package(Eigen3 REQUIRED)
+find_package(muparser REQUIRED)
+find_package(yaml-cpp REQUIRED)
 
 ###################################
 ## catkin specific configuration ##
@@ -232,6 +234,7 @@ target_link_libraries(FindActions
     ActionPinchLoose
     ActionSingleJointMultipleTips
     ActionMultiplePinchTight
+    muparser
 )
 
 target_link_libraries(ParserMoveIt

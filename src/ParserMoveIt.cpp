@@ -30,7 +30,7 @@ bool ROSEE::ParserMoveIt::init ( std::string robot_description, bool verbose ) {
         std::cerr << "[PARSER::"  << __func__ << "]: init() already called by someone " << std::endl;;
         return false;
     }
-    // it is a ros param in the launch, take care that also sdrf is read 
+    // it is a ros param in the launch, take care that also sdrf is read by robot_mo
     // (param for srd is robot_description_semantic)
     this->robot_description = robot_description;
     
@@ -133,6 +133,25 @@ std::string ROSEE::ParserMoveIt::getFingertipOfFinger (std::string fingerName) c
         return "";
     }
 }
+
+std::pair<std::string, std::string> ROSEE::ParserMoveIt::getMimicNonLinearRel(std::string mimicNLJointName) const {
+    
+    std::pair<std::string, std::string> retPair;
+    
+    auto it = mimicNonLinearRelMap.find(mimicNLJointName);
+    
+    if (it != mimicNonLinearRelMap.end()) {
+        retPair = it->second;
+    }
+    return retPair;
+}
+
+std::map<std::string, std::pair<std::string, std::string>> ROSEE::ParserMoveIt::getMimicNonLinearMap() const {
+    
+    return mimicNonLinearRelMap;
+    
+}
+
 
 robot_model::RobotModelPtr ROSEE::ParserMoveIt::getCopyModel() const {
     robot_model_loader::RobotModelLoader robot_model_loader(robot_description); 
@@ -529,34 +548,33 @@ void ROSEE::ParserMoveIt::getRealDescendantLinkModelsRecursive (
 }
 
 
-//parse urdf string directly to detect the nlFunVel tag inside the mimic joint
-std::map<std::string, std::pair<std::string, std::string>>  
-    ROSEE::ParserMoveIt::getNonLinearMimicRelations (std::string xml) {
+void ROSEE::ParserMoveIt::parseNonLinearMimicRelations (std::string xml) {
         
-        std::map<std::string, std::pair<std::string, std::string>>  relationMap;
         
-        TiXmlDocument tiDoc;
-        tiDoc.Parse(xml.c_str());
-        TiXmlElement* jointEl = tiDoc.FirstChildElement("robot")->FirstChildElement("joint") ;
-               
-        while (jointEl) {
+    //we do not make urdf verification here, it is already done before by robot model loader of moveit,
+    //and also by Parser with parseUrdf
+    TiXmlDocument tiDoc;
+    tiDoc.Parse(xml.c_str());
+    //std::cout << robot_description << std::endl;
+    TiXmlElement* jointEl = tiDoc.FirstChildElement("robot")->FirstChildElement("joint") ;
             
-            std::string jointName = jointEl->Attribute("name");
-            auto mimicEl = jointEl->FirstChildElement("mimic");
-            if (mimicEl) {
-                auto nlAttr = mimicEl->Attribute("nlFunPos");
-                if (nlAttr) {
-                    //std::cout << jointName << std::endl;
-                    //std::cout << nlAttr << std::endl;
-                    //std::cout << mimicEl->Attribute("joint") << std::endl;
-                    std::string fatherName = mimicEl->Attribute("joint");
-                    relationMap.insert ( std::make_pair( jointName,
-                                                         std::make_pair(fatherName, nlAttr)) );
-                }
+    while (jointEl) {
+        
+        std::string jointName = jointEl->Attribute("name");
+        auto mimicEl = jointEl->FirstChildElement("mimic");
+        if (mimicEl) {
+            auto nlAttr = mimicEl->Attribute("nlFunPos");
+            if (nlAttr) {
+                //std::cout << jointName << std::endl;
+                //std::cout << nlAttr << std::endl;
+                //std::cout << mimicEl->Attribute("joint") << std::endl;
+                std::string fatherName = mimicEl->Attribute("joint");
+                mimicNonLinearRelMap.insert ( std::make_pair( jointName,
+                                                        std::make_pair(fatherName, nlAttr)) );
             }
-            
-            jointEl = jointEl->NextSiblingElement("joint");
-        }                
+        }
+        
+        jointEl = jointEl->NextSiblingElement("joint");
+    }                
     
-        return relationMap;
 }
