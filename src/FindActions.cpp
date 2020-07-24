@@ -872,6 +872,7 @@ void ROSEE::FindActions::setToRandomPositions(moveit::core::RobotState * kinemat
                 
             }
             
+            //HACK single dof joint
             std::vector<double> one_dof ;
             one_dof.push_back(mimPos);
             kinematic_state->setJointPositions(el.first, one_dof);
