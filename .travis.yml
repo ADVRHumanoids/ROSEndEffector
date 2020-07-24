@@ -51,7 +51,6 @@ script:
 - cmake .
 - make
 
-
 # going back to working directory
 - cd ../../
 
