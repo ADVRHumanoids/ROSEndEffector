@@ -50,6 +50,7 @@ script:
 - cd muparser
 - cmake .
 - make
+- cd ..
 
 # going back to working directory
 - cd ../../
