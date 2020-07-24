@@ -45,6 +45,13 @@ script:
 - sudo chmod -R 777 /opt/ros/kinetic
 - make install
 
+#install muparser
+- git clone https://github.com/beltoforion/muparser.git
+- cd muparser
+- cmake .
+- make
+
+
 # going back to working directory
 - cd ../../
 
