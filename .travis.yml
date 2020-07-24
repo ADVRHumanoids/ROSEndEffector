@@ -50,6 +50,8 @@ script:
 - cd muparser
 - cmake .
 - make
+- sudo make install
+- sudo ldconfig
 - cd ..
 
 # going back to working directory
