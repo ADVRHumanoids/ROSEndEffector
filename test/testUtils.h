@@ -1,7 +1,6 @@
 #ifndef TESTUTILS_H
 #define TESTUTILS_H
 
-
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/types.h>
@@ -9,7 +8,7 @@
 
 //for the function prepareROSForTests
 #include <ros/ros.h>
-#include <ROSEndEffector/Utils.h>
+#include <ros_end_effector/Utils.h>
 
 
 /** Utils funcion to create process to run roscore,
