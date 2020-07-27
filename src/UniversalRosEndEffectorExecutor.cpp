@@ -92,6 +92,7 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
 bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive() {
 
     // parse YAML for End-Effector cconfiguration
+    //TODO safe to remove this? remove and test it
     ROSEE::YamlWorker yamlWorker ;
     
     std::string folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/" + _ee->getName();
