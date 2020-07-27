@@ -95,6 +95,7 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive() {
     //TODO safe to remove this? remove and test it
     ROSEE::YamlWorker yamlWorker ;
     
+    //TODO take actions from custom folder... info taken from yaml conf file
     std::string folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/" + _ee->getName();
     std::string folderForActionsComposed = ROSEE::Utils::getPackagePath() + "/configs/actions/" + _ee->getName() + "/generics/";
 
