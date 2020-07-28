@@ -87,6 +87,7 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
 
     // this should be done by hal?
     init_robotState_sub();
+
 }
 
 bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive() {
@@ -140,8 +141,8 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive() {
     _graspParsed = mapActionHandler.getGeneric("grasp");
     
     // recap
-    ROS_INFO_STREAM ( "GRASP:" );
     if (_graspParsed != nullptr) {
+        ROS_INFO_STREAM ( "GRASP:" );
         _graspParsed->print();
     }
     
@@ -529,7 +530,7 @@ void ROSEE::UniversalRosEndEffectorExecutor::set_references() {
 void ROSEE::UniversalRosEndEffectorExecutor::timer_callback ( const ros::TimerEvent& timer_ev ) {
 
     //TODO check the order of these functions...
-    
+        
     _hal->sense();
 
     fill_publish_joint_states();
@@ -586,7 +587,7 @@ void ROSEE::UniversalRosEndEffectorExecutor::timer_callback ( const ros::TimerEv
             set_references(); 
                 
         } else {
-            ROS_INFO_STREAM ("Waiting time to execute action...");
+            ROS_INFO_STREAM ("Waiting time to execute timed action...");
         }
             
         
