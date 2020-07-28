@@ -94,6 +94,8 @@ Process::~Process()
  */
 int prepareROSForTests ( int argc, char **argv, std::string testName ) {
     
+
+    
     ros::init ( argc, argv, testName );
         
     /////////////////////////// I cant manage to make this working, to wait the roscore
@@ -118,6 +120,7 @@ int prepareROSForTests ( int argc, char **argv, std::string testName ) {
 
     ros::param::set("robot_description" , sUrdf.str());
     ros::param::set("robot_description_semantic" , sSrdf.str());
+    ros::param::set("robot_name", argv[1]);
     
     return 0;
 }

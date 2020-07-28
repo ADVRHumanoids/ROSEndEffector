@@ -32,9 +32,7 @@ struct ClbkHelper {
 
     void actionDoneClbk(const actionlib::SimpleClientGoalState& state,
                 const rosee_msg::ROSEECommandResultConstPtr& result) {
-        
-        ROS_ERROR_STREAM ("completed");
-        
+                
         completed = true;
         
     }
@@ -80,19 +78,28 @@ protected:
 
     virtual void SetUp() override {
         
+        if (! nh.hasParam("robot_name")) {
+            std::cout << "[TEST FAIL: robot name not set on server]" << std::endl;
+            return;
+        }
+        
+        std::string robot_name = "";
+        nh.getParam("robot_name", robot_name);
+        
         ROSEE::Parser p ( nh );
-        if (! p.init (  ROSEE::Utils::getPackagePath() + "/configs/test_ee.yaml" )) {
+        if (! p.init (  ROSEE::Utils::getPackagePath() + "/configs/" + robot_name + ".yaml" )) {
             
             std::cout << "[TEST parser FAIL: some config file missing]" << std::endl;
             return;
-            
         }
         
         ee = std::make_shared<ROSEE::EEInterface>(p);
         
-        folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/" + ee->getName();
-            
-
+        folderForActions = p.getActionPath();
+        if ( folderForActions.size() == 0 ){ //if no action path is set in the yaml file...
+            folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/" + ee->getName();
+        }
+    
     }
 
     virtual void TearDown() override {
@@ -154,7 +161,8 @@ TEST_F ( testSendAction, sendSimpleGeneric ) {
     std::string handNameArg = "hand_name:=" + ee->getName();
     roseeExecutor.reset(new ROSEE::TestUtils::Process({"roslaunch", "ros_end_effector", "test_rosee_startup.launch", handNameArg}));
 
-    sleep(1); // lets wait for test_rosee_startup to be ready
+    //TODO put a checkReady service instead of sleeping?
+    sleep(5); // lets wait for test_rosee_startup to be ready
     std::string topic_name_js;
 
     nh.param<std::string>("/rosee/joint_states_topic", topic_name_js, "");
@@ -236,15 +244,12 @@ int main ( int argc, char **argv ) {
     std::unique_ptr<ROSEE::TestUtils::Process> roscore;
     roscore.reset(new ROSEE::TestUtils::Process({"roscore", "-p", "11322"}));
     /****************************************************************************************************/
-
     
     if ( ROSEE::TestUtils::prepareROSForTests ( argc, argv, "testSendAction" ) != 0 ) {
         
-        std::cout << "[TEST ERROR] Prepare Funcion failed" << std::endl;
+        std::cout << "[TEST ERROR] Prepare Function failed" << std::endl;
         return -1;
     }
-
-    
     
     ::testing::InitGoogleTest ( &argc, argv );
     return RUN_ALL_TESTS();

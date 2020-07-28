@@ -354,15 +354,24 @@ if(CATKIN_ENABLE_TESTING)
     )
     
     #run each test with each hand
+#     foreach(hand ${handsForTests})
+#         foreach(testEx ${testsExecutable})
+#         
+#             add_test(
+#                 NAME ${testEx}_${hand}
+#                 COMMAND ${testEx} ${hand}
+#             )
+# 
+#         endforeach()    
+#     endforeach()
+    
     foreach(hand ${handsForTests})
-        foreach(testEx ${testsExecutable})
         
-            add_test(
-                NAME ${testEx}_${hand}
-                COMMAND ${testEx} ${hand}
-            )
-
-        endforeach()    
+        add_test(
+            NAME SendAction_test_${hand}
+            COMMAND SendAction_test ${hand}
+        )
+  
     endforeach()
                 
 endif()

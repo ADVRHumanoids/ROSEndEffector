@@ -104,6 +104,8 @@ private:
 
     std::vector<std::string> _all_joints;
     std::vector<std::string> _joints;
+    
+    std::string folderForActions;
 
     ros::Subscriber _sub_grasp, _sub_pinch, _sub_trigger, sub_finger_flextion, sub_tip_flextion;
 

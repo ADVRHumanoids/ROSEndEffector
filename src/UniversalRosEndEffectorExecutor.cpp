@@ -33,12 +33,18 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
     ROSEE::Parser p ( _nh );
     p.init (); //TBD check return
     p.printEndEffectorFingerJointsMap();
+    
 
     // retrieve the ee interface
     _ee = std::make_shared<ROSEE::EEInterface> ( p );
     ROS_INFO_STREAM ( "Fingers in EEInterface: " );
     for ( auto& f : _ee->getFingers() ) {
         ROS_INFO_STREAM ( f );
+    }
+    
+    folderForActions = p.getActionPath();
+    if ( folderForActions.size() == 0 ){ //if no action path is set in the yaml file...
+        folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/" + _ee->getName();
     }
     
     _all_joints =_ee->getActuatedJoints();
@@ -95,8 +101,7 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive() {
     // parse YAML for End-Effector cconfiguration
     ROSEE::YamlWorker yamlWorker ;
     
-    std::string folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/" + _ee->getName();
-    std::string folderForActionsComposed = ROSEE::Utils::getPackagePath() + "/configs/actions/" + _ee->getName() + "/generics/";
+    std::string folderForActionsComposed = folderForActions + "/generics/";
 
     // get all action in the handler
     mapActionHandler.parseAllActions(folderForActions);
