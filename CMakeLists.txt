@@ -339,7 +339,7 @@ if(CATKIN_ENABLE_TESTING)
                                                  ActionTrig
                                                  ActionComposed)
     endif()
-
+    
 endif()
 
 ## Add folders to be run by python nosetests
