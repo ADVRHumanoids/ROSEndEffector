@@ -96,12 +96,14 @@ int prepareROSForTests ( int argc, char **argv, std::string testName ) {
     
     ros::init ( argc, argv, testName );
         
+    /////////////////////////// I cant manage to make this working, to wait the roscore
     //ros::Time::init();
     //while (!ros::master::check()) //wait for roscore to be ready
     //{
     //    std::cout << "waiting for roscore..." << std::endl;
     //    ros::Duration(0.2).sleep();
     //}
+    ////////////////////////////////////////////////////////////////////////////////
     
     //fill ros param with file models, needed by moveit parserMoveIt
     std::string modelPathURDF = ROSEE::Utils::getPackagePath() + "configs/urdf/" + argv[1];
