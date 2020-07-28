@@ -90,7 +90,12 @@ protected:
         }
 
         void actionDoneClbk(const actionlib::SimpleClientGoalState& state,
-                    const rosee_msg::ROSEECommandResultConstPtr& result) { completed = true; }
+                    const rosee_msg::ROSEECommandResultConstPtr& result) { 
+            
+            completed = true; 
+            goalState = state.state_;
+            actionCompleted = result->completed_action;
+        }
 
         void actionFeedbackClbk(const rosee_msg::ROSEECommandFeedbackConstPtr& feedback) {
             
@@ -102,6 +107,9 @@ protected:
         sensor_msgs::JointState js;
         bool completed;
         double feedback_percentage;
+        rosee_msg::ROSEEActionControl actionCompleted;
+        actionlib::SimpleClientGoalState::StateEnum goalState; 
+        
             
     };
 
@@ -168,6 +176,13 @@ void testSendAction::sendAndTest( ROSEE::ActionGeneric simpleAction, double perc
 
         //the percentage must be exaclty 100 instead (apart double precisions errors, handled by the macro)
         EXPECT_DOUBLE_EQ (clbkHelper.feedback_percentage, 100); 
+        EXPECT_EQ (actionlib::SimpleClientGoalState::SUCCEEDED, clbkHelper.goalState);
+        
+        //test if the action completed is the same sent
+        EXPECT_DOUBLE_EQ (goal.goal_action.percentage, clbkHelper.actionCompleted.percentage);
+        EXPECT_EQ (goal.goal_action.action_name, clbkHelper.actionCompleted.action_name);
+        EXPECT_EQ (goal.goal_action.action_type, clbkHelper.actionCompleted.action_type);
+        EXPECT_EQ (goal.goal_action.actionPrimitive_type, clbkHelper.actionCompleted.actionPrimitive_type);
         
     }
 }
@@ -282,8 +297,6 @@ TEST_F ( testSendAction, sendSimpleGeneric3 ) {
     sendAndTest(simpleAction, 0.33);
     
 }
-
-
 
 } //namespace
 
