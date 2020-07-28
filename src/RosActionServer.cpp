@@ -16,11 +16,11 @@
 
 #include <ros_end_effector/RosActionServer.h>
 
-ROSEE::RosActionServer::RosActionServer (std::string rosActionName, ros::NodeHandle* nh) :
-    _actionServer(*nh, rosActionName, false) {
+ROSEE::RosActionServer::RosActionServer (std::string topicForAction, ros::NodeHandle* nh) :
+    _actionServer(*nh, topicForAction, false) {
     
     this->nh = nh;
-    this->rosActionName = rosActionName;
+    this->topicForAction = topicForAction;
     goalInExecution = false;
     newGoal = false;
     

@@ -375,7 +375,6 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_actionsInfo_services() {
         actInfo.action_name = primitiveContainers.first;
         actInfo.action_type = ROSEE::Action::Type::Primitive;
         actInfo.actionPrimitive_type = primitiveContainers.second.begin()->second->getPrimitiveType();
-        actInfo.ros_action_name = _nh.getNamespace() + "/" + "action_command";
         actInfo.seq = 0; //TODO check if necessary the seq in this msg
         //until now, there is not a primitive that does not have "something" to select
         // (eg pinch has 2 fing, trig one fing, singleJointMultipleTips 1 joint...). 
@@ -395,7 +394,6 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_actionsInfo_services() {
         actInfo.action_name = genericMap.first;
         actInfo.action_type = genericMap.second->getType();
         actInfo.actionPrimitive_type = ROSEE::ActionPrimitive::Type::None;
-        actInfo.ros_action_name = _nh.getNamespace() + "/" + "action_command";
         actInfo.seq = 0; //TODO check if necessary the seq in this msg
         //Generic action has always no thing to select UNTIL NOW
         actInfo.max_selectable = 0;
@@ -410,7 +408,6 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_actionsInfo_services() {
         actInfo.action_name = timedMap.first;
         actInfo.action_type = timedMap.second->getType();
         actInfo.actionPrimitive_type = ROSEE::ActionPrimitive::Type::None;
-        actInfo.ros_action_name = _nh.getNamespace() + "/" + "action_command";
         actInfo.seq = 0; //TODO check if necessary the seq in this msg
         actInfo.max_selectable = 0;
         // we use selectable items info to store in it the action that compose this timed
