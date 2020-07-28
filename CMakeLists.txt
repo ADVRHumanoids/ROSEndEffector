@@ -335,10 +335,19 @@ if(CATKIN_ENABLE_TESTING)
                                               ActionPrimitive
                                               ActionTrig
                                               ActionComposed
-                                              gtest)  
+                                              gtest)
+                                              
+    add_executable(SendAction_test test/test_send_action.cpp)
+    target_link_libraries(SendAction_test ${catkin_LIBRARIES}
+                                              Action
+                                              ActionGeneric
+                                              gtest
+                                              YamlWorker
+                                              ROSEEParser
+                                              ROSEEInterface)  
     
     list(APPEND testsExecutable 
-        EEInterface_test FindPinches_test FindTrigs_test ComposedAction_test
+        EEInterface_test FindPinches_test FindTrigs_test ComposedAction_test SendAction_test
     )
     list(APPEND handsForTests
          test_ee two_finger two_finger_mimic

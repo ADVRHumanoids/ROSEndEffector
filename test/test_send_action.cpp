@@ -22,7 +22,7 @@ struct ClbkHelper {
     ClbkHelper() : js(), completed(false) {};
     
     void jointStateClbk(const sensor_msgs::JointState::ConstPtr& msg) {
-    
+        
         js.name = msg->name;
         js.position = msg->position;
         js.velocity = msg->velocity;
@@ -33,12 +33,16 @@ struct ClbkHelper {
     void actionDoneClbk(const actionlib::SimpleClientGoalState& state,
                 const rosee_msg::ROSEECommandResultConstPtr& result) {
         
+        ROS_ERROR_STREAM ("completed");
+        
         completed = true;
         
     }
 
     void actionFeedbackClbk(const rosee_msg::ROSEECommandFeedbackConstPtr& feedback) {
         
+        feedback_percentage = feedback->completation_percentage;
+
         
     }
 
@@ -48,10 +52,20 @@ struct ClbkHelper {
     
     sensor_msgs::JointState js;
     bool completed;
+    double feedback_percentage;
 
         
-}
+};
 
+
+/**
+ * @brief This Tests are to check if actions are sent correctly. Check each TEST_F for better explanation
+ * 
+ * @warning @todo There are a lot of prints that seems to be not in the right order. Probably is because we use 
+ *   the ROS STREAM that effectively prints only when the spin is called...
+ *   BTW it is strange that the parser prints are printed at the end, and not while setup function is running (where they
+ *   should be because we init the parser there. This does not cause problems at the test.
+ */
 class testSendAction: public ::testing::Test {
 
     
@@ -66,18 +80,18 @@ protected:
 
     virtual void SetUp() override {
         
-        
-
         ROSEE::Parser p ( nh );
-        p.init (  ROSEE::Utils::getPackagePath() + "/configs/test_ee.yaml" );
+        if (! p.init (  ROSEE::Utils::getPackagePath() + "/configs/test_ee.yaml" )) {
+            
+            std::cout << "[TEST parser FAIL: some config file missing]" << std::endl;
+            return;
+            
+        }
         
         ee = std::make_shared<ROSEE::EEInterface>(p);
         
         folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/" + ee->getName();
-        
-
-
-
+            
 
     }
 
@@ -92,16 +106,26 @@ protected:
     ROSEE::EEInterface::Ptr ee;
     ros::Publisher sendActionPub;
     ros::Subscriber receiveRobStateSub;
-    sensor_msgs::JointState::ConstPtr& _msg;
     ROSEE::YamlWorker yamlWorker;
 
     
 };
 
-
+/**
+ * @brief This Test create a Generic Action and see if it is sent correctly.
+ *  - An ActionGeneric is created, where the actuated Joints are set to their upper limit
+ *  - The ROSEE main node (which receives action commands and output specific joint pos references) is launched
+ *       such that the action created is parsed by him
+ *  - The action is commanded.
+ * 
+ *  This test check that, when the ROSEE says the action is completed, the joints positions are effectively the ones
+ *   put in the actionGeneric created. So in someway it bypass ROSEE when checking directly the robot state.
+ */
 TEST_F ( testSendAction, sendSimpleGeneric ) {
     
+    
     ROSEE::JointPos jp;
+    ROSEE::JointsInvolvedCount jpc;
 
     //for now copy jp of another action 
     std::vector<std::string> actJoints = ee->getActuatedJoints();
@@ -110,6 +134,8 @@ TEST_F ( testSendAction, sendSimpleGeneric ) {
     
     for (int i = 0; i<actJoints.size(); i++) {
         
+        std::cout << actJoints[i] << std::endl;
+        
         int id = -1;
         ee->getInternalIdForJoint(actJoints.at(i), id);
         
@@ -117,24 +143,31 @@ TEST_F ( testSendAction, sendSimpleGeneric ) {
         std::vector<double> one_dof;
         one_dof.push_back ( ee->getUpperPositionLimits()[id] );
         jp.insert ( std::make_pair(actJoints.at(i), one_dof) );
-        
+        jpc.insert (std::make_pair(actJoints.at(i), 1));
         
     }
 
-    ROSEE::ActionGeneric simpleAction("testAllUpperLim", jp);
+    ROSEE::ActionGeneric simpleAction("testAllUpperLim", jp, jpc);
     //emit the yaml so roseeExecutor can find the action
     yamlWorker.createYamlFile( &simpleAction, folderForActions + "/generics/" );
     
-    
-    roseeExecutor.reset(new ROSEE::TestUtils::Process({"roslaunch", "ros_end_effector", "rosee_startup.launch", "hand_name:=test_ee"}));
+    std::string handNameArg = "hand_name:=" + ee->getName();
+    roseeExecutor.reset(new ROSEE::TestUtils::Process({"roslaunch", "ros_end_effector", "test_rosee_startup.launch", handNameArg}));
+
+    sleep(1); // lets wait for test_rosee_startup to be ready
     std::string topic_name_js;
-    nh.param<std::string>("/rosee/joint_states_topic", topic_name_js, "/ros_end_effector/joint_states");
+
+    nh.param<std::string>("/rosee/joint_states_topic", topic_name_js, "");
+    
+    ASSERT_TRUE ( topic_name_js.size() > 0);
     
     receiveRobStateSub = nh.subscribe (topic_name_js, 1, &ClbkHelper::jointStateClbk, &clbkHelper);
     
     std::shared_ptr <actionlib::SimpleActionClient <rosee_msg::ROSEECommandAction> > action_client = 
         std::make_shared <actionlib::SimpleActionClient <rosee_msg::ROSEECommandAction>>
-        (nh, "/action_command", false); //TODO check this action command
+        (nh, "/ros_end_effector/action_command", true); //TODO check this action command
+
+    action_client->waitForServer();
     
     rosee_msg::ROSEECommandGoal goal;
     goal.goal_action.seq = 0 ;
@@ -142,7 +175,7 @@ TEST_F ( testSendAction, sendSimpleGeneric ) {
     goal.goal_action.percentage = 1;
     goal.goal_action.action_name = "testAllUpperLim";
     goal.goal_action.action_type = ROSEE::Action::Type::Generic ;
-    goal.goal_action.actionPrimitive_type = ROSEE::ActionPrimitive::None ; //because it is not a primitive
+    goal.goal_action.actionPrimitive_type = ROSEE::ActionPrimitive::Type::None ; //because it is not a primitive
     
     action_client->sendGoal (goal, boost::bind(&ClbkHelper::actionDoneClbk, &clbkHelper, _1, _2),
         boost::bind(&ClbkHelper::actionActiveClbk, &clbkHelper), boost::bind(&ClbkHelper::actionFeedbackClbk, &clbkHelper, _1)) ;
@@ -170,13 +203,12 @@ TEST_F ( testSendAction, sendSimpleGeneric ) {
         double wantedPos = findJoint->second.at(0);
         double realPos = clbkHelper.js.position[i];
         
-        EXPECT_DOUBLE_EQ (wantedPos, realPos);
-        
+        EXPECT_NEAR (wantedPos, realPos, 0.02);  //norm of the accepted error in roseeExecutor is <0.01
+
+        //the percentage must be exaclty 100 instead (apart double precisions errors, handled by the macro)
+        EXPECT_DOUBLE_EQ (clbkHelper.feedback_percentage, 100); 
         
     }
-
-    
-    
     
 }
 
@@ -192,16 +224,19 @@ int main ( int argc, char **argv ) {
         return -1;
     }
     
-    /* Run tests on an isolated roscore */
+    /******************* Run tests on an isolated roscore ********************************************************/
+    /* COMMENT ALL THIS block if you want to use roscore command by hand (useful for debugging the test) */
     if(setenv("ROS_MASTER_URI", "http://localhost:11322", 1) == -1)
     {
-        perror("setenv");
-        return 1;
+       perror("setenv");
+       return 1;
     }
 
     //run roscore
     std::unique_ptr<ROSEE::TestUtils::Process> roscore;
     roscore.reset(new ROSEE::TestUtils::Process({"roscore", "-p", "11322"}));
+    /****************************************************************************************************/
+
     
     if ( ROSEE::TestUtils::prepareROSForTests ( argc, argv, "testSendAction" ) != 0 ) {
         
