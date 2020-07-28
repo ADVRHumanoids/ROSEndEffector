@@ -16,45 +16,6 @@
 
 
 namespace {
-    
-struct ClbkHelper {
-    
-    ClbkHelper() : js(), completed(false) {};
-    
-    void jointStateClbk(const sensor_msgs::JointState::ConstPtr& msg) {
-        
-        js.name = msg->name;
-        js.position = msg->position;
-        js.velocity = msg->velocity;
-        js.effort = msg->effort;
-    
-    }
-
-    void actionDoneClbk(const actionlib::SimpleClientGoalState& state,
-                const rosee_msg::ROSEECommandResultConstPtr& result) {
-                
-        completed = true;
-        
-    }
-
-    void actionFeedbackClbk(const rosee_msg::ROSEECommandFeedbackConstPtr& feedback) {
-        
-        feedback_percentage = feedback->completation_percentage;
-
-        
-    }
-
-    void actionActiveClbk() {
-        completed = false;
-    }
-    
-    sensor_msgs::JointState js;
-    bool completed;
-    double feedback_percentage;
-
-        
-};
-
 
 /**
  * @brief This Tests are to check if actions are sent correctly. Check each TEST_F for better explanation
@@ -105,8 +66,8 @@ protected:
     virtual void TearDown() override {
     }
     
-
-    ClbkHelper clbkHelper;
+    void sendAndTest( ROSEE::ActionGeneric simpleAction, double percentageWanted = 1.0);
+    
     ros::NodeHandle nh;
     std::string folderForActions;
     std::unique_ptr<ROSEE::TestUtils::Process> roseeExecutor;
@@ -114,49 +75,41 @@ protected:
     ros::Publisher sendActionPub;
     ros::Subscriber receiveRobStateSub;
     ROSEE::YamlWorker yamlWorker;
+    
+    struct ClbkHelper {
+    
+        ClbkHelper() : js(), completed(false) {};
+    
+        void jointStateClbk(const sensor_msgs::JointState::ConstPtr& msg) {
+            
+            js.name = msg->name;
+            js.position = msg->position;
+            js.velocity = msg->velocity;
+            js.effort = msg->effort;
+        
+        }
 
+        void actionDoneClbk(const actionlib::SimpleClientGoalState& state,
+                    const rosee_msg::ROSEECommandResultConstPtr& result) { completed = true; }
+
+        void actionFeedbackClbk(const rosee_msg::ROSEECommandFeedbackConstPtr& feedback) {
+            
+            feedback_percentage = feedback->completation_percentage;   
+        }
+
+        void actionActiveClbk() { completed = false; }
+        
+        sensor_msgs::JointState js;
+        bool completed;
+        double feedback_percentage;
+            
+    };
+
+    ClbkHelper clbkHelper;
     
 };
 
-/**
- * @brief This Test create a Generic Action and see if it is sent correctly.
- *  - An ActionGeneric is created, where the actuated Joints are set to their upper limit
- *  - The ROSEE main node (which receives action commands and output specific joint pos references) is launched
- *       such that the action created is parsed by him
- *  - The action is commanded.
- * 
- *  This test check that, when the ROSEE says the action is completed, the joints positions are effectively the ones
- *   put in the actionGeneric created. So in someway it bypass ROSEE when checking directly the robot state.
- */
-TEST_F ( testSendAction, sendSimpleGeneric ) {
-    
-    
-    ROSEE::JointPos jp;
-    ROSEE::JointsInvolvedCount jpc;
-
-    //for now copy jp of another action 
-    std::vector<std::string> actJoints = ee->getActuatedJoints();
-    
-    ASSERT_FALSE (actJoints.empty());
-    
-    for (int i = 0; i<actJoints.size(); i++) {
-        
-        std::cout << actJoints[i] << std::endl;
-        
-        int id = -1;
-        ee->getInternalIdForJoint(actJoints.at(i), id);
-        
-        //create an action where all joints move toward their upper limit
-        std::vector<double> one_dof;
-        one_dof.push_back ( ee->getUpperPositionLimits()[id] );
-        jp.insert ( std::make_pair(actJoints.at(i), one_dof) );
-        jpc.insert (std::make_pair(actJoints.at(i), 1));
-        
-    }
-
-    ROSEE::ActionGeneric simpleAction("testAllUpperLim", jp, jpc);
-    //emit the yaml so roseeExecutor can find the action
-    yamlWorker.createYamlFile( &simpleAction, folderForActions + "/generics/" );
+void testSendAction::sendAndTest( ROSEE::ActionGeneric simpleAction, double percentageWanted) {
     
     std::string handNameArg = "hand_name:=" + ee->getName();
     roseeExecutor.reset(new ROSEE::TestUtils::Process({"roslaunch", "ros_end_effector", "test_rosee_startup.launch", handNameArg}));
@@ -180,7 +133,7 @@ TEST_F ( testSendAction, sendSimpleGeneric ) {
     rosee_msg::ROSEECommandGoal goal;
     goal.goal_action.seq = 0 ;
     goal.goal_action.stamp = ros::Time::now();
-    goal.goal_action.percentage = 1;
+    goal.goal_action.percentage = percentageWanted;
     goal.goal_action.action_name = "testAllUpperLim";
     goal.goal_action.action_type = ROSEE::Action::Type::Generic ;
     goal.goal_action.actionPrimitive_type = ROSEE::ActionPrimitive::Type::None ; //because it is not a primitive
@@ -208,7 +161,7 @@ TEST_F ( testSendAction, sendSimpleGeneric ) {
             continue; //this is not an error, in clbkHelper we have joint pos of all joints, not only actuated
         }
         
-        double wantedPos = findJoint->second.at(0);
+        double wantedPos = (findJoint->second.at(0))*percentageWanted;
         double realPos = clbkHelper.js.position[i];
         
         EXPECT_NEAR (wantedPos, realPos, 0.02);  //norm of the accepted error in roseeExecutor is <0.01
@@ -217,6 +170,116 @@ TEST_F ( testSendAction, sendSimpleGeneric ) {
         EXPECT_DOUBLE_EQ (clbkHelper.feedback_percentage, 100); 
         
     }
+}
+
+/**
+ * @brief These Tests create a Generic Action and see if it is sent correctly.
+ *  1 - An ActionGeneric is created, where the actuated Joints are set to their upper limit
+ * 
+ *  2 - The sendAndTest function is called:
+ * 
+ *    - The ROSEE main node (which receives action commands and output specific joint pos references) is launched
+ *       such that the action created is parsed by him
+ *    - The action is commanded.
+ * 
+ * 
+ * 
+ *  These Tests check that, when the ROSEE says the action is completed, the joints positions are effectively the ones
+ *     put in the actionGeneric created. So in someway it bypass ROSEE when checking directly the robot state.
+ */
+TEST_F ( testSendAction, sendSimpleGeneric ) {
+    
+    
+    ROSEE::JointPos jp;
+    ROSEE::JointsInvolvedCount jpc;
+
+    //for now copy jp of another action 
+    std::vector<std::string> actJoints = ee->getActuatedJoints();
+    
+    ASSERT_FALSE (actJoints.empty());
+    
+    for (int i = 0; i<actJoints.size(); i++) {
+                
+        int id = -1;
+        ee->getInternalIdForJoint(actJoints.at(i), id);
+        
+        //create an action where all joints move toward their upper limit
+        std::vector<double> one_dof;
+        one_dof.push_back ( ee->getUpperPositionLimits()[id] );
+        jp.insert ( std::make_pair(actJoints.at(i), one_dof) );
+        jpc.insert (std::make_pair(actJoints.at(i), 1));
+        
+    }
+
+    ROSEE::ActionGeneric simpleAction("testAllUpperLim", jp, jpc);
+    //emit the yaml so roseeExecutor can find the action
+    yamlWorker.createYamlFile( &simpleAction, folderForActions + "/generics/" );
+    
+    sendAndTest(simpleAction);
+    
+}
+
+TEST_F ( testSendAction, sendSimpleGeneric2 ) {
+    
+    
+    ROSEE::JointPos jp;
+    ROSEE::JointsInvolvedCount jpc;
+
+    //for now copy jp of another action 
+    std::vector<std::string> actJoints = ee->getActuatedJoints();
+    
+    ASSERT_FALSE (actJoints.empty());
+    
+    for (int i = 0; i<actJoints.size(); i++) {
+                
+        int id = -1;
+        ee->getInternalIdForJoint(actJoints.at(i), id);
+        
+        //create an action where all joints move toward their upper limit
+        std::vector<double> one_dof;
+        one_dof.push_back ( ee->getLowerPositionLimits()[id] );
+        jp.insert ( std::make_pair(actJoints.at(i), one_dof) );
+        jpc.insert (std::make_pair(actJoints.at(i), 1));
+        
+    }
+
+    ROSEE::ActionGeneric simpleAction("testAllUpperLim", jp, jpc);
+    //emit the yaml so roseeExecutor can find the action
+    yamlWorker.createYamlFile( &simpleAction, folderForActions + "/generics/" );
+    
+    sendAndTest(simpleAction);
+    
+}
+
+TEST_F ( testSendAction, sendSimpleGeneric3 ) {
+    
+    
+    ROSEE::JointPos jp;
+    ROSEE::JointsInvolvedCount jpc;
+
+    //for now copy jp of another action 
+    std::vector<std::string> actJoints = ee->getActuatedJoints();
+    
+    ASSERT_FALSE (actJoints.empty());
+    
+    for (int i = 0; i<actJoints.size(); i++) {
+                
+        int id = -1;
+        ee->getInternalIdForJoint(actJoints.at(i), id);
+        
+        //create an action where all joints move toward their upper limit
+        std::vector<double> one_dof;
+        one_dof.push_back ( ee->getLowerPositionLimits()[id]*0.15 + 0.1 );
+        jp.insert ( std::make_pair(actJoints.at(i), one_dof) );
+        jpc.insert (std::make_pair(actJoints.at(i), 1));
+        
+    }
+
+    ROSEE::ActionGeneric simpleAction("testAllUpperLim", jp, jpc);
+    //emit the yaml so roseeExecutor can find the action
+    yamlWorker.createYamlFile( &simpleAction, folderForActions + "/generics/" );
+    
+    sendAndTest(simpleAction, 0.33);
     
 }
 
@@ -234,6 +297,7 @@ int main ( int argc, char **argv ) {
     
     /******************* Run tests on an isolated roscore ********************************************************/
     /* COMMENT ALL THIS block if you want to use roscore command by hand (useful for debugging the test) */
+    //TODO I do not really understand why everything fails if I put this block at the beginning of prepareROSForTests function
     if(setenv("ROS_MASTER_URI", "http://localhost:11322", 1) == -1)
     {
        perror("setenv");
