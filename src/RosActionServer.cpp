@@ -53,10 +53,13 @@ rosee_msg::ROSEEActionControl ROSEE::RosActionServer::getGoal() {
 
 void ROSEE::RosActionServer::goalReceivedCallback() {
     
-    ROS_INFO_STREAM ("ROSACTION SERVER received goal");
+    //ROS_INFO_STREAM (goal_action.
     goalInExecution = true;
     newGoal = true;
     this->actionControlMsg = _actionServer.acceptNewGoal()->goal_action;
+    ROS_INFO_STREAM ("ROSACTION SERVER received goal: '" << this->actionControlMsg.action_name  << "'");
+
+    
 }
 
 void ROSEE::RosActionServer::preemptReceivedCallback() {
