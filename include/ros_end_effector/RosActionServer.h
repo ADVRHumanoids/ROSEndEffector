@@ -30,7 +30,7 @@ namespace ROSEE {
 class RosActionServer {
     
 public:
-    RosActionServer(std::string rosActionName, ros::NodeHandle *nh);
+    RosActionServer(std::string topicForAction, ros::NodeHandle *nh);
     ~RosActionServer() {};
     
     rosee_msg::ROSEEActionControl getGoal() ;
@@ -53,7 +53,7 @@ public:
     
 protected:
     ros::NodeHandle* nh;
-    std::string rosActionName;
+    std::string topicForAction;
     actionlib::SimpleActionServer <rosee_msg::ROSEECommandAction> _actionServer;
     rosee_msg::ROSEEActionControl actionControlMsg;
     bool goalInExecution;
