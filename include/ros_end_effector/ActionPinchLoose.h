@@ -45,6 +45,8 @@ class ActionPinchLoose : public ActionPinchGeneric
     
 public:
     
+    typedef std::map < std::pair<std::string, std::string>, ActionPinchLoose > Map;
+    
     /**
      * @brief A pair to "link" the JointPos with the optional info 'distance' 
      */
