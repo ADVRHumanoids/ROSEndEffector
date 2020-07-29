@@ -32,6 +32,8 @@ class ActionSingleJointMultipleTips : public ActionPrimitive {
     
 public:
     
+    typedef std::map < std::string, ActionSingleJointMultipleTips > Map;
+    
     ActionSingleJointMultipleTips();
 
     /**

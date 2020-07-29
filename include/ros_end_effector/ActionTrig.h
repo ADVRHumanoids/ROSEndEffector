@@ -66,6 +66,8 @@ class ActionTrig : public ActionPrimitive
 
 public:
     
+    typedef std::map < std::string, ActionTrig > Map;
+
     ActionTrig (std::string actionName, ActionPrimitive::Type);
     ActionTrig (std::string actionName, ActionPrimitive::Type, std::string tip, JointPos);
     
