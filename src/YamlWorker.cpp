@@ -116,7 +116,7 @@ std::map<std::set<std::string>, ROSEE::ActionPrimitive::Ptr> ROSEE::YamlWorker::
         
         ptr->fillFromYaml ( it4Action );
         
-        parsedMap.insert ( std::make_pair ( ptr->getKeyForYamlMap(), ptr) );
+        parsedMap.insert ( std::make_pair ( ptr->getKeyElements(), ptr) );
     }
         
     return parsedMap;
@@ -189,7 +189,7 @@ std::map < std::set < std::string>, ROSEE::ActionPrimitive::Ptr > ROSEE::YamlWor
         
         ptr->fillFromYaml ( it4Action );
         
-        parsedMap.insert ( std::make_pair ( ptr->getKeyForYamlMap(), ptr) );
+        parsedMap.insert ( std::make_pair ( ptr->getKeyElements(), ptr) );
     }
         
     return parsedMap;
