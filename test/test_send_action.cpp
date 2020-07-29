@@ -65,7 +65,7 @@ protected:
 
         /** Find all the actions  **/
         //note: test on the findActions part is done in other test files
-        ROSEE::ParserMoveIt::Ptr parserMoveIt = std::make_shared<ROSEE::ParserMoveIt>();
+        parserMoveIt = std::make_shared<ROSEE::ParserMoveIt>();
         if (! parserMoveIt->init ("robot_description") ) {
 
             std::cout << "[TEST SEND ACTIONS] FAILED parserMoveit Init, stopping execution"  << std::endl; 
@@ -116,6 +116,7 @@ protected:
     ros::Subscriber receiveRobStateSub;
     ROSEE::YamlWorker yamlWorker;
     std::shared_ptr <actionlib::SimpleActionClient <rosee_msg::ROSEECommandAction> > action_client;
+    ROSEE::ParserMoveIt::Ptr parserMoveIt;
     
     std::map <std::string, ROSEE::ActionTrig> trigMap;
     
@@ -185,7 +186,7 @@ void testSendAction::setMainNode() {
         (nh, "/ros_end_effector/action_command", true); //TODO check this action command
 
     action_client->waitForServer();
-    
+        
 }
     
 void testSendAction::sendAction( ROSEE::Action::Ptr action, double percentageWanted) {
@@ -196,19 +197,19 @@ void testSendAction::sendAction( ROSEE::Action::Ptr action, double percentageWan
     goal.goal_action.percentage = percentageWanted;
     goal.goal_action.action_name = action->getName();
     goal.goal_action.action_type = action->getType() ;
-    
+
     if (action->getType() == ROSEE::Action::Type::Primitive) {
         ROSEE::ActionPrimitive::Ptr primitivePtr = std::static_pointer_cast<ROSEE::ActionPrimitive>(action);
         goal.goal_action.actionPrimitive_type = primitivePtr->getPrimitiveType() ;
-        goal.goal_action.selectable_items = 
-            std::vector<std::string>(primitivePtr->getKeyElements().begin(), primitivePtr->getKeyElements().end() );
 
+        for (auto it : primitivePtr->getKeyElements()) {
+            goal.goal_action.selectable_items.push_back(it);
+        }
     }
-    
+
     action_client->sendGoal (goal, boost::bind(&ClbkHelper::actionDoneClbk, &clbkHelper, _1, _2),
         boost::bind(&ClbkHelper::actionActiveClbk, &clbkHelper), boost::bind(&ClbkHelper::actionFeedbackClbk, &clbkHelper, _1)) ;
         
-    
 }
 
 void testSendAction::testAction(ROSEE::Action::Ptr actionSent, double percentageWanted) {
@@ -261,18 +262,15 @@ void testSendAction::sendAndTest(ROSEE::Action::Ptr action, double percentageWan
 
 /**
  * @brief These Tests create a Generic Action and see if it is sent correctly.
- *  1 - An ActionGeneric is created, where the actuated Joints are set to their upper limit
+ *  1 - An ActionGeneric is created, where the actuated Joints are set
  * 
  *  2 - The sendAndTest function is called:
  * 
- *    - The ROSEE main node (which receives action commands and output specific joint pos references) is launched
+ *    -[setMainNode] The ROSEE main node (which receives action commands and output specific joint pos references) is launched
  *       such that the action created is parsed by him
- *    - The action is commanded.
- * 
- * 
- * 
- *  These Tests check that, when the ROSEE says the action is completed, the joints positions are effectively the ones
- *     put in the actionGeneric created. So in someway it bypass ROSEE when checking directly the robot state.
+ *    -[sendAction] The action is commanded.
+ *    -[testAction] After rosee says the action is completed, some checks are done to see if the final state is the same as the 
+ *      action created
  */
 TEST_F ( testSendAction, sendSimpleGeneric ) {
     
@@ -312,7 +310,7 @@ TEST_F ( testSendAction, sendSimpleGeneric2 ) {
     ROSEE::JointPos jp;
     ROSEE::JointsInvolvedCount jpc;
 
-    //for now copy jp of another action 
+   // for now copy jp of another action 
     std::vector<std::string> actJoints = ee->getActuatedJoints();
     
     ASSERT_FALSE (actJoints.empty());
@@ -337,6 +335,7 @@ TEST_F ( testSendAction, sendSimpleGeneric2 ) {
     sendAndTest(action);
     
 }
+
 
 TEST_F ( testSendAction, sendSimpleGeneric3 ) {
     
@@ -370,21 +369,42 @@ TEST_F ( testSendAction, sendSimpleGeneric3 ) {
     
 }
 
-// TEST_F ( testSendAction, sendTrig ) {
-// 
-//     if (trigMap.size()>0){
-//         std::vector<std::string> keys = ROSEE::Utils::extract_keys(trigMap);
-//         lets pick a random trig
-//         int i = rand() % keys.size();
-//         std::cout << i << std::endl;
-//         ROSEE::Action::Ptr action = std::make_shared<ROSEE::ActionTrig>(trigMap.at(keys.at(i)));
-//         emit the yaml so roseeExecutor can find the action
-//         yamlWorker.createYamlFile( action.get(), folderForActions + "/generics/" );
-// 
-//         sendAndTest(action, 0.33);
-//     }
-//     
-// }
+/**
+ * @brief This test take a random trig (among the one found for the ee loaded) and command it
+ * The check is done after the action completion as before (in the sendAndTest function), 
+ * but here we also check that the final pose of the moved finger finds all the actuated joint of that finger
+ * in the bigger bound (as it should be by definition of trig)
+ */
+TEST_F ( testSendAction, sendTrig ) {
+
+    if (trigMap.size()>0){
+        std::vector<std::string> keys = ROSEE::Utils::extract_keys(trigMap);
+        //lets pick a random trig
+        srand((unsigned int)time(NULL));
+        int i = rand() % keys.size();
+        ROSEE::Action::Ptr action = std::make_shared<ROSEE::ActionTrig>(trigMap.at(keys.at(i)));
+
+        sendAndTest(action);
+        
+        //other than "default" check done in sendAndTest, we check that effectively the trig joints are gone
+        //toward their limit (from definition of trig)
+        std::vector<std::string> actJointsInvolved;
+        ee->getActuatedJointsInFinger(keys.at(i), actJointsInvolved);
+        
+        for (auto jointName : actJointsInvolved) {
+            //at O single dof joint
+            double bigBound = parserMoveIt->getBiggerBoundFromZero(jointName).at(0);
+            
+            for (int k = 0; k<clbkHelper.js.name.size(); k++) {
+                
+                if (clbkHelper.js.name[i].compare(jointName) == 0 ) {
+                    EXPECT_NEAR(bigBound, clbkHelper.js.position[i], 0.02);
+                    break;
+                } 
+            }
+        }
+    }
+}
 
 } //namespace
 
