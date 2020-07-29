@@ -33,7 +33,7 @@ class testSendAction: public ::testing::Test {
 
 protected:
 
-    testSendAction() {
+    testSendAction()  {
     }
 
     virtual ~testSendAction() {
@@ -63,44 +63,20 @@ protected:
             folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/" + ee->getName();
         }
 
-        /** Find all the actions  **/
+        /** Find all the actions **/
         //note: test on the findActions part is done in other test files
         parserMoveIt = std::make_shared<ROSEE::ParserMoveIt>();
-        if (! parserMoveIt->init ("robot_description") ) {
+        if (! parserMoveIt->init ("robot_description", false) ) {
 
             std::cout << "[TEST SEND ACTIONS] FAILED parserMoveit Init, stopping execution"  << std::endl; 
             return;
         }
                 
-        ROSEE::FindActions actionsFinder (parserMoveIt);
+        actionsFinder = std::make_shared<ROSEE::FindActions>(parserMoveIt);
 
-        trigMap =  actionsFinder.findTrig (ROSEE::ActionPrimitive::Type::Trig, folderForActions + "/primitives/") ;
-                                                                                    
-        // NOT useful for now in this test
-                                     
-//         auto maps = actionsFinder.findPinch(folderForActions + "/primitives/");
-//         std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchTight > pinchTightMap = maps.first;
-//         std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchLoose > pinchLooseMap = maps.second;
-// 
-//         std::map <std::string, ROSEE::ActionTrig> tipFlexMap = actionsFinder.findTrig (ROSEE::ActionPrimitive::Type::TipFlex, 
-//                                                                                     folderForActions + "/primitives/");
-// 
-//         std::map <std::string, ROSEE::ActionTrig> fingFlexMap = actionsFinder.findTrig (ROSEE::ActionPrimitive::Type::FingFlex, 
-//                                                                                         folderForActions + "/primitives/");
-//         unsigned int nFinger = 3;
-//         std::map < std::string, ROSEE::ActionSingleJointMultipleTips> singleJointMultipleTipsMap = 
-//             actionsFinder.findSingleJointMultipleTips (nFinger, folderForActions + "/primitives/") ;
-//         
-//         nFinger = 2;
-//         std::map < std::string, ROSEE::ActionSingleJointMultipleTips> singleJointMultipleTipsMap2 = 
-//             actionsFinder.findSingleJointMultipleTips (nFinger, folderForActions + "/primitives/") ;
-//             
-//         nFinger = 5;
-//         std::map < std::string, ROSEE::ActionSingleJointMultipleTips> singleJointMultipleTipsMap5 = 
-//             actionsFinder.findSingleJointMultipleTips (nFinger, folderForActions + "/primitives/") ;
-//         
-//         auto mulPinch = actionsFinder.findMultiplePinch(3, folderForActions + "/primitives/" );
+
         
+                                                                                      
         }
 
     virtual void TearDown() override {
@@ -117,8 +93,7 @@ protected:
     ROSEE::YamlWorker yamlWorker;
     std::shared_ptr <actionlib::SimpleActionClient <rosee_msg::ROSEECommandAction> > action_client;
     ROSEE::ParserMoveIt::Ptr parserMoveIt;
-    
-    std::map <std::string, ROSEE::ActionTrig> trigMap;
+    std::shared_ptr<ROSEE::FindActions> actionsFinder;
     
     struct ClbkHelper {
     
@@ -377,6 +352,8 @@ TEST_F ( testSendAction, sendSimpleGeneric3 ) {
  */
 TEST_F ( testSendAction, sendTrig ) {
 
+    std::map <std::string, ROSEE::ActionTrig> trigMap = actionsFinder->findTrig (ROSEE::ActionPrimitive::Type::Trig, folderForActions + "/primitives/") ;
+
     if (trigMap.size()>0){
         std::vector<std::string> keys = ROSEE::Utils::extract_keys(trigMap);
         //lets pick a random trig
@@ -405,6 +382,216 @@ TEST_F ( testSendAction, sendTrig ) {
         }
     }
 }
+
+TEST_F ( testSendAction, sendTipFlex ) {
+    
+    auto tipFlexMap = actionsFinder->findTrig (ROSEE::ActionPrimitive::Type::TipFlex, folderForActions + "/primitives/");
+
+    if (tipFlexMap.size()>0) {
+        std::vector<std::string> keys = ROSEE::Utils::extract_keys(tipFlexMap);
+        //lets pick a random 
+        srand((unsigned int)time(NULL));
+        int i = rand() % keys.size();
+        ROSEE::Action::Ptr action = std::make_shared<ROSEE::ActionTrig>(tipFlexMap.at(keys.at(i)));
+
+        sendAndTest(action);
+        
+        //other than "default" check done in sendAndTest, we check that effectively the joint is gone to the limit
+        
+        //Workaround to take the single joint used by this action
+        auto jic = action->getJointsInvolvedCount();
+        std::string jointInvolved;
+        for (auto it : jic) {
+            if (it.second == 1 ){
+                jointInvolved = it.first;
+            }
+        }
+        
+        EXPECT_TRUE(jointInvolved.size() > 0);
+        
+        //at O single dof joint
+        double bigBound = parserMoveIt->getBiggerBoundFromZero(jointInvolved).at(0);
+        
+        for (int k = 0; k<clbkHelper.js.name.size(); k++) {
+            
+            if (clbkHelper.js.name[i].compare(jointInvolved) == 0 ) {
+                EXPECT_NEAR(bigBound, clbkHelper.js.position[i], 0.02);
+                break;
+                
+            }
+        }        
+    }
+}
+
+TEST_F ( testSendAction, sendFingFlex ) {
+
+    auto fingFlexMap = actionsFinder->findTrig (ROSEE::ActionPrimitive::Type::FingFlex, folderForActions + "/primitives/");
+
+    if (fingFlexMap.size()>0) {
+        std::vector<std::string> keys = ROSEE::Utils::extract_keys(fingFlexMap);
+        //lets pick a random 
+        srand((unsigned int)time(NULL));
+        int i = rand() % keys.size();
+        ROSEE::Action::Ptr action = std::make_shared<ROSEE::ActionTrig>(fingFlexMap.at(keys.at(i)));
+
+        sendAndTest(action);
+        
+       //other than "default" check done in sendAndTest, we check that effectively the joint is gone to the limit
+        
+        //Workaround to take the single joint used by this action
+        auto jic = action->getJointsInvolvedCount();
+        std::string jointInvolved;
+        for (auto it : jic) {
+            if (it.second == 1 ){
+                jointInvolved = it.first;
+            }
+        }
+        
+        EXPECT_TRUE(jointInvolved.size() > 0);
+        
+        //at O single dof joint
+        double bigBound = parserMoveIt->getBiggerBoundFromZero(jointInvolved).at(0);
+        
+        for (int k = 0; k<clbkHelper.js.name.size(); k++) {
+            
+            if (clbkHelper.js.name[i].compare(jointInvolved) == 0 ) {
+                EXPECT_NEAR(bigBound, clbkHelper.js.position[i], 0.02);
+                break;
+                
+            }
+        }
+    }
+}
+
+
+TEST_F ( testSendAction, sendPinches ) {
+    
+    auto pinchTightMap = actionsFinder->findPinch(folderForActions + "/primitives/").first;
+
+    if (pinchTightMap.size()>0){
+        std::vector<std::pair<std::string,std::string>> keys = ROSEE::Utils::extract_keys(pinchTightMap);
+        //lets pick a random 
+        srand((unsigned int)time(NULL));
+        int i = rand() % keys.size();
+        ROSEE::Action::Ptr action = std::make_shared<ROSEE::ActionPinchTight>(pinchTightMap.at(keys.at(i)));
+
+        sendAndTest(action);
+        
+    }
+}
+
+TEST_F ( testSendAction, sendPinchLoose ) {
+    
+    auto pinchLooseMap = actionsFinder->findPinch(folderForActions + "/primitives/").second;
+
+    if (pinchLooseMap.size()>0){
+        std::vector<std::pair<std::string,std::string>> keys = ROSEE::Utils::extract_keys(pinchLooseMap);
+        //lets pick a random 
+        srand((unsigned int)time(NULL));
+        int i = rand() % keys.size();
+        ROSEE::Action::Ptr action = std::make_shared<ROSEE::ActionPinchLoose>(pinchLooseMap.at(keys.at(i)));
+
+        sendAndTest(action);
+        
+    }
+}
+
+TEST_F (testSendAction, sendMultiplePinchStrict ) {
+    
+            
+    std::vector < std::map < std::set<std::string>, ROSEE::ActionMultiplePinchTight > > multiplePinchMapsStrict;
+    for (int i = 3; i <= ee->getFingersNumber(); i++) {
+        auto multiplePinchMapStrict = actionsFinder->findMultiplePinch(i, folderForActions + "/primitives/", true );
+        
+        //keep only if it is not empty
+        if (multiplePinchMapStrict.size() > 0 ) {
+            multiplePinchMapsStrict.push_back (multiplePinchMapStrict);
+        }    
+    }
+
+    if ( multiplePinchMapsStrict.size() > 0 ) {
+        
+        srand((unsigned int)time(NULL));
+        int j = rand() % multiplePinchMapsStrict.size();
+        
+        std::vector<std::set<std::string>> keys = ROSEE::Utils::extract_keys( multiplePinchMapsStrict.at(j) );
+        //lets pick a random trig
+        srand((unsigned int)time(NULL));
+        int i = rand() % keys.size();
+        ROSEE::Action::Ptr action = std::make_shared<ROSEE::ActionMultiplePinchTight>(multiplePinchMapsStrict.at(j).at(keys.at(i)));
+
+        sendAndTest(action);
+        
+    }
+    
+}
+
+TEST_F (testSendAction, sendMultiplePinchNoStrict ) {
+    
+            
+    std::vector < std::map < std::set<std::string>, ROSEE::ActionMultiplePinchTight > > multiplePinchMapsNOStrict;
+    for (int i = 3; i <= ee->getFingersNumber(); i++) {
+        auto multiplePinchMapNOStrict = actionsFinder->findMultiplePinch(i, folderForActions + "/primitives/", false );
+        
+        //keep only if it is not empty
+        if (multiplePinchMapNOStrict.size() > 0 ) {
+            multiplePinchMapsNOStrict.push_back (multiplePinchMapNOStrict);
+        }
+
+    }
+
+    if ( multiplePinchMapsNOStrict.size() > 0 ) {
+        
+        srand((unsigned int)time(NULL));
+        int j = rand() % multiplePinchMapsNOStrict.size();
+        
+        std::vector<std::set<std::string>> keys = ROSEE::Utils::extract_keys( multiplePinchMapsNOStrict.at(j) );
+        //lets pick a random trig
+        srand((unsigned int)time(NULL));
+        int i = rand() % keys.size();
+        ROSEE::Action::Ptr action = std::make_shared<ROSEE::ActionMultiplePinchTight>(multiplePinchMapsNOStrict.at(j).at(keys.at(i)));
+
+        sendAndTest(action);
+        
+    }
+    
+}
+
+TEST_F (testSendAction, sendSingleJointMultipleTips ) {
+    
+    std::vector<std::map < std::string, ROSEE::ActionSingleJointMultipleTips>> singleJointMultipleTipsMaps;
+    
+    for (int i = 1; i<=ee->getFingersNumber(); i++) {
+            
+        std::map < std::string, ROSEE::ActionSingleJointMultipleTips> singleJointMultipleTipsMap = 
+            actionsFinder->findSingleJointMultipleTips (i, folderForActions + "/primitives/") ;
+            
+        if (singleJointMultipleTipsMap.size()>0) {
+            singleJointMultipleTipsMaps.push_back(singleJointMultipleTipsMap);
+        }
+
+    }
+
+    if ( singleJointMultipleTipsMaps.size() > 0 ) {
+        
+        srand((unsigned int)time(NULL));
+        int j = rand() % singleJointMultipleTipsMaps.size();
+        
+        std::vector<std::string> keys = ROSEE::Utils::extract_keys( singleJointMultipleTipsMaps.at(j) );
+        //lets pick a random trig
+        srand((unsigned int)time(NULL));
+        int i = rand() % keys.size();
+        ROSEE::Action::Ptr action = std::make_shared<ROSEE::ActionSingleJointMultipleTips>(singleJointMultipleTipsMaps.at(j).at(keys.at(i)));
+
+        sendAndTest(action);
+        
+        
+        
+    }
+    
+}
+
+
 
 } //namespace
 
