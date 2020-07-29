@@ -244,6 +244,7 @@ target_link_libraries(UniversalRosEndEffector
 
 target_link_libraries(UniversalFindActions
     ParserMoveIt
+    ROSEEParser
     FindActions
     Action
     ActionPrimitive
@@ -334,10 +335,19 @@ if(CATKIN_ENABLE_TESTING)
                                               ActionPrimitive
                                               ActionTrig
                                               ActionComposed
-                                              gtest)  
+                                              gtest)
+                                              
+    add_executable(SendAction_test test/test_send_action.cpp)
+    target_link_libraries(SendAction_test ${catkin_LIBRARIES}
+                                              Action
+                                              ActionGeneric
+                                              gtest
+                                              YamlWorker
+                                              ROSEEParser
+                                              ROSEEInterface)  
     
     list(APPEND testsExecutable 
-        EEInterface_test FindPinches_test FindTrigs_test ComposedAction_test
+        EEInterface_test FindPinches_test FindTrigs_test ComposedAction_test SendAction_test
     )
     list(APPEND handsForTests
          test_ee two_finger two_finger_mimic
@@ -354,6 +364,15 @@ if(CATKIN_ENABLE_TESTING)
 
         endforeach()    
     endforeach()
+    
+#     foreach(hand ${handsForTests})
+#         
+#         add_test(
+#             NAME SendAction_test_${hand}
+#             COMMAND SendAction_test ${hand}
+#         )
+#   
+#     endforeach()
                 
 endif()
 

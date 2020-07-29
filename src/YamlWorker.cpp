@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <ROSEndEffector/YamlWorker.h>
+#include <ros_end_effector/YamlWorker.h>
 
 ROSEE::YamlWorker::YamlWorker ( ) {}
 

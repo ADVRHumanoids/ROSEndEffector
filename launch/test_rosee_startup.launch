@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<launch>
+    
+    <arg name="hand_name"/> 
+
+    <!-- send urdf to parameter server. This is necessary because sometimes UniversalRosEndEffector can not put them in time and joint state pub crashes-->
+    <!-- BE SURE that the values are the same in the ros_ee_config_path file -->
+    <param name="robot_description" textfile="$(find ros_end_effector)/configs/urdf/$(arg hand_name).urdf"/>
+    <param name="robot_description_semantic" textfile="$(find ros_end_effector)/configs/srdf/$(arg hand_name).srdf" />
+    
+    <!-- this rosparam is need by c++ (universalroseeexec) to take states from gazebo or joint state publisher (which deal with mimic joints) --> 
+    <param name = "/rosee/joint_states_topic" value="/js_publisher/joint_states"  />
+
+    <param name="ros_ee_config_path" value="$(find ros_end_effector)/configs/$(arg hand_name).yaml"/> 
+    <param name="rate" value="100.0"/>
+    
+    <node type="UniversalRosEndEffector" name="UniversalRosEndEffector" pkg="ros_end_effector" />
+
+    <!-- Joint state publisher is necessary for mimic joint, not used if gazebo is used because there is the gazebo_ros_plugin which handles the mimic -->
+    <node  name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+        <!-- Input -->
+        <rosparam param="source_list">["ros_end_effector/joint_commands"] </rosparam>
+        <!-- Output -->
+        <remap from="joint_states" to="/js_publisher/joint_states" />
+        <param name="use_gui" value="false" />
+    </node>
+    
+    <!-- NOT NEEDED FOR TESTS; BUT uncomment to debug the test itself on local machine -->
+    <!-- start robot state publisher to transform joint pos into tf for rviz, so it is always on, gazebo or not -->
+    <!--
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" output="screen" >
+        <param name="publish_frequency" type="double" value="200.0" />
+        <remap from="joint_states" to="/js_publisher/joint_states" />
+    </node> 
+    
+    <node type="rviz" name="rviz" pkg="rviz" args="-d $(find ros_end_effector)/configs/rviz/$(arg hand_name).rviz" />
+    -->
+     
+
+
+</launch>

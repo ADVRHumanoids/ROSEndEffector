@@ -1,0 +1,24 @@
+casual:
+  Type: 1
+  FingersInvolved: []
+  JointsInvolvedCount:
+    left_hand_Finger_Spread: 1
+    left_hand_Index_Finger_Distal: 1
+    left_hand_Index_Finger_Proximal: 1
+    left_hand_Middle_Finger_Distal: 0
+    left_hand_Middle_Finger_Proximal: 0
+    left_hand_Pinky: 0
+    left_hand_Ring_Finger: 1
+    left_hand_Thumb_Flexion: 0
+    left_hand_Thumb_Opposition: 1
+  JointPos:
+    left_hand_Finger_Spread: [0.1243814297100529]
+    left_hand_Index_Finger_Distal: [2.083417849109508]
+    left_hand_Index_Finger_Proximal: [0.4187311309747119]
+    left_hand_Middle_Finger_Distal: [0]
+    left_hand_Middle_Finger_Proximal: [0]
+    left_hand_Pinky: [0]
+    left_hand_Ring_Finger: [1.111765196244931]
+    left_hand_Thumb_Flexion: [0]
+    left_hand_Thumb_Opposition: [1.702851465833047]
+

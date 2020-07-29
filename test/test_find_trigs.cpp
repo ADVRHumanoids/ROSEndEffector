@@ -4,10 +4,11 @@
 #include <ros/ros.h>
 #include <ros/console.h>
 
-#include <ROSEndEffector/FindActions.h>
-#include <ROSEndEffector/ParserMoveIt.h>
-#include <ROSEndEffector/ActionPrimitive.h>
-#include <ROSEndEffector/ActionTrig.h>
+#include <ros_end_effector/FindActions.h>
+#include <ros_end_effector/ParserMoveIt.h>
+#include <ros_end_effector/ActionPrimitive.h>
+#include <ros_end_effector/ActionTrig.h>
+
 
 namespace {
 
@@ -27,7 +28,7 @@ protected:
     
         std::shared_ptr <ROSEE::ParserMoveIt> parserMoveIt = std::make_shared <ROSEE::ParserMoveIt> ();
         //if return false, models are not found and it is useless to continue the test
-        ASSERT_TRUE(parserMoveIt->init ("robot_description")) ;
+        ASSERT_TRUE(parserMoveIt->init ("robot_description", false)) ;
         ROSEE::FindActions actionsFinder (parserMoveIt);
         
         std::string folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/tests/" + parserMoveIt->getHandName();

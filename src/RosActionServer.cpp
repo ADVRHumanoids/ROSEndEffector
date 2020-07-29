@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include <ROSEndEffector/RosActionServer.h>
+#include <ros_end_effector/RosActionServer.h>
 
-ROSEE::RosActionServer::RosActionServer (std::string rosActionName, ros::NodeHandle* nh) :
-    _actionServer(*nh, rosActionName, false) {
+ROSEE::RosActionServer::RosActionServer (std::string topicForAction, ros::NodeHandle* nh) :
+    _actionServer(*nh, topicForAction, false) {
     
     this->nh = nh;
-    this->rosActionName = rosActionName;
+    this->topicForAction = topicForAction;
     goalInExecution = false;
     newGoal = false;
     
@@ -53,10 +53,13 @@ rosee_msg::ROSEEActionControl ROSEE::RosActionServer::getGoal() {
 
 void ROSEE::RosActionServer::goalReceivedCallback() {
     
-    ROS_INFO_STREAM ("ROSACTION SERVER received goal");
+    //ROS_INFO_STREAM (goal_action.
     goalInExecution = true;
     newGoal = true;
     this->actionControlMsg = _actionServer.acceptNewGoal()->goal_action;
+    ROS_INFO_STREAM ("ROSACTION SERVER received goal: '" << this->actionControlMsg.action_name  << "'");
+
+    
 }
 
 void ROSEE::RosActionServer::preemptReceivedCallback() {

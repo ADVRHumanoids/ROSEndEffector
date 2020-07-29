@@ -15,7 +15,7 @@
  * limitations under the License.
 */
 
-#include <ROSEndEffector/EEHal.h>
+#include <ros_end_effector/EEHal.h>
 
 ROSEE::EEHal::EEHal ( ROSEE::EEInterface::Ptr ee_interface ) : _ee_inteface ( ee_interface ) {
 

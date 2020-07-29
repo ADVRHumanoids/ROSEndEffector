@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<robot name="two_finger_end_effector">
+<robot name="two_finger">
   <link name="world"/>
     <joint name="virtualFixed" type="fixed">
     <parent link="world"/>

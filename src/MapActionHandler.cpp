@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <ROSEndEffector/MapActionHandler.h>
+#include <ros_end_effector/MapActionHandler.h>
 
 ROSEE::MapActionHandler::MapActionHandler() {}
 
@@ -175,7 +175,7 @@ std::shared_ptr<ROSEE::ActionGeneric> ROSEE::MapActionHandler::getGeneric(std::s
     
     auto it = generics.find(name);
     if (it == generics.end() ) {
-         std::cerr << "[ERROR MapActionHandler " << __func__ << "] No generic function named" << name << std::endl;    
+         std::cerr << "[ERROR MapActionHandler " << __func__ << "] No generic function named '" << name << "'" << std::endl;    
         return nullptr;
     }
     
