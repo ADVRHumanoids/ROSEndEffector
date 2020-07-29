@@ -253,7 +253,6 @@ TEST_F ( testSendAction, sendSimpleGeneric ) {
     ROSEE::JointPos jp;
     ROSEE::JointsInvolvedCount jpc;
 
-    //for now copy jp of another action 
     std::vector<std::string> actJoints = ee->getActuatedJoints();
     
     ASSERT_FALSE (actJoints.empty());
@@ -285,7 +284,6 @@ TEST_F ( testSendAction, sendSimpleGeneric2 ) {
     ROSEE::JointPos jp;
     ROSEE::JointsInvolvedCount jpc;
 
-   // for now copy jp of another action 
     std::vector<std::string> actJoints = ee->getActuatedJoints();
     
     ASSERT_FALSE (actJoints.empty());
@@ -314,11 +312,9 @@ TEST_F ( testSendAction, sendSimpleGeneric2 ) {
 
 TEST_F ( testSendAction, sendSimpleGeneric3 ) {
     
-    
     ROSEE::JointPos jp;
     ROSEE::JointsInvolvedCount jpc;
 
-    //for now copy jp of another action 
     std::vector<std::string> actJoints = ee->getActuatedJoints();
     
     ASSERT_FALSE (actJoints.empty());
@@ -352,7 +348,7 @@ TEST_F ( testSendAction, sendSimpleGeneric3 ) {
  */
 TEST_F ( testSendAction, sendTrig ) {
 
-    std::map <std::string, ROSEE::ActionTrig> trigMap = actionsFinder->findTrig (ROSEE::ActionPrimitive::Type::Trig, folderForActions + "/primitives/") ;
+    ROSEE::ActionTrig::Map trigMap = actionsFinder->findTrig (ROSEE::ActionPrimitive::Type::Trig, folderForActions + "/primitives/") ;
 
     if (trigMap.size()>0){
         std::vector<std::string> keys = ROSEE::Utils::extract_keys(trigMap);
@@ -499,7 +495,7 @@ TEST_F ( testSendAction, sendPinchLoose ) {
 TEST_F (testSendAction, sendMultiplePinchStrict ) {
     
             
-    std::vector < std::map < std::set<std::string>, ROSEE::ActionMultiplePinchTight > > multiplePinchMapsStrict;
+    std::vector < ROSEE::ActionMultiplePinchTight::Map > multiplePinchMapsStrict;
     for (int i = 3; i <= ee->getFingersNumber(); i++) {
         auto multiplePinchMapStrict = actionsFinder->findMultiplePinch(i, folderForActions + "/primitives/", true );
         
@@ -529,7 +525,7 @@ TEST_F (testSendAction, sendMultiplePinchStrict ) {
 TEST_F (testSendAction, sendMultiplePinchNoStrict ) {
     
             
-    std::vector < std::map < std::set<std::string>, ROSEE::ActionMultiplePinchTight > > multiplePinchMapsNOStrict;
+    std::vector < ROSEE::ActionMultiplePinchTight::Map > multiplePinchMapsNOStrict;
     for (int i = 3; i <= ee->getFingersNumber(); i++) {
         auto multiplePinchMapNOStrict = actionsFinder->findMultiplePinch(i, folderForActions + "/primitives/", false );
         
@@ -559,7 +555,7 @@ TEST_F (testSendAction, sendMultiplePinchNoStrict ) {
 
 TEST_F (testSendAction, sendSingleJointMultipleTips ) {
     
-    std::vector<std::map < std::string, ROSEE::ActionSingleJointMultipleTips>> singleJointMultipleTipsMaps;
+    std::vector < ROSEE::ActionSingleJointMultipleTips::Map > singleJointMultipleTipsMaps;
     
     for (int i = 1; i<=ee->getFingersNumber(); i++) {
             
@@ -584,12 +580,70 @@ TEST_F (testSendAction, sendSingleJointMultipleTips ) {
         ROSEE::Action::Ptr action = std::make_shared<ROSEE::ActionSingleJointMultipleTips>(singleJointMultipleTipsMaps.at(j).at(keys.at(i)));
 
         sendAndTest(action);
-        
-        
-        
+            
+    }
+}
+
+
+/***
+ * @brief Here we create a randomic action composed by some primitives
+ */
+TEST_F (testSendAction, sendComposedAction ) {
+
+    ROSEE::ActionTrig::Map trigMap = actionsFinder->findTrig (ROSEE::ActionPrimitive::Type::Trig, folderForActions + "/primitives/") ;
+    auto fingFlexMap = actionsFinder->findTrig (ROSEE::ActionPrimitive::Type::FingFlex, folderForActions + "/primitives/");
+    auto pinchTightMap = actionsFinder->findPinch(folderForActions + "/primitives/").first;
+    
+    ROSEE::ActionComposed actionComposed ( "TestComposed", false) ;
+    
+    for (auto trig : trigMap) {
+        std::shared_ptr <ROSEE::ActionPrimitive> pointer = 
+            std::make_shared <ROSEE::ActionTrig> ( trig.second );
+            
+        double lower_bound = 0;
+        double upper_bound = 0.8; //low, we do not want to go out of joint limits
+        std::uniform_real_distribution<double> unif(lower_bound, upper_bound);
+        std::default_random_engine re;
+        double random = unif(re);
+        EXPECT_TRUE(actionComposed.sumAction ( pointer, random )); 
     }
     
+    for (auto trig : fingFlexMap) {
+        std::shared_ptr <ROSEE::ActionPrimitive> pointer = 
+            std::make_shared <ROSEE::ActionTrig> ( trig.second );
+            
+        double lower_bound = 0;
+        double upper_bound = 0.7; //low, we do not want to go out of joint limits
+        std::uniform_real_distribution<double> unif(lower_bound, upper_bound);
+        std::default_random_engine re;
+        double random = unif(re);
+        EXPECT_TRUE(actionComposed.sumAction ( pointer, random )); 
+    }
+    
+    for (auto pinch : pinchTightMap) {
+        
+        std::shared_ptr <ROSEE::ActionPrimitive> pointer = 
+            std::make_shared <ROSEE::ActionPinchTight> ( pinch.second );
+            
+        double lower_bound = 0;
+        double upper_bound = 0.29; //low, we do not want to go out of joint limits
+        std::uniform_real_distribution<double> unif(lower_bound, upper_bound);
+        std::default_random_engine re;
+        double random = unif(re);
+        EXPECT_TRUE(actionComposed.sumAction ( pointer, random, 2 )); 
+    }
+    
+    if (actionComposed.numberOfInnerActions() > 0) {
+        ROSEE::Action::Ptr actionPtr = std::make_shared<ROSEE::ActionGeneric>(actionComposed);
+        
+        //do not forget to emit the file, in sendAndTest the rosee main node need to parse it
+        yamlWorker.createYamlFile( actionPtr.get(), folderForActions + "/generics/" );
+
+        sendAndTest(actionPtr, 0.95);
+    }
+ 
 }
+
 
 
 
