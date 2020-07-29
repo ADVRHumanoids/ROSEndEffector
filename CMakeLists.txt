@@ -344,7 +344,8 @@ if(CATKIN_ENABLE_TESTING)
                                               gtest
                                               YamlWorker
                                               ROSEEParser
-                                              ROSEEInterface)  
+                                              ROSEEInterface
+                                              FindActions)  
     
     list(APPEND testsExecutable 
         EEInterface_test FindPinches_test FindTrigs_test ComposedAction_test SendAction_test
@@ -354,25 +355,25 @@ if(CATKIN_ENABLE_TESTING)
     )
     
     #run each test with each hand
-    foreach(hand ${handsForTests})
-        foreach(testEx ${testsExecutable})
-        
-            add_test(
-                NAME ${testEx}_${hand}
-                COMMAND ${testEx} ${hand}
-            )
-
-        endforeach()    
-    endforeach()
-    
 #     foreach(hand ${handsForTests})
+#         foreach(testEx ${testsExecutable})
 #         
-#         add_test(
-#             NAME SendAction_test_${hand}
-#             COMMAND SendAction_test ${hand}
-#         )
-#   
+#             add_test(
+#                 NAME ${testEx}_${hand}
+#                 COMMAND ${testEx} ${hand}
+#             )
+# 
+#         endforeach()    
 #     endforeach()
+    
+    foreach(hand ${handsForTests})
+        
+        add_test(
+            NAME SendAction_test_${hand}
+            COMMAND SendAction_test ${hand}
+        )
+  
+    endforeach()
                 
 endif()
 
