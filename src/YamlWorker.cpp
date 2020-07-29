@@ -28,7 +28,6 @@ std::string ROSEE::YamlWorker::createYamlFile( const ROSEE::Action* action, std:
 }
 
 std::string ROSEE::YamlWorker::createYamlFile(
-    
     const std::map < std::set <std::string> , ActionPrimitive* > mapOfActions,
     const std::string actionName, std::string pathFolder) {
     
