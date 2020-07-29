@@ -57,10 +57,10 @@ ROSEE::ActionPrimitive::Ptr ROSEE::MapActionHandler::getPrimitive(std::string pr
         return nullptr; //error message already printed in getPrimitiveMap
     }
     
-    if (map.begin()->second->getKeyForYamlMap().size() != key.size()) {
+    if (map.begin()->second->getKeyElements().size() != key.size()) {
         std::cerr << "[ERROR MapActionHandler::" << __func__ << "] The action '" 
         << primitiveName << "' has as key a set of dimension " <<
-        map.begin()->second->getKeyForYamlMap().size() <<
+        map.begin()->second->getKeyElements().size() <<
         " and not dimension of passed 2nd argument " << key.size() << std::endl;
         return nullptr;
     }
@@ -105,7 +105,7 @@ std::vector<ROSEE::ActionPrimitive::Ptr> ROSEE::MapActionHandler::getPrimitive(R
     //now we look among the maps, for all the maps that has key size as the size of key passed
     std::vector <ActionPrimitiveMap> theMaps;
     for (int i =0; i<maps.size(); i++) {
-        if (maps.at(i).begin()->second->getKeyForYamlMap().size() == key.size()) {
+        if (maps.at(i).begin()->second->getKeyElements().size() == key.size()) {
             theMaps.push_back(maps.at(i));
         }
     }

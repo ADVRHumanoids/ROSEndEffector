@@ -80,7 +80,7 @@ public:
      * @brief Necessary method to know the key used by the maps which store all the Actions of one type. Used by \ref YamlWorker
      * @return for this class, it return the finger name, inserted in a single-element set because father signature say so
      */
-    std::set < std::string> getKeyForYamlMap () const override;
+    std::set < std::string> getKeyElements () const override;
 
     
     /** 
