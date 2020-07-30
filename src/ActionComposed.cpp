@@ -73,7 +73,7 @@ bool ROSEE::ActionComposed::sumAction ( ROSEE::Action::Ptr action, double jointP
         return false;
     }
     
-    if (jointPosScaleFactor <= 0) {
+    if (jointPosScaleFactor < 0) {
         std::cerr << "[ACTIONCOMPOSED:: " << __func__ << "] You can not scale the joint position of the action to be inserted by a " 
                   <<  "value less than 0; jointPosScaleFactor passed is: " << jointPosScaleFactor << std::endl;
         return false;
