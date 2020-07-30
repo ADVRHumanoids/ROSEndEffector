@@ -337,10 +337,21 @@ if(CATKIN_ENABLE_TESTING)
                                               ActionComposed
                                               gtest)
                                               
+    add_executable(TimedAction_test test/test_timedAction.cpp)
+    target_link_libraries(TimedAction_test ${catkin_LIBRARIES}
+                                              FindActions
+                                              Action
+                                              ActionPrimitive
+                                              ActionTrig
+                                              ActionPinchGeneric
+                                              ActionComposed
+                                              gtest)
+                                              
     add_executable(SendAction_test test/test_send_action.cpp)
     target_link_libraries(SendAction_test ${catkin_LIBRARIES}
                                               Action
                                               ActionGeneric
+                                              ActionComposed
                                               gtest
                                               YamlWorker
                                               ROSEEParser
@@ -348,32 +359,32 @@ if(CATKIN_ENABLE_TESTING)
                                               FindActions)  
     
     list(APPEND testsExecutable 
-        EEInterface_test FindPinches_test FindTrigs_test ComposedAction_test SendAction_test
+        EEInterface_test FindPinches_test FindTrigs_test ComposedAction_test TimedAction_test SendAction_test
     )
     list(APPEND handsForTests
          test_ee two_finger two_finger_mimic
     )
     
     #run each test with each hand
-#     foreach(hand ${handsForTests})
-#         foreach(testEx ${testsExecutable})
-#         
-#             add_test(
-#                 NAME ${testEx}_${hand}
-#                 COMMAND ${testEx} ${hand}
-#             )
-# 
-#         endforeach()    
-#     endforeach()
-    
     foreach(hand ${handsForTests})
+        foreach(testEx ${testsExecutable})
         
-        add_test(
-            NAME SendAction_test_${hand}
-            COMMAND SendAction_test ${hand}
-        )
-  
+            add_test(
+                NAME ${testEx}_${hand}
+                COMMAND ${testEx} ${hand}
+            )
+
+        endforeach()    
     endforeach()
+    
+#     foreach(hand ${handsForTests})
+#         
+#         add_test(
+#             NAME SendAction_test_${hand}
+#             COMMAND SendAction_test ${hand}
+#         )
+#   
+#     endforeach()
                 
 endif()
 

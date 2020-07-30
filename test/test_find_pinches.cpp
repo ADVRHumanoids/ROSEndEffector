@@ -2,7 +2,6 @@
 #include "testUtils.h"
 
 #include <ros/ros.h>
-#include <ros/console.h>
 
 #include <ros_end_effector/FindActions.h>
 #include <ros_end_effector/ParserMoveIt.h>
@@ -169,6 +168,7 @@ TEST_F ( testFindPinches, checkEmitParse ) {
                 
         //std::string is ok to compare with _EQ
         EXPECT_EQ (pinchCasted->getName(), pinchMap.at(keyPair).getName() );
+        EXPECT_EQ (pinchCasted->getType(), pinchMap.at(keyPair).getType() );
         EXPECT_EQ (pinchCasted->getnFingersInvolved(), pinchMap.at(keyPair).getnFingersInvolved() );
         EXPECT_EQ (pinchCasted->getMaxStoredActionStates(), pinchMap.at(keyPair).getMaxStoredActionStates());
         EXPECT_EQ (pinchCasted->getPrimitiveType(), pinchMap.at(keyPair).getPrimitiveType() );

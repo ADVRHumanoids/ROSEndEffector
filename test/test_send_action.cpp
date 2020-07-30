@@ -2,7 +2,6 @@
 #include "testUtils.h"
 
 #include <ros/ros.h>
-#include <ros/console.h>
 
 #include <ros_end_effector/Parser.h>
 #include <ros_end_effector/ParserMoveIt.h>
@@ -74,9 +73,7 @@ protected:
                 
         actionsFinder = std::make_shared<ROSEE::FindActions>(parserMoveIt);
 
-
-        
-                                                                                      
+                                                                          
         }
 
     virtual void TearDown() override {
@@ -134,7 +131,7 @@ protected:
 
     ClbkHelper clbkHelper;
     
-private:
+protected:
     void setMainNode();
     void sendAction( ROSEE::Action::Ptr action, double percentageWanted);
     void testAction( ROSEE::Action::Ptr actionSent, double percentageWanted);
@@ -247,6 +244,7 @@ void testSendAction::sendAndTest(ROSEE::Action::Ptr action, double percentageWan
  *    -[testAction] After rosee says the action is completed, some checks are done to see if the final state is the same as the 
  *      action created
  */
+
 TEST_F ( testSendAction, sendSimpleGeneric ) {
     
     
@@ -644,6 +642,74 @@ TEST_F (testSendAction, sendComposedAction ) {
  
 }
 
+
+TEST_F (testSendAction, sendTimedAction ) {
+
+    ROSEE::ActionTrig::Map trigMap = actionsFinder->findTrig (ROSEE::ActionPrimitive::Type::Trig, folderForActions + "/primitives/") ;
+    auto tipFlexMap = actionsFinder->findTrig (ROSEE::ActionPrimitive::Type::TipFlex, folderForActions + "/primitives/");
+    auto pinchMaps = actionsFinder->findPinch(folderForActions + "/primitives/");
+    
+    ROSEE::ActionTimed actionTimed ( "TestTimed" ) ;
+    
+    if  (trigMap.size()>0) {
+        std::shared_ptr <ROSEE::ActionPrimitive> pointer = 
+            std::make_shared <ROSEE::ActionTrig> ( trigMap.begin()->second );
+            
+        double lower_bound = 0;
+        double upper_bound = 0.8; //low, we do not want to go out of joint limits
+        std::uniform_real_distribution<double> unif(lower_bound, upper_bound);
+        std::default_random_engine re;
+        double random = unif(re);
+        EXPECT_TRUE(actionTimed.insertAction(pointer, 0, 0.7, 0, random)); 
+    }
+    
+    if (tipFlexMap.size() > 0) {
+        std::shared_ptr <ROSEE::ActionPrimitive> pointer = 
+            std::make_shared <ROSEE::ActionTrig> ( tipFlexMap.rbegin()->second); //rbegin is the last element
+            
+        double lower_bound = 0;
+        double upper_bound = 0.95;
+        std::uniform_real_distribution<double> unif(lower_bound, upper_bound);
+        std::default_random_engine re;
+        double random = unif(re);
+        EXPECT_TRUE(actionTimed.insertAction(pointer, 0.2, 0.32, 0, random)); 
+    }
+    
+    if (! pinchMaps.first.empty()) {
+        
+        std::shared_ptr <ROSEE::ActionPrimitive> pointer = 
+            std::make_shared <ROSEE::ActionPinchTight> ( pinchMaps.first.begin()->second );
+            
+        double lower_bound = 0.6;
+        double upper_bound = 1; 
+        std::uniform_real_distribution<double> unif(lower_bound, upper_bound);
+        std::default_random_engine re;
+        double random = unif(re);
+        EXPECT_TRUE(actionTimed.insertAction(pointer, 0.2, 0.32, 1, random)); 
+    }
+    
+    if (! pinchMaps.second.empty()) {        
+        std::shared_ptr <ROSEE::ActionPrimitive> pointer = 
+            std::make_shared <ROSEE::ActionPinchLoose> ( pinchMaps.second.rbegin()->second );
+            
+        double lower_bound = 0;
+        double upper_bound = 1;
+        std::uniform_real_distribution<double> unif(lower_bound, upper_bound);
+        std::default_random_engine re;
+        double random = unif(re);
+        EXPECT_TRUE(actionTimed.insertAction(pointer, 0, 0, 0, random)); 
+    }
+    
+    if (actionTimed.getInnerActionsNames().size() > 0) {
+        ROSEE::Action::Ptr actionPtr = std::make_shared<ROSEE::ActionTimed>(actionTimed);
+        
+        //do not forget to emit the file, in sendAndTest the rosee main node need to parse it
+        yamlWorker.createYamlFile( actionPtr.get(), folderForActions + "/timeds/" );
+        
+        sendAndTest(actionPtr);
+    }
+ 
+}
 
 
 
