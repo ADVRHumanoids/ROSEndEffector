@@ -1,3 +1,0 @@
-ROSEndEffector:
-  urdf_path: "urdf/shadowhand_motor.urdf"
-  srdf_path: "srdf/shadowhand_motor.srdf"

@@ -56,17 +56,13 @@ script:
 - make dox
 
 #tests
-- roscore & #before the make so it has time to setup and travis does not give error
 - make tests
 - source devel/setup.bash
-#test with test_ee hand
-- rosparam set -t $(rospack find ros_end_effector)/configs/urdf/test_ee.urdf robot_description
-- rosparam set -t $(rospack find ros_end_effector)/configs/srdf/test_ee.srdf robot_description_semantic
-- make test ARGS="-V" -i
-#test with 2_finger hand
-- rosparam set -t $(rospack find ros_end_effector)/configs/urdf/two_finger.urdf robot_description
-- rosparam set -t $(rospack find ros_end_effector)/configs/srdf/two_finger.srdf robot_description_semantic
-- make test ARGS="-V" -i
+- ctest --verbose
+# OLD WAY to test with roscore needed in this file. test with test_ee hand
+#- rosparam set -t $(rospack find ros_end_effector)/configs/urdf/test_ee.urdf robot_description
+#- rosparam set -t $(rospack find ros_end_effector)/configs/srdf/test_ee.srdf robot_description_semantic
+#- make test ARGS="-V" -i
 # to test with schunk hand we would need to install its package...
 # add other hand test...
 

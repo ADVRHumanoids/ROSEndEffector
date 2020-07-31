@@ -33,46 +33,49 @@ std::ostream& ROSEE::operator << (std::ostream& output, const ROSEE::JointPos jp
     return output;
 }
 
-ROSEE::JointPos ROSEE::operator * (const double multiplier, const ROSEE::JointPos jp) {
+ROSEE::JointPos ROSEE::operator * ( double multiplier,  ROSEE::JointPos jp) {
     
-    ROSEE::JointPos jpNew;
-    for (const auto &jsEl : jp) {
-        std::vector<double> newPos;
-       // std::cout << jsEl.first << std::endl;
-        for (const double pos : jsEl.second) {
-            //std::cout << "old " << pos << "   new: " << pos*multiplier << std::endl;
-            newPos.push_back (pos*multiplier);
+    return jp *= multiplier;
+}
+
+ROSEE::JointPos ROSEE::operator * ( ROSEE::JointPos jp,  double multiplier ) {
+    
+    return jp *= multiplier;
+}
+
+ROSEE::JointPos& ROSEE::operator *= ( ROSEE::JointPos& jp, double multiplier) {
+    
+    for ( auto &jsEl : jp) {
+        for (int i = 0; i< jsEl.second.size(); i++) {
+            jsEl.second.at(i) *= multiplier;
         }
-        jpNew.insert ( std::make_pair (jsEl.first, newPos) );
     }
     
-    return jpNew;
+    return jp;
 }
 
-ROSEE::JointPos ROSEE::operator * (const ROSEE::JointPos jp, const double multiplier ) {
-    return (multiplier * jp );
+ROSEE::JointPos ROSEE::operator + ( ROSEE::JointPos jp1, ROSEE::JointPos jp2) {
+    
+    return jp1 += jp2;
 }
 
-ROSEE::JointPos ROSEE::operator + (const ROSEE::JointPos jp1, const ROSEE::JointPos jp2) {
+ROSEE::JointPos& ROSEE::operator += (ROSEE::JointPos& jp1, ROSEE::JointPos jp2) {
     
     if ( ! ROSEE::Utils::keys_equal(jp1, jp2) ) {
         throw ROSEE::Utils::DifferentKeysException<ROSEE::JointPos, ROSEE::JointPos>(&jp1, &jp2);
     }
     
-    ROSEE::JointPos jpNew;
-    for (const auto &jsEl : jp1) {
+    for (auto &jsEl : jp1) {
         if (jsEl.second.size() != jp2.at(jsEl.first).size() ) {
             throw "Dofs not same";
         }
 
-        std::vector<double> newPos;
         for (int i = 0; i < jsEl.second.size(); i++) {
-            newPos.push_back (jsEl.second.at(i) +  jp2.at(jsEl.first).at(i));
+            jsEl.second.at(i) += jp2.at(jsEl.first).at(i); 
         }
-        jpNew.insert ( std::make_pair (jsEl.first, newPos) );
     }
     
-    return jpNew;
+    return jp1;
 }
 
 std::ostream& ROSEE::operator << (std::ostream& output, const ROSEE::JointsInvolvedCount jic) {

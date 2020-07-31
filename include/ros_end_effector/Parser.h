@@ -149,6 +149,13 @@ namespace ROSEE {
         std::string getSrdfString() const;
         
         /**
+         * @brief get the path where emit and parse grasping actions
+         *
+         * @return the path as a string
+         */    
+        std::string getActionPath() const;
+        
+        /**
          * @brief get the filename (with path) of the yaml config file. 
          *   Useful get to print infos about file parsed outside this class
          * 
@@ -160,6 +167,7 @@ namespace ROSEE {
         
         ros::NodeHandle _nh;
         std::string _ros_ee_config_path, _urdf_path, _srdf_path, _urdf_string, _srdf_string;
+        std::string _action_path;
         bool _is_initialized = false;
         
         urdf::ModelInterfaceSharedPtr _urdf_model;

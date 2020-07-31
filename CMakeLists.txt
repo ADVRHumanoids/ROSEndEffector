@@ -306,40 +306,86 @@ install(DIRECTORY launch/
 if(CATKIN_ENABLE_TESTING)
 
     # Add gtest based cpp test target and link libraries
-    catkin_add_gtest(EEInterface_test test/test_ee_interface.cpp)
-    if(TARGET EEInterface_test)
-        target_link_libraries(EEInterface_test ${catkin_LIBRARIES}
-                                                ROSEEParser
-                                                ROSEEInterface)
-    endif()
+    #catkin_add_gtest(EEInterface_test test/test_ee_interface.cpp)
+    add_executable(EEInterface_test test/test_ee_interface.cpp)
+    target_link_libraries(EEInterface_test ${catkin_LIBRARIES}
+                                           ROSEEParser
+                                           ROSEEInterface
+                                           gtest)
+                                           
+    add_executable(FindPinches_test test/test_find_pinches.cpp)
+    target_link_libraries(FindPinches_test ${catkin_LIBRARIES}
+                                            FindActions
+                                            ActionPrimitive
+                                            ActionPinchTight
+                                            ActionPinchLoose
+                                            gtest)
+                                            
+    add_executable(FindTrigs_test test/test_find_trigs.cpp)
+    target_link_libraries(FindTrigs_test ${catkin_LIBRARIES}
+                                         FindActions
+                                         ActionPrimitive
+                                         ActionTrig
+                                         gtest)
+                                         
+    add_executable(ComposedAction_test test/test_composedAction.cpp)
+    target_link_libraries(ComposedAction_test ${catkin_LIBRARIES}
+                                              FindActions
+                                              Action
+                                              ActionPrimitive
+                                              ActionTrig
+                                              ActionComposed
+                                              gtest)
+                                              
+    add_executable(TimedAction_test test/test_timedAction.cpp)
+    target_link_libraries(TimedAction_test ${catkin_LIBRARIES}
+                                              FindActions
+                                              Action
+                                              ActionPrimitive
+                                              ActionTrig
+                                              ActionPinchGeneric
+                                              ActionComposed
+                                              gtest)
+                                              
+    add_executable(SendAction_test test/test_send_action.cpp)
+    target_link_libraries(SendAction_test ${catkin_LIBRARIES}
+                                              Action
+                                              ActionGeneric
+                                              ActionComposed
+                                              gtest
+                                              YamlWorker
+                                              ROSEEParser
+                                              ROSEEInterface
+                                              FindActions)  
     
-    catkin_add_gtest(FindPinches_test test/test_find_pinches.cpp)
-    if(TARGET FindPinches_test)
-        target_link_libraries(FindPinches_test ${catkin_LIBRARIES}
-                                                 FindActions
-                                                 ActionPrimitive
-                                                 ActionPinchTight
-                                                 ActionPinchLoose)
-    endif()
+    list(APPEND testsExecutable 
+        EEInterface_test FindPinches_test FindTrigs_test ComposedAction_test TimedAction_test SendAction_test
+    )
+    list(APPEND handsForTests
+         test_ee two_finger two_finger_mimic
+    )
     
-    catkin_add_gtest(FindTrigs_test test/test_find_trigs.cpp)
-    if(TARGET FindTrigs_test)
-        target_link_libraries(FindTrigs_test ${catkin_LIBRARIES}
-                                                 FindActions
-                                                 ActionPrimitive
-                                                 ActionTrig)
-    endif()
-    
-    catkin_add_gtest(ComposedAction_test test/test_composedAction.cpp)
-    if(TARGET ComposedAction_test)
-        target_link_libraries(ComposedAction_test ${catkin_LIBRARIES}
-                                                 FindActions
-                                                 Action
-                                                 ActionPrimitive
-                                                 ActionTrig
-                                                 ActionComposed)
-    endif()
+    #run each test with each hand
+    foreach(hand ${handsForTests})
+        foreach(testEx ${testsExecutable})
+        
+            add_test(
+                NAME ${testEx}_${hand}
+                COMMAND ${testEx} ${hand}
+            )
 
+        endforeach()    
+    endforeach()
+    
+#     foreach(hand ${handsForTests})
+#         
+#         add_test(
+#             NAME SendAction_test_${hand}
+#             COMMAND SendAction_test ${hand}
+#         )
+#   
+#     endforeach()
+                
 endif()
 
 ## Add folders to be run by python nosetests

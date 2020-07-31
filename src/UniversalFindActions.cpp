@@ -45,7 +45,11 @@ int main ( int argc, char **argv ) {
         return -1;
     }
     
-    std::string folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/" + parserMoveIt->getHandName();
+    std::string folderForActions = parser.getActionPath();
+    
+    if ( folderForActions.size() == 0 ){ //if no action path is set in the yaml file...
+        folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/" + parserMoveIt->getHandName();
+    }
     
     ROSEE::FindActions actionsFinder (parserMoveIt);
 
