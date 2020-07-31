@@ -4,6 +4,13 @@ project(ros_end_effector)
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++11)
 
+##test code coverage
+option(ROSEE_ENABLE_COVERAGE "Compile with coverage information" ON)
+if(${ROSEE_ENABLE_COVERAGE})
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage -g")
+endif()
+
+
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
@@ -124,8 +131,8 @@ add_library(ActionTimed
 
 add_executable(UniversalRosEndEffector src/UniversalRosEndEffector.cpp)
 add_executable(UniversalFindActions src/UniversalFindActions.cpp)
-# # add_dependencies(UniversalRosEndEffectorExecutor ros_end_effector_generate_messages_cpp)
-# # add_dependencies(UniversalFindActions ros_end_effector_generate_messages_cpp)
+# add_dependencies(UniversalRosEndEffector rosee_msg_generate_messages_cpp)
+# add_dependencies(UniversalFindActions rosee_msg_generate_messages_cpp)
 
 
 ## Add cmake target dependencies of the executable
@@ -380,11 +387,25 @@ if(CATKIN_ENABLE_TESTING)
 #     foreach(hand ${handsForTests})
 #         
 #         add_test(
-#             NAME SendAction_test_${hand}
-#             COMMAND SendAction_test ${hand}
+#             NAME ComposedAction_test_${hand}
+#             COMMAND ComposedAction_test ${hand}
 #         )
 #   
 #     endforeach()
+    
+    #for code coverage, from Arturo xbot2
+    add_custom_target(test_clean_coverage
+        COMMAND /bin/sh ${CMAKE_CURRENT_SOURCE_DIR}/test/scripts/clean_gcov.sh
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    )
+    
+    add_custom_target(test_coverage
+        COMMAND lcov -c -d . --output-file main_coverage.info
+        #remove external libraries in the coverage
+        COMMAND lcov -r main_coverage.info '/usr*' 'boost*' 'eigen3*' 'c++*' '/opt*' -o main_coverage.info
+        COMMAND genhtml main_coverage.info --output-directory coverage_out
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    )
                 
 endif()
 
