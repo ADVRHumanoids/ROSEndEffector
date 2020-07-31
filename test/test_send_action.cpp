@@ -2,9 +2,10 @@
 #include "testUtils.h"
 
 #include <ros/ros.h>
-#include <ros/console.h>
 
 #include <ros_end_effector/Parser.h>
+#include <ros_end_effector/ParserMoveIt.h>
+#include <ros_end_effector/FindActions.h>
 #include <ros_end_effector/EEInterface.h>
 #include <ros_end_effector/ActionGeneric.h>
 #include <ros_end_effector/Utils.h>
@@ -31,7 +32,7 @@ class testSendAction: public ::testing::Test {
 
 protected:
 
-    testSendAction() {
+    testSendAction()  {
     }
 
     virtual ~testSendAction() {
@@ -50,7 +51,7 @@ protected:
         ROSEE::Parser p ( nh );
         if (! p.init (  ROSEE::Utils::getPackagePath() + "/configs/" + robot_name + ".yaml" )) {
             
-            std::cout << "[TEST parser FAIL: some config file missing]" << std::endl;
+            std::cout << "[TEST SEND ACTIONS]parser FAIL: some config file missing]" << std::endl;
             return;
         }
         
@@ -60,14 +61,26 @@ protected:
         if ( folderForActions.size() == 0 ){ //if no action path is set in the yaml file...
             folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/" + ee->getName();
         }
-    
-    }
+
+        /** Find all the actions **/
+        //note: test on the findActions part is done in other test files
+        parserMoveIt = std::make_shared<ROSEE::ParserMoveIt>();
+        if (! parserMoveIt->init ("robot_description", false) ) {
+
+            std::cout << "[TEST SEND ACTIONS] FAILED parserMoveit Init, stopping execution"  << std::endl; 
+            return;
+        }
+                
+        actionsFinder = std::make_shared<ROSEE::FindActions>(parserMoveIt);
+
+                                                                          
+        }
 
     virtual void TearDown() override {
     }
     
-    void sendAndTest( ROSEE::ActionGeneric simpleAction, double percentageWanted = 1.0);
-    
+    void sendAndTest(ROSEE::Action::Ptr action, double percentageWanted = 1.0);
+
     ros::NodeHandle nh;
     std::string folderForActions;
     std::unique_ptr<ROSEE::TestUtils::Process> roseeExecutor;
@@ -75,6 +88,9 @@ protected:
     ros::Publisher sendActionPub;
     ros::Subscriber receiveRobStateSub;
     ROSEE::YamlWorker yamlWorker;
+    std::shared_ptr <actionlib::SimpleActionClient <rosee_msg::ROSEECommandAction> > action_client;
+    ROSEE::ParserMoveIt::Ptr parserMoveIt;
+    std::shared_ptr<ROSEE::FindActions> actionsFinder;
     
     struct ClbkHelper {
     
@@ -115,9 +131,14 @@ protected:
 
     ClbkHelper clbkHelper;
     
+protected:
+    void setMainNode();
+    void sendAction( ROSEE::Action::Ptr action, double percentageWanted);
+    void testAction( ROSEE::Action::Ptr actionSent, double percentageWanted);
+    
 };
 
-void testSendAction::sendAndTest( ROSEE::ActionGeneric simpleAction, double percentageWanted) {
+void testSendAction::setMainNode() {
     
     std::string handNameArg = "hand_name:=" + ee->getName();
     roseeExecutor.reset(new ROSEE::TestUtils::Process({"roslaunch", "ros_end_effector", "test_rosee_startup.launch", handNameArg}));
@@ -132,22 +153,38 @@ void testSendAction::sendAndTest( ROSEE::ActionGeneric simpleAction, double perc
     
     receiveRobStateSub = nh.subscribe (topic_name_js, 1, &ClbkHelper::jointStateClbk, &clbkHelper);
     
-    std::shared_ptr <actionlib::SimpleActionClient <rosee_msg::ROSEECommandAction> > action_client = 
+    action_client = 
         std::make_shared <actionlib::SimpleActionClient <rosee_msg::ROSEECommandAction>>
         (nh, "/ros_end_effector/action_command", true); //TODO check this action command
 
     action_client->waitForServer();
+        
+}
     
+void testSendAction::sendAction( ROSEE::Action::Ptr action, double percentageWanted) {
+
     rosee_msg::ROSEECommandGoal goal;
     goal.goal_action.seq = 0 ;
     goal.goal_action.stamp = ros::Time::now();
     goal.goal_action.percentage = percentageWanted;
-    goal.goal_action.action_name = "testAllUpperLim";
-    goal.goal_action.action_type = ROSEE::Action::Type::Generic ;
-    goal.goal_action.actionPrimitive_type = ROSEE::ActionPrimitive::Type::None ; //because it is not a primitive
-    
+    goal.goal_action.action_name = action->getName();
+    goal.goal_action.action_type = action->getType() ;
+
+    if (action->getType() == ROSEE::Action::Type::Primitive) {
+        ROSEE::ActionPrimitive::Ptr primitivePtr = std::static_pointer_cast<ROSEE::ActionPrimitive>(action);
+        goal.goal_action.actionPrimitive_type = primitivePtr->getPrimitiveType() ;
+
+        for (auto it : primitivePtr->getKeyElements()) {
+            goal.goal_action.selectable_items.push_back(it);
+        }
+    }
+
     action_client->sendGoal (goal, boost::bind(&ClbkHelper::actionDoneClbk, &clbkHelper, _1, _2),
         boost::bind(&ClbkHelper::actionActiveClbk, &clbkHelper), boost::bind(&ClbkHelper::actionFeedbackClbk, &clbkHelper, _1)) ;
+        
+}
+
+void testSendAction::testAction(ROSEE::Action::Ptr actionSent, double percentageWanted) {
          
     ros::Rate r(10); // 10 hz
     while (!clbkHelper.completed) {
@@ -159,9 +196,7 @@ void testSendAction::sendAndTest( ROSEE::ActionGeneric simpleAction, double perc
     //finally, lets test if the pos set in the actions are the same of the robot when the action is completed
     for (int i=0; i < clbkHelper.js.name.size(); i++) {
         
-        
-        //create an action where all joints move toward their upper limit
-        auto wantedJointsPosMap = simpleAction.getJointPos();
+        auto wantedJointsPosMap = actionSent->getJointPos();
         
         auto findJoint = wantedJointsPosMap.find(clbkHelper.js.name[i]);
         
@@ -179,36 +214,43 @@ void testSendAction::sendAndTest( ROSEE::ActionGeneric simpleAction, double perc
         EXPECT_EQ (actionlib::SimpleClientGoalState::SUCCEEDED, clbkHelper.goalState);
         
         //test if the action completed is the same sent
-        EXPECT_DOUBLE_EQ (goal.goal_action.percentage, clbkHelper.actionCompleted.percentage);
-        EXPECT_EQ (goal.goal_action.action_name, clbkHelper.actionCompleted.action_name);
-        EXPECT_EQ (goal.goal_action.action_type, clbkHelper.actionCompleted.action_type);
-        EXPECT_EQ (goal.goal_action.actionPrimitive_type, clbkHelper.actionCompleted.actionPrimitive_type);
-        
+        EXPECT_DOUBLE_EQ (percentageWanted, clbkHelper.actionCompleted.percentage);
+        EXPECT_EQ (actionSent->getName(), clbkHelper.actionCompleted.action_name);
+        EXPECT_EQ (actionSent->getType(), clbkHelper.actionCompleted.action_type);
+        if (actionSent->getType() == ROSEE::Action::Type::Primitive) {
+            ROSEE::ActionPrimitive::Ptr primitivePtr = std::static_pointer_cast<ROSEE::ActionPrimitive>(actionSent);
+            EXPECT_EQ (primitivePtr->getPrimitiveType(), clbkHelper.actionCompleted.actionPrimitive_type);
+        }
     }
+}
+
+void testSendAction::sendAndTest(ROSEE::Action::Ptr action, double percentageWanted) {
+    
+    setMainNode();
+    sendAction(action, percentageWanted);
+    testAction(action, percentageWanted);
+    
 }
 
 /**
  * @brief These Tests create a Generic Action and see if it is sent correctly.
- *  1 - An ActionGeneric is created, where the actuated Joints are set to their upper limit
+ *  1 - An ActionGeneric is created, where the actuated Joints are set
  * 
  *  2 - The sendAndTest function is called:
  * 
- *    - The ROSEE main node (which receives action commands and output specific joint pos references) is launched
+ *    -[setMainNode] The ROSEE main node (which receives action commands and output specific joint pos references) is launched
  *       such that the action created is parsed by him
- *    - The action is commanded.
- * 
- * 
- * 
- *  These Tests check that, when the ROSEE says the action is completed, the joints positions are effectively the ones
- *     put in the actionGeneric created. So in someway it bypass ROSEE when checking directly the robot state.
+ *    -[sendAction] The action is commanded.
+ *    -[testAction] After rosee says the action is completed, some checks are done to see if the final state is the same as the 
+ *      action created
  */
+
 TEST_F ( testSendAction, sendSimpleGeneric ) {
     
     
     ROSEE::JointPos jp;
     ROSEE::JointsInvolvedCount jpc;
 
-    //for now copy jp of another action 
     std::vector<std::string> actJoints = ee->getActuatedJoints();
     
     ASSERT_FALSE (actJoints.empty());
@@ -226,11 +268,11 @@ TEST_F ( testSendAction, sendSimpleGeneric ) {
         
     }
 
-    ROSEE::ActionGeneric simpleAction("testAllUpperLim", jp, jpc);
+    ROSEE::Action::Ptr action = std::make_shared<ROSEE::ActionGeneric>("testAllUpperLim", jp, jpc);
     //emit the yaml so roseeExecutor can find the action
-    yamlWorker.createYamlFile( &simpleAction, folderForActions + "/generics/" );
-    
-    sendAndTest(simpleAction);
+    yamlWorker.createYamlFile( action.get(), folderForActions + "/generics/" );
+
+    sendAndTest(action);
     
 }
 
@@ -240,7 +282,6 @@ TEST_F ( testSendAction, sendSimpleGeneric2 ) {
     ROSEE::JointPos jp;
     ROSEE::JointsInvolvedCount jpc;
 
-    //for now copy jp of another action 
     std::vector<std::string> actJoints = ee->getActuatedJoints();
     
     ASSERT_FALSE (actJoints.empty());
@@ -250,7 +291,7 @@ TEST_F ( testSendAction, sendSimpleGeneric2 ) {
         int id = -1;
         ee->getInternalIdForJoint(actJoints.at(i), id);
         
-        //create an action where all joints move toward their upper limit
+        //create an action where all joints move toward their lower limit
         std::vector<double> one_dof;
         one_dof.push_back ( ee->getLowerPositionLimits()[id] );
         jp.insert ( std::make_pair(actJoints.at(i), one_dof) );
@@ -258,21 +299,20 @@ TEST_F ( testSendAction, sendSimpleGeneric2 ) {
         
     }
 
-    ROSEE::ActionGeneric simpleAction("testAllUpperLim", jp, jpc);
+    ROSEE::Action::Ptr action = std::make_shared<ROSEE::ActionGeneric>("testAllLowerLim", jp, jpc);
     //emit the yaml so roseeExecutor can find the action
-    yamlWorker.createYamlFile( &simpleAction, folderForActions + "/generics/" );
-    
-    sendAndTest(simpleAction);
+    yamlWorker.createYamlFile( action.get(), folderForActions + "/generics/" );
+
+    sendAndTest(action);
     
 }
 
+
 TEST_F ( testSendAction, sendSimpleGeneric3 ) {
-    
     
     ROSEE::JointPos jp;
     ROSEE::JointsInvolvedCount jpc;
 
-    //for now copy jp of another action 
     std::vector<std::string> actJoints = ee->getActuatedJoints();
     
     ASSERT_FALSE (actJoints.empty());
@@ -282,7 +322,7 @@ TEST_F ( testSendAction, sendSimpleGeneric3 ) {
         int id = -1;
         ee->getInternalIdForJoint(actJoints.at(i), id);
         
-        //create an action where all joints move toward their upper limit
+        //create an action where all joints move, but make sure to stay within limits
         std::vector<double> one_dof;
         one_dof.push_back ( ee->getLowerPositionLimits()[id]*0.15 + 0.1 );
         jp.insert ( std::make_pair(actJoints.at(i), one_dof) );
@@ -290,13 +330,388 @@ TEST_F ( testSendAction, sendSimpleGeneric3 ) {
         
     }
 
-    ROSEE::ActionGeneric simpleAction("testAllUpperLim", jp, jpc);
+    ROSEE::Action::Ptr action = std::make_shared<ROSEE::ActionGeneric>("testAllUpperLim", jp, jpc);
     //emit the yaml so roseeExecutor can find the action
-    yamlWorker.createYamlFile( &simpleAction, folderForActions + "/generics/" );
-    
-    sendAndTest(simpleAction, 0.33);
+    yamlWorker.createYamlFile( action.get(), folderForActions + "/generics/" );
+
+    sendAndTest(action, 0.33);
     
 }
+
+/**
+ * @brief This test take a random trig (among the one found for the ee loaded) and command it
+ * The check is done after the action completion as before (in the sendAndTest function), 
+ * but here we also check that the final pose of the moved finger finds all the actuated joint of that finger
+ * in the bigger bound (as it should be by definition of trig)
+ */
+TEST_F ( testSendAction, sendTrig ) {
+
+    ROSEE::ActionTrig::Map trigMap = actionsFinder->findTrig (ROSEE::ActionPrimitive::Type::Trig, folderForActions + "/primitives/") ;
+
+    if (trigMap.size()>0){
+        std::vector<std::string> keys = ROSEE::Utils::extract_keys(trigMap);
+        //lets pick a random trig
+        srand((unsigned int)time(NULL));
+        int i = rand() % keys.size();
+        ROSEE::Action::Ptr action = std::make_shared<ROSEE::ActionTrig>(trigMap.at(keys.at(i)));
+
+        sendAndTest(action);
+        
+        //other than "default" check done in sendAndTest, we check that effectively the trig joints are gone
+        //toward their limit (from definition of trig)
+        std::vector<std::string> actJointsInvolved;
+        ee->getActuatedJointsInFinger(keys.at(i), actJointsInvolved);
+        
+        for (auto jointName : actJointsInvolved) {
+            //at O single dof joint
+            double bigBound = parserMoveIt->getBiggerBoundFromZero(jointName).at(0);
+            
+            for (int k = 0; k<clbkHelper.js.name.size(); k++) {
+                
+                if (clbkHelper.js.name[i].compare(jointName) == 0 ) {
+                    EXPECT_NEAR(bigBound, clbkHelper.js.position[i], 0.02);
+                    break;
+                } 
+            }
+        }
+    }
+}
+
+TEST_F ( testSendAction, sendTipFlex ) {
+    
+    auto tipFlexMap = actionsFinder->findTrig (ROSEE::ActionPrimitive::Type::TipFlex, folderForActions + "/primitives/");
+
+    if (tipFlexMap.size()>0) {
+        std::vector<std::string> keys = ROSEE::Utils::extract_keys(tipFlexMap);
+        //lets pick a random 
+        srand((unsigned int)time(NULL));
+        int i = rand() % keys.size();
+        ROSEE::Action::Ptr action = std::make_shared<ROSEE::ActionTrig>(tipFlexMap.at(keys.at(i)));
+
+        sendAndTest(action);
+        
+        //other than "default" check done in sendAndTest, we check that effectively the joint is gone to the limit
+        
+        //Workaround to take the single joint used by this action
+        auto jic = action->getJointsInvolvedCount();
+        std::string jointInvolved;
+        for (auto it : jic) {
+            if (it.second == 1 ){
+                jointInvolved = it.first;
+            }
+        }
+        
+        EXPECT_TRUE(jointInvolved.size() > 0);
+        
+        //at O single dof joint
+        double bigBound = parserMoveIt->getBiggerBoundFromZero(jointInvolved).at(0);
+        
+        for (int k = 0; k<clbkHelper.js.name.size(); k++) {
+            
+            if (clbkHelper.js.name[i].compare(jointInvolved) == 0 ) {
+                EXPECT_NEAR(bigBound, clbkHelper.js.position[i], 0.02);
+                break;
+                
+            }
+        }        
+    }
+}
+
+TEST_F ( testSendAction, sendFingFlex ) {
+
+    auto fingFlexMap = actionsFinder->findTrig (ROSEE::ActionPrimitive::Type::FingFlex, folderForActions + "/primitives/");
+
+    if (fingFlexMap.size()>0) {
+        std::vector<std::string> keys = ROSEE::Utils::extract_keys(fingFlexMap);
+        //lets pick a random 
+        srand((unsigned int)time(NULL));
+        int i = rand() % keys.size();
+        ROSEE::Action::Ptr action = std::make_shared<ROSEE::ActionTrig>(fingFlexMap.at(keys.at(i)));
+
+        sendAndTest(action);
+        
+       //other than "default" check done in sendAndTest, we check that effectively the joint is gone to the limit
+        
+        //Workaround to take the single joint used by this action
+        auto jic = action->getJointsInvolvedCount();
+        std::string jointInvolved;
+        for (auto it : jic) {
+            if (it.second == 1 ){
+                jointInvolved = it.first;
+            }
+        }
+        
+        EXPECT_TRUE(jointInvolved.size() > 0);
+        
+        //at O single dof joint
+        double bigBound = parserMoveIt->getBiggerBoundFromZero(jointInvolved).at(0);
+        
+        for (int k = 0; k<clbkHelper.js.name.size(); k++) {
+            
+            if (clbkHelper.js.name[i].compare(jointInvolved) == 0 ) {
+                EXPECT_NEAR(bigBound, clbkHelper.js.position[i], 0.02);
+                break;
+                
+            }
+        }
+    }
+}
+
+
+TEST_F ( testSendAction, sendPinches ) {
+    
+    auto pinchTightMap = actionsFinder->findPinch(folderForActions + "/primitives/").first;
+
+    if (pinchTightMap.size()>0){
+        std::vector<std::pair<std::string,std::string>> keys = ROSEE::Utils::extract_keys(pinchTightMap);
+        //lets pick a random 
+        srand((unsigned int)time(NULL));
+        int i = rand() % keys.size();
+        ROSEE::Action::Ptr action = std::make_shared<ROSEE::ActionPinchTight>(pinchTightMap.at(keys.at(i)));
+
+        sendAndTest(action);
+        
+    }
+}
+
+TEST_F ( testSendAction, sendPinchLoose ) {
+    
+    auto pinchLooseMap = actionsFinder->findPinch(folderForActions + "/primitives/").second;
+
+    if (pinchLooseMap.size()>0){
+        std::vector<std::pair<std::string,std::string>> keys = ROSEE::Utils::extract_keys(pinchLooseMap);
+        //lets pick a random 
+        srand((unsigned int)time(NULL));
+        int i = rand() % keys.size();
+        ROSEE::Action::Ptr action = std::make_shared<ROSEE::ActionPinchLoose>(pinchLooseMap.at(keys.at(i)));
+
+        sendAndTest(action);
+        
+    }
+}
+
+TEST_F (testSendAction, sendMultiplePinchStrict ) {
+    
+            
+    std::vector < ROSEE::ActionMultiplePinchTight::Map > multiplePinchMapsStrict;
+    for (int i = 3; i <= ee->getFingersNumber(); i++) {
+        auto multiplePinchMapStrict = actionsFinder->findMultiplePinch(i, folderForActions + "/primitives/", true );
+        
+        //keep only if it is not empty
+        if (multiplePinchMapStrict.size() > 0 ) {
+            multiplePinchMapsStrict.push_back (multiplePinchMapStrict);
+        }    
+    }
+
+    if ( multiplePinchMapsStrict.size() > 0 ) {
+        
+        srand((unsigned int)time(NULL));
+        int j = rand() % multiplePinchMapsStrict.size();
+        
+        std::vector<std::set<std::string>> keys = ROSEE::Utils::extract_keys( multiplePinchMapsStrict.at(j) );
+        //lets pick a random trig
+        srand((unsigned int)time(NULL));
+        int i = rand() % keys.size();
+        ROSEE::Action::Ptr action = std::make_shared<ROSEE::ActionMultiplePinchTight>(multiplePinchMapsStrict.at(j).at(keys.at(i)));
+
+        sendAndTest(action);
+        
+    }
+    
+}
+
+TEST_F (testSendAction, sendMultiplePinchNoStrict ) {
+    
+            
+    std::vector < ROSEE::ActionMultiplePinchTight::Map > multiplePinchMapsNOStrict;
+    for (int i = 3; i <= ee->getFingersNumber(); i++) {
+        auto multiplePinchMapNOStrict = actionsFinder->findMultiplePinch(i, folderForActions + "/primitives/", false );
+        
+        //keep only if it is not empty
+        if (multiplePinchMapNOStrict.size() > 0 ) {
+            multiplePinchMapsNOStrict.push_back (multiplePinchMapNOStrict);
+        }
+
+    }
+
+    if ( multiplePinchMapsNOStrict.size() > 0 ) {
+        
+        srand((unsigned int)time(NULL));
+        int j = rand() % multiplePinchMapsNOStrict.size();
+        
+        std::vector<std::set<std::string>> keys = ROSEE::Utils::extract_keys( multiplePinchMapsNOStrict.at(j) );
+        //lets pick a random trig
+        srand((unsigned int)time(NULL));
+        int i = rand() % keys.size();
+        ROSEE::Action::Ptr action = std::make_shared<ROSEE::ActionMultiplePinchTight>(multiplePinchMapsNOStrict.at(j).at(keys.at(i)));
+
+        sendAndTest(action);
+        
+    }
+    
+}
+
+TEST_F (testSendAction, sendSingleJointMultipleTips ) {
+    
+    std::vector < ROSEE::ActionSingleJointMultipleTips::Map > singleJointMultipleTipsMaps;
+    
+    for (int i = 1; i<=ee->getFingersNumber(); i++) {
+            
+        std::map < std::string, ROSEE::ActionSingleJointMultipleTips> singleJointMultipleTipsMap = 
+            actionsFinder->findSingleJointMultipleTips (i, folderForActions + "/primitives/") ;
+            
+        if (singleJointMultipleTipsMap.size()>0) {
+            singleJointMultipleTipsMaps.push_back(singleJointMultipleTipsMap);
+        }
+
+    }
+
+    if ( singleJointMultipleTipsMaps.size() > 0 ) {
+        
+        srand((unsigned int)time(NULL));
+        int j = rand() % singleJointMultipleTipsMaps.size();
+        
+        std::vector<std::string> keys = ROSEE::Utils::extract_keys( singleJointMultipleTipsMaps.at(j) );
+        //lets pick a random trig
+        srand((unsigned int)time(NULL));
+        int i = rand() % keys.size();
+        ROSEE::Action::Ptr action = std::make_shared<ROSEE::ActionSingleJointMultipleTips>(singleJointMultipleTipsMaps.at(j).at(keys.at(i)));
+
+        sendAndTest(action);
+            
+    }
+}
+
+
+/***
+ * @brief Here we create a randomic action composed by some primitives
+ */
+TEST_F (testSendAction, sendComposedAction ) {
+
+    ROSEE::ActionTrig::Map trigMap = actionsFinder->findTrig (ROSEE::ActionPrimitive::Type::Trig, folderForActions + "/primitives/") ;
+    auto fingFlexMap = actionsFinder->findTrig (ROSEE::ActionPrimitive::Type::FingFlex, folderForActions + "/primitives/");
+    auto pinchTightMap = actionsFinder->findPinch(folderForActions + "/primitives/").first;
+    
+    ROSEE::ActionComposed actionComposed ( "TestComposed", false) ;
+    
+    for (auto trig : trigMap) {
+        std::shared_ptr <ROSEE::ActionPrimitive> pointer = 
+            std::make_shared <ROSEE::ActionTrig> ( trig.second );
+            
+        double lower_bound = 0;
+        double upper_bound = 0.8; //low, we do not want to go out of joint limits
+        std::uniform_real_distribution<double> unif(lower_bound, upper_bound);
+        std::default_random_engine re;
+        double random = unif(re);
+        EXPECT_TRUE(actionComposed.sumAction ( pointer, random )); 
+    }
+    
+    for (auto trig : fingFlexMap) {
+        std::shared_ptr <ROSEE::ActionPrimitive> pointer = 
+            std::make_shared <ROSEE::ActionTrig> ( trig.second );
+            
+        double lower_bound = 0;
+        double upper_bound = 0.7; //low, we do not want to go out of joint limits
+        std::uniform_real_distribution<double> unif(lower_bound, upper_bound);
+        std::default_random_engine re;
+        double random = unif(re);
+        EXPECT_TRUE(actionComposed.sumAction ( pointer, random )); 
+    }
+    
+    for (auto pinch : pinchTightMap) {
+        
+        std::shared_ptr <ROSEE::ActionPrimitive> pointer = 
+            std::make_shared <ROSEE::ActionPinchTight> ( pinch.second );
+            
+        double lower_bound = 0;
+        double upper_bound = 0.29; //low, we do not want to go out of joint limits
+        std::uniform_real_distribution<double> unif(lower_bound, upper_bound);
+        std::default_random_engine re;
+        double random = unif(re);
+        EXPECT_TRUE(actionComposed.sumAction ( pointer, random, 2 )); 
+    }
+    
+    if (actionComposed.numberOfInnerActions() > 0) {
+        ROSEE::Action::Ptr actionPtr = std::make_shared<ROSEE::ActionGeneric>(actionComposed);
+        
+        //do not forget to emit the file, in sendAndTest the rosee main node need to parse it
+        yamlWorker.createYamlFile( actionPtr.get(), folderForActions + "/generics/" );
+
+        sendAndTest(actionPtr, 0.95);
+    }
+ 
+}
+
+
+TEST_F (testSendAction, sendTimedAction ) {
+
+    ROSEE::ActionTrig::Map trigMap = actionsFinder->findTrig (ROSEE::ActionPrimitive::Type::Trig, folderForActions + "/primitives/") ;
+    auto tipFlexMap = actionsFinder->findTrig (ROSEE::ActionPrimitive::Type::TipFlex, folderForActions + "/primitives/");
+    auto pinchMaps = actionsFinder->findPinch(folderForActions + "/primitives/");
+    
+    ROSEE::ActionTimed actionTimed ( "TestTimed" ) ;
+    
+    if  (trigMap.size()>0) {
+        std::shared_ptr <ROSEE::ActionPrimitive> pointer = 
+            std::make_shared <ROSEE::ActionTrig> ( trigMap.begin()->second );
+            
+        double lower_bound = 0;
+        double upper_bound = 0.8; //low, we do not want to go out of joint limits
+        std::uniform_real_distribution<double> unif(lower_bound, upper_bound);
+        std::default_random_engine re;
+        double random = unif(re);
+        EXPECT_TRUE(actionTimed.insertAction(pointer, 0, 0.7, 0, random)); 
+    }
+    
+    if (tipFlexMap.size() > 0) {
+        std::shared_ptr <ROSEE::ActionPrimitive> pointer = 
+            std::make_shared <ROSEE::ActionTrig> ( tipFlexMap.rbegin()->second); //rbegin is the last element
+            
+        double lower_bound = 0;
+        double upper_bound = 0.95;
+        std::uniform_real_distribution<double> unif(lower_bound, upper_bound);
+        std::default_random_engine re;
+        double random = unif(re);
+        EXPECT_TRUE(actionTimed.insertAction(pointer, 0.2, 0.32, 0, random)); 
+    }
+    
+    if (! pinchMaps.first.empty()) {
+        
+        std::shared_ptr <ROSEE::ActionPrimitive> pointer = 
+            std::make_shared <ROSEE::ActionPinchTight> ( pinchMaps.first.begin()->second );
+            
+        double lower_bound = 0.6;
+        double upper_bound = 1; 
+        std::uniform_real_distribution<double> unif(lower_bound, upper_bound);
+        std::default_random_engine re;
+        double random = unif(re);
+        EXPECT_TRUE(actionTimed.insertAction(pointer, 0.2, 0.32, 1, random)); 
+    }
+    
+    if (! pinchMaps.second.empty()) {        
+        std::shared_ptr <ROSEE::ActionPrimitive> pointer = 
+            std::make_shared <ROSEE::ActionPinchLoose> ( pinchMaps.second.rbegin()->second );
+            
+        double lower_bound = 0;
+        double upper_bound = 1;
+        std::uniform_real_distribution<double> unif(lower_bound, upper_bound);
+        std::default_random_engine re;
+        double random = unif(re);
+        EXPECT_TRUE(actionTimed.insertAction(pointer, 0, 0, 0, random)); 
+    }
+    
+    if (actionTimed.getInnerActionsNames().size() > 0) {
+        ROSEE::Action::Ptr actionPtr = std::make_shared<ROSEE::ActionTimed>(actionTimed);
+        
+        //do not forget to emit the file, in sendAndTest the rosee main node need to parse it
+        yamlWorker.createYamlFile( actionPtr.get(), folderForActions + "/timeds/" );
+        
+        sendAndTest(actionPtr);
+    }
+ 
+}
+
+
 
 } //namespace
 

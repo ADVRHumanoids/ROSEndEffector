@@ -382,7 +382,7 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_actionsInfo_services() {
         actInfo.max_selectable = primitiveContainers.second.begin()->first.size();
         //TODO extract the keys with another mapActionHandler function?
         actInfo.selectable_names =
-            ROSEE::Utils::extract_keys_unique(primitiveContainers.second,
+            ROSEE::Utils::extract_keys_merged(primitiveContainers.second,
                                               _ee->getFingers().size());
         _actionsInfoVect.push_back(actInfo);
 

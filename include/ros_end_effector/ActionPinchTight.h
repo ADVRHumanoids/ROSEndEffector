@@ -42,6 +42,9 @@ class ActionPinchTight : public ActionPinchGeneric
     
 public:
     
+    typedef std::map < std::pair<std::string, std::string>, ActionPinchTight > Map;
+
+    
     /** @brief A pair to "link" the JointPos with infos about the collision among the two tips */
     typedef std::pair <JointPos, collision_detection::Contact> StateWithContact; 
     

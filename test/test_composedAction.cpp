@@ -2,7 +2,6 @@
 #include "testUtils.h"
 
 #include <ros/ros.h>
-#include <ros/console.h>
 
 #include <ros_end_effector/FindActions.h>
 #include <ros_end_effector/ParserMoveIt.h>
@@ -75,8 +74,9 @@ TEST_F ( testComposedAction, checkEmitParse ) {
     if (trigMap.size() > 0) { //if empty, no grasp is defined in the setup so test without meaning
         
         EXPECT_EQ (grasp.getName(), graspParsed.getName() );
-        EXPECT_EQ (grasp.numberOfInnerActions(), graspParsed.numberOfInnerActions() );
+        EXPECT_EQ (grasp.getType(), graspParsed.getType() );
         EXPECT_EQ (grasp.isIndependent(), graspParsed.isIndependent() );
+        EXPECT_EQ (grasp.numberOfInnerActions(), graspParsed.numberOfInnerActions() );
         EXPECT_EQ (grasp.getFingersInvolved(), graspParsed.getFingersInvolved() );
         
         for (auto joint: grasp.getJointPos() ) {
@@ -87,6 +87,12 @@ TEST_F ( testComposedAction, checkEmitParse ) {
             for (int j = 0; j < joint.second.size(); ++j ){
                 EXPECT_DOUBLE_EQ ( joint.second.at(j), graspParsed.getJointPos().at(joint.first).at(j) ); 
             }     
+        }
+        
+        for (auto jointCount : grasp.getJointsInvolvedCount()) {
+
+            EXPECT_EQ ( jointCount.second, graspParsed.getJointsInvolvedCount().at(jointCount.first) ); 
+               
         }
     }
 }

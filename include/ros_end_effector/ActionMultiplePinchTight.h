@@ -50,6 +50,8 @@ class ActionMultiplePinchTight : public ActionPinchGeneric
     
 public:
     
+    typedef std::map < std::set<std::string>, ActionMultiplePinchTight > Map;
+    
     /** @brief A pair to "link" the JointPos with the depthSum info to order the StateWithDepth in the actionState set*/
     typedef std::pair <JointPos, double> StateWithDepth; 
     

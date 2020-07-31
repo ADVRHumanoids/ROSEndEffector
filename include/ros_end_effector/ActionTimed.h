@@ -153,6 +153,12 @@ private:
     std::map <std::string, ROSEE::JointsInvolvedCount> actionsJointCountMap;
     
     /**
+     * Here is contained the wanted final position of the timed action.
+     * So, it is the sum of all the wanted joint position of all the inner actions
+     */
+    ROSEE::JointPos jointPosFinal;
+    
+    /**
      * This vector is used to take count of the order of the actions inserted
      */
     std::vector < std::string > actionsNamesOrdered;
