@@ -222,6 +222,9 @@ public:
      */
     std::string getFirstActuatedJointInFinger (std::string linkName) const ;
     
+    std::map<std::string, std::vector<double>> getInitialJointPositions() const;
+    std::vector<double> getInitialJointPosition(std::string jointName ) const;
+    
 private:
     
     std::string handName;
@@ -233,6 +236,8 @@ private:
     std::vector<const moveit::core::JointModel*> activeJointModels;
     std::string robot_description;
     unsigned int nFingers;
+    
+    std::map<std::string, std::vector<double>> initialJointPositions;
     
     /** @brief Map containing info about descendants links of a joint see \ref lookForDescendants function for more info */
     std::map <std::string, std::vector < const moveit::core::LinkModel* > > descendantLinksOfJoint;
@@ -309,6 +314,16 @@ private:
      * @note The descendants are found only for the actuated joints (not fixed, not mimic, not passive).
      */
     void lookForDescendants();
+    
+    /**
+     * @brief look if in the srdf there is specified a group state named "initial_state".
+     * if present, load the initial joint position from this
+     * else, the initial joint position are set all to 0 (one dof hack)
+     * @warning: be sure to put all dofs and also the pos of passive joints (but mimic is not necessary)
+     * @return false if any errors
+     */
+    bool lookForInitialPosition();
+
     
     /**
      * @brief Recursive function, support for \ref lookForDescendants, to explore the urdf tree

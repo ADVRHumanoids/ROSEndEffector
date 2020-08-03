@@ -53,6 +53,9 @@ bool ROSEE::ParserMoveIt::init ( std::string robot_description, bool verbose ) {
     lookForPassiveJoints();
     lookForDescendants();
     lookJointsTipsCorrelation();
+    if (!lookForInitialPosition()){
+        return false;
+    }
     
     return true;
     
@@ -102,6 +105,11 @@ std::map<std::string, std::vector<std::string> > ROSEE::ParserMoveIt::getJointsO
     return jointsOfFingertipMap;
 }
 
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
 std::map < std::string, std::string> ROSEE::ParserMoveIt::getFingerOfFingertipMap() const {
     return fingerOfFingertipMap;
 }
@@ -134,6 +142,26 @@ std::string ROSEE::ParserMoveIt::getFingertipOfFinger (std::string fingerName) c
     }
 }
 
+<<<<<<< Updated upstream
+=======
+std::map<std::string, std::vector<double>> ROSEE::ParserMoveIt::getInitialJointPositions() const {
+    return initialJointPositions;
+}
+
+std::vector<double> ROSEE::ParserMoveIt::getInitialJointPosition(std::string jointName ) const {
+    
+    auto it = initialJointPositions.find(jointName);
+    
+    if (it != initialJointPositions.end() ) {
+        return (it->second);
+        
+    } else {
+        return std::vector<double>();
+    } 
+}
+
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 robot_model::RobotModelPtr ROSEE::ParserMoveIt::getCopyModel() const {
     robot_model_loader::RobotModelLoader robot_model_loader(robot_description); 
     return robot_model_loader.getModel();
@@ -526,3 +554,65 @@ void ROSEE::ParserMoveIt::getRealDescendantLinkModelsRecursive (
     }
     
 }
+
+bool ROSEE::ParserMoveIt::lookForInitialPosition() {
+    auto allGroupStates = robot_model->getSRDF()->getGroupStates();
+    
+    for (const auto it : allGroupStates) {
+        if (it.name_.compare("initial_state")) {
+            initialJointPositions = it.joint_values_;
+        } 
+    }
+    
+    if (initialJointPositions.size()==0) { //set the default pos all to zero
+    
+        for (const auto jn : activeJointNames) {
+            
+            std::vector<double> pos (robot_model->getJointModel(jn)->getVariableCount(), 0.0);
+            initialJointPositions.insert(std::make_pair(jn, pos));
+        }
+        
+        for (const auto jn : passiveJointNames) {
+            
+            std::vector<double> pos (robot_model->getJointModel(jn)->getVariableCount(), 0.0);
+            initialJointPositions.insert(std::make_pair(jn, pos));
+        }
+        
+    } else if (initialJointPositions.size() != (activeJointNames.size() + passiveJointNames.size()) ) {
+        
+        std::cerr << " [PARSER::" << __func__ << 
+            "]: Number of joint in the group state 'initial_state' is lesser than the active and passive" 
+            << " joints number. Are you sure to have put also the initial position of passive?"
+            << std::endl;
+        return false;
+    }
+    
+    //check if initial states are not out of limits
+    
+
+
+    for (const auto is : initialJointPositions) {
+        
+        moveit::core::JointModel::Bounds limits = 
+            robot_model->getJointModel(is.first)->getVariableBounds();
+        
+        for (int i=0; i<limits.size(); i++ ){
+            
+            if (limits.at(i).max_position_ < is.second.at(i) ||
+                limits.at(i).min_position_ > is.second.at(i) ) {
+                
+                std::cerr << " [PARSER::" << __func__ << 
+                    "]: Initial Position of joint '" << is.first << "' exceeds its limits:\n"
+                    << "Min Limit : " << limits.at(i).min_position_ << "\n"
+                    << "Max Limit : " << limits.at(i).max_position_ << "\n"
+                    << "Default pos : " << is.second.at(i) << std::endl;
+                    
+                    return false;
+            }
+            
+        }
+        
+    }
+    return true;
+}
+

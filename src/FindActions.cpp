@@ -105,8 +105,10 @@ std::map <std::string, ROSEE::ActionTrig> ROSEE::FindActions::findTrig ( ROSEE::
         ROSEE::JointsInvolvedCount jointsInvolvedCount;
         for ( auto joint : mapEl.second.getJointPos() ) {
             jointsInvolvedCount.insert (std::make_pair(joint.first, 0));
-            for (auto dof : joint.second) {
-                if (dof != DEFAULT_JOINT_POS){
+            //check all dofs...
+            for (int i = 0; i< joint.second.size() ; i++) {
+                if (joint.second.at(i) != parserMoveIt->getInitialJointPosition(joint.first).at(i) ){
+                    
                     jointsInvolvedCount.at(joint.first) = 1;
                     break;
                 }
@@ -166,11 +168,7 @@ std::map <std::string, ROSEE::ActionSingleJointMultipleTips> ROSEE::FindActions:
         std::vector<double> nearerPos = parserMoveIt->getSmallerBoundFromZero(mapEl.first);
         
         //create and initialize JointPos map
-        JointPos jpFar;
-        for (auto it : parserMoveIt->getActiveJointModels()){
-            std::vector <double> jPos (it->getVariableCount(), DEFAULT_JOINT_POS);
-            jpFar.insert ( std::make_pair ( it->getName(), jPos ));
-        }
+        JointPos jpFar = parserMoveIt->getInitialJointPositions();
         JointPos jpNear = jpFar;
         
         jpFar.at ( mapEl.first ) = furtherPos;
@@ -271,7 +269,7 @@ std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchTight > ROSE
         std::stringstream logCollision;
         collision_result.clear();
         kinematic_state.setToRandomPositions();
-        setToDefaultPositionPassiveJoints(&kinematic_state);
+        setToInitialPositionPassiveJoints(&kinematic_state);
         planning_scene.checkSelfCollision(collision_request, collision_result, kinematic_state, acm);
         
         if (collision_result.collision) { 
@@ -329,7 +327,7 @@ void ROSEE::FindActions::checkDistances (std::map < std::pair <std::string, std:
     for (int i = 0; i < N_EXP_DISTANCES; i++){
         
         kinematic_state.setToRandomPositions();
-        setToDefaultPositionPassiveJoints(&kinematic_state);
+        setToInitialPositionPassiveJoints(&kinematic_state);
 
         //for each pair remaining in notCollidingTips, check if a new min distance is found
         for (auto &mapEl : *mapOfLoosePinches) { 
@@ -467,7 +465,7 @@ void ROSEE::FindActions::checkWhichTipsCollideWithoutBounds (
     for (int i = 0; i < N_EXP_COLLISION; i++){
         collision_result.clear();
         kinematic_state.setToRandomPositions();
-        setToDefaultPositionPassiveJoints(&kinematic_state);
+        setToInitialPositionPassiveJoints(&kinematic_state);
 
         planning_scene.checkSelfCollision(collision_request, collision_result, kinematic_state, acm);
         
@@ -517,7 +515,7 @@ std::map<std::set<std::string>, ROSEE::ActionMultiplePinchTight> ROSEE::FindActi
         
         collision_result.clear();
         kinematic_state.setToRandomPositions();
-        setToDefaultPositionPassiveJoints(&kinematic_state);
+        setToInitialPositionPassiveJoints(&kinematic_state);
 
         planning_scene.checkSelfCollision(collision_request, collision_result, kinematic_state, acm);
         
@@ -665,12 +663,7 @@ bool ROSEE::FindActions::insertJointPosForTrigInMap ( std::map <std::string, Act
     if ( itMap == trigMap.end() ) {
         //still no action for this finger in the map
 
-        JointPos jp;
-        for (auto it : parserMoveIt->getActiveJointModels()){
-            std::vector <double> jPos (it->getVariableCount(), DEFAULT_JOINT_POS);
-            jp.insert ( std::make_pair ( it->getName(), jPos ));
-        }
-        
+        JointPos jp = parserMoveIt->getInitialJointPositions();
         //HACK at(0) because 1dof joint
         jp.at ( jointName ).at(0) = trigValue;
  
@@ -754,7 +747,7 @@ ROSEE::JointsInvolvedCount ROSEE::FindActions::setOnlyDependentJoints(
         if ( std::find( jointOfTips1.begin(), jointOfTips1.end(), jp.first) == jointOfTips1.end() &&
              std::find( jointOfTips2.begin(), jointOfTips2.end(), jp.first) == jointOfTips2.end() ) {
               
-            std::fill ( jp.second.begin(), jp.second.end(), DEFAULT_JOINT_POS);   
+            jp.second = parserMoveIt->getInitialJointPosition(jp.first); 
         
             IF USE THIS JOINTINVOLVEDCOUNT REMEMBER
         }
@@ -767,7 +760,7 @@ ROSEE::JointsInvolvedCount ROSEE::FindActions::setOnlyDependentJoints(
         if (std::find (tips.begin(), tips.end(), tipsNames.first) == tips.end() &&
             std::find (tips.begin(), tips.end(), tipsNames.second) == tips.end() ) {
             // not dependant, set to default the position
-            std::fill ( jp.second.begin(), jp.second.end(), DEFAULT_JOINT_POS); 
+            jp.second = parserMoveIt->getInitialJointPosition(jp.first); 
             jointsInvolvedCount.at ( jp.first ) = 0;
         }
     } 
@@ -800,7 +793,7 @@ ROSEE::JointsInvolvedCount ROSEE::FindActions::setOnlyDependentJoints(
         }
         
         if (jointsInvolvedCount.at ( jp.first ) == 0 ) {
-            std::fill ( jp.second.begin(), jp.second.end(), DEFAULT_JOINT_POS); 
+            jp.second = parserMoveIt->getInitialJointPosition(jp.first);
             //not used joint, set to default state (all its dof)
         }
 
@@ -808,11 +801,11 @@ ROSEE::JointsInvolvedCount ROSEE::FindActions::setOnlyDependentJoints(
     return jointsInvolvedCount;    
 }
 
-void ROSEE::FindActions::setToDefaultPositionPassiveJoints(moveit::core::RobotState * kinematic_state) {
+void ROSEE::FindActions::setToInitialPositionPassiveJoints(moveit::core::RobotState * kinematic_state) {
     
-    const double pos = DEFAULT_JOINT_POS; //idk why but setJointPositions want a pointer as 2nd arg
     for (auto joint : parserMoveIt->getPassiveJointNames()){
-        kinematic_state->setJointPositions(joint, &pos);
+        std::vector<double> pos = parserMoveIt->getInitialJointPosition(joint);
+        kinematic_state->setJointPositions(joint, pos);
     }
     
 }

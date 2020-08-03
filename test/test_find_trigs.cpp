@@ -25,7 +25,7 @@ protected:
     virtual void SetUp() override {
 
     
-        std::shared_ptr <ROSEE::ParserMoveIt> parserMoveIt = std::make_shared <ROSEE::ParserMoveIt> ();
+        parserMoveIt = std::make_shared <ROSEE::ParserMoveIt> ();
         //if return false, models are not found and it is useless to continue the test
         ASSERT_TRUE(parserMoveIt->init ("robot_description", false)) ;
         ROSEE::FindActions actionsFinder (parserMoveIt);
@@ -60,6 +60,7 @@ protected:
     virtual void TearDown() override {
     }
 
+    std::shared_ptr <ROSEE::ParserMoveIt> parserMoveIt;
     std::vector < std::map < std::string , ROSEE::ActionTrig >  > trigMap;
     std::vector < std::map < std::set < std::string >, std::shared_ptr<ROSEE::ActionPrimitive> >  > trigParsedMap;
 };
@@ -201,9 +202,8 @@ TEST_F ( testFindTrigs, checkEmitParse ) {
 
 /** TipFlex and FingerFlex, for definition, must have the unique setted joints that are different joints
  * 
- * @NOTE : These consideration are valid because we send the joint in the biggest bound, so a 0 position always 
+ * @NOTE : These consideration are valid because we send the joint in the biggest bound, so a default position always 
  * means that is a "not setted" joint. 
- * @WARNING what happens if the define in findAction.h DEFAULT_JOINT_POS 0.0 changes
  */
 TEST_F ( testFindTrigs, checkJointPosTipAndFing ) {
     
@@ -228,6 +228,7 @@ TEST_F ( testFindTrigs, checkJointPosTipAndFing ) {
                 ROSEE::JointPos fingJs = mapFingEl.second.getJointPos();
                 ASSERT_EQ ( tipJs.size(), fingJs.size() );
                 
+<<<<<<< Updated upstream
                 for (auto tipJoint: tipJs) {
                     
                     //at(0): 1dof joint
@@ -236,6 +237,25 @@ TEST_F ( testFindTrigs, checkJointPosTipAndFing ) {
                         EXPECT_EQ ( fingJs.at(tipJoint.first).at(0), 0.0);
                     } 
                 }
+=======
+<<<<<<< Updated upstream
+                //at(0): 1dof joint
+                if (tipJoint.second.at(0) != 0.0) {
+                    //if so, it is the setted joint, and the correspondent of fingerAction must be zero
+                    EXPECT_EQ ( fingJs.at(tipJoint.first).at(0), 0.0);
+                } 
+=======
+                for (auto tipJoint: tipJs) {
+                    
+                    //HACK at(0): 1dof joint
+                    if (tipJoint.second.at(0) != parserMoveIt->getInitialJointPosition(tipJoint.first).at(0)) {
+                        //if so, it is the setted joint, and the correspondent of fingerAction must be in the 
+                        // default pos 
+                        EXPECT_EQ ( fingJs.at(tipJoint.first).at(0), parserMoveIt->getInitialJointPosition(tipJoint.first).at(0));
+                    } 
+                }
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
             }
         }
     }
@@ -249,14 +269,33 @@ TEST_F ( testFindTrigs, checkJointPosTipAndFing ) {
  * 
  * Similar consideration exists for fingFlex
  * 
- * @NOTE : These consideration are valid because we send the joint in the biggest bound, so a 0 position always 
+ * @NOTE : These consideration are valid because we send the joint in the biggest bound, so a default position always 
  * means that is a "not setted" joint. 
- * @WARNING what happens if the define in findAction.h DEFAULT_JOINT_POS 0.0 changes
  * @WARNING the third for must be changed if for trig another key (like the finger group name) is used instead
  * of the tip
  */
 TEST_F ( testFindTrigs, checkJointPosFlexsAndTrig ) {
     
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+    // we assume the order in trigmap : 0 = trig, 1 = tipflex, 2 = fingflex
+    // otherwise we have to check which one is what that is useless
+    ASSERT_EQ ( trigMap.at(0).begin()->second.getPrimitiveType(), ROSEE::ActionPrimitive::Type::Trig);
+    ASSERT_EQ ( trigMap.at(1).begin()->second.getPrimitiveType(), ROSEE::ActionPrimitive::Type::TipFlex);
+    ASSERT_EQ ( trigMap.at(2).begin()->second.getPrimitiveType(), ROSEE::ActionPrimitive::Type::FingFlex);
+    
+    
+   // If a tipFlex is present, the unique setted joint must be also setted (equal pos) in the trig action 
+    for (auto &mapTipEl: trigMap.at(1) ) {                
+        for ( auto &tipJs : mapTipEl.second.getJointPos() ) {
+            if (tipJs.second.at(0) != 0 ) {
+                //if a tipFlex exist for a tip, also a trig for that tip exist
+                EXPECT_TRUE (trigMap.at(0).find ( mapTipEl.first ) != trigMap.at(0).end());
+                EXPECT_DOUBLE_EQ ( tipJs.second.at(0),
+                        trigMap.at(0).at(mapTipEl.first).getJointPos().at(tipJs.first).at(0) );
+=======
+>>>>>>> Stashed changes
 
     if (trigMap.size() != 0 &&
         trigMap.at(0).size() != 0 && 
@@ -273,15 +312,25 @@ TEST_F ( testFindTrigs, checkJointPosFlexsAndTrig ) {
     // If a tipFlex is present, the unique setted joint must be also setted (equal pos) in the trig action 
         for (auto &mapTipEl: trigMap.at(1) ) {                
             for ( auto &tipJs : mapTipEl.second.getJointPos() ) {
+<<<<<<< Updated upstream
                 if (tipJs.second.at(0) != 0 ) {
+=======
+                //HACK one dof joint
+                if (tipJs.second.at(0) != parserMoveIt->getInitialJointPosition(tipJs.first).at(0) ) {
+>>>>>>> Stashed changes
                     //if a tipFlex exist for a tip, also a trig for that tip exist
                     EXPECT_TRUE (trigMap.at(0).find ( mapTipEl.first ) != trigMap.at(0).end());
                     EXPECT_DOUBLE_EQ ( tipJs.second.at(0),
                             trigMap.at(0).at(mapTipEl.first).getJointPos().at(tipJs.first).at(0) );
                 }
                 
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
             }
         }
+<<<<<<< Updated upstream
         
         // If a FingFlex is present, the unique setted joint must be also setted (equal pos) in the trig action 
         for (auto &mapFingEl: trigMap.at(2) ) {                
@@ -294,24 +343,85 @@ TEST_F ( testFindTrigs, checkJointPosFlexsAndTrig ) {
                 }
             }
         }
+=======
+<<<<<<< Updated upstream
+    }
+    
+    // If a FingFlex is present, the unique setted joint must be also setted (equal pos) in the trig action 
+    for (auto &mapFingEl: trigMap.at(2) ) {                
+        for ( auto &fingJs : mapFingEl.second.getJointPos() ) {
+            if (fingJs.second.at(0) != 0 ) {
+                //if a fingFlex exist for a tip, also a trig for that tip exist
+                EXPECT_TRUE ( trigMap.at(0).find ( mapFingEl.first ) != trigMap.at(0).end() );
+                EXPECT_DOUBLE_EQ ( fingJs.second.at(0),
+                        trigMap.at(0).at(mapFingEl.first).getJointPos().at(fingJs.first).at(0) );
+            }
+        }
+    }
+    
+    // If some joint is not setted in the trig, it must be also non setted in 
+    // the tipAction of the same fingertip
+    for (auto &mapTrigEl: trigMap.at(0) ) {    
+        for ( auto &trigJs : mapTrigEl.second.getJointPos() ) {
+            if (trigJs.second.at(0) == 0.0 ) {
+                
+                // if a trig exist, it is not assured that a tip flex exist for that tip
+                if (trigMap.at(1).find ( mapTrigEl.first ) != trigMap.at(1).end()) {
+                    EXPECT_EQ ( 0.0,
+                            trigMap.at(1).at(mapTrigEl.first).getJointPos().at(trigJs.first).at(0) );
+                }
+                
+                // if a trig exist, it is not assured that a fing flex exist for that tip
+                if (trigMap.at(2).find ( mapTrigEl.first ) != trigMap.at(2).end()) {
+                    EXPECT_EQ ( 0.0,
+                            trigMap.at(2).at(mapTrigEl.first).getJointPos().at(trigJs.first).at(0) );
+=======
+        
+        // If a FingFlex is present, the unique setted joint must be also setted (equal pos) in the trig action 
+        for (auto &mapFingEl: trigMap.at(2) ) {                
+            for ( auto &fingJs : mapFingEl.second.getJointPos() ) {
+                if (fingJs.second.at(0) != parserMoveIt->getInitialJointPosition(fingJs.first).at(0) ) {
+                    //if a fingFlex exist for a tip, also a trig for that tip exist
+                    EXPECT_TRUE ( trigMap.at(0).find ( mapFingEl.first ) != trigMap.at(0).end() );
+                    EXPECT_DOUBLE_EQ ( fingJs.second.at(0),
+                            trigMap.at(0).at(mapFingEl.first).getJointPos().at(fingJs.first).at(0) );
+                }
+            }
+        }
+>>>>>>> Stashed changes
         
         // If some joint is not set in the trig, it must be also non setted in 
         // the tipAction of the same fingertip
         for (auto &mapTrigEl: trigMap.at(0) ) {    
             for ( auto &trigJs : mapTrigEl.second.getJointPos() ) {
+<<<<<<< Updated upstream
                 if (trigJs.second.at(0) == 0.0 ) {
                     
                     // if a trig exist, it is not assured that a tip flex exist for that tip
                     if (trigMap.at(1).find ( mapTrigEl.first ) != trigMap.at(1).end()) {
                         EXPECT_EQ ( 0.0,
+=======
+                if (trigJs.second.at(0) == parserMoveIt->getInitialJointPosition(trigJs.first).at(0) ) {
+                    
+                    // if a trig exist, it is not assured that a tip flex exist for that tip
+                    if (trigMap.at(1).find ( mapTrigEl.first ) != trigMap.at(1).end()) {
+                        EXPECT_EQ ( parserMoveIt->getInitialJointPosition(trigJs.first).at(0) ,
+>>>>>>> Stashed changes
                                 trigMap.at(1).at(mapTrigEl.first).getJointPos().at(trigJs.first).at(0) );
                     }
                     
                     // if a trig exist, it is not assured that a fing flex exist for that tip
                     if (trigMap.at(2).find ( mapTrigEl.first ) != trigMap.at(2).end()) {
+<<<<<<< Updated upstream
                         EXPECT_EQ ( 0.0,
                                 trigMap.at(2).at(mapTrigEl.first).getJointPos().at(trigJs.first).at(0) );
                     }
+=======
+                        EXPECT_EQ ( parserMoveIt->getInitialJointPosition(trigJs.first).at(0) ,
+                                trigMap.at(2).at(mapTrigEl.first).getJointPos().at(trigJs.first).at(0) );
+                    }
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
                 }
             }
         }
@@ -335,7 +445,7 @@ TEST_F ( testFindTrigs, checkFlexsSingleJoint ) {
           
             for ( auto &flexJs : mapFlexEl.second.getJointPos() ) { //iteration over the jointstates map
                 
-                if ( flexJs.second.at(0) != 0.0 ) {
+                if ( flexJs.second.at(0) != parserMoveIt->getInitialJointPosition(flexJs.first).at(0)  ) {
                     nJSet++;
                 }                
             }

@@ -27,7 +27,7 @@
       <group name="finger_2" />
       <group name="finger_3" />
       <group name="thumb" />
-   </group>
+    </group>
 
    <end_effector name="heri_hand_end_effector" parent_link="base_link" group="end_effector_fingers"/>
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->

@@ -16,7 +16,6 @@
 #define N_EXP_COLLISION 5000 //5000 is ok
 #define N_EXP_DISTANCES 5000 //? is ok
 #define N_EXP_COLLISION_MULTPINCH 3000
-#define DEFAULT_JOINT_POS 0.0
 
 namespace ROSEE
 {
@@ -258,10 +257,16 @@ private:
     
     
     /**
-     * @brief set to \ref DEFAULT_JOINT_POS all the passive joints (defined so in
+     * @brief set to initial pos all the passive joints (defined so in
      * the urdf file)
      */
+<<<<<<< Updated upstream:include/ROSEndEffector/FindActions.h
     void setToDefaultPositionPassiveJoints(moveit::core::RobotState * kinematic_state);
+<<<<<<< Updated upstream:include/ros_end_effector/FindActions.h
+=======
+=======
+    void setToInitialPositionPassiveJoints(moveit::core::RobotState * kinematic_state);
+>>>>>>> Stashed changes:include/ROSEndEffector/FindActions.h
     
     /**
      * @brief Giving as argument a pair of fingertips, this function return a pair of fingers that
@@ -288,6 +293,10 @@ private:
      * 
      */
     std::pair < std::string, std::string > getFingertipsPair (std::pair <std::string, std::string> fingersPair) const;
+<<<<<<< Updated upstream:include/ros_end_effector/FindActions.h
+=======
+>>>>>>> Stashed changes:include/ros_end_effector/FindActions.h
+>>>>>>> Stashed changes:include/ROSEndEffector/FindActions.h
 
 
 
