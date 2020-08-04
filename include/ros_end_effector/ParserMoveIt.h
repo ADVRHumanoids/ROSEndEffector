@@ -165,28 +165,28 @@ public:
     bool checkIfContinuosJoint ( const moveit::core::JointModel* joint ) const;
     
     /**
-     * @brief For each DOF of a joint, find the limit which is farther from 0 position
+     * @brief For each DOF of a joint, find the limit which is farther from initial position 
      * @param jointName the name of the joint
-     * @return std::vector<double> a vector (because joint can have more dofs) containing the values of the limits that are farther from 0
+     * @return std::vector<double> a vector (because joint can have more dofs) containing the values of the limits that are farther from initial position
      */
     std::vector<double> getBiggerBoundFromZero ( std::string jointName ) const;
     /**
-     * @brief For each DOF of a joint, find the limit which is farther from 0 position
+     * @brief For each DOF of a joint, find the limit which is farther from initial position 
      * @param joint pointer to the joint model
-     * @return std::vector<double> a vector (because joint can have more dofs) containing the values of the limits that are farther from 0
+     * @return std::vector<double> a vector (because joint can have more dofs) containing the values of the limits that are farther from the initial position
      */
     std::vector<double> getBiggerBoundFromZero ( const moveit::core::JointModel* joint ) const;
     
     /**
-     * @brief For each DOF of a joint, find the limit which is nearer from 0 position
+     * @brief For each DOF of a joint, find the limit which is nearer from initial position 
      * @param jointName the name of the joint
-     * @return std::vector<double> a vector (because joint can have more dofs) containing the values of the limits that are nearer from 0
+     * @return std::vector<double> a vector (because joint can have more dofs) containing the values of the limits that are nearer from initial position
      */
     std::vector<double> getSmallerBoundFromZero ( std::string jointName ) const;
     /**
-     * @brief For each DOF of a joint, find the limit which is nearer from 0 position
+     * @brief For each DOF of a joint, find the limit which is nearer from initial position
      * @param joint pointer to the joint model
-     * @return std::vector<double> a vector (because joint can have more dofs) containing the values of the limits that are nearer from 0
+     * @return std::vector<double> a vector (because joint can have more dofs) containing the values of the limits that are nearer from initial position
      */
     std::vector<double> getSmallerBoundFromZero ( const moveit::core::JointModel* joint ) const;
     
@@ -318,7 +318,7 @@ private:
     /**
      * @brief look if in the srdf there is specified a group state named "initial_state".
      * if present, load the initial joint position from this
-     * else, the initial joint position are set all to 0 (one dof hack)
+     * else, the initial joint position are set all to 0 
      * @warning: be sure to put all dofs and also the pos of passive joints (but mimic is not necessary)
      * @return false if any errors
      */

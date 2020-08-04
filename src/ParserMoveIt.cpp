@@ -105,11 +105,7 @@ std::map<std::string, std::vector<std::string> > ROSEE::ParserMoveIt::getJointsO
     return jointsOfFingertipMap;
 }
 
-<<<<<<< Updated upstream
-=======
-<<<<<<< Updated upstream
-=======
->>>>>>> Stashed changes
+
 std::map < std::string, std::string> ROSEE::ParserMoveIt::getFingerOfFingertipMap() const {
     return fingerOfFingertipMap;
 }
@@ -142,8 +138,6 @@ std::string ROSEE::ParserMoveIt::getFingertipOfFinger (std::string fingerName) c
     }
 }
 
-<<<<<<< Updated upstream
-=======
 std::map<std::string, std::vector<double>> ROSEE::ParserMoveIt::getInitialJointPositions() const {
     return initialJointPositions;
 }
@@ -160,8 +154,6 @@ std::vector<double> ROSEE::ParserMoveIt::getInitialJointPosition(std::string joi
     } 
 }
 
->>>>>>> Stashed changes
->>>>>>> Stashed changes
 robot_model::RobotModelPtr ROSEE::ParserMoveIt::getCopyModel() const {
     robot_model_loader::RobotModelLoader robot_model_loader(robot_description); 
     return robot_model_loader.getModel();
@@ -267,15 +259,23 @@ std::vector <double> ROSEE::ParserMoveIt::getBiggerBoundFromZero ( const moveit:
     }
     
     moveit::core::JointModel::Bounds limits = joint->getVariableBounds();
+    
 
     std::vector <double> maxPos;
-    for ( auto limit : limits ) {
-        if ( std::abs(limit.max_position_) > std::abs(limit.min_position_)) {
-            maxPos.push_back ( limit.max_position_ ) ;
+    std::vector <double> initialPos = getInitialJointPosition(joint->getName());
+    for ( int i = 0; i<limits.size(); i++ ) {
+        
+        //we take the limit which is further from initial position
+        if ( std::abs(limits.at(i).max_position_ - initialPos.at(i)) >=
+             std::abs(limits.at(i).min_position_ - initialPos.at(i))) {
+            
+            maxPos.push_back ( limits.at(i).max_position_ ) ;
+        
         } else {
-            maxPos.push_back ( limit.min_position_ ) ;
+            maxPos.push_back ( limits.at(i).min_position_ ) ;
         }
     }
+        
     return maxPos;
 }
 
@@ -299,11 +299,17 @@ std::vector <double> ROSEE::ParserMoveIt::getSmallerBoundFromZero ( const moveit
     moveit::core::JointModel::Bounds limits = joint->getVariableBounds();
 
     std::vector <double> minPos;
-    for ( auto limit : limits ) {
-        if ( std::abs(limit.max_position_) < std::abs(limit.min_position_)) {
-            minPos.push_back ( limit.max_position_ ) ;
+    std::vector <double> initialPos = getInitialJointPosition(joint->getName());
+    for ( int i = 0; i<limits.size(); i++ ) {
+        
+        //we take the limit which is further from initial position
+        if ( std::abs(limits.at(i).max_position_ - initialPos.at(i)) <=
+             std::abs(limits.at(i).min_position_ - initialPos.at(i))) {
+            
+            minPos.push_back ( limits.at(i).max_position_);
+            
         } else {
-            minPos.push_back ( limit.min_position_ ) ;
+            minPos.push_back ( limits.at(i).min_position_ ) ;
         }
     }
     return minPos;
@@ -559,13 +565,31 @@ bool ROSEE::ParserMoveIt::lookForInitialPosition() {
     auto allGroupStates = robot_model->getSRDF()->getGroupStates();
     
     for (const auto it : allGroupStates) {
-        if (it.name_.compare("initial_state")) {
+        
+        if (it.name_.compare("initial_state") == 0) {
+            
+            if (it.joint_values_.size() == 0) {
+                
+                //if here, srdfparser print errors but they are not fatal; we want to be fatal
+                std::cerr << " [PARSER::" << __func__ << 
+                "]: No valid joints are found in the group_state 'initial_state'"
+                << " Please check your srdf file and fill the group_state 'initial_state' or remove it" 
+                << std::endl;
+                
+                return false; 
+            }
+            
             initialJointPositions = it.joint_values_;
-        } 
+            std::cout << it.joint_values_.size() << std::endl;
+            for (auto boh : it.joint_values_) {
+                std::cout << boh.first << "    " << boh.second.at(0) << std::endl;
+            }
+            break; //no need to continue
+        }
     }
     
-    if (initialJointPositions.size()==0) { //set the default pos all to zero
-    
+    if (initialJointPositions.size() == 0) { //set the default pos all to zero
+        
         for (const auto jn : activeJointNames) {
             
             std::vector<double> pos (robot_model->getJointModel(jn)->getVariableCount(), 0.0);
@@ -587,10 +611,8 @@ bool ROSEE::ParserMoveIt::lookForInitialPosition() {
         return false;
     }
     
-    //check if initial states are not out of limits
     
-
-
+    //check if initial states are not out of limits
     for (const auto is : initialJointPositions) {
         
         moveit::core::JointModel::Bounds limits = 
@@ -609,9 +631,7 @@ bool ROSEE::ParserMoveIt::lookForInitialPosition() {
                     
                     return false;
             }
-            
         }
-        
     }
     return true;
 }

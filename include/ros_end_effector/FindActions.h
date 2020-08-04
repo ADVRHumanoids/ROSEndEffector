@@ -260,13 +260,7 @@ private:
      * @brief set to initial pos all the passive joints (defined so in
      * the urdf file)
      */
-<<<<<<< Updated upstream:include/ROSEndEffector/FindActions.h
-    void setToDefaultPositionPassiveJoints(moveit::core::RobotState * kinematic_state);
-<<<<<<< Updated upstream:include/ros_end_effector/FindActions.h
-=======
-=======
     void setToInitialPositionPassiveJoints(moveit::core::RobotState * kinematic_state);
->>>>>>> Stashed changes:include/ROSEndEffector/FindActions.h
     
     /**
      * @brief Giving as argument a pair of fingertips, this function return a pair of fingers that
@@ -293,13 +287,6 @@ private:
      * 
      */
     std::pair < std::string, std::string > getFingertipsPair (std::pair <std::string, std::string> fingersPair) const;
-<<<<<<< Updated upstream:include/ros_end_effector/FindActions.h
-=======
->>>>>>> Stashed changes:include/ros_end_effector/FindActions.h
->>>>>>> Stashed changes:include/ROSEndEffector/FindActions.h
-
-
-
 
 };
     
