@@ -580,10 +580,6 @@ bool ROSEE::ParserMoveIt::lookForInitialPosition() {
             }
             
             initialJointPositions = it.joint_values_;
-            std::cout << it.joint_values_.size() << std::endl;
-            for (auto boh : it.joint_values_) {
-                std::cout << boh.first << "    " << boh.second.at(0) << std::endl;
-            }
             break; //no need to continue
         }
     }

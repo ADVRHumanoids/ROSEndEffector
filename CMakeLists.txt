@@ -369,7 +369,7 @@ if(CATKIN_ENABLE_TESTING)
         EEInterface_test FindPinches_test FindTrigs_test ComposedAction_test TimedAction_test SendAction_test
     )
     list(APPEND handsForTests
-         test_ee two_finger two_finger_mimic
+         test_ee two_finger two_finger_mimic test_ee_spread
     )
     
     #run each test with each hand
