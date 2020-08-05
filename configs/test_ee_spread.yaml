@@ -1,0 +1,5 @@
+ros_end_effector:
+  urdf_path: "urdf/test_ee_spread.urdf"
+  srdf_path: "srdf/test_ee_spread.srdf"
+  action_path: "actions/tests/test_ee_spread/"
+    

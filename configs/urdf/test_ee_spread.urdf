@@ -1,0 +1,295 @@
+<?xml version="1.0"?>
+<robot name="test_ee_spread">
+
+  <link name="world"/>
+    <joint name="virtualFixed" type="fixed">
+    <parent link="world"/>
+    <child link="motor"/>
+  </joint>
+  
+  <link name="motor">
+  <inertial>
+    <mass value="1"/>
+    <inertia ixx="100" ixy="0" ixz="0" iyy="100" iyz="0" izz="100" />
+    <origin/>
+  </inertial>
+    <visual>
+      <geometry>
+        <cylinder length="0.6" radius=".2"/>
+      </geometry>
+      <material name="black">
+
+      <color rgba=".1 .1 .1 1"/>
+      </material>
+    </visual>
+  <collision>
+    <origin xyz="0 0 0"/>
+    <geometry>
+      <cylinder length="0.6" radius=".2"/>
+    </geometry>
+    <contact_coefficients mu="0" kp="1000.0" kd="1.0"/>
+  </collision>
+  </link>
+
+  <link name="base">
+  <inertial>
+    <mass value="1"/>
+    <inertia ixx="100" ixy="0" ixz="0" iyy="100" iyz="0" izz="100" />
+    <origin/>
+  </inertial>
+    <visual>
+      <geometry>
+        <box size="0.4 .1 .6"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 -0.15 0"/>
+      <material name="white">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+  <collision>
+      <origin rpy="0 0 0" xyz="0 -0.15 0"/>
+    <geometry>
+        <box size="0.4 .1 .6"/>
+    </geometry>
+    <contact_coefficients mu="0" kp="1000.0" kd="1.0"/>
+  </collision>
+  </link>
+
+  <joint name="motor_to_base" type="fixed">
+    <parent link="motor"/>
+    <child link="base"/>
+    <origin xyz="0 -0.15 0"/>
+  </joint>
+
+  <link name="virtual_left_for_spread">
+  </link>
+  
+  <joint name="left_spread" type="revolute">
+    <axis xyz="1 0 0"/>
+    <limit effort="1000.0" lower="-0.3" upper="0.3" velocity="0.5"/>
+    <parent link="base"/>
+    <child link="virtual_left_for_spread"/>
+    <origin xyz="0.1 0 0"/>
+  </joint>
+  
+
+  <link name="left_finger">
+  <inertial>
+    <mass value="1"/>
+    <inertia ixx="100" ixy="0" ixz="0" iyy="100" iyz="0" izz="100" />
+    <origin/>
+  </inertial>
+    <visual>
+      <geometry>
+        <box size="0.1 .5 .1"/>
+      </geometry>
+      <origin rpy="0 0 -0.7" xyz="-0.4 -0.3 0"/>
+      <material name="white">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+  <collision>
+      <origin rpy="0 0 -0.7" xyz="-0.4 -0.3 0"/>
+    <geometry>
+        <box size="0.1 .5 .1"/>
+    </geometry>
+    <contact_coefficients mu="0" kp="1000.0" kd="1.0"/>
+  </collision>
+  </link>
+
+  <joint name="base_to_left_finger" type="revolute">
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="0.0" upper="0.7" velocity="0.5"/>
+    <parent link="virtual_left_for_spread"/>
+    <child link="left_finger"/>
+    <origin xyz="-0.1 0 0"/>
+  </joint>
+  
+  <link name="virtual_right1_for_spread">
+  </link>
+  
+  <joint name="right1_spread" type="revolute">
+    <axis xyz="1 0 0"/>
+    <limit effort="1000.0" lower="-0.25" upper="0.25" velocity="0.5"/>
+    <parent link="base"/>
+    <child link="virtual_right1_for_spread"/>
+    <origin xyz="-0.1 0 0"/>
+  </joint>
+
+  <link name="right_finger1">
+  <inertial>
+    <mass value="1"/>
+    <inertia ixx="100" ixy="0" ixz="0" iyy="100" iyz="0" izz="100" />
+    <origin/>
+  </inertial>
+    <visual>
+      <geometry>
+        <box size="0.1 .5 .1"/>
+      </geometry>
+      <origin rpy="0 0 0.7" xyz="0.4 -0.3 0.25"/>
+      <material name="white">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+  <collision>
+      <origin rpy="0 0 0.7" xyz="0.4 -0.3 0.25"/>
+    <geometry>
+        <box size="0.1 .5 .1"/>
+    </geometry>
+    <contact_coefficients mu="0" kp="1000.0" kd="1.0"/>
+  </collision>
+  </link>
+
+  <joint name="base_to_right_finger1" type="revolute">
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="-0.7" upper="0.0" velocity="0.5"/>
+    <parent link="virtual_right1_for_spread"/>
+    <child link="right_finger1"/>
+    <origin xyz=".1 0 0"/>
+  </joint>
+  
+  <link name="virtual_right2_for_spread">
+  </link>
+  
+  <joint name="right2_spread" type="revolute">
+    <axis xyz="1 0 0"/>
+    <limit effort="1000.0" lower="-0.25" upper="0.25" velocity="0.5"/>
+    <parent link="base"/>
+    <child link="virtual_right2_for_spread"/>
+    <origin xyz="-0.1 0 0"/>
+  </joint>
+
+  <link name="right_finger2">
+  <inertial>
+    <mass value="1"/>
+    <inertia ixx="100" ixy="0" ixz="0" iyy="100" iyz="0" izz="100" />
+    <origin/>
+  </inertial>
+    <visual>
+      <geometry>
+        <box size="0.1 .5 .1"/>
+      </geometry>
+      <origin rpy="0 0 0.7" xyz="0.4 -0.3 -0.25"/>
+      <material name="white">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+  <collision>
+      <origin rpy="0 0 0.7" xyz="0.4 -0.3 -0.25"/>
+    <geometry>
+        <box size="0.1 .5 .1"/>
+    </geometry>
+    <contact_coefficients mu="0" kp="1000.0" kd="1.0"/>
+  </collision>
+  </link>
+
+  <joint name="base_to_right_finger2" type="revolute">
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="-0.7" upper="0.0" velocity="0.5"/>
+    <parent link="virtual_right2_for_spread"/>
+    <child link="right_finger2"/>
+    <origin xyz=".1 0 0"/>
+  </joint>
+
+  <link name="left_fingertip">
+  <inertial>
+    <mass value="1"/>
+    <inertia ixx="100" ixy="0" ixz="0" iyy="100" iyz="0" izz="100" />
+    <origin/>
+  </inertial>
+    <visual>
+      <geometry>
+        <box size="0.1 .4 .1"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 -0.2 0"/>
+      <material name="white">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+  <collision>
+      <origin rpy="0 0 0" xyz="0 -0.2 0"/>
+    <geometry>
+        <box size="0.1 .4 .1"/>
+    </geometry>
+    <contact_coefficients mu="0" kp="1000.0" kd="1.0"/>
+  </collision>
+  </link>
+
+  <joint name="left_finger_to_left_fingertip" type="revolute">
+    <axis xyz="0 0 1"/>
+    <limit effort="1.0" lower="0" upper="0.9" velocity="0.5"/>
+    <parent link="left_finger"/>
+    <child link="left_fingertip"/>
+    <origin xyz="-0.6 -0.5 0"/>
+  </joint>
+
+  <link name="right_fingertip1">
+  <inertial>
+    <mass value="1"/>
+    <inertia ixx="100" ixy="0" ixz="0" iyy="100" iyz="0" izz="100" />
+    <origin/>
+  </inertial>
+    <visual>
+      <geometry>
+        <box size="0.1 .4 .1"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 -0.2 0"/>
+      <material name="white">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+  <collision>
+      <origin rpy="0 0 0" xyz="0 -0.2 0"/>
+    <geometry>
+        <box size="0.1 .4 .1"/>
+    </geometry>
+    <contact_coefficients mu="0" kp="1000.0" kd="1.0"/>
+  </collision>
+  </link>
+
+  <joint name="right_finger1_to_right_fingertip1" type="revolute">
+    <axis xyz="0 0 1"/>
+    <limit effort="1.0" lower="-0.9" upper="0.0" velocity="0.5"/>
+    <parent link="right_finger1"/>
+    <child link="right_fingertip1"/>
+    <origin xyz="0.6 -0.5 0.25"/>
+  </joint>
+
+  <link name="right_fingertip2">
+  <inertial>
+    <mass value="1"/>
+    <inertia ixx="100" ixy="0" ixz="0" iyy="100" iyz="0" izz="100" />
+    <origin/>
+  </inertial>
+    <visual>
+      <geometry>
+        <box size="0.1 .4 .1"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 -0.2 0"/>
+      <material name="white">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+  <collision>
+     <origin rpy="0 0 0" xyz="0 -0.2 0"/>
+    <geometry>
+        <box size="0.1 .4 .1"/>
+    </geometry>
+    <contact_coefficients mu="0" kp="1000.0" kd="1.0"/>
+  </collision>
+  </link>
+
+  <joint name="right_finger2_to_right_fingertip2" type="revolute">
+    <axis xyz="0 0 1"/>
+    <limit effort="1.0" lower="-0.9" upper="0.0" velocity="0.5"/>
+    <parent link="right_finger2"/>
+    <child link="right_fingertip2"/>
+    <origin xyz="0.6 -0.5 -0.25"/>
+  </joint>
+  
+    <gazebo>
+    <plugin name="test_ee_controller" filename="libRoseePlugin.so">
+    </plugin>
+  </gazebo>
+
+</robot>

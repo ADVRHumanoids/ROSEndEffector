@@ -102,7 +102,6 @@ protected:
             js.position = msg->position;
             js.velocity = msg->velocity;
             js.effort = msg->effort;
-        
         }
 
         void actionDoneClbk(const actionlib::SimpleClientGoalState& state,
@@ -192,6 +191,12 @@ void testSendAction::testAction(ROSEE::Action::Ptr actionSent, double percentage
         ros::spinOnce();
         r.sleep();
     }
+    
+    //lets wait one sec more so subscriber for joint state receive the very last state
+    ros::Rate r2(1);
+    r2.sleep();
+    ros::spinOnce();
+
     
     //finally, lets test if the pos set in the actions are the same of the robot when the action is completed
     for (int i=0; i < clbkHelper.js.name.size(); i++) {
@@ -330,7 +335,7 @@ TEST_F ( testSendAction, sendSimpleGeneric3 ) {
         
     }
 
-    ROSEE::Action::Ptr action = std::make_shared<ROSEE::ActionGeneric>("testAllUpperLim", jp, jpc);
+    ROSEE::Action::Ptr action = std::make_shared<ROSEE::ActionGeneric>("testAllUpperLim2", jp, jpc);
     //emit the yaml so roseeExecutor can find the action
     yamlWorker.createYamlFile( action.get(), folderForActions + "/generics/" );
 
