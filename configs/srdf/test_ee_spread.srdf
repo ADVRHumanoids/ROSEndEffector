@@ -19,22 +19,6 @@
       <group name="finger_3" />
    </group>
    
-    <!-- define a named state/configuration of a group -->
-   <group_state name="initial_state" group="end_effector_fingers">
-   
-      <joint name="left_spread" value="0.2" />
-      <joint name="base_to_left_finger" value="0" />
-      <joint name="left_finger_to_left_fingertip" value="0.2" />
-      
-      <joint name="right1_spread" value="0.2" />
-      <joint name="base_to_right_finger1" value="-0.2" />
-      <joint name="right_finger1_to_right_fingertip1" value="0" />
-      
-      <joint name="right2_spread" value="0.2" />
-      <joint name="base_to_right_finger2" value="-0.2" />
-      <joint name="right_finger2_to_right_fingertip2" value="-0.2" />
-   </group_state>
-   
    <end_effector name="test_end_effector" parent_link="motor" group="end_effector_fingers"/>
 
 </robot>
