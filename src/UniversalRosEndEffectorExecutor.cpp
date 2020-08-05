@@ -353,7 +353,7 @@ double ROSEE::UniversalRosEndEffectorExecutor::sendFeedbackGoal(std::string curr
     
     double actualCompletationPercentage;
 
-    if (actualNorm < 0.01) { 
+    if (actualNorm < _ros_action_server->getWantedNormError()) { 
         actualCompletationPercentage = 100;
     } else {
         
