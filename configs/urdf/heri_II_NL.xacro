@@ -8,17 +8,17 @@
 	 
 			<xacro:if value="${regression_level == 'low'}">
 				<xacro:property name="p" value="${[0.7528, -0.9162, 0.7495, 0.0005927]}"/>
-				<mimic joint="${father_joint}" nlFun="${p[0]}*x^3 + ${p[1]}*x^2 + ${p[2]}*x + ${p[3]}"/>
+				<mimic joint="${father_joint}" nlFunPos="${p[0]}*x^3 + ${p[1]}*x^2 + ${p[2]}*x + ${p[3]}"/>
 			</xacro:if>
 			
 			<xacro:if value="${regression_level == 'medium'}">
 				<xacro:property name="p" value="${[-0.506, 1.698, -1.453, 0.8461, -0.002379 ]}"/>
-				<mimic joint="${father_joint}" nlFun="${p[0]}*x^4 + ${p[1]}*x^3 + ${p[2]}*x^2 + ${p[3]}*x + ${p[4]}"/>
+				<mimic joint="${father_joint}" nlFunPos="${p[0]}*x^4 + ${p[1]}*x^3 + ${p[2]}*x^2 + ${p[3]}*x + ${p[4]}"/>
 			</xacro:if>
 			
 			<xacro:if value="${regression_level == 'high'}">
 				<xacro:property name="p" value="${[-3.986, 8.428, -5.14, 0.6392, 0.6254, 0.001261]}"/>
-				<mimic joint="${father_joint}" nlFun="${p[0]}*x^5 + ${p[1]}*x^4 + ${p[2]}*x^3 + ${p[3]}*x^2 + ${p[4]}*x + ${p[5]}"/>
+				<mimic joint="${father_joint}" nlFunPos="${p[0]}*x^5 + ${p[1]}*x^4 + ${p[2]}*x^3 + ${p[3]}*x^2 + ${p[4]}*x + ${p[5]}"/>
 			</xacro:if>
 			
     </xacro:if>
@@ -28,17 +28,17 @@
 	 
 			<xacro:if value="${regression_level == 'low'}">
 				<xacro:property name="p" value="${[-0.2668, 0.8847 , -0.01172]}"/>
-				<mimic joint="${father_joint}" nlFun="${p[0]}*x^2 + ${p[1]}*x + ${p[2]}"/>
+				<mimic joint="${father_joint}" nlFunPos="${p[0]}*x^2 + ${p[1]}*x + ${p[2]}"/>
 			</xacro:if>
 			
 			<xacro:if value="${regression_level == 'medium'}">
 				<xacro:property name="p" value="${[-0.4089, 0.3219, 0.679, 0.0003435]}"/>
-				<mimic joint="${father_joint}" nlFun="${p[0]}*x^3 + ${p[1]}*x^2 + ${p[2]}*x + ${p[3]}"/>
+				<mimic joint="${father_joint}" nlFunPos="${p[0]}*x^3 + ${p[1]}*x^2 + ${p[2]}*x + ${p[3]}"/>
 			</xacro:if>
 			
 			<xacro:if value="${regression_level == 'high'}">
 				<xacro:property name="p" value="${[0.1099, -0.6142, 0.4386, 0.658,  0.0009892]}"/>
-				<mimic joint="${father_joint}" nlFun="${p[0]}*x^4 + ${p[1]}*x^3 + ${p[2]}*x^2 +${p[3]}*x + ${p[4]}"/>
+				<mimic joint="${father_joint}" nlFunPos="${p[0]}*x^4 + ${p[1]}*x^3 + ${p[2]}*x^2 +${p[3]}*x + ${p[4]}"/>
 			</xacro:if>
 			
     </xacro:if>
@@ -48,17 +48,17 @@
 	 
 			<xacro:if value="${regression_level == 'low'}">
 				<xacro:property name="p" value="${[-0.2502, 0.5836, -0.001989]}"/>
-				<mimic joint="${father_joint}" nlFun="${p[0]}*x^2 + ${p[1]}*x + ${p[2]}"/>
+				<mimic joint="${father_joint}" nlFunPos="${p[0]}*x^2 + ${p[1]}*x + ${p[2]}"/>
 			</xacro:if>
 			
 			<xacro:if value="${regression_level == 'medium'}">
 				<xacro:property name="p" value="${[-0.06593, -0.1553, 0.5505, -0.00004385]}"/>
-				<mimic joint="${father_joint}" nlFun="${p[0]}*x^3 + ${p[1]}*x^2 + ${p[2]}*x + ${p[3]}"/>
+				<mimic joint="${father_joint}" nlFunPos="${p[0]}*x^3 + ${p[1]}*x^2 + ${p[2]}*x + ${p[3]}"/>
 			</xacro:if>
 			
 			<xacro:if value="${regression_level == 'high'}">
 				<xacro:property name="p" value="${[0.08032, -0.216, -0.07007, 0.5351, 0.000428]}"/>
-				<mimic joint="${father_joint}" nlFun="${p[0]}*x^4 + ${p[1]}*x^3 + ${p[2]}*x^2 +${p[3]}*x + ${p[4]}"/>
+				<mimic joint="${father_joint}" nlFunPos="${p[0]}*x^4 + ${p[1]}*x^3 + ${p[2]}*x^2 +${p[3]}*x + ${p[4]}"/>
 			</xacro:if>
 			
     </xacro:if>
@@ -72,12 +72,12 @@
   	 
 				<xacro:if value="${regression_level == 'low'}">
   				<xacro:property name="p" value="${[1.93, -1.221, 1.145, 0.001959]}"/>
-					<mimic joint="${father_joint}" nlFun="${p[0]}*x^3 + ${p[1]}*x^2 + ${p[2]}*x + ${p[3]}"/>
+					<mimic joint="${father_joint}" nlFunPos="${p[0]}*x^3 + ${p[1]}*x^2 + ${p[2]}*x + ${p[3]}"/>
 				</xacro:if>
 				
 				<xacro:if value="${regression_level == 'high'}">
   				<xacro:property name="p" value="${[-9.144, 11.02, -3.932, 1.401, -0.002157]}"/>
-					<mimic joint="${father_joint}" nlFun="${p[0]}*x^4 + ${p[1]}*x^3 + ${p[2]}*x^2 + ${p[3]}*x + ${p[4]}"/>
+					<mimic joint="${father_joint}" nlFunPos="${p[0]}*x^4 + ${p[1]}*x^3 + ${p[2]}*x^2 + ${p[3]}*x + ${p[4]}"/>
 				</xacro:if>
 				
       </xacro:if>
@@ -86,12 +86,12 @@
   	 
 				<xacro:if value="${regression_level == 'low'}">
   				<xacro:property name="p" value="${[-1.014, 1.182, -0.009797]}"/>
-					<mimic joint="${father_joint}" nlFun="${p[0]}*x^2 + ${p[1]}*x + ${p[2]}"/>
+					<mimic joint="${father_joint}" nlFunPos="${p[0]}*x^2 + ${p[1]}*x + ${p[2]}"/>
 				</xacro:if>
 				
 				<xacro:if value="${regression_level == 'high'}">
   				<xacro:property name="p" value="${[6.076, -7.902, 2.248, 0.739, 0.001644]}"/>
-					<mimic joint="${father_joint}" nlFun="${p[0]}*x^4 + ${p[1]}*x^3 + ${p[2]}*x^2 + ${p[3]}*x + ${p[4]}"/>
+					<mimic joint="${father_joint}" nlFunPos="${p[0]}*x^4 + ${p[1]}*x^3 + ${p[2]}*x^2 + ${p[3]}*x + ${p[4]}"/>
 				</xacro:if>
 				
       </xacro:if>
