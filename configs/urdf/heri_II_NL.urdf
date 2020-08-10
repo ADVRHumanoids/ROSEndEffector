@@ -300,7 +300,8 @@
     <limit effort="10" lower="-0.1" upper="0.9" velocity="1"/>
     <dynamics damping="0.003" friction="0.003"/>
     <!-- joint of the first phalange -->
-    <mimic joint="motor_finger1" nlFunPos="where(x&lt;1, -3.986*x^5 + 8.428*x^4 + -5.14*x^3 + 0.6392*x^2 + 0.6254*x + 0.001261, 0.9)"/>
+    <!-- <mimic joint="motor_finger1" nlFunPos="where(x&lt;1, -3.986*x^5 + 8.428*x^4 + -5.14*x^3 + 0.6392*x^2 + 0.6254*x + 0.001261, 0.9)"/> -->
+    <mimic joint="motor_finger1" nlFunPos="-3.986*x^5 + 8.428*x^4 + -5.14*x^3 + 0.6392*x^2 + 0.6254*x + 0.001261"/>
   </joint>
   <!-- ///////////////////////////////////////   Second phalanx of the Long_Finger   ////////////////////////////////////////// -->
   <link name="LFP1_2">

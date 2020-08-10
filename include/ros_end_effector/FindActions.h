@@ -264,7 +264,8 @@ private:
     
     /**
      * @brief set to \ref DEFAULT_JOINT_POS all the passive joints (defined so in
-     * the urdf file)
+     * the urdf file). this is necessary because moveit setToRandomPositions modify the position of passive joints,
+     * we do not want that
      */
     void setToDefaultPositionPassiveJoints(moveit::core::RobotState * kinematic_state);
     
@@ -294,7 +295,16 @@ private:
      */
     std::pair < std::string, std::string > getFingertipsPair (std::pair <std::string, std::string> fingersPair) const;
 
-
+    /**
+     * @brief This function set the random position of joint considering:
+     * 
+     *   - Non linear mimic joint relationship, if present
+     *   - Passive joints, which default position will be assured
+     *   - Positional limit of also mimic joint will be enforced
+     * 
+     *   These three things are not present in the moveit setToRandomPositions. So we use the moveit one but then 
+     *   we change a bit the things.
+     */
     void setToRandomPositions(robot_state::RobotState* kinematic_state);
 
 

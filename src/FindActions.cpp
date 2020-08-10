@@ -280,13 +280,7 @@ std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchTight > ROSE
         collision_result.clear();
         
         setToRandomPositions(&kinematic_state);
-        //kinematic_state.setToRandomPositions();
-          
 
-
-
-
-        setToDefaultPositionPassiveJoints(&kinematic_state);
         planning_scene.checkSelfCollision(collision_request, collision_result, kinematic_state, acm);
         
         if (collision_result.collision) { 
@@ -344,8 +338,6 @@ void ROSEE::FindActions::checkDistances (std::map < std::pair <std::string, std:
     for (int i = 0; i < N_EXP_DISTANCES; i++){
         
         setToRandomPositions(&kinematic_state);
-        //kinematic_state.setToRandomPositions();
-        setToDefaultPositionPassiveJoints(&kinematic_state);
 
         //for each pair remaining in notCollidingTips, check if a new min distance is found
         for (auto &mapEl : *mapOfLoosePinches) { 
@@ -483,8 +475,6 @@ void ROSEE::FindActions::checkWhichTipsCollideWithoutBounds (
     for (int i = 0; i < N_EXP_COLLISION; i++){
         collision_result.clear();
         setToRandomPositions(&kinematic_state);
-        //kinematic_state.setToRandomPositions();
-        setToDefaultPositionPassiveJoints(&kinematic_state);
 
         planning_scene.checkSelfCollision(collision_request, collision_result, kinematic_state, acm);
         
@@ -534,8 +524,6 @@ std::map<std::set<std::string>, ROSEE::ActionMultiplePinchTight> ROSEE::FindActi
         
         collision_result.clear();
         setToRandomPositions(&kinematic_state);
-        //kinematic_state.setToRandomPositions();
-        setToDefaultPositionPassiveJoints(&kinematic_state);
 
         planning_scene.checkSelfCollision(collision_request, collision_result, kinematic_state, acm);
         
@@ -837,6 +825,10 @@ void ROSEE::FindActions::setToDefaultPositionPassiveJoints(moveit::core::RobotSt
 
 void ROSEE::FindActions::setToRandomPositions(moveit::core::RobotState * kinematic_state) {
 
+    //NOTE this function will consider the mimic LINEAR. if in mimic tag only nlFunPos is written, default LINEAR args are 
+    //considered : multiplier 1 and offset 0. Then the joint which mimic someone will have same position of father, it is not
+    // an error of randomic. Also, this is not a problem for us because below we overwrite the mimic sons, and we keep only 
+    // the random pos of actuated joints.
     kinematic_state->setToRandomPositions();
     
     //when setting a joint pos (also a single one) moveit call also updateMimic using the standard linear params
@@ -869,17 +861,26 @@ void ROSEE::FindActions::setToRandomPositions(moveit::core::RobotState * kinemat
                  << "in the expression. Have you used syntax valid for muparser?. Expression found: '" 
                  << el.second.second << "'" << std::endl;
                  
+                 exit(-1); //TODO is it good to use exit?
                 
             }
             
             //HACK single dof joint
             std::vector<double> one_dof ;
             one_dof.push_back(mimPos);
+            
+            //we enforce the bounds, in this way. calling at the end kinematic_state->enforceBounds() call internally updateMimicJoint
+            //and we would have again problems.
+            kinematic_state->getJointModel(el.first)->enforcePositionBounds(one_dof.data());
             kinematic_state->setJointPositions(el.first, one_dof);
+
+                  
         }
+        
         
     }
     
+    setToDefaultPositionPassiveJoints(kinematic_state);
 
 }
 
