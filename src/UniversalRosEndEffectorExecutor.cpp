@@ -99,6 +99,7 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
 bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive() {
 
     // parse YAML for End-Effector cconfiguration
+    //TODO safe to remove this? remove and test it
     ROSEE::YamlWorker yamlWorker ;
     
     std::string folderForActionsComposed = folderForActions + "/generics/";
@@ -354,7 +355,7 @@ double ROSEE::UniversalRosEndEffectorExecutor::sendFeedbackGoal(std::string curr
     
     double actualCompletationPercentage;
 
-    if (actualNorm < 0.01) { 
+    if (actualNorm < _ros_action_server->getWantedNormError()) { 
         actualCompletationPercentage = 100;
     } else {
         

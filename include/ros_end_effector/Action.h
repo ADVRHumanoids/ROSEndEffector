@@ -110,6 +110,7 @@ public:
      * store this info differently so they are in charge of providing the read.
      * @return JointsPos the map indicating how the position of the joint
      */
+    //TODO rename getJointsPos
     virtual JointPos getJointPos () const = 0;
     
     /**
@@ -117,6 +118,7 @@ public:
      * this function is equal to \ref getJointPos.
      * @return vector containing all the joint pos of the action
      */
+    //TODO rename getAllJointsPos
     virtual std::vector < ROSEE::JointPos > getAllJointPos () const = 0;
 
     /** @brief Overridable functions, if we want to make them more action-specific */

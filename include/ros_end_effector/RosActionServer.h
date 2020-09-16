@@ -23,6 +23,8 @@
 #include <actionlib/server/simple_action_server.h>
 #include <rosee_msg/ROSEECommandAction.h>
 
+#define DEFAULT_ERROR_NORM 0.01
+
 namespace ROSEE {
 /**
  * @todo write docs
@@ -33,9 +35,15 @@ public:
     RosActionServer(std::string topicForAction, ros::NodeHandle *nh);
     ~RosActionServer() {};
     
-    rosee_msg::ROSEEActionControl getGoal() ;
-    bool hasGoal();
-    bool hasNewGoal();
+    rosee_msg::ROSEEActionControl getGoal();
+    bool hasGoal() const;
+    bool hasNewGoal() const;
+    
+    /**
+     * @brief in message there is a field where norm error of joint position can be set
+     *   If it is not present in the message sent (thus it is 0) the DEFAULT_ERROR_NORM is used
+     */
+    double getWantedNormError() const;
 
     /** 
      * @brief send Feedback to the client who has requested the goal.
@@ -58,6 +66,7 @@ protected:
     rosee_msg::ROSEEActionControl actionControlMsg;
     bool goalInExecution;
     bool newGoal;
+    double wantedNormError;
     
     void goalReceivedCallback ();
     void preemptReceivedCallback ();
