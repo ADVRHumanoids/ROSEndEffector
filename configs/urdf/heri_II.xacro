@@ -106,7 +106,7 @@
     <parent link="SFB1" />
     <child link="SFB1_1" />
     <axis xyz="0 0 -1" />
-    <limit lower="-0.1" upper="0.5" effort="10" velocity="1" />
+    <limit lower="-0.1" upper="0.9" effort="10" velocity="1" />
     <dynamics damping="0.003" friction="0.003"/>
   </joint>
 
@@ -140,14 +140,14 @@
     <parent link="SFB1_1" />
     <child link="SFP1_2" />
     <axis xyz="0 0 -1" />
-    <limit lower="-0.1" upper="0.5" effort="10" velocity="1" />
+    <limit lower="-0.1" upper="1.2" effort="10" velocity="1" />
     <dynamics damping="0.003" friction="0.003"/>
-    <mimic joint="SFB1__SFP1_1" multiplier="1" offset="0"/>
+    <mimic joint="SFB1__SFP1_1" multiplier="1.2" offset="0.2"/>
   </joint>
   
       <xacro:mimic_joint_plugin_gazebo name_prefix="SFP1_1__SFP1_2_joint"
     parent_joint="SFB1__SFP1_1" mimic_joint="SFP1_1__SFP1_2"
-    has_pid="false" multiplier="1.0" max_effort="10.0" />
+    has_pid="false" multiplier="1.2" max_effort="10.0" offset="0.2"/>
 
 <!-- ///////////////////////////////////////   Long finger 1   ////////////////////////////////////////// -->
 
@@ -215,7 +215,7 @@
     <parent link="LFB1" />
     <child link="LFP1_1" />
     <axis xyz="0 0 -1" />
-    <limit lower="-0.1" upper="0.5" effort="10" velocity="1" />
+    <limit lower="-0.1" upper="0.9" effort="10" velocity="1" />
     <dynamics damping="0.003" friction="0.003"/>
   </joint>
 
@@ -243,7 +243,7 @@
     </collision>
   </link>
 
-  <!-- ///////////////////////////////////////   Joint of base_link and the first phalanx of the short finger   ////////////////////////////////////////// -->
+  <!-- ///////////////////////////////////////   Joint of base_link and the first phalanx of the long finger   ////////////////////////////////////////// -->
   <joint name="LFP1_1__LFP1_2" type="revolute">
     <origin xyz="0.035 0 0" rpy="0 0 0" />
     <parent link="LFP1_1" />
@@ -251,12 +251,12 @@
     <axis xyz="0 0 -1" />
     <limit lower="-0.1" upper="0.5" effort="10" velocity="1" />
     <dynamics damping="0.06" friction="0.05"/>
-    <mimic joint="LFB1__LFP1_1" multiplier="1" offset="0"/>
+    <mimic joint="LFB1__LFP1_1" multiplier="1" offset="0.1"/>
   </joint>
   
         <xacro:mimic_joint_plugin_gazebo name_prefix="LFP1_1__LFP1_2_joint"
     parent_joint="LFB1__LFP1_1" mimic_joint="LFP1_1__LFP1_2"
-    has_pid="false" multiplier="1.0" max_effort="10.0" />
+    has_pid="false" multiplier="1.0" max_effort="10.0" offset="0.1" />
 
   <!-- ///////////////////////////////////////   Tip phalanx of the long finger   ////////////////////////////////////////// -->
   <link name="LFP1_3">
@@ -290,12 +290,12 @@
     <axis xyz="0 0 -1" />
     <limit lower="-0.1" upper="0.5" effort="10" velocity="1" />
     <dynamics damping="0.003" friction="0.003"/>
-    <mimic joint="LFB1__LFP1_1" multiplier="1" offset="0"/>
+    <mimic joint="LFB1__LFP1_1" multiplier="0.5" offset="0.2"/>
   </joint>
 
         <xacro:mimic_joint_plugin_gazebo name_prefix="LFP1_1__LFP1_3_joint"
     parent_joint="LFB1__LFP1_1" mimic_joint="LFP1_2__LFP1_3"
-    has_pid="false" multiplier="1.0" max_effort="10.0" />
+    has_pid="false" multiplier="0.5" max_effort="10.0" offset="0.2" />
 
 
   <!-- ///////////////////////////////////////   Long finger 2   ////////////////////////////////////////// -->
@@ -364,7 +364,7 @@
     <parent link="LFB2" />
     <child link="LFP2_1" />
     <axis xyz="0 0 -1" />
-    <limit lower="-0.1" upper="0.5" effort="10" velocity="1" />
+    <limit lower="-0.1" upper="0.73" effort="10" velocity="1" />
     <dynamics damping="0.003" friction="0.003"/>
   </joint>
 
@@ -400,12 +400,12 @@
     <axis xyz="0 0 -1" />
     <limit lower="-0.1" upper="0.5" effort="10" velocity="1"/>
     <dynamics damping="0.003" friction="0.003"/>
-    <mimic joint="LFB2__LFP2_1" multiplier="1" offset="0"/>    
+    <mimic joint="LFB2__LFP2_1" multiplier="1" offset="0.1"/>
   </joint>
   
           <xacro:mimic_joint_plugin_gazebo name_prefix="LFP2_1__LFP2_2_joint"
     parent_joint="LFB2__LFP2_1" mimic_joint="LFP2_1__LFP2_2"
-    has_pid="false" multiplier="1.0" max_effort="10.0" />
+    has_pid="false" multiplier="1.0" max_effort="10.0" offset="0.1" />
   
   
 
@@ -441,12 +441,12 @@
     <axis xyz="0 0 -1" />
     <limit lower="-0.1" upper="0.5" effort="10" velocity="1"/>
     <dynamics damping="0.06" friction="0.05"/>
-    <mimic joint="LFB2__LFP2_1" multiplier="1" offset="0"/>
+    <mimic joint="LFB2__LFP2_1" multiplier="0.5" offset="0.2"/>
   </joint>
 
   <xacro:mimic_joint_plugin_gazebo name_prefix="LFP2_2__LFP2_3_joint"
     parent_joint="LFB2__LFP2_1" mimic_joint="LFP2_2__LFP2_3"
-    has_pid="false" multiplier="1.0" max_effort="10.0" />
+    has_pid="false" multiplier="0.5" max_effort="10.0" offset="0.2" />
 
 
   <!-- ///////////////////////////////////////   Long finger 3   ////////////////////////////////////////// -->
@@ -515,7 +515,7 @@
     <parent link="LFB3" />
     <child link="LFP3_1" />
     <axis xyz="0 0 -1" />
-    <limit lower="-0.1" upper="0.5" effort="10" velocity="1" />
+    <limit lower="-0.1" upper="0.9" effort="10" velocity="1" />
     <dynamics damping="0.003" friction="0.003"/>
   </joint>
 
@@ -551,11 +551,11 @@
     <axis xyz="0 0 -1" />
     <limit lower="-0.1" upper="0.5" effort="10" velocity="1"/>
     <dynamics damping="0.003" friction="0.003"/>
-    <mimic joint="LFB3__LFP3_1" multiplier="1" offset="0"/>
+    <mimic joint="LFB3__LFP3_1" multiplier="1" offset="0.1"/>
   </joint>
   <xacro:mimic_joint_plugin_gazebo name_prefix="LFP3_1__LFP3_2_joint"
     parent_joint="LFB3__LFP3_1" mimic_joint="LFP3_1__LFP3_2"
-    has_pid="false" multiplier="1.0" max_effort="10.0" />
+    has_pid="false" multiplier="1.0" max_effort="10.0" offset="0.1" />
 
   <!-- ///////////////////////////////////////   Tip phalanx of the long finger   ////////////////////////////////////////// -->
   <link name="LFP3_3">
@@ -589,11 +589,11 @@
     <axis xyz="0 0 -1" />
     <limit lower="-0.1" upper="0.5" effort="10" velocity="1"/>
     <dynamics damping="0.003" friction="0.003"/>
-    <mimic joint="LFB3__LFP3_1" multiplier="1" offset="0"/>
+    <mimic joint="LFB3__LFP3_1" multiplier="0.5" offset="0.2"/>
   </joint>
 
   <xacro:mimic_joint_plugin_gazebo name_prefix="LFP3_2__LFP3_3_joint"
     parent_joint="LFB3__LFP3_1" mimic_joint="LFP3_2__LFP3_3"
-    has_pid="false" multiplier="1.0" max_effort="10.0" />
+    has_pid="false" multiplier="0.5" max_effort="10.0" offset="0.2"/>
 
 </robot>

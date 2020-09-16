@@ -1,3 +1,14 @@
 ros_end_effector:
   urdf_path: "urdf/schunk.urdf"
   srdf_path: "srdf/schunk.srdf"
+  
+rosee_gui:
+  sensors_state_widget:
+    #- topic_name: "/js_publisher/joint_states"
+      #row_name: TODO, the field of the message where to take from the row labels (e.g "name" for a jointState msg
+    #  column_names : {effort, velocity, position} # the column to be displayed (note: the parser act from the end... so the first one parsed is the last one     
+      #Others tab...
+    - topic_name: "/boh"
+      #row_name: #TODO, the field of the message where to take from the row labels (e.g "name" for a jointState msg
+      column_names : {orientation, angular_velocity} # the column to be displayed 
+  

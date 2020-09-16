@@ -2,7 +2,6 @@
 #include "testUtils.h"
 
 #include <ros/ros.h>
-#include <ros/console.h>
 
 #include <ros_end_effector/FindActions.h>
 #include <ros_end_effector/ParserMoveIt.h>
@@ -176,6 +175,7 @@ TEST_F ( testFindTrigs, checkEmitParse ) {
                     
             //std::string is ok to compare with _EQ
             EXPECT_EQ (trigCasted->getName(), trigMap.at(k).at(key).getName() );
+            EXPECT_EQ (trigCasted->getType(), trigMap.at(k).at(key).getType() );
             EXPECT_EQ (trigCasted->getnFingersInvolved(), trigMap.at(k).at(key).getnFingersInvolved() );
             EXPECT_EQ (trigCasted->getMaxStoredActionStates(), trigMap.at(k).at(key).getMaxStoredActionStates());
             EXPECT_EQ (trigCasted->getPrimitiveType(), trigMap.at(k).at(key).getPrimitiveType() );

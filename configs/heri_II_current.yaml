@@ -1,0 +1,192 @@
+#WARNING: DO NOT USE TAB FOR IDENT YAML FILE: This is not permitted by the YAML spec
+## urdf and srdf filename
+ros_end_effector:
+  urdf_path: "urdf/heri_II_current.urdf"
+  srdf_path: "srdf/heri_II_current.srdf"
+  
+  
+## Arguments for rosee_plugin control for gazebo. Similar syntax to
+# the one used by "official" ros plugin http://gazebosim.org/tutorials/?tut=ros_control
+rosee_gazebo_plugins_args: #robot name
+  #Controller for each joint. type now is only JointPositionControllerfor JointVelocityController
+  SFB1__SFP1_1_position_controller:
+    type: JointPositionController
+    joint_name: SFB1__SFP1_1
+    pid: {p: 0.3, i: 0.001, d: 0.00005}
+
+  LFB1__LFP1_1_position_controller:
+    type: JointPositionController
+    joint_name: LFB1__LFP1_1
+    pid: {p: 0.3, i: 0.001, d: 0.00005}
+
+  LFB2__LFP2_1_position_controller:
+    type: JointPositionController
+    joint_name: LFB2__LFP2_1
+    pid: {p: 0.3, i: 0.001, d: 0.00005}
+    
+  LFB3__LFP3_1_position_controller:
+    type: JointPositionController
+    joint_name: LFB3__LFP3_1
+    pid: {p: 0.3, i: 0.001, d: 0.00005}
+
+##############
+### real hand
+##############
+
+ec_board_ctrl :
+  #eth_iface: rteth0
+  eth_iface: enp3s0
+  #sync_cycle_time_ns: 500000
+  #sync_cycle_time_ns: 1000000
+  #sync_cycle_time_ns: 2000000
+  #sync_cycle_time_ns: 5000000
+  #sync_cycle_time_ns: 10000000
+  #sync_cycle_time_ns: 100000000
+  sync_cycle_time_ns: 0
+  sync_cycle_offset_ns: 1000000000
+  sync_point_ns : 500000
+  power_off_boards: false
+  reset_micro : true
+  
+ec_boards_base :
+  app_mode : run_mode
+  #app_mode : config_mode
+  robot_name : NoNe
+  read_SDOs : false
+  use_pipes : true
+  log_level : 1
+  #fault_power_off : true
+  # only for TestESC
+  #use_ecat_pos_as_id : true
+
+
+
+#############################
+## GENERIC config
+#############################
+
+LpESC_X:
+  sign: 1
+  pos_offset: 0
+  control_mode : 3B_motor_pos_ctrl
+  pid :
+    position: [100000.0 , 0.0 , 1.0]
+
+LpHandESC_X:
+  sign: 1
+  pos_offset: 0
+  control_mode : 3B_motor_pos_ctrl
+  pid :
+    position: [100000.0 , 0.0 , 1.0]
+
+HeriHandESC_X:
+  sign: 1
+  pos_offset: 0
+  control_mode : 3B_motor_pos_ctrl
+  pid :
+    position: [100000.0 , 0.0 , 1.0]
+
+
+#############################
+## HERI II necessary motors info
+#############################
+
+Joint_Actuation_Info:
+    SFB1__SFP1_1:
+        board_id : 113
+        finger_in_board_id : 2
+        motor_lower_limit : 0
+        motor_upper_limit : 2 #1.65
+        # Joint safer limit, thez can be lesser that limit in urdf
+        joint_lower_limit : 0
+        joint_upper_limit : 0.2
+    LFB1__LFP1_1:
+        board_id : 112
+        finger_in_board_id : 1
+        motor_lower_limit : 0
+        motor_upper_limit : 2.5 #1.95
+        # Joint safer limit, thez can be lesser that limit in urdf
+        joint_lower_limit : 0
+        joint_upper_limit : 0.9
+    LFB2__LFP2_1:
+        board_id : 112
+        finger_in_board_id : 2
+        motor_lower_limit : 0
+        motor_upper_limit : 2.5 #1.45
+        # Joint safer limit, thez can be lesser that limit in urdf
+        joint_lower_limit : 0
+        joint_upper_limit : 0.73
+    LFB3__LFP3_1:
+        board_id : 113
+        finger_in_board_id : 1
+        motor_lower_limit : 0
+        motor_upper_limit : 2.5 #1.35
+        # Joint safer limit, thez can be lesser that limit in urdf
+        joint_lower_limit : 0
+        joint_upper_limit : 0.9
+        
+Pressure_Sensor_Info:
+    Finger1_Sensor1:
+        board_id: 112
+        finger_in_board_id: 1
+        sensor_in_finger_id: 1
+    Finger1_Sensor2:
+        board_id: 112
+        finger_in_board_id: 1 
+        sensor_in_finger_id: 2       
+    Finger1_Sensor3:
+        board_id: 112
+        finger_in_board_id: 1 
+        sensor_in_finger_id: 3        
+    Finger2_Sensor1:
+        board_id: 112
+        finger_in_board_id: 2 
+        sensor_in_finger_id: 1        
+    Finger2_Sensor2:
+        board_id: 112 
+        finger_in_board_id: 2 
+        sensor_in_finger_id: 2        
+    Finger2_Sensor3:
+        board_id: 112
+        finger_in_board_id: 2 
+        sensor_in_finger_id: 3
+    Finger3_Sensor1:
+        board_id: 113
+        finger_in_board_id: 1 
+        sensor_in_finger_id: 1       
+    Finger3_Sensor2:
+        board_id: 113 
+        finger_in_board_id: 1 
+        sensor_in_finger_id: 2        
+    Finger3_Sensor3:
+        board_id: 113
+        finger_in_board_id: 1 
+        sensor_in_finger_id: 3        
+    Thumb_Sensor1:
+        board_id: 113
+        finger_in_board_id: 2 
+        sensor_in_finger_id: 1
+    Thumb_Sensor2: 
+        board_id: 113
+        finger_in_board_id: 2
+        sensor_in_finger_id: 2
+
+
+Motor_actuation_info:
+    112-1: 
+        joint_1 : LFB1__LFP1_1
+        joint_2 : LFP1_1__LFP1_2
+        joint_3 : LFP1_2__LFP1_3
+    112-2: 
+        joint_1 : LFB2__LFP2_1
+        joint_2 : LFP2_1__LFP2_2
+        joint_3 : LFP2_2__LFP2_3
+    113-1: 
+        joint_1 : LFB3__LFP3_1
+        joint_2 : LFP3_1__LFP3_2
+        joint_3 : LFP3_2__LFP3_3
+    113-2: 
+        joint_1 : SFB1__SFP1_1
+        joint_2 : SFP1_1__SFP1_2
+        
+

@@ -34,17 +34,17 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
     p.init (); //TBD check return
     p.printEndEffectorFingerJointsMap();
     
-    //load to param server the urdf and srdf model
-    _nh.setParam("/robot_description", p.getUrdfString());
-    _nh.setParam("/robot_description_semantic", p.getSrdfString());
-     ROS_INFO_STREAM("Set urdf and srdf file in the param server from config file " << p.getRoseeConfigPath());
-
 
     // retrieve the ee interface
     _ee = std::make_shared<ROSEE::EEInterface> ( p );
     ROS_INFO_STREAM ( "Fingers in EEInterface: " );
     for ( auto& f : _ee->getFingers() ) {
         ROS_INFO_STREAM ( f );
+    }
+    
+    folderForActions = p.getActionPath();
+    if ( folderForActions.size() == 0 ){ //if no action path is set in the yaml file...
+        folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/" + _ee->getName();
     }
     
     _all_joints =_ee->getActuatedJoints();
@@ -93,6 +93,7 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
 
     // this should be done by hal?
     init_robotState_sub();
+
 }
 
 bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive() {
@@ -100,8 +101,7 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive() {
     // parse YAML for End-Effector cconfiguration
     ROSEE::YamlWorker yamlWorker ;
     
-    std::string folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/" + _ee->getName();
-    std::string folderForActionsComposed = ROSEE::Utils::getPackagePath() + "/configs/actions/" + _ee->getName() + "/generics/";
+    std::string folderForActionsComposed = folderForActions + "/generics/";
 
     // get all action in the handler
     mapActionHandler.parseAllActions(folderForActions);
@@ -146,8 +146,8 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive() {
     _graspParsed = mapActionHandler.getGeneric("grasp");
     
     // recap
-    ROS_INFO_STREAM ( "GRASP:" );
     if (_graspParsed != nullptr) {
+        ROS_INFO_STREAM ( "GRASP:" );
         _graspParsed->print();
     }
     
@@ -375,7 +375,6 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_actionsInfo_services() {
         actInfo.action_name = primitiveContainers.first;
         actInfo.action_type = ROSEE::Action::Type::Primitive;
         actInfo.actionPrimitive_type = primitiveContainers.second.begin()->second->getPrimitiveType();
-        actInfo.ros_action_name = _nh.getNamespace() + "/" + "action_command";
         actInfo.seq = 0; //TODO check if necessary the seq in this msg
         //until now, there is not a primitive that does not have "something" to select
         // (eg pinch has 2 fing, trig one fing, singleJointMultipleTips 1 joint...). 
@@ -383,7 +382,7 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_actionsInfo_services() {
         actInfo.max_selectable = primitiveContainers.second.begin()->first.size();
         //TODO extract the keys with another mapActionHandler function?
         actInfo.selectable_names =
-            ROSEE::Utils::extract_keys_unique(primitiveContainers.second,
+            ROSEE::Utils::extract_keys_merged(primitiveContainers.second,
                                               _ee->getFingers().size());
         _actionsInfoVect.push_back(actInfo);
 
@@ -395,7 +394,6 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_actionsInfo_services() {
         actInfo.action_name = genericMap.first;
         actInfo.action_type = genericMap.second->getType();
         actInfo.actionPrimitive_type = ROSEE::ActionPrimitive::Type::None;
-        actInfo.ros_action_name = _nh.getNamespace() + "/" + "action_command";
         actInfo.seq = 0; //TODO check if necessary the seq in this msg
         //Generic action has always no thing to select UNTIL NOW
         actInfo.max_selectable = 0;
@@ -410,7 +408,6 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_actionsInfo_services() {
         actInfo.action_name = timedMap.first;
         actInfo.action_type = timedMap.second->getType();
         actInfo.actionPrimitive_type = ROSEE::ActionPrimitive::Type::None;
-        actInfo.ros_action_name = _nh.getNamespace() + "/" + "action_command";
         actInfo.seq = 0; //TODO check if necessary the seq in this msg
         actInfo.max_selectable = 0;
         // we use selectable items info to store in it the action that compose this timed
@@ -535,7 +532,7 @@ void ROSEE::UniversalRosEndEffectorExecutor::set_references() {
 void ROSEE::UniversalRosEndEffectorExecutor::timer_callback ( const ros::TimerEvent& timer_ev ) {
 
     //TODO check the order of these functions...
-    
+        
     _hal->sense();
 
     fill_publish_joint_states();
@@ -592,7 +589,7 @@ void ROSEE::UniversalRosEndEffectorExecutor::timer_callback ( const ros::TimerEv
             set_references(); 
                 
         } else {
-            ROS_INFO_STREAM ("Waiting time to execute action...");
+            ROS_INFO_STREAM ("Waiting time to execute timed action...");
         }
             
         

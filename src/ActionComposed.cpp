@@ -53,7 +53,7 @@ bool ROSEE::ActionComposed::empty() {
 }
 
 
-bool ROSEE::ActionComposed::sumAction ( ROSEE::Action::Ptr action, unsigned int jointPosIndex )
+bool ROSEE::ActionComposed::sumAction ( ROSEE::Action::Ptr action, double jointPosScaleFactor, unsigned int jointPosIndex )
 {
     
     if ( ! checkIndependency(action) ) {
@@ -72,8 +72,19 @@ bool ROSEE::ActionComposed::sumAction ( ROSEE::Action::Ptr action, unsigned int 
                   << " respect to the others inserted in this composed action " << std::endl;
         return false;
     }
+    
+    if (jointPosScaleFactor < 0) {
+        std::cerr << "[ACTIONCOMPOSED:: " << __func__ << "] You can not scale the joint position of the action to be inserted by a " 
+                  <<  "value less than 0; jointPosScaleFactor passed is: " << jointPosScaleFactor << std::endl;
+        return false;
+    } 
+    
+    if (jointPosScaleFactor > 1) {
+        std::wcerr << "[ACTIONCOMPOSED:: " << __func__ << "] WARNING, You are scaling with a value greater than 1 " 
+                   << " this could cause to command position over the joint limits;  jointPosScaleFactor passed is: " << jointPosScaleFactor << std::endl;
+    } 
 
-    JointPos actionJP = action->getAllJointPos().at(jointPosIndex);
+    JointPos actionJP = action->getAllJointPos().at(jointPosIndex) * jointPosScaleFactor;
     JointsInvolvedCount actionJIC = action->getJointsInvolvedCount();
         
     if (nInnerActions == 0) { //first primitive inserted

@@ -45,6 +45,9 @@ class ActionComposed : public ActionGeneric
 {
     
 public: 
+    typedef std::shared_ptr<ActionComposed> Ptr;
+    typedef std::shared_ptr<const ActionComposed> ConstPtr;
+    
     ActionComposed();
     ActionComposed(std::string name);
     ActionComposed(std::string name, bool independent);
@@ -92,11 +95,12 @@ public:
     /** 
      * @brief Function to add another action to this one. 
      * @param action The action to be added to the ActionComposed
+     * @param jointPosScaleFactor How much scale the joint position values for the action to be inserted. Default to 1
      * @param jointPosIndex (default == 0) the wanted jointPos or \p action to insert. Error the index is greater than the number
      *      of joint pos in the \p action. First element has index 0. 
      * @return False if the ActionComposed is \ref independent and we try to add an action that is dependent from one of the already present
      */
-    virtual bool sumAction ( ROSEE::Action::Ptr action , unsigned int jointPosIndex = 0 );
+    virtual bool sumAction ( ROSEE::Action::Ptr action , double jointPosScaleFactor = 1.0, unsigned int jointPosIndex = 0 );
     
     /**
      * @brief Check if the action composed is empty
