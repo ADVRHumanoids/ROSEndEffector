@@ -39,6 +39,8 @@ namespace ROSEE {
 class MapActionHandler {
 
 public:
+    
+    typedef std::shared_ptr<MapActionHandler> Ptr;
 
     MapActionHandler();
 
