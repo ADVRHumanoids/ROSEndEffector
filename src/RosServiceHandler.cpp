@@ -38,7 +38,6 @@ bool ROSEE::RosServiceHandler::init(unsigned int nFinger) {
         actInfo.action_name = primitiveContainers.first;
         actInfo.action_type = ROSEE::Action::Type::Primitive;
         actInfo.actionPrimitive_type = primitiveContainers.second.begin()->second->getPrimitiveType();
-        actInfo.seq = 0; //TODO check if necessary the seq in this msg
         //until now, there is not a primitive that does not have "something" to select
         // (eg pinch has 2 fing, trig one fing, singleJointMultipleTips 1 joint...). 
         //Instead generic action has always no thing to select (next for loop)
@@ -46,7 +45,8 @@ bool ROSEE::RosServiceHandler::init(unsigned int nFinger) {
         //TODO extract the keys with another mapActionHandler function?
         actInfo.selectable_names =
             ROSEE::Utils::extract_keys_merged(primitiveContainers.second, nFinger);
-        _actionsInfoVect.push_back(actInfo);
+        _primitiveActionsInfoVect.push_back(actInfo);
+        _allActionsInfoVect.push_back(actInfo);
 
     }
 
@@ -56,11 +56,11 @@ bool ROSEE::RosServiceHandler::init(unsigned int nFinger) {
         actInfo.action_name = genericMap.first;
         actInfo.action_type = genericMap.second->getType();
         actInfo.actionPrimitive_type = ROSEE::ActionPrimitive::Type::None;
-        actInfo.seq = 0; //TODO check if necessary the seq in this msg
         //Generic action has always no thing to select UNTIL NOW
         actInfo.max_selectable = 0;
 
-        _actionsInfoVect.push_back(actInfo);
+        _genericActionsInfoVect.push_back(actInfo);
+        _allActionsInfoVect.push_back(actInfo);
 
     }
     
@@ -70,7 +70,6 @@ bool ROSEE::RosServiceHandler::init(unsigned int nFinger) {
         actInfo.action_name = timedMap.first;
         actInfo.action_type = timedMap.second->getType();
         actInfo.actionPrimitive_type = ROSEE::ActionPrimitive::Type::None;
-        actInfo.seq = 0; //TODO check if necessary the seq in this msg
         actInfo.max_selectable = 0;
         // we use selectable items info to store in it the action that compose this timed
         for (std::string act : timedMap.second->getInnerActionsNames()) {
@@ -80,8 +79,9 @@ bool ROSEE::RosServiceHandler::init(unsigned int nFinger) {
             actInfo.after_margins.push_back(margin.second);
         }
 
-        _actionsInfoVect.push_back(actInfo);
-        
+        _timedActionsInfoVect.push_back(actInfo);
+        _allActionsInfoVect.push_back(actInfo);
+
     }
     
     std::string actionInfoServiceName, selectablePairInfoServiceName;
@@ -102,14 +102,38 @@ bool ROSEE::RosServiceHandler::actionsInfoCallback(
     rosee_msg::ActionsInfo::Request& request,
     rosee_msg::ActionsInfo::Response& response) {
     
-    //here we only send the actionsInfo vector, it is better to build it not in this clbk
-    
-    for (auto &act : _actionsInfoVect) {
-        act.stamp = ros::Time::now();
+    //here we only send the actionsInfo vector, it is better to build it not in this clbk    
+    switch (request.actionType) {
+        case 0 : { //ALL
+            response.actionsInfo = _allActionsInfoVect;
+            break;
+        }
+        
+        case 1 : { //PRIMITIVe
+            response.actionsInfo = _primitiveActionsInfoVect;
+            break;
+        }
+        
+        case 2 : { //GENERIC_and_COMPOSED
+            response.actionsInfo = _genericActionsInfoVect;
+            break;
+        }
+        
+        case 3 : { //TIMED
+            response.actionsInfo = _timedActionsInfoVect;
+            break;
+        }
+        
+        default : {
+            ROS_ERROR_STREAM ( "[RosServiceHandler " << __func__ << " ] request.actionType can only be 0(ALL), 1(PRIMITIVE), "
+                << "2(GENERIC_and_COMPOSED), or 3(TIMED); I have received " << request.actionType);
+            return false;
+            
+        }
+        
     }
-    response.actionsInfo = _actionsInfoVect;
-    return true;
     
+    return true;    
 }
 
 bool ROSEE::RosServiceHandler::selectablePairInfoCallback(

@@ -42,7 +42,11 @@ private:
     MapActionHandler::Ptr _mapActionHandler;
     ros::NodeHandle* _nh;
 
-    std::vector<rosee_msg::ActionInfo> _actionsInfoVect;
+    std::vector<rosee_msg::ActionInfo> _allActionsInfoVect; //redundant, but faster in service callback
+    std::vector<rosee_msg::ActionInfo> _primitiveActionsInfoVect;
+    std::vector<rosee_msg::ActionInfo> _genericActionsInfoVect;
+    std::vector<rosee_msg::ActionInfo> _timedActionsInfoVect;
+
     ros::ServiceServer _server_actionsInfo;
     ros::ServiceServer _server_selectablePairInfo;
     
