@@ -16,6 +16,13 @@
     <!-- this rosparam is need by c++ (universalroseeexec) to take states from gazebo or joint state publisher (which deal with mimic joints) --> 
     <param name = "/rosee/joint_states_topic" value="$(arg jointState4robotState)" />
 
+    <!-- param for services names-->
+    <param name = "/rosee/action_info_service" value="actions_info" />
+    <param name = "/rosee/selectable_finger_pair_info" value="selectable_finger_pair_info" />
+
+    <!-- param for action server -->
+    <param name = "/rosee/rosAction_grasping_command" value="action_command" />
+
     <param name="ros_ee_config_path" value="$(find ros_end_effector)/configs/$(arg hand_name).yaml"/> 
     <param name="rate" value="100.0"/>
     

@@ -84,11 +84,14 @@ bool ROSEE::RosServiceHandler::init(unsigned int nFinger) {
         
     }
     
-    //TODO not hardcoded names here
-    _server_actionsInfo = _nh->advertiseService("ActionsInfo", 
+    std::string actionInfoServiceName, selectablePairInfoServiceName;
+    _nh->param<std::string>("/rosee/action_info_service", actionInfoServiceName, "actions_info");
+    _nh->param<std::string>("/rosee/selectable_finger_pair_info", selectablePairInfoServiceName, "selectable_finger_pair_info");
+
+    _server_actionsInfo = _nh->advertiseService(actionInfoServiceName, 
         &RosServiceHandler::actionsInfoCallback, this);
     
-    _server_selectablePairInfo = _nh->advertiseService("SelectablePairInfo", 
+    _server_selectablePairInfo = _nh->advertiseService(selectablePairInfoServiceName, 
         &RosServiceHandler::selectablePairInfoCallback, this);
     
     return true;

@@ -87,7 +87,9 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
     _ros_service_handler->init(_ee->getFingers().size());
     
     // actions
-    _ros_action_server = std::make_shared<RosActionServer> ("action_command" , &_nh);
+    std::string actionGraspingCommandName;
+    _nh.param<std::string>("/rosee/rosAction_grasping_command", actionGraspingCommandName, "action_command");
+    _ros_action_server = std::make_shared<RosActionServer> (actionGraspingCommandName , &_nh);
     timed_requested = false;
     timed_index = -1;
 
