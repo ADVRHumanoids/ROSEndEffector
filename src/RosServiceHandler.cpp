@@ -26,6 +26,8 @@ ROSEE::RosServiceHandler::RosServiceHandler( ros::NodeHandle *nh, ROSEE::MapActi
     this->_mapActionHandler = mapActionHandler;
 
     this->_nh = nh;
+    
+    initGraspingActionsServices();
 
 }
 
@@ -95,6 +97,209 @@ bool ROSEE::RosServiceHandler::init(unsigned int nFinger) {
         &RosServiceHandler::selectablePairInfoCallback, this);
     
     return true;
+
+}
+
+bool ROSEE::RosServiceHandler::initGraspingActionsServices() { 
+    
+    std::string graspingActionsSrvName;
+    _nh->param<std::string>("/rosee/grasping_action_srv_name", graspingActionsSrvName, "grasping_actions_available");
+    
+    _serverGraspingActions = _nh->advertiseService(graspingActionsSrvName, &RosServiceHandler::graspingActionsCallback, this);
+    
+}
+
+bool ROSEE::RosServiceHandler::graspingActionsCallback(
+    rosee_msg::GraspingActionsAvailable::Request& request,
+    rosee_msg::GraspingActionsAvailable::Response& response) {
+    
+    switch (request.action_type) {
+        
+        case 0 : { //PRIMITIVE
+            
+            //NOTE if both primitive type and action name are set in the request, the action name is not considered
+
+            if (request.primitive_type == 0) { 
+                
+                std::cout << ActionPrimitive::Type::PinchLoose << std::endl;
+
+                if (request.action_name.size() == 0 ) {            
+                    for (auto primitiveContainers : _mapActionHandler->getAllPrimitiveMaps() ) {
+                        
+                        //iterate all the primitive of a type
+                        for (auto primitive : primitiveContainers.second) {
+                            response.grasping_actions.push_back(fillGraspingActionMsg(primitive.second));
+                        }
+                    }
+                    
+                } else {
+                    if (request.elements_involved.size() == 0) {
+                        
+                        for (auto primitive : _mapActionHandler->getPrimitiveMap(request.action_name)) {
+                            response.grasping_actions.push_back(fillGraspingActionMsg(primitive.second));
+                        }
+                        
+                    } else {
+        
+                        auto primitive =_mapActionHandler->getPrimitive(request.action_name, request.elements_involved);
+                        response.grasping_actions.push_back(fillGraspingActionMsg(primitive));
+                    }
+                }
+                
+            } else {
+               
+                if (request.elements_involved.size() == 0) {
+                        
+                    //NOTE -1 because in the srv 0 is for all primitives, then the enum is scaled by one
+                    for (auto primitives : _mapActionHandler->getPrimitiveMap(
+                            static_cast<ROSEE::ActionPrimitive::Type>(request.primitive_type-1))) {
+                        
+                        for (auto primitive : primitives) {
+                            response.grasping_actions.push_back(fillGraspingActionMsg(primitive.second));
+                        }
+                    }
+                              
+                } else {
+                     
+                    for (auto primitive : _mapActionHandler->getPrimitive(
+                            static_cast<ROSEE::ActionPrimitive::Type>(request.primitive_type-1), request.elements_involved)) {
+                        
+                            response.grasping_actions.push_back(fillGraspingActionMsg(primitive));
+                    }
+                }
+            }
+            
+            break;
+        }
+        
+        case 1 : { //GENERIC_and_COMPOSED
+            
+            //NOTE for these some fields are ignored 
+            if (request.action_name.size() == 0) {
+                for (auto action : _mapActionHandler->getAllGenerics()) {
+                    response.grasping_actions.push_back(fillGraspingActionMsg(action.second));
+                }
+                
+            } else {
+                response.grasping_actions.push_back(fillGraspingActionMsg(_mapActionHandler->getGeneric(request.action_name)));
+            }
+            break;
+        }
+        
+        case 2 : { //TIMED
+            if (request.action_name.size() == 0) {
+                for (auto action : _mapActionHandler->getAllTimeds()) {
+                    response.grasping_actions.push_back(fillGraspingActionMsg(action.second));
+                }
+                
+            } else {
+                response.grasping_actions.push_back(fillGraspingActionMsg(_mapActionHandler->getTimed(request.action_name)));
+            }
+            break;
+        }
+        
+        default : {
+            ROS_ERROR_STREAM ( "[RosServiceHandler " << __func__ << " ] request.actionType can only be 0(ALL), 1(PRIMITIVE), "
+                << "2(GENERIC_and_COMPOSED), or 3(TIMED); I have received " << request.action_type);
+            return false;
+            
+        }
+    }
+    
+    return true;    
+}
+
+rosee_msg::GraspingAction ROSEE::RosServiceHandler::fillGraspingActionMsg(ROSEE::ActionPrimitive::Ptr primitive) {
+    
+    rosee_msg::GraspingAction primitiveMsg;
+    
+    if (primitive == nullptr) {
+        return primitiveMsg;
+    }
+
+    primitiveMsg.action_name = primitive->getName();
+    primitiveMsg.action_type = primitive->getType();
+    primitiveMsg.primitive_type = primitive->getPrimitiveType();
+    auto elements = primitive->getKeyElements();
+    primitiveMsg.elements_involved.assign(elements.begin(), elements.end());
+
+
+    //iterate all the possible motor pos (eg pinch with 2 finger can have more than one way to perform)
+    for ( auto motorPosMultiple : primitive->getAllJointPos()) {
+
+        //iterate over the single motor positions
+        rosee_msg::MotorPosition motorPosMsg;
+        for ( auto motorPos : motorPosMultiple) { 
+            motorPosMsg.name.push_back(motorPos.first);
+            motorPosMsg.position.push_back(motorPos.second.at(0)); //at(0). because multiple dof is considered in general
+
+        }
+        primitiveMsg.action_motor_positions.push_back(motorPosMsg); 
+
+    }
+    
+    return primitiveMsg;
+     
+}
+
+rosee_msg::GraspingAction ROSEE::RosServiceHandler::fillGraspingActionMsg(ROSEE::ActionGeneric::Ptr generic) {
+    
+    rosee_msg::GraspingAction genericActionMsg;
+    if (generic == nullptr) {
+        return genericActionMsg;
+    }
+    
+    genericActionMsg.action_type = generic->getType();
+    genericActionMsg.primitive_type = genericActionMsg.PRIMITIVE_NONE;
+    genericActionMsg.action_name = generic->getName();
+    rosee_msg::MotorPosition motorPosMsg;
+    for ( auto motorPos : generic->getJointPos()) { 
+        motorPosMsg.name.push_back(motorPos.first);
+        motorPosMsg.position.push_back(motorPos.second.at(0)); //at(0). because multiple dof is considered in general
+
+    }
+    genericActionMsg.action_motor_positions.push_back(motorPosMsg);
+    
+    ActionComposed::Ptr composedCasted = std::dynamic_pointer_cast<ActionComposed>(generic);
+    if ( composedCasted != nullptr) {
+        genericActionMsg.inner_actions = composedCasted->getInnerActionsNames();
+    }
+    
+    return genericActionMsg;
+
+}
+
+rosee_msg::GraspingAction ROSEE::RosServiceHandler::fillGraspingActionMsg(ROSEE::ActionTimed::Ptr timed) {
+    
+    rosee_msg::GraspingAction timedActionMsg;
+    if (timed == nullptr) {
+        return timedActionMsg;
+    }
+    
+    timedActionMsg.action_type = timed->getType();
+    timedActionMsg.primitive_type = timedActionMsg.PRIMITIVE_NONE;
+    timedActionMsg.action_name = timed->getName();
+    for ( auto motorPosInners : timed->getAllJointPos()) { 
+        rosee_msg::MotorPosition motorPosMsg;
+
+        for ( auto motorPos : motorPosInners) { 
+            motorPosMsg.name.push_back(motorPos.first);
+            motorPosMsg.position.push_back(motorPos.second.at(0)); //at(0). because multiple dof is considered in general
+        }
+        timedActionMsg.action_motor_positions.push_back(motorPosMsg);
+
+    }
+    
+    for (auto innerMargin : timed->getAllActionMargins()){
+        timedActionMsg.before_time_margins.push_back(innerMargin.first);
+        timedActionMsg.after_time_margins.push_back(innerMargin.second);
+    }
+    
+    timedActionMsg.inner_actions = timed->getInnerActionsNames();
+    
+    
+    
+    return timedActionMsg;
 
 }
 

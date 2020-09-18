@@ -21,6 +21,9 @@
 #include <ros_end_effector/MapActionHandler.h>
 #include <rosee_msg/ActionsInfo.h>
 #include <rosee_msg/SelectablePairInfo.h>
+#include <rosee_msg/GraspingActionsAvailable.h>
+#include <rosee_msg/GraspingAction.h>
+#include <rosee_msg/MotorPosition.h>
 
 
 namespace ROSEE {
@@ -35,6 +38,7 @@ public:
      */
     RosServiceHandler(ros::NodeHandle *nh, ROSEE::MapActionHandler::Ptr);
     bool init(unsigned int nFinger);
+    bool initGraspingActionsServices();
 
     
 private:
@@ -49,9 +53,19 @@ private:
 
     ros::ServiceServer _server_actionsInfo;
     ros::ServiceServer _server_selectablePairInfo;
+    ros::ServiceServer _serverGraspingActions;
     
     bool actionsInfoCallback ( rosee_msg::ActionsInfo::Request& request, rosee_msg::ActionsInfo::Response& response);
     bool selectablePairInfoCallback ( rosee_msg::SelectablePairInfo::Request& request, rosee_msg::SelectablePairInfo::Response& response);
+    bool graspingActionsCallback(rosee_msg::GraspingActionsAvailable::Request& request,   
+                                 rosee_msg::GraspingActionsAvailable::Response& response);
+    
+    rosee_msg::GraspingAction fillGraspingActionMsg(ROSEE::ActionPrimitive::Ptr primitive);
+    rosee_msg::GraspingAction fillGraspingActionMsg(ROSEE::ActionGeneric::Ptr generic);
+    rosee_msg::GraspingAction fillGraspingActionMsg(ROSEE::ActionTimed::Ptr timed);
+
+
+
 
 
 };
