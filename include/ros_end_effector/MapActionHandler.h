@@ -94,6 +94,9 @@ public:
     ROSEE::ActionPrimitive::Ptr getPrimitive (std::string primitiveName, std::string key) const;
     std::vector<ROSEE::ActionPrimitive::Ptr> getPrimitive (ROSEE::ActionPrimitive::Type, std::string key) const;
     
+    /**
+     * @note these functions return generics and composed (because composed are a derived class of generic)
+     */
     std::shared_ptr<ROSEE::ActionGeneric> getGeneric (std::string name) const;
     std::map <std::string, std::shared_ptr<ROSEE::ActionGeneric>> getAllGenerics () const;
     

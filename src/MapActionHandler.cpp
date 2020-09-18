@@ -190,7 +190,7 @@ std::shared_ptr<ROSEE::ActionTimed> ROSEE::MapActionHandler::getTimed(std::strin
     
     auto it = timeds.find(name);
     if (it == timeds.end() ) {
-         std::cerr << "[ERROR MapActionHandler " << __func__ << "] No timed function named" << name << std::endl;    
+         std::cerr << "[ERROR MapActionHandler " << __func__ << "] No timed function named '" << name << "'" << std::endl;    
         return nullptr;
     }
     
