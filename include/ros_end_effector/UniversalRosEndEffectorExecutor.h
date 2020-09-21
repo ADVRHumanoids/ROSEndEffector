@@ -34,6 +34,7 @@
 #include <ros_end_effector/MapActionHandler.h>
 #include <ros_end_effector/YamlWorker.h>
 #include <ros_end_effector/RosActionServer.h>
+#include <ros_end_effector/RosServiceHandler.h>
 
 #include <ros_end_effector/ActionPrimitive.h>
 #include <ros_end_effector/ActionComposed.h>
@@ -123,13 +124,9 @@ private:
     
     std::shared_ptr<ROSEE::ActionGeneric> _graspParsed;
     
-    MapActionHandler mapActionHandler;
+    MapActionHandler::Ptr mapActionHandlerPtr;
     
-    //for service info to gui 
-    std::vector<rosee_msg::ActionInfo> _actionsInfoVect;
-    ros::ServiceServer _ros_server_actionsInfo;
-    ros::ServiceServer _ros_server_selectablePairInfo;
-    
+    std::shared_ptr <RosServiceHandler> _ros_service_handler;
     std::shared_ptr <RosActionServer> _ros_action_server;
     
     // we need this as global member because in send_feedback we need it...

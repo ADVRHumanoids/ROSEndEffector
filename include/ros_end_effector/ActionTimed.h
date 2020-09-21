@@ -39,6 +39,8 @@ namespace ROSEE {
 class ActionTimed : public Action
 {
 public:
+    typedef std::shared_ptr<ActionTimed> Ptr;
+    typedef std::shared_ptr<const ActionTimed> ConstPtr;
     /**
      * @brief Default constructor, used when parsing action from yaml file
      */

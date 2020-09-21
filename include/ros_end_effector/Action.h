@@ -81,7 +81,6 @@ public:
      */
     enum Type {Primitive, Generic, Composed, Timed, None};
 
-
     /* destructor of base must be virtual */
     virtual ~Action() {};
     
@@ -150,6 +149,13 @@ protected:
     JointsInvolvedCount jointsInvolvedCount;
 
 };
+
+/**
+ * To print the action type enum as the real name (eg primitive) and not as the enum number
+ * REmember to add here if new type are implemented
+ */
+std::ostream& operator <<(std::ostream& out, const ROSEE::Action::Type type);
+
 }
 
 #endif // __ROSEE_ACTION_H
