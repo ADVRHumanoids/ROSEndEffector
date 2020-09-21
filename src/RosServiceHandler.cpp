@@ -27,86 +27,28 @@ ROSEE::RosServiceHandler::RosServiceHandler( ros::NodeHandle *nh, ROSEE::MapActi
 
     this->_nh = nh;
     
-    initGraspingActionsServices();
-
 }
 
 //TODO see if this argument can be avoided, maybe use extract_keys_merged in map action handler?
 bool ROSEE::RosServiceHandler::init(unsigned int nFinger) {
-        
-    for (auto primitiveContainers : _mapActionHandler->getAllPrimitiveMaps() ) {
-        
-        rosee_msg::ActionInfo actInfo;
-        actInfo.action_name = primitiveContainers.first;
-        actInfo.action_type = ROSEE::Action::Type::Primitive;
-        actInfo.actionPrimitive_type = primitiveContainers.second.begin()->second->getPrimitiveType();
-        //until now, there is not a primitive that does not have "something" to select
-        // (eg pinch has 2 fing, trig one fing, singleJointMultipleTips 1 joint...). 
-        //Instead generic action has always no thing to select (next for loop)
-        actInfo.max_selectable = primitiveContainers.second.begin()->first.size();
-        //TODO extract the keys with another mapActionHandler function?
-        actInfo.selectable_names =
-            ROSEE::Utils::extract_keys_merged(primitiveContainers.second, nFinger);
-        _primitiveActionsInfoVect.push_back(actInfo);
-        _allActionsInfoVect.push_back(actInfo);
-
-    }
-
-    for (auto genericMap : _mapActionHandler->getAllGenerics() ) {
-
-        rosee_msg::ActionInfo actInfo;
-        actInfo.action_name = genericMap.first;
-        actInfo.action_type = genericMap.second->getType();
-        actInfo.actionPrimitive_type = ROSEE::ActionPrimitive::Type::None;
-        //Generic action has always no thing to select UNTIL NOW
-        actInfo.max_selectable = 0;
-
-        _genericActionsInfoVect.push_back(actInfo);
-        _allActionsInfoVect.push_back(actInfo);
-
-    }
     
-    for (auto timedMap : _mapActionHandler->getAllTimeds() ) {
-        
-        rosee_msg::ActionInfo actInfo;
-        actInfo.action_name = timedMap.first;
-        actInfo.action_type = timedMap.second->getType();
-        actInfo.actionPrimitive_type = ROSEE::ActionPrimitive::Type::None;
-        actInfo.max_selectable = 0;
-        // we use selectable items info to store in it the action that compose this timed
-        for (std::string act : timedMap.second->getInnerActionsNames()) {
-            actInfo.inner_actions.push_back(act);
-            auto margin = timedMap.second->getActionMargins(act);
-            actInfo.before_margins.push_back(margin.first);
-            actInfo.after_margins.push_back(margin.second);
-        }
-
-        _timedActionsInfoVect.push_back(actInfo);
-        _allActionsInfoVect.push_back(actInfo);
-
-    }
+    this->nFinger = nFinger;
     
-    std::string actionInfoServiceName, selectablePairInfoServiceName;
-    _nh->param<std::string>("/rosee/action_info_service", actionInfoServiceName, "actions_info");
+    std::string graspingActionsSrvName, actionInfoServiceName, selectablePairInfoServiceName;
+    _nh->param<std::string>("/rosee/grasping_action_srv_name", graspingActionsSrvName, "grasping_actions_available");
+    _nh->param<std::string>("/rosee/primitive_aggregated_srv_name", actionInfoServiceName, "primitives_aggregated_available");
     _nh->param<std::string>("/rosee/selectable_finger_pair_info", selectablePairInfoServiceName, "selectable_finger_pair_info");
+    
+    _serverGraspingActions = _nh->advertiseService(graspingActionsSrvName, 
+        &RosServiceHandler::graspingActionsCallback, this);
 
-    _server_actionsInfo = _nh->advertiseService(actionInfoServiceName, 
-        &RosServiceHandler::actionsInfoCallback, this);
+    _serverPrimitiveAggregated = _nh->advertiseService(actionInfoServiceName, 
+        &RosServiceHandler::primitiveAggregatedCallback, this);
     
     _server_selectablePairInfo = _nh->advertiseService(selectablePairInfoServiceName, 
         &RosServiceHandler::selectablePairInfoCallback, this);
     
     return true;
-
-}
-
-bool ROSEE::RosServiceHandler::initGraspingActionsServices() { 
-    
-    std::string graspingActionsSrvName;
-    _nh->param<std::string>("/rosee/grasping_action_srv_name", graspingActionsSrvName, "grasping_actions_available");
-    
-    _serverGraspingActions = _nh->advertiseService(graspingActionsSrvName, &RosServiceHandler::graspingActionsCallback, this);
-    
 }
 
 bool ROSEE::RosServiceHandler::graspingActionsCallback(
@@ -288,48 +230,94 @@ void ROSEE::RosServiceHandler::fillCommonInfoGraspingActionMsg(ROSEE::Action::Pt
 
         }
         graspingMsg->action_motor_positions.push_back(motorPosMsg); 
-
     }
-    
 }
 
-bool ROSEE::RosServiceHandler::actionsInfoCallback(
-    rosee_msg::ActionsInfo::Request& request,
-    rosee_msg::ActionsInfo::Response& response) {
+bool ROSEE::RosServiceHandler::primitiveAggregatedCallback(
+    rosee_msg::GraspingPrimitiveAggregatedAvailable::Request& request,
+    rosee_msg::GraspingPrimitiveAggregatedAvailable::Response& response) {
     
-    //here we only send the actionsInfo vector, it is better to build it not in this clbk    
-    switch (request.actionType) {
-        case 0 : { //ALL
-            response.actionsInfo = _allActionsInfoVect;
-            break;
-        }
-        
-        case 1 : { //PRIMITIVe
-            response.actionsInfo = _primitiveActionsInfoVect;
-            break;
-        }
-        
-        case 2 : { //GENERIC_and_COMPOSED
-            response.actionsInfo = _genericActionsInfoVect;
-            break;
-        }
-        
-        case 3 : { //TIMED
-            response.actionsInfo = _timedActionsInfoVect;
-            break;
-        }
-        
-        default : {
-            ROS_ERROR_STREAM ( "[RosServiceHandler " << __func__ << " ] request.actionType can only be 0(ALL), 1(PRIMITIVE), "
-                << "2(GENERIC_and_COMPOSED), or 3(TIMED); I have received " << request.actionType);
-            return false;
+     if (request.primitive_type == 0) { 
+                
+        if (request.action_name.size() == 0 ) {
+            // return all primitives
+                        
+            for (auto primitiveMaps : _mapActionHandler->getAllPrimitiveMaps() ) {
+                
+                response.primitives_aggregated.push_back(fillPrimitiveAggregatedMsg(primitiveMaps.second));
+            }
             
+        } else {
+            if (request.elements_involved.size() == 0) {
+                
+                auto primitiveMap = _mapActionHandler->getPrimitiveMap(request.action_name);                     
+                response.primitives_aggregated.push_back(fillPrimitiveAggregatedMsg(primitiveMap));
+
+                
+            } else {
+
+                auto primitive =_mapActionHandler->getPrimitive(request.action_name, request.elements_involved);
+                response.primitives_aggregated.push_back(fillPrimitiveAggregatedMsg(primitive));
+            }
         }
         
+    } else {
+        
+        if (request.elements_involved.size() == 0) {
+                
+            //NOTE -1 because in the srv 0 is for all primitives, then the enum is scaled by one
+            for (auto primitiveMap : _mapActionHandler->getPrimitiveMap(
+                    static_cast<ROSEE::ActionPrimitive::Type>(request.primitive_type-1))) {
+            
+                response.primitives_aggregated.push_back(fillPrimitiveAggregatedMsg(primitiveMap));
+
+            }
+                        
+        } else {
+                
+            for (auto primitive : _mapActionHandler->getPrimitive(
+                    static_cast<ROSEE::ActionPrimitive::Type>(request.primitive_type-1), request.elements_involved)) {
+                                    
+                response.primitives_aggregated.push_back(fillPrimitiveAggregatedMsg(primitive));
+            }
+        }
     }
-    
     return true;    
 }
+
+
+rosee_msg::GraspingPrimitiveAggregated ROSEE::RosServiceHandler::fillPrimitiveAggregatedMsg(
+    ROSEE::MapActionHandler::ActionPrimitiveMap primitiveMap) {
+    
+    rosee_msg::GraspingPrimitiveAggregated primitiveMsg;
+
+    primitiveMsg.action_name = primitiveMap.begin()->second->getName();
+    primitiveMsg.primitive_type = primitiveMap.begin()->second->getPrimitiveType();
+    //until now, there is not a primitive that does not have "something" to select
+    // (eg pinch has 2 fing, trig one fing, singleJointMultipleTips 1 joint...). 
+    //Instead generic action has always no thing to select (next for loop)
+    primitiveMsg.max_selectable = primitiveMap.begin()->first.size();
+    //TODO extract the keys with another mapActionHandler function?
+    primitiveMsg.selectable_names =
+        ROSEE::Utils::extract_keys_merged(primitiveMap, nFinger);
+
+    return primitiveMsg;
+}
+
+rosee_msg::GraspingPrimitiveAggregated ROSEE::RosServiceHandler::fillPrimitiveAggregatedMsg(
+    ROSEE::ActionPrimitive::Ptr primitive) {
+
+    rosee_msg::GraspingPrimitiveAggregated primitiveMsg;
+    primitiveMsg.action_name = primitive->getName();
+    primitiveMsg.primitive_type = primitive->getPrimitiveType();
+    
+    auto elements = primitive->getKeyElements();
+    primitiveMsg.max_selectable = elements.size();
+    primitiveMsg.selectable_names.assign(elements.begin(), elements.end());
+
+    return primitiveMsg;
+}
+
 
 bool ROSEE::RosServiceHandler::selectablePairInfoCallback(
     rosee_msg::SelectablePairInfo::Request& request,
@@ -361,6 +349,5 @@ bool ROSEE::RosServiceHandler::selectablePairInfoCallback(
         response.pair_elements.push_back (fing);
     }
     
-    return true;
-        
+    return true;        
 }
