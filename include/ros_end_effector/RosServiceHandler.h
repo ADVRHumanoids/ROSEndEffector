@@ -63,6 +63,16 @@ private:
     rosee_msg::GraspingAction fillGraspingActionMsg(ROSEE::ActionPrimitive::Ptr primitive);
     rosee_msg::GraspingAction fillGraspingActionMsg(ROSEE::ActionGeneric::Ptr generic);
     rosee_msg::GraspingAction fillGraspingActionMsg(ROSEE::ActionTimed::Ptr timed);
+    /**
+     * @brief Internal function called by each of the fillGraspingActionMsg, it fills the GraspingAction message
+     * with the info that are always present in any kind of action (like name and type). 
+     * Each specific \ref fillGraspingActionMsg will insert fill the field specific for the action type 
+     * (like time margins for timed actions)
+     *
+     * @param action the action that must be sent as response
+     * @param msg the ROS message that must be filled with action info
+     */
+    void fillCommonInfoGraspingActionMsg(ROSEE::Action::Ptr action, rosee_msg::GraspingAction* msg);
 
 
 

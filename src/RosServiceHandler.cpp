@@ -121,8 +121,6 @@ bool ROSEE::RosServiceHandler::graspingActionsCallback(
 
             if (request.primitive_type == 0) { 
                 
-                std::cout << ActionPrimitive::Type::PinchLoose << std::endl;
-
                 if (request.action_name.size() == 0 ) {            
                     for (auto primitiveContainers : _mapActionHandler->getAllPrimitiveMaps() ) {
                         
@@ -217,29 +215,14 @@ rosee_msg::GraspingAction ROSEE::RosServiceHandler::fillGraspingActionMsg(ROSEE:
         return primitiveMsg;
     }
 
-    primitiveMsg.action_name = primitive->getName();
-    primitiveMsg.action_type = primitive->getType();
+    fillCommonInfoGraspingActionMsg(primitive, &primitiveMsg);
+
     primitiveMsg.primitive_type = primitive->getPrimitiveType();
+    
     auto elements = primitive->getKeyElements();
     primitiveMsg.elements_involved.assign(elements.begin(), elements.end());
-
-
-    //iterate all the possible motor pos (eg pinch with 2 finger can have more than one way to perform)
-    for ( auto motorPosMultiple : primitive->getAllJointPos()) {
-
-        //iterate over the single motor positions
-        rosee_msg::MotorPosition motorPosMsg;
-        for ( auto motorPos : motorPosMultiple) { 
-            motorPosMsg.name.push_back(motorPos.first);
-            motorPosMsg.position.push_back(motorPos.second.at(0)); //at(0). because multiple dof is considered in general
-
-        }
-        primitiveMsg.action_motor_positions.push_back(motorPosMsg); 
-
-    }
     
     return primitiveMsg;
-     
 }
 
 rosee_msg::GraspingAction ROSEE::RosServiceHandler::fillGraspingActionMsg(ROSEE::ActionGeneric::Ptr generic) {
@@ -249,16 +232,9 @@ rosee_msg::GraspingAction ROSEE::RosServiceHandler::fillGraspingActionMsg(ROSEE:
         return genericActionMsg;
     }
     
-    genericActionMsg.action_type = generic->getType();
-    genericActionMsg.primitive_type = genericActionMsg.PRIMITIVE_NONE;
-    genericActionMsg.action_name = generic->getName();
-    rosee_msg::MotorPosition motorPosMsg;
-    for ( auto motorPos : generic->getJointPos()) { 
-        motorPosMsg.name.push_back(motorPos.first);
-        motorPosMsg.position.push_back(motorPos.second.at(0)); //at(0). because multiple dof is considered in general
+    fillCommonInfoGraspingActionMsg(generic, &genericActionMsg);
 
-    }
-    genericActionMsg.action_motor_positions.push_back(motorPosMsg);
+    genericActionMsg.primitive_type = genericActionMsg.PRIMITIVE_NONE;
     
     ActionComposed::Ptr composedCasted = std::dynamic_pointer_cast<ActionComposed>(generic);
     if ( composedCasted != nullptr) {
@@ -266,7 +242,6 @@ rosee_msg::GraspingAction ROSEE::RosServiceHandler::fillGraspingActionMsg(ROSEE:
     }
     
     return genericActionMsg;
-
 }
 
 rosee_msg::GraspingAction ROSEE::RosServiceHandler::fillGraspingActionMsg(ROSEE::ActionTimed::Ptr timed) {
@@ -276,31 +251,46 @@ rosee_msg::GraspingAction ROSEE::RosServiceHandler::fillGraspingActionMsg(ROSEE:
         return timedActionMsg;
     }
     
-    timedActionMsg.action_type = timed->getType();
+    fillCommonInfoGraspingActionMsg(timed, &timedActionMsg);
+
     timedActionMsg.primitive_type = timedActionMsg.PRIMITIVE_NONE;
-    timedActionMsg.action_name = timed->getName();
-    for ( auto motorPosInners : timed->getAllJointPos()) { 
-        rosee_msg::MotorPosition motorPosMsg;
-
-        for ( auto motorPos : motorPosInners) { 
-            motorPosMsg.name.push_back(motorPos.first);
-            motorPosMsg.position.push_back(motorPos.second.at(0)); //at(0). because multiple dof is considered in general
-        }
-        timedActionMsg.action_motor_positions.push_back(motorPosMsg);
-
-    }
     
+    timedActionMsg.inner_actions = timed->getInnerActionsNames();
+
     for (auto innerMargin : timed->getAllActionMargins()){
         timedActionMsg.before_time_margins.push_back(innerMargin.first);
         timedActionMsg.after_time_margins.push_back(innerMargin.second);
     }
     
-    timedActionMsg.inner_actions = timed->getInnerActionsNames();
-    
-    
-    
     return timedActionMsg;
+}
 
+void ROSEE::RosServiceHandler::fillCommonInfoGraspingActionMsg(ROSEE::Action::Ptr action, 
+                                                               rosee_msg::GraspingAction* graspingMsg) {
+    
+    graspingMsg->action_type = action->getType();
+    graspingMsg->action_name = action->getName();
+    
+    rosee_msg::JointsInvolvedCount motorCountMsg;
+    for ( auto motorCount : action->getJointsInvolvedCount()) { 
+        motorCountMsg.name.push_back(motorCount.first);
+        motorCountMsg.count.push_back(motorCount.second);
+    }
+    graspingMsg->action_motor_count = motorCountMsg;
+    
+    for ( auto motorPosMultiple : action->getAllJointPos()) {
+
+        //iterate over the single motor positions
+        rosee_msg::MotorPosition motorPosMsg;
+        for ( auto motorPos : motorPosMultiple) { 
+            motorPosMsg.name.push_back(motorPos.first);
+            motorPosMsg.position.push_back(motorPos.second.at(0)); //at(0). because multiple dof is considered in general
+
+        }
+        graspingMsg->action_motor_positions.push_back(motorPosMsg); 
+
+    }
+    
 }
 
 bool ROSEE::RosServiceHandler::actionsInfoCallback(
