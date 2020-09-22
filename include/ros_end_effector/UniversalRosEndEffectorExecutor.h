@@ -41,8 +41,6 @@
 
 /// new messages from rosee_msg package
 //for services to gui
-#include <rosee_msg/ActionsInfo.h> //service
-#include <rosee_msg/ActionInfo.h>  //message
 #include <rosee_msg/SelectablePairInfo.h>  //message
 #include <rosee_msg/ROSEEActionControl.h> //msg
 #include <rosee_msg/ROSEECommandAction.h> //action
