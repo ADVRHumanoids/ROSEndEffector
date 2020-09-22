@@ -4,13 +4,14 @@
     
   	<param name="robot_description" textfile="$(find ros_end_effector)/configs/urdf/$(arg hand_name).urdf"/>
     
-    <node name="input_joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
-      <param name="use_gui" value="true" />
+    <node name="jsp_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui">
+    	<remap from="joint_states" to="/js_publisher/joint_states" />
     </node>
      
     <!-- start robot state publisher to transform joint pos into tf for rviz -->
     <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" output="screen" >
         <param name="publish_frequency" type="double" value="200.0" />
+        <remap from="joint_states" to="/js_publisher/joint_states" />
     </node> 
     
     <node type="rviz" name="rviz" pkg="rviz" args="-d $(find ros_end_effector)/configs/rviz/$(arg hand_name).rviz" />  

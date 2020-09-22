@@ -37,7 +37,6 @@
         <rosparam param="source_list">["ros_end_effector/joint_commands"] </rosparam>
         <!-- Output -->
         <remap from="joint_states" to="/js_publisher/joint_states" />
-        <param name="use_gui" value="false" />
     </node>
      
     <!-- start robot state publisher to transform joint pos into tf for rviz, so it is always on, gazebo or not -->
