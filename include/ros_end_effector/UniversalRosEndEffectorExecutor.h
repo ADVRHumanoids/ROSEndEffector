@@ -39,12 +39,6 @@
 #include <ros_end_effector/ActionPrimitive.h>
 #include <ros_end_effector/ActionComposed.h>
 
-/// new messages from rosee_msg package
-//for services to gui
-#include <rosee_msg/SelectablePairInfo.h>  //message
-#include <rosee_msg/ROSEEActionControl.h> //msg
-#include <rosee_msg/ROSEECommandAction.h> //action
-
 namespace ROSEE
 {
 
@@ -76,15 +70,6 @@ private:
     bool init_grapsing_primitive();
     
     bool init_action_server();
-    
-    bool init_actionsInfo_services() ;
-    
-    bool actionsInfoCallback (rosee_msg::ActionsInfo::Request& request,
-        rosee_msg::ActionsInfo::Response& response);
-    
-    bool selectablePairInfoCallback( rosee_msg::SelectablePairInfo::Request& request,
-                                     rosee_msg::SelectablePairInfo::Response& response);
-
     
     ros::NodeHandle _nh;
     ros::Timer _loop_timer;
