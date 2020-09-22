@@ -5,9 +5,9 @@ Wiki is here: https://github.com/ADVRHumanoids/ROSEndEffector/wiki
 
 Documentation about the API of ROS End-Effector can be found here https://advrhumanoids.github.io/ROSEndEffector/index.html
 
-CI powered by Travis CI (.org) [![Build Status](https://travis-ci.org/ADVRHumanoids/ROSEndEffector.svg?branch=master)](https://travis-ci.org/ADVRHumanoids/ROSEndEffector)
+CI powered by Travis CI (.com) [![Build Status](https://travis-ci.com/ADVRHumanoids/ROSEndEffector.svg?branch=master)](https://travis-ci.com/ADVRHumanoids/ROSEndEffector)
 
-https://travis-ci.org/ADVRHumanoids/ROSEndEffector
+https://travis-ci.com/ADVRHumanoids/ROSEndEffector
 
 ***
 <!-- 
