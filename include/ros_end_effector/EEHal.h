@@ -32,7 +32,7 @@ namespace ROSEE {
      * @brief Class representing an end-effector
      * 
      */
-    class EEHal : public IMotor {
+    class EEHal  {
 
     public:
         
@@ -48,22 +48,20 @@ namespace ROSEE {
         
     protected:
         
-        virtual bool setJointPosition( std::string joint_name, double joint_position);
-        virtual bool setJointVelocity( std::string joint_name, double joint_velocity);
-        virtual bool setJointEffort( std::string joint_name, double joint_effort);
+        virtual bool setMotorPositionReference (std::string motor_name, double position_ref) = 0;
         
-        virtual bool getJointPosition( std::string joint_name, double& joint_position);
-        virtual bool getJointVelocity( std::string joint_name, double& joint_velocity);
-        virtual bool getJointEffort( std::string joint_name, double& joint_effort);
+        virtual bool getMotorPosition (std::string motor_name, double &position) = 0; 
+        //virtual bool getJointVelocity( std::string joint_name, double& joint_velocity);
+        //virtual bool getJointEffort( std::string joint_name, double& joint_effort);
         
-        ROSEE::EEInterface::Ptr _ee_inteface;
+        ROSEE::EEInterface::Ptr _ee_interface;
         
     private:
         
         
-        std::map<std::string, double> _joint_postion;
-        std::map<std::string, double> _joint_velocity;
-        std::map<std::string, double> _joint_effort;
+        //std::map<std::string, double> _joint_position;
+        //std::map<std::string, double> _joint_velocity;
+        //std::map<std::string, double> _joint_effort;
     };
     
 }
