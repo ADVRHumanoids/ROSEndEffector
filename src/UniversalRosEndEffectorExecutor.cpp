@@ -377,11 +377,11 @@ void ROSEE::UniversalRosEndEffectorExecutor::fill_publish_joint_states() {
             _hal->getMotorPosition ( j, value );
             _js_msg.position[c] = value;
 
-            _hal->getMotorVelocity ( j, value );
-            _js_msg.velocity[c] = value;
-
-            _hal->getMotorEffort ( j, value );
-            _js_msg.effort[c] = value;
+//             _hal->getMotorVelocity ( j, value );
+//             _js_msg.velocity[c] = value;
+// 
+//             _hal->getMotorEffort ( j, value );
+//             _js_msg.effort[c] = value;
 
             c++;
         }
@@ -399,7 +399,7 @@ void ROSEE::UniversalRosEndEffectorExecutor::set_references() {
     for ( const auto& j : _all_joints ) {
 
         _ee->getInternalIdForJoint ( j, id );
-        _hal->setPositionReference ( j, _qref_filtered[id] );
+        _hal->setMotorPositionReference ( j, _qref_filtered[id] );
     }
 
 }

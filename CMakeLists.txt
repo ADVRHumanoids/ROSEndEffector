@@ -18,6 +18,13 @@ find_package(catkin REQUIRED COMPONENTS srdfdom
 # find_package(matlogger2 REQUIRED)
 find_package(Eigen3 REQUIRED)
 
+#Xbot stuff
+option(XBOT2_ENABLE_XENO OFF "Compile against xenomai") #TODO necessary?
+find_package(xbot2 REQUIRED)
+add_xbot2_device(EE src/XBot2Hal.cpp)
+#install(TARGETS rocket DESTINATION lib)
+
+
 ###################################
 ## catkin specific configuration ##
 ###################################
@@ -52,10 +59,10 @@ add_library(ROSEEInterface
     src/EEInterface.cpp
 )
 
-add_library(DummyHal
-    src/EEHal.cpp
-    src/DummyHal.cpp
-)
+# add_library(DummyHal
+#     src/EEHal.cpp
+#     src/DummyHal.cpp
+# )
 
 add_library(UniversalRosEndEffectorExecutor
     src/UniversalRosEndEffectorExecutor.cpp
@@ -147,9 +154,9 @@ target_link_libraries(ROSEEInterface
     ROSEEParser
 )
 
-target_link_libraries(DummyHal
-    yaml-cpp
-)
+# target_link_libraries(DummyHal
+#     yaml-cpp
+# )
 
 target_link_libraries(UniversalRosEndEffectorExecutor
     ${catkin_LIBRARIES}
@@ -161,7 +168,7 @@ target_link_libraries(UniversalRosEndEffectorExecutor
     RosServiceHandler
     
     # do it automatically
-    DummyHal
+    #DummyHal
     
 )
 

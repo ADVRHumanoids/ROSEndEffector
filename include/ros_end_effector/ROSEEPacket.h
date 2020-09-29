@@ -1,22 +1,27 @@
 #ifndef ROSEE_PACKET_H
 #define ROSEE_PACKET_H
 
-namespace ROSEE { 
+#include <map>
+#include <string>
 
+namespace ROSEE { 
+    
 struct ROSEEPacket
 {
     struct Rx
     {
         
-        std::map <std::string, double> motors_position_refs;
+        //std::string motor_name;
+        double motor_position;
+             
     };
 
     struct Tx
     {
         //std::map <std::string, double> motors_position_refs;
-
-        std::string motor_name;
+       // std::string motor_name;
         double motor_position_ref;
+
     };
 
 };
