@@ -159,7 +159,7 @@
   </link>
   <!-- ///////////////////////////////////////   Joint of base_link and the first phalanx of the short finger   ////////////////////////////////////////// -->
   <joint name="SFB1__SFP1_1" type="revolute">
-    <origin rpy="1.5708 -0.29671 0" xyz="0.011 0 0.007"/>
+		<origin xyz="0.0211 0 0.007" rpy="1.5708 -0.29671 0" />
     <parent link="SFB1"/>
     <child link="SFB1_1"/>
     <axis xyz="0 0 -1"/>
