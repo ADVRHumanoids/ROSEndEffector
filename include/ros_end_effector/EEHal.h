@@ -62,7 +62,6 @@ namespace ROSEE {
         
     private:
         
-        
         //std::map<std::string, double> _joint_position;
         //std::map<std::string, double> _joint_velocity;
         //std::map<std::string, double> _joint_effort;

@@ -2,10 +2,16 @@
 
 /** CLIENT   ****************/
 
+
+ROSEE::XBotEEClient::XBotEEClient(XBot::Hal::DeviceInfo devinfo) : DeviceClientTpl( devinfo )
+{
+}
+
+
 bool ROSEE::XBotEEClient::setMotorPositionReference(std::string motor_name, double position_ref) {
    // _tx.motor_name = motor_name;
     _tx.motor_position_ref = position_ref;
-    return true;
+   return true;
 }
 
 bool ROSEE::XBotEEClient::getMotorPosition(std::string motor_name, double& position) {
@@ -26,13 +32,13 @@ bool ROSEE::XBotEEClient::getMotorPosition(std::string motor_name, double& posit
 }
 
 /********************** Xbot DRIVER *******************************************/
-ROSEE::XBotEEDriver::XBotEEDriver(XBot::Hal::DeviceInfo devinfo):
+ROSEE::XBotGazeboDriver::XBotGazeboDriver(XBot::Hal::DeviceInfo devinfo):
     DeviceDriverTpl(devinfo)
 {
 
 }
 
-bool ROSEE::XBotEEDriver::move_impl()
+bool ROSEE::XBotGazeboDriver::move_impl()
 {
     
 //     for (auto it = _rx.motors_position_refs) {
@@ -43,13 +49,13 @@ bool ROSEE::XBotEEDriver::move_impl()
     return true;
 }
 
-bool ROSEE::XBotEEDriver::sense_impl()
+bool ROSEE::XBotGazeboDriver::sense_impl()
 {
     // do stuff with _rx
     return true;
 }
 
-ROSEE::XBotEEDriverContainer::XBotEEDriverContainer(std::vector<XBot::Hal::DeviceInfo> devinfo):
+ROSEE::XBotGazeboDriverContainer::XBotGazeboDriverContainer(std::vector<XBot::Hal::DeviceInfo> devinfo):
     DeviceContainer(devinfo),
     _srv_alive(false)
 {
@@ -67,7 +73,7 @@ ROSEE::XBotEEDriverContainer::XBotEEDriverContainer(std::vector<XBot::Hal::Devic
         );
 }
 
-bool ROSEE::XBotEEDriverContainer::sense_all()
+bool ROSEE::XBotGazeboDriverContainer::sense_all()
 {
     if(!_srv_alive)
     {
@@ -80,7 +86,7 @@ bool ROSEE::XBotEEDriverContainer::sense_all()
     return ret && DeviceContainer::sense_all();
 }
 
-bool ROSEE::XBotEEDriverContainer::move_all()
+bool ROSEE::XBotGazeboDriverContainer::move_all()
 {
     DeviceContainer::move_all();
 
@@ -91,4 +97,4 @@ bool ROSEE::XBotEEDriverContainer::move_all()
 
 
 
-XBOT2_REGISTER_DEVICE(ROSEE::XBotEEDriverContainer, ROSEE::XBotEEClientContainer, XbotEE)
+XBOT2_REGISTER_DEVICE(ROSEE::XBotGazeboDriverContainer, ROSEE::XBotEEClientContainer, XbotEE)

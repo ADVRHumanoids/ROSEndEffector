@@ -15,7 +15,7 @@ namespace ROSEE {
     * @brief Concrete class which communicate directly with ROS topics
     * 
     */
-class XBot2Hal : public EEHal, public XBot::ControlPlugin
+class XBot2Hal : public EEHal 
 {
 
 public:
@@ -24,7 +24,7 @@ public:
     typedef std::shared_ptr<const XBot2Hal> ConstPtr;
     
     XBot2Hal( ROSEE::EEInterface::Ptr ee_interface );
-    virtual ~XBot2Hal();
+    virtual ~XBot2Hal() { };
     
     bool sense() override;
     
@@ -38,7 +38,8 @@ public:
 private:
     
     //xbot stuffs
-    ROSEE::XBotEEClient * _xbot_ee;
+    std::shared_ptr<ROSEE::XBotEEBase> _xbot_ee_client;
+    //ROSEE::XBotEEClient _xbot_ee_client;
     
 
 };

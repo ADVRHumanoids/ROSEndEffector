@@ -22,7 +22,7 @@ find_package(Eigen3 REQUIRED)
 option(XBOT2_ENABLE_XENO OFF "Compile against xenomai") #TODO necessary?
 find_package(xbot2 REQUIRED)
 add_xbot2_device(XBot2HalCommunication src/XBot2HalCommunication.cpp)
-#install(TARGETS XBot2HalCommunication DESTINATION lib)
+install(TARGETS XBot2HalCommunication DESTINATION lib)
 
 
 ###################################
@@ -70,7 +70,6 @@ add_library(EEHal
 add_library(XBot2Hal
     src/XBot2Hal.cpp 
 )
- 
 
 add_library(UniversalRosEndEffectorExecutor
     src/UniversalRosEndEffectorExecutor.cpp
@@ -185,8 +184,8 @@ target_link_libraries(UniversalRosEndEffectorExecutor
 )
 
 target_link_libraries(XBot2Hal
-    xbot2::xbot2
     XBot2HalCommunication
+    xbot2::xbot2
     EEHal
 )
 
@@ -275,6 +274,7 @@ target_link_libraries(ParserMoveIt
 
 target_link_libraries(UniversalRosEndEffector
     UniversalRosEndEffectorExecutor
+    
 )
 
 target_link_libraries(UniversalFindActions
