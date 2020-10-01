@@ -72,7 +72,7 @@ Motor_actuation_info:
         joint_1 : LFB1__LFP1_1
         joint_2 : LFP1_1__LFP1_2
         joint_3 : LFP1_2__LFP1_3
-        pid: {p: 0.5, i: 0, d: 0} #This should be the same pid indicated above in HeriHandESC_X LpHandESC_X LpESC_X
+        pid: {p: 0.01, i: 0, d: 0} #This should be the same pid indicated above in HeriHandESC_X LpHandESC_X LpESC_X
         K_t : 0.0418 # Torque coefficent of the motor [Nm/A]
         r : 0.008 # Radius of the pulley [m]
         R_M : 2.62 # Eletrical terminal resistance of the motor [ohm]
@@ -83,7 +83,7 @@ Motor_actuation_info:
         joint_1 : LFB2__LFP2_1
         joint_2 : LFP2_1__LFP2_2
         joint_3 : LFP2_2__LFP2_3
-        pid: {p: 1.0, i: 0, d: 0} #This should be the same pid indicated above in HeriHandESC_X LpHandESC_X LpESC_X
+        pid: {p: 0.1, i: 0, d: 0} #This should be the same pid indicated above in HeriHandESC_X LpHandESC_X LpESC_X
         K_t : 0.0418 # Torque coefficent of the motor [Nm/A]
         r : 0.008 # Radius of the pulley [m]
         R_M : 2.62 # Eletrical terminal resistance of the motor [ohm]
@@ -94,7 +94,7 @@ Motor_actuation_info:
         joint_1 : LFB3__LFP3_1
         joint_2 : LFP3_1__LFP3_2
         joint_3 : LFP3_2__LFP3_3
-        pid: {p: 1.0, i: 0, d: 0} #This should be the same pid indicated above in HeriHandESC_X LpHandESC_X LpESC_X
+        pid: {p: 0, i: 0, d: 0} #This should be the same pid indicated above in HeriHandESC_X LpHandESC_X LpESC_X
         K_t : 0.0418 # Torque coefficent of the motor [Nm/A]
         r : 0.008 # Radius of the pulley [m]
         R_M : 2.62 # Eletrical terminal resistance of the motor [ohm]
@@ -104,7 +104,7 @@ Motor_actuation_info:
         motor_urdf_name: motor_thumb
         joint_1 : SFB1__SFP1_1
         joint_2 : SFP1_1__SFP1_2
-        pid: {p: 100000.0, i: 0, d: 0} #This should be the same pid indicated above in HeriHandESC_X LpHandESC_X LpESC_X
+        pid: {p: 0.01, i: 0, d: 0} #This should be the same pid indicated above in HeriHandESC_X LpHandESC_X LpESC_X
         K_t : 0.0418 # Torque coefficent of the motor [Nm/A]
         r : 0.008 # Radius of the pulley [m]
         R_M : 2.62 # Eletrical terminal resistance of the motor [ohm]

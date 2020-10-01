@@ -393,7 +393,9 @@ void ROSEE::UniversalRosEndEffectorExecutor::fill_publish_joint_states() {
 
 void ROSEE::UniversalRosEndEffectorExecutor::set_references() {
 
-    _qref_filtered = _filt_q.process ( _qref );
+    //TODO
+    //_qref_filtered = _filt_q.process ( _qref );
+    _qref_filtered = _qref ;
     int id = -1;
 
     for ( const auto& j : _all_joints ) {
