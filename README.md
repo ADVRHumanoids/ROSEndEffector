@@ -1,7 +1,7 @@
 # ROS End-Effector 
 ROS End-Effector package: provides a ROS-based set of standard interfaces to command robotics end-effectors in an agnostic fashion.
 
-Wiki is here: https://github.com/ADVRHumanoids/ROSEndEffector/wiki
+Wiki is here: https://advrhumanoids.github.io/ROSEndEffectorDocs/
 
 Documentation about the API of ROS End-Effector can be found here https://advrhumanoids.github.io/ROSEndEffector/index.html
 
