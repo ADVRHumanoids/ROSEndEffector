@@ -134,21 +134,39 @@ std::string ROSEE::ParserMoveIt::getFingertipOfFinger (std::string fingerName) c
     }
 }
 
-std::pair<std::string, std::string> ROSEE::ParserMoveIt::getMimicNonLinearRel(std::string mimicNLJointName) const {
+std::pair<std::string, std::string> ROSEE::ParserMoveIt::getMimicNLFatherOfJoint(std::string mimicNLJointName) const {
     
     std::pair<std::string, std::string> retPair;
     
-    auto it = mimicNonLinearRelMap.find(mimicNLJointName);
+    auto it = mimicNLFatherOfJointMap.find(mimicNLJointName);
     
-    if (it != mimicNonLinearRelMap.end()) {
+    if (it != mimicNLFatherOfJointMap.end()) {
         retPair = it->second;
     }
     return retPair;
 }
 
-std::map<std::string, std::pair<std::string, std::string>> ROSEE::ParserMoveIt::getMimicNonLinearMap() const {
+std::map<std::string, std::pair<std::string, std::string>> ROSEE::ParserMoveIt::getMimicNLFatherOfJointMap() const {
     
-    return mimicNonLinearRelMap;
+    return mimicNLFatherOfJointMap;
+    
+}
+
+std::pair<std::string, std::string> ROSEE::ParserMoveIt::getMimicNLJointOfFather(std::string mimicNLFatherName) const {
+    
+    std::pair<std::string, std::string> retPair;
+    
+    auto it = mimicNLJointOfFatherMap.find(mimicNLFatherName);
+    
+    if (it != mimicNLJointOfFatherMap.end()) {
+        retPair = it->second;
+    }
+    return retPair;
+}
+
+std::map<std::string, std::pair<std::string, std::string>> ROSEE::ParserMoveIt::getMimicNLJointOfFatherMap() const {
+    
+    return mimicNLJointOfFatherMap;
     
 }
 
@@ -569,8 +587,11 @@ void ROSEE::ParserMoveIt::parseNonLinearMimicRelations (std::string xml) {
                 //std::cout << nlAttr << std::endl;
                 //std::cout << mimicEl->Attribute("joint") << std::endl;
                 std::string fatherName = mimicEl->Attribute("joint");
-                mimicNonLinearRelMap.insert ( std::make_pair( jointName,
+                mimicNLFatherOfJointMap.insert ( std::make_pair( jointName,
                                                         std::make_pair(fatherName, nlAttr)) );
+                
+                mimicNLJointOfFatherMap.insert (std::make_pair (fatherName,
+                                                        std::make_pair(jointName, nlAttr)) );
             }
         }
         

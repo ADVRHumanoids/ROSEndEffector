@@ -233,9 +233,15 @@ public:
      */
     void parseNonLinearMimicRelations(std::string xml);
     
-    //TODO docs
-    std::pair<std::string, std::string> getMimicNonLinearRel(std::string mimicNLJointName) const;
-    std::map<std::string, std::pair<std::string, std::string>> getMimicNonLinearMap() const;
+    /**
+     * @brief gets for the maps of non linear mimic joints
+     * 
+     */
+    std::pair<std::string, std::string> getMimicNLFatherOfJoint(std::string mimicNLJointName) const;
+    std::map<std::string, std::pair<std::string, std::string>> getMimicNLFatherOfJointMap() const;
+    
+    std::pair<std::string, std::string> getMimicNLJointOfFather(std::string mimicNLFatherName) const;
+    std::map<std::string, std::pair<std::string, std::string>> getMimicNLJointOfFatherMap() const;
     
     
 private:
@@ -278,7 +284,13 @@ private:
      * @WARNING as convention, in the equation there must exist only the variable x, that is, the 
      *     position of the father joint
      */
-    std::map<std::string, std::pair<std::string, std::string>>  mimicNonLinearRelMap;
+    std::map<std::string, std::pair<std::string, std::string>>  mimicNLFatherOfJointMap;
+    
+    /**
+     * @brief inverse map of previous, even if the function is replicated, this is anyway useful, 
+     * at the cost of having 2 copy of a string type 
+     */
+    std::map<std::string, std::pair<std::string, std::string>>  mimicNLJointOfFatherMap;
 
     
     /**

@@ -4,7 +4,7 @@ ROSEE::FindActions::FindActions ( std::shared_ptr < ROSEE::ParserMoveIt > parser
 
     this->parserMoveIt = parserMoveIt;
     
-    this->mimicNLRelMap = parserMoveIt->getMimicNonLinearMap();
+    this->mimicNLRelMap = parserMoveIt->getMimicNLFatherOfJointMap();
 }
 
 
