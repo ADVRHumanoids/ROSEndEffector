@@ -4,7 +4,7 @@ ROSEE::XBot2Hal::XBot2Hal( ROSEE::EEInterface::Ptr ee_interface ) : EEHal ( ee_i
     
     XBot::Hal::DeviceInfo devinfo{"XBotEE_0", "XbotEE", 1};
     _xbot_ee_client = std::make_shared<ROSEE::XBotEEClient>(devinfo);
-    //_xbot_ee_client = ROSEE::XBotEEClient(devinfo);
+    _xbot_ee_client = ROSEE::XBotEEClient(devinfo);
 }
 
 
