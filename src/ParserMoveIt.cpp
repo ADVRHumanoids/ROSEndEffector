@@ -152,21 +152,34 @@ std::map<std::string, std::pair<std::string, std::string>> ROSEE::ParserMoveIt::
     
 }
 
-std::pair<std::string, std::string> ROSEE::ParserMoveIt::getMimicNLJointOfFather(std::string mimicNLFatherName) const {
+std::string ROSEE::ParserMoveIt::getMimicNLJointOfFather(std::string mimicNLFatherName, std::string mimicNLJointName) const {
     
-    std::pair<std::string, std::string> retPair;
+    auto map = getMimicNLJointsOfFather(mimicNLFatherName);
     
-    auto it = mimicNLJointOfFatherMap.find(mimicNLFatherName);
+    auto it = map.find(mimicNLJointName);
     
-    if (it != mimicNLJointOfFatherMap.end()) {
-        retPair = it->second;
+    if (it != map.end()) {
+        return it->second;
     }
-    return retPair;
+    
+    return "";
 }
 
-std::map<std::string, std::pair<std::string, std::string>> ROSEE::ParserMoveIt::getMimicNLJointOfFatherMap() const {
+std::map<std::string, std::string> ROSEE::ParserMoveIt::getMimicNLJointsOfFather(std::string mimicNLFatherName) const {
     
-    return mimicNLJointOfFatherMap;
+    std::map<std::string, std::string> map;
+    
+    auto it = mimicNLJointsOfFatherMap.find(mimicNLFatherName);
+    
+    if (it != mimicNLJointsOfFatherMap.end()) {
+        map = it->second;
+    }
+    return map;
+}
+
+std::map<std::string, std::map<std::string, std::string>> ROSEE::ParserMoveIt::getMimicNLJointsOfFatherMap() const {
+    
+    return mimicNLJointsOfFatherMap;
     
 }
 
@@ -590,8 +603,7 @@ void ROSEE::ParserMoveIt::parseNonLinearMimicRelations (std::string xml) {
                 mimicNLFatherOfJointMap.insert ( std::make_pair( jointName,
                                                         std::make_pair(fatherName, nlAttr)) );
                 
-                mimicNLJointOfFatherMap.insert (std::make_pair (fatherName,
-                                                        std::make_pair(jointName, nlAttr)) );
+                mimicNLJointsOfFatherMap[fatherName].insert(std::make_pair(jointName, nlAttr)) ;
             }
         }
         

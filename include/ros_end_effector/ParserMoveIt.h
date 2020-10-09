@@ -240,8 +240,9 @@ public:
     std::pair<std::string, std::string> getMimicNLFatherOfJoint(std::string mimicNLJointName) const;
     std::map<std::string, std::pair<std::string, std::string>> getMimicNLFatherOfJointMap() const;
     
-    std::pair<std::string, std::string> getMimicNLJointOfFather(std::string mimicNLFatherName) const;
-    std::map<std::string, std::pair<std::string, std::string>> getMimicNLJointOfFatherMap() const;
+    std::string getMimicNLJointOfFather(std::string mimicNLFatherName, std::string mimicNLJointName) const;
+    std::map<std::string, std::string> getMimicNLJointsOfFather(std::string mimicNLFatherName) const;
+    std::map<std::string, std::map<std::string, std::string>> getMimicNLJointsOfFatherMap() const;
     
     
 private:
@@ -288,9 +289,11 @@ private:
     
     /**
      * @brief inverse map of previous, even if the function is replicated, this is anyway useful, 
-     * at the cost of having 2 copy of a string type 
+     * at the cost of having 2 copy of a string type.
+     * the key is the name of the father, the value is a map because more than one child can
+     * mimic the father (In the other map, there is a pair)
      */
-    std::map<std::string, std::pair<std::string, std::string>>  mimicNLJointOfFatherMap;
+    std::map<std::string, std::map<std::string, std::string>>  mimicNLJointsOfFatherMap;
 
     
     /**
