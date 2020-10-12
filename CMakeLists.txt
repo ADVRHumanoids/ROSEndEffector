@@ -81,6 +81,10 @@ add_library(RosActionServer
     src/RosActionServer.cpp
 )
 
+add_library(RosServiceHandler
+    src/RosServiceHandler.cpp
+)
+
 add_library(MapActionHandler
     src/MapActionHandler.cpp
 )
@@ -158,6 +162,7 @@ target_link_libraries(UniversalRosEndEffectorExecutor
     YamlWorker
     MapActionHandler
     RosActionServer
+    RosServiceHandler
     
     # do it automatically
     DummyHal
@@ -189,6 +194,11 @@ target_link_libraries(RosActionServer
     ${catkin_LIBRARIES}
 )
 add_dependencies(RosActionServer rosee_msg_generate_messages_cpp)
+
+target_link_libraries(RosServiceHandler
+    ${catkin_LIBRARIES}
+)
+add_dependencies(RosServiceHandler rosee_msg_generate_messages_cpp)
 
 target_link_libraries(ActionPinchTight
     ActionPinchGeneric
@@ -344,7 +354,7 @@ if(CATKIN_ENABLE_TESTING)
                                                  ActionTrig
                                                  ActionComposed)
     endif()
-
+    
 endif()
 
 ## Add folders to be run by python nosetests

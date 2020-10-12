@@ -39,6 +39,8 @@ namespace ROSEE {
 class ActionTimed : public Action
 {
 public:
+    typedef std::shared_ptr<ActionTimed> Ptr;
+    typedef std::shared_ptr<const ActionTimed> ConstPtr;
     /**
      * @brief Default constructor, used when parsing action from yaml file
      */
@@ -151,6 +153,12 @@ private:
     std::map <std::string, std::pair<double, double> > actionsTimeMarginsMap;
     std::map <std::string, ROSEE::JointPos> actionsJointPosMap;
     std::map <std::string, ROSEE::JointsInvolvedCount> actionsJointCountMap;
+    
+    /**
+     * Here is contained the wanted final position of the timed action.
+     * So, it is the sum of all the wanted joint position of all the inner actions
+     */
+    ROSEE::JointPos jointPosFinal;
     
     /**
      * This vector is used to take count of the order of the actions inserted

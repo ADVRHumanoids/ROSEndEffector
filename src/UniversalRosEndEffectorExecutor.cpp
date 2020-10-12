@@ -41,6 +41,11 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
         ROS_INFO_STREAM ( f );
     }
     
+    folderForActions = p.getActionPath();
+    if ( folderForActions.size() == 0 ){ //if no action path is set in the yaml file...
+        folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/" + _ee->getName();
+    }
+    
     _all_joints =_ee->getActuatedJoints();
 
     // prepare joint state publisher
@@ -77,13 +82,16 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
     // primitives
     init_grapsing_primitive();
     
+    //services, be sure to have mapActionHandler filled (it is done in init_grapsing_primitive)
+    _ros_service_handler = std::make_shared<RosServiceHandler>(&_nh, mapActionHandlerPtr);
+    _ros_service_handler->init(_ee->getFingers().size());
+    
     // actions
-    init_action_server();
+    std::string actionGraspingCommandName;
+    _nh.param<std::string>("/rosee/rosAction_grasping_command", actionGraspingCommandName, "action_command");
+    _ros_action_server = std::make_shared<RosActionServer> (actionGraspingCommandName , &_nh);
     timed_requested = false;
     timed_index = -1;
-
-    // services (only for gui now)
-    init_actionsInfo_services();
 
     // this should be done by hal?
     init_robotState_sub();
@@ -91,28 +99,23 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
 
 bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive() {
 
-    // parse YAML for End-Effector cconfiguration
-    ROSEE::YamlWorker yamlWorker ;
-    
-    std::string folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/" + _ee->getName();
-    std::string folderForActionsComposed = ROSEE::Utils::getPackagePath() + "/configs/actions/" + _ee->getName() + "/generics/";
-
     // get all action in the handler
-    mapActionHandler.parseAllActions(folderForActions);
+    mapActionHandlerPtr = std::make_shared<ROSEE::MapActionHandler>();
+    mapActionHandlerPtr->parseAllActions(folderForActions);
 
     // pinch tight
-    _pinchParsedMap = mapActionHandler.getPrimitiveMap("pinchTight");
+    _pinchParsedMap = mapActionHandlerPtr->getPrimitiveMap("pinchTight");
     
     // pinch loose
-    if (mapActionHandler.getPrimitiveMap(ROSEE::ActionPrimitive::Type::PinchLoose).size()>0) {
+    if (mapActionHandlerPtr->getPrimitiveMap(ROSEE::ActionPrimitive::Type::PinchLoose).size()>0) {
         //another method to get the map
-        _pinchLooseParsedMap = mapActionHandler.getPrimitiveMap(ROSEE::ActionPrimitive::Type::PinchLoose).at(0);
+        _pinchLooseParsedMap = mapActionHandlerPtr->getPrimitiveMap(ROSEE::ActionPrimitive::Type::PinchLoose).at(0);
     } 
     
     // trig, tip flex and fing flex
-    _trigParsedMap = mapActionHandler.getPrimitiveMap("trig");
-    _tipFlexParsedMap = mapActionHandler.getPrimitiveMap("tipFlex");
-    _fingFlexParsedMap = mapActionHandler.getPrimitiveMap("fingFlex");
+    _trigParsedMap = mapActionHandlerPtr->getPrimitiveMap("trig");
+    _tipFlexParsedMap = mapActionHandlerPtr->getPrimitiveMap("tipFlex");
+    _fingFlexParsedMap = mapActionHandlerPtr->getPrimitiveMap("fingFlex");
 
     // NOTE maps useful just to recap
     ROS_INFO_STREAM ( "PINCHES-TIGHT:" );
@@ -137,7 +140,7 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive() {
     }
     
     // composed actions
-    _graspParsed = mapActionHandler.getGeneric("grasp");
+    _graspParsed = mapActionHandlerPtr->getGeneric("grasp");
     
     // recap
     ROS_INFO_STREAM ( "GRASP:" );
@@ -145,12 +148,6 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive() {
         _graspParsed->print();
     }
     
-    return true;
-}
-
-bool ROSEE::UniversalRosEndEffectorExecutor::init_action_server () {
-    
-    _ros_action_server = std::make_shared<RosActionServer> ("action_command" , &_nh);
     return true;
 }
 
@@ -206,7 +203,7 @@ bool ROSEE::UniversalRosEndEffectorExecutor::updateGoal() {
         
     case ROSEE::Action::Type::Primitive :
     {
-        ROSEE::ActionPrimitive::Ptr primitive = mapActionHandler.getPrimitive (goal.action_name, goal.selectable_items);
+        ROSEE::ActionPrimitive::Ptr primitive = mapActionHandlerPtr->getPrimitive (goal.action_name, goal.selectable_items);
         
         if (primitive == nullptr) {
             //error message already printed in getPrimitive
@@ -222,7 +219,7 @@ bool ROSEE::UniversalRosEndEffectorExecutor::updateGoal() {
     case ROSEE::Action::Type::Generic : // same thing as composed
     case ROSEE::Action::Type::Composed :
     {
-        ROSEE::ActionGeneric::Ptr generic = mapActionHandler.getGeneric(goal.action_name);
+        ROSEE::ActionGeneric::Ptr generic = mapActionHandlerPtr->getGeneric(goal.action_name);
         
         if (generic == nullptr) {
             //error message already printed in getGeneric
@@ -239,7 +236,7 @@ bool ROSEE::UniversalRosEndEffectorExecutor::updateGoal() {
         // here we take the first of the timed action and we set refs for it
         //TODO first time margin (before) is not considered?
 
-        timedAction = mapActionHandler.getTimed(goal.action_name);
+        timedAction = mapActionHandlerPtr->getTimed(goal.action_name);
         
         if (timedAction == nullptr) {
             //error message already printed in getTimed
@@ -348,7 +345,7 @@ double ROSEE::UniversalRosEndEffectorExecutor::sendFeedbackGoal(std::string curr
     
     double actualCompletationPercentage;
 
-    if (actualNorm < 0.01) { 
+    if (actualNorm < _ros_action_server->getWantedNormError()) { 
         actualCompletationPercentage = 100;
     } else {
         
@@ -361,114 +358,6 @@ double ROSEE::UniversalRosEndEffectorExecutor::sendFeedbackGoal(std::string curr
     return actualCompletationPercentage;
 }
 
-bool ROSEE::UniversalRosEndEffectorExecutor::init_actionsInfo_services() {
-        
-    for (auto primitiveContainers : mapActionHandler.getAllPrimitiveMaps() ) {
-        
-        rosee_msg::ActionInfo actInfo;
-        actInfo.action_name = primitiveContainers.first;
-        actInfo.action_type = ROSEE::Action::Type::Primitive;
-        actInfo.actionPrimitive_type = primitiveContainers.second.begin()->second->getPrimitiveType();
-        //until now, there is not a primitive that does not have "something" to select
-        // (eg pinch has 2 fing, trig one fing, singleJointMultipleTips 1 joint...). 
-        //Instead generic action has always no thing to select (next for loop)
-        actInfo.max_selectable = primitiveContainers.second.begin()->first.size();
-        //TODO extract the keys with another mapActionHandler function?
-        actInfo.selectable_names =
-            ROSEE::Utils::extract_keys_unique(primitiveContainers.second,
-                                              _ee->getFingers().size());
-        _actionsInfoVect.push_back(actInfo);
-
-    }
-
-    for (auto genericMap : mapActionHandler.getAllGenerics() ) {
-
-        rosee_msg::ActionInfo actInfo;
-        actInfo.action_name = genericMap.first;
-        actInfo.action_type = genericMap.second->getType();
-        actInfo.actionPrimitive_type = ROSEE::ActionPrimitive::Type::None;
-        //Generic action has always no thing to select UNTIL NOW
-        actInfo.max_selectable = 0;
-
-        _actionsInfoVect.push_back(actInfo);
-
-    }
-    
-    for (auto timedMap : mapActionHandler.getAllTimeds() ) {
-        
-        rosee_msg::ActionInfo actInfo;
-        actInfo.action_name = timedMap.first;
-        actInfo.action_type = timedMap.second->getType();
-        actInfo.actionPrimitive_type = ROSEE::ActionPrimitive::Type::None;
-        actInfo.max_selectable = 0;
-        // we use selectable items info to store in it the action that compose this timed
-        for (std::string act : timedMap.second->getInnerActionsNames()) {
-            actInfo.inner_actions.push_back(act);
-            auto margin = timedMap.second->getActionMargins(act);
-            actInfo.before_margins.push_back(margin.first);
-            actInfo.after_margins.push_back(margin.second);
-        }
-        
-
-        _actionsInfoVect.push_back(actInfo);
-        
-    }
-    
-    _ros_server_actionsInfo = _nh.advertiseService("ActionsInfo", 
-        &ROSEE::UniversalRosEndEffectorExecutor::actionsInfoCallback, this);
-    
-    _ros_server_selectablePairInfo = _nh.advertiseService("SelectablePairInfo", 
-        &ROSEE::UniversalRosEndEffectorExecutor::selectablePairInfoCallback, this);
-    
-    return true;
-
-}
-
-
-bool ROSEE::UniversalRosEndEffectorExecutor::actionsInfoCallback(
-    rosee_msg::ActionsInfo::Request& request,
-    rosee_msg::ActionsInfo::Response& response) {
-    
-    //here we only send the actionsInfo vector, it is better to build it not in this clbk
-    
-    response.actionsInfo = _actionsInfoVect;
-    return true;
-    
-}
-
-bool ROSEE::UniversalRosEndEffectorExecutor::selectablePairInfoCallback(
-    rosee_msg::SelectablePairInfo::Request& request,
-    rosee_msg::SelectablePairInfo::Response& response) {
-    
-    std::set<std::string> companionFingers;
-    if (request.action_name.compare ("pinchTight") == 0) {
-        companionFingers =
-            mapActionHandler.getFingertipsForPinch(request.element_name,
-                ROSEE::ActionPrimitive::Type::PinchTight) ;
-                
-    } else if (request.action_name.compare ("pinchLoose") == 0) {
-        companionFingers =
-            mapActionHandler.getFingertipsForPinch(request.element_name,
-                ROSEE::ActionPrimitive::Type::PinchLoose) ;
-                
-    } else {
-        ROS_ERROR_STREAM ( "Received" << request.action_name << " that is not" <<
-            "a recognizible action name to look for finger companions" );
-        return false;
-    }
-    
-    if (companionFingers.size() == 0) {
-        return false;
-    }
-    
-    //push the elements of set into the vector
-    for (auto fing : companionFingers ) {
-        response.pair_elements.push_back (fing);
-    }
-    
-    return true;
-        
-}
 
 void ROSEE::UniversalRosEndEffectorExecutor::fill_publish_joint_states() {
 

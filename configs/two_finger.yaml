@@ -1,6 +1,7 @@
 ros_end_effector:
   urdf_path: "urdf/two_finger.urdf"
   srdf_path: "srdf/two_finger.srdf"
+  action_path: "actions/tests/two_finger/"
   
   
 ## Arguments for rosee_plugin control for gazebo. Similar syntax to

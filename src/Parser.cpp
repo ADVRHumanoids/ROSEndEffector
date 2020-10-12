@@ -310,6 +310,12 @@ bool ROSEE::Parser::getROSEndEffectorConfig() {
             ROS_ERROR_STREAM ( "in " << __func__ << " : ros_end_effector node of  " << _ros_ee_config_path << " does not contain srdf_path mandatory node!!" );
             success = false;
         }
+        
+        if ( ros_ee_node["action_path"] ) {
+            _action_path = ROSEE::Utils::getPackagePath() + "/configs/" + ros_ee_node["action_path"].as<std::string>();
+            ROS_INFO_STREAM ( "ros_end_effector Parser found config folder for actions: " << _action_path );
+
+        }
     }
 
     return success;
@@ -448,6 +454,10 @@ std::string ROSEE::Parser::getSrdfString() const {
 std::string ROSEE::Parser::getRoseeConfigPath() const {
     return _ros_ee_config_path;
 }
+
+std::string ROSEE::Parser::getActionPath() const {
+    return _action_path;
+};
 
 
 

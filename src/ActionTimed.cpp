@@ -25,7 +25,7 @@ ROSEE::ActionTimed::ActionTimed (std::string name ) : Action(name, Action::Type:
 }
 
 ROSEE::JointPos ROSEE::ActionTimed::getJointPos() const {
-    return (actionsJointPosMap.at(actionsNamesOrdered.back()));
+    return jointPosFinal;
 }
 
 std::vector<ROSEE::JointPos> ROSEE::ActionTimed::getAllJointPos() const {
@@ -122,6 +122,9 @@ void ROSEE::ActionTimed::print() const {
         output << actionsJointPosMap.at(actionName) << std::endl;
     }
     
+    output << "\tJointPos final, the sum of all joint pos of each inner action:\n";
+    output << jointPosFinal << std::endl;
+    
     output << "\tFingers involved: [" ;
     for (auto it : fingersInvolved) {
         output << it << ", ";
@@ -151,11 +154,19 @@ void ROSEE::ActionTimed::emitYaml(YAML::Emitter& out) const {
         out << YAML::Comment(timeline);
         out << YAML::Key << "Type" << YAML::Value << type;
         out << YAML::Key << "FingersInvolved" << YAML::Value << YAML::Flow << fingersInvolved;
+        
         out << YAML::Key << "JointsInvolvedCount" << YAML::Value << YAML::BeginMap;
         for (const auto &jointCount : jointsInvolvedCount ) {
             out << YAML::Key << jointCount.first;
             out << YAML::Value << jointCount.second;
         } 
+        out << YAML::EndMap;
+        
+        out << YAML::Key << "ActionsJointPosFinal" << YAML::Value << YAML::BeginMap;
+        for ( const auto joint : jointPosFinal ) {
+            out << YAML::Key << joint.first;
+            out << YAML::Value << YAML::Flow << joint.second; //vector of double is emitted like Seq
+        }
         out << YAML::EndMap;
         
         out << YAML::Key << "ActionsNamesOrdered" << YAML::Value << YAML::Flow << actionsNamesOrdered;
@@ -187,6 +198,7 @@ void ROSEE::ActionTimed::emitYaml(YAML::Emitter& out) const {
         }
         out << YAML::EndMap;
         
+        
         out << YAML::Key << "ActionsJointCount" << YAML::Value << YAML::BeginMap;
         for (const std::string action : actionsNamesOrdered ){
 
@@ -199,6 +211,8 @@ void ROSEE::ActionTimed::emitYaml(YAML::Emitter& out) const {
             out << YAML::EndMap;
         }
         out << YAML::EndMap;
+        
+
 
         
         out << YAML::EndMap; // map began at the beginning of the function
@@ -261,6 +275,10 @@ bool ROSEE::ActionTimed::fillFromYaml(YAML::const_iterator yamlIt){
             }
 
             
+        } else if ( key.compare("ActionsJointPosFinal") == 0) {
+            
+            jointPosFinal =  keyValue->second.as < JointPos >();
+        
         } else {
             std::cerr << "[TIMEDACTION::" << __func__ << "] Error, not known key " << key << std::endl;
             return false;
@@ -293,7 +311,7 @@ bool ROSEE::ActionTimed::insertAction(ROSEE::Action::Ptr action, double marginBe
         return false;
     }
     
-    if (percentJointPos <=0 || percentJointPos > 1) {
+    if (percentJointPos < 0 || percentJointPos > 1) {
         std::cerr << "[ACTIONTIMED:: " << __func__ << "] Please insert percentage for jointpos between 0 and 1. Passed: " 
             << percentJointPos << std::endl;
         return false;
@@ -307,7 +325,8 @@ bool ROSEE::ActionTimed::insertAction(ROSEE::Action::Ptr action, double marginBe
         return false;
     }
 
-    actionsJointPosMap.insert (std::make_pair ( usedName, (percentJointPos)*(action->getAllJointPos().at( jointPosIndex )) ));
+    ROSEE::JointPos insertingJP = (percentJointPos)*(action->getAllJointPos().at( jointPosIndex )) ;
+    actionsJointPosMap.insert (std::make_pair ( usedName, insertingJP) );
     actionsTimeMarginsMap.insert ( std::make_pair( usedName, std::make_pair(marginBefore, marginAfter)));
     actionsNamesOrdered.push_back ( usedName );
     actionsJointCountMap.insert (std::make_pair (usedName, action->getJointsInvolvedCount()));
@@ -320,13 +339,21 @@ bool ROSEE::ActionTimed::insertAction(ROSEE::Action::Ptr action, double marginBe
     if (actionsNamesOrdered.size() == 1 ) { //We are inserting first action, we have to init the JointsInvolvedCount map 
         
         jointsInvolvedCount = action->getJointsInvolvedCount();
+        jointPosFinal = insertingJP;
         
-    } else { // add the action.jointInvolvedCount to the timed jointCount
+    } else { 
+        // add the action.jointInvolvedCount to the timed jointCount
+        // and update jointPosFinal 
         for (auto jic : action->getJointsInvolvedCount() ) {
             jointsInvolvedCount.at(jic.first) += jic.second;
+            
+            if (jic.second > 0) {
+                //if so, we must overwrite the pos of this joint in jointPosFina
+                jointPosFinal.at(jic.first) = insertingJP.at(jic.first);
+            }
         } 
     }
-    
+
     return true;
 }
 

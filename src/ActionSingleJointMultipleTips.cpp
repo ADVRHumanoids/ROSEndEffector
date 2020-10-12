@@ -64,7 +64,7 @@ std::string ROSEE::ActionSingleJointMultipleTips::getJointName() const {
     return jointInvolved;
 }
 
-std::set<std::string> ROSEE::ActionSingleJointMultipleTips::getKeyForYamlMap() const {
+std::set<std::string> ROSEE::ActionSingleJointMultipleTips::getKeyElements() const {
     std::set <std::string> set;
     set.insert(jointInvolved);
     return set;

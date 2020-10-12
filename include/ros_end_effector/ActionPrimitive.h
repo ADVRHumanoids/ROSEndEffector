@@ -69,9 +69,9 @@ public:
     /**
      * @brief Depending on the primitive, we can use different "keys" to take info from yaml file when parsing
      * for example, trig and pinches are selected through fingersInvolved, while ActionSingleJointMultipleTips uses the joint name.
-     * So each derived class must override this info, which for now is used only in \ref YamlWorker::parseYamlPrimitive() and also by map handler to get the primitive
+     * So each derived class must override this info, which for now is used only in \ref YamlWorker::parseYamlPrimitive() and also by map handler to get the primitive, also on send action test
      */
-    virtual std::set < std::string> getKeyForYamlMap () const = 0;
+    virtual std::set < std::string> getKeyElements () const = 0;
     
     void setJointsInvolvedCount (ROSEE::JointsInvolvedCount jointsInvolvedCount ) ;    
     /* overridable functions, if we want to make them more action-specific*/
@@ -99,6 +99,14 @@ protected:
 
     
 };
+
+/**
+ * To print the action type enum as the real name (eg primitive) and not as the enum number
+ * REmember to add here if new type are implemented
+ */
+
+//std::ostream& operator<<(std::ostream& out, const ActionPrimitive::Type type);
+
 }
 
 #endif // __ROSEE_ACTIONPRIMITIVE_H

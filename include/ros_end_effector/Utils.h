@@ -84,9 +84,9 @@ static std::string getPackagePath() {
     return path.string() + "/../../";
 }
 
-template <class T>
-static std::vector<std::string> extract_keys(std::map<std::string, T> const& input_map) {
-  std::vector<std::string> retval;
+template <class KeyType, class ValueType>
+static std::vector<KeyType> extract_keys(std::map<KeyType, ValueType> const& input_map) {
+  std::vector<KeyType> retval;
   for (auto const& element : input_map) {
     retval.push_back(element.first);
   }
@@ -103,7 +103,7 @@ static std::vector<std::string> extract_keys(std::map<std::string, T> const& inp
  * @return vector of extracted string of set keys (string in this vect will be unique)
  */
 template <class T>
-static std::vector<std::string> extract_keys_unique(
+static std::vector<std::string> extract_keys_merged(
     std::map<std::set<std::string>, T> const& input_map, unsigned int max_string_number = 0) {
     
     std::set<std::string> allStrings;
@@ -132,7 +132,45 @@ static std::vector<std::string> extract_keys_unique(
     return retval;
 }
 
-/** Return false if two maps have different keys. The type of the keys must be the same obviously */
+/**
+ * @brief See above, this is the version with pair instead of set
+ */
+template <class T>
+static std::vector<std::string> extract_keys_merged(
+    std::map<std::pair<std::string,std::string>, T> const& input_map, unsigned int max_string_number = 0) {
+    
+    std::set<std::string> allStrings;
+    // if else so we do not check in the for the max_string_number if it is not used (ie ==0)
+
+    if (max_string_number == 0) {
+        for (auto const& element : input_map) {
+            allStrings.insert( element.first.first);
+            allStrings.insert( element.first.second);
+        }
+            
+    } else {
+        for (auto const& element : input_map) {
+            allStrings.insert( element.first.first);
+            allStrings.insert( element.first.second);
+            if (max_string_number == allStrings.size()){
+                break;
+            }
+            if (max_string_number < allStrings.size() ) {
+                std::cerr << "[ERROR]" << __func__ << " You passed " << max_string_number
+                << " but I found more unique strings in the pair keys ( " << allStrings.size()
+                << " found)" << std::endl;
+                return std::vector<std::string>();
+            }
+        }
+    }
+    std::vector<std::string> retval (allStrings.begin(), allStrings.end());
+    return retval;
+}
+
+/** @brief Return false if two maps have different keys. 
+ * The type of the keys (@p typename) must be the same obviously,
+ * but the values (@p valueType1 and @p valueType2) can be anything, because they are not considered
+*/
 template <typename keyType, typename valueType1, typename valueType2>
 bool keys_equal (std::map <keyType, valueType1> const &lhs, std::map<keyType, valueType2> const &rhs) {
 
