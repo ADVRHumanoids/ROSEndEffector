@@ -25,6 +25,8 @@
 #include <rosee_msg/GraspingActionsAvailable.h>
 #include <rosee_msg/GraspingAction.h>
 #include <rosee_msg/MotorPosition.h>
+#include <rosee_msg/NewGenericGraspingAction.h>
+#include <rosee_msg/NewGenericGraspingActionSrv.h>
 
 
 namespace ROSEE {
@@ -48,6 +50,7 @@ private:
     ros::ServiceServer _serverPrimitiveAggregated;
     ros::ServiceServer _server_selectablePairInfo;
     ros::ServiceServer _serverGraspingActions;
+    ros::ServiceServer _serverNewGraspingAction;
     
     unsigned int nFinger;
     
@@ -80,6 +83,11 @@ private:
                         ROSEE::MapActionHandler::ActionPrimitiveMap primitiveMap);
     rosee_msg::GraspingPrimitiveAggregated fillPrimitiveAggregatedMsg(
                         ROSEE::ActionPrimitive::Ptr primitive);
+    
+    
+    bool newGraspingActionCallback(
+        rosee_msg::NewGenericGraspingActionSrv::Request& request,
+        rosee_msg::NewGenericGraspingActionSrv::Response& response);
 };
 
 } //end namespace

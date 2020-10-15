@@ -34,10 +34,12 @@ bool ROSEE::RosServiceHandler::init(unsigned int nFinger) {
     
     this->nFinger = nFinger;
     
-    std::string graspingActionsSrvName, actionInfoServiceName, selectablePairInfoServiceName;
+    std::string graspingActionsSrvName, actionInfoServiceName, selectablePairInfoServiceName,
+        newGraspingActionServiceName;
     _nh->param<std::string>("/rosee/grasping_action_srv_name", graspingActionsSrvName, "grasping_actions_available");
     _nh->param<std::string>("/rosee/primitive_aggregated_srv_name", actionInfoServiceName, "primitives_aggregated_available");
     _nh->param<std::string>("/rosee/selectable_finger_pair_info", selectablePairInfoServiceName, "selectable_finger_pair_info");
+    _nh->param<std::string>("/rosee/new_grasping_action_srv_name", newGraspingActionServiceName, "new_generic_grasping_action");
     
     _serverGraspingActions = _nh->advertiseService(graspingActionsSrvName, 
         &RosServiceHandler::graspingActionsCallback, this);
@@ -47,6 +49,11 @@ bool ROSEE::RosServiceHandler::init(unsigned int nFinger) {
     
     _server_selectablePairInfo = _nh->advertiseService(selectablePairInfoServiceName, 
         &RosServiceHandler::selectablePairInfoCallback, this);
+    
+    _serverNewGraspingAction = _nh->advertiseService(newGraspingActionServiceName, 
+        &RosServiceHandler::newGraspingActionCallback, this);
+
+
     
     return true;
 }
@@ -350,4 +357,95 @@ bool ROSEE::RosServiceHandler::selectablePairInfoCallback(
     }
     
     return true;        
+}
+
+bool ROSEE::RosServiceHandler::newGraspingActionCallback(
+        rosee_msg::NewGenericGraspingActionSrv::Request& request,
+        rosee_msg::NewGenericGraspingActionSrv::Response& response){
+    
+    response.accepted = false;
+    response.emitted = false;
+    
+    if (request.newAction.action_name.empty()) {
+        
+        response.error_msg = "action_name can not be empty";
+        return false;
+    }
+    
+    if (request.newAction.action_motor_position.name.size() == 0 ||
+        request.newAction.action_motor_position.position.size() == 0 ||
+        request.newAction.action_motor_position.position.size() != request.newAction.action_motor_position.name.size()) {
+        
+        response.error_msg = "action_motor_position is empty or badly formed";
+        return false;
+    }
+    
+    if (request.newAction.action_motor_count.name.size() != request.newAction.action_motor_count.count.size()) {
+        
+        response.error_msg = "action_motor_count is badly formed, name and count have different sizes";
+        return false;
+    }
+    
+    // TODO request.newAction.action_motor_count : if empty, ActionGeneric costructor will consider all joint
+    // with 0 position as not used. This may change in future when we will support not 0 default joint positions
+    
+    if (_mapActionHandler->getGeneric(request.newAction.action_name, false) != nullptr) {
+        
+        response.error_msg = "A generic action with name '" + request.newAction.action_name + "' already exists";
+        return false;
+        
+    }
+
+    ROSEE::ActionGeneric::Ptr newAction;
+    ROSEE::JointPos jp;
+    ROSEE::JointsInvolvedCount jic;
+    std::set<std::string> elementInvolved;
+    
+    for (int i = 0; i < request.newAction.action_motor_position.name.size(); i++){
+        
+        std::vector<double> one_dof(request.newAction.action_motor_position.position.at(i));
+        
+        jp.insert(std::make_pair(request.newAction.action_motor_position.name.at(i),
+                                 one_dof));
+    }
+    
+    for (int i = 0; i < request.newAction.action_motor_count.name.size(); i++){
+        
+        jic.insert(std::make_pair(request.newAction.action_motor_count.name.at(i),
+                                  request.newAction.action_motor_count.count.at(i)));
+    }
+    
+    for (int i = 0; i< request.newAction.elements_involved.size(); i++) {
+        
+        elementInvolved.insert(request.newAction.elements_involved.at(i));  
+    }
+    
+    //costructor will handle jpc and elementInvolved also if empty
+    try { newAction = std::make_shared<ROSEE::ActionGeneric>(request.newAction.action_name,
+                                                             jp,
+                                                             jic,
+                                                             elementInvolved);
+    
+    } catch (const ROSEE::Utils::DifferentKeysException<ROSEE::JointPos, ROSEE::JointsInvolvedCount>) {
+        
+        response.error_msg = "action_motor_position and action_motor_count have different names element. They must be the same because they refer to actuator of the end-effector";
+        return false;
+    } 
+    
+    // TODO rosee main node use always mapActionHandler to check if an action exists. Thus, we need to add this new 
+    // action into the mapActionHandler "database" (ie private member map of the generic actions)
+    if (! _mapActionHandler->insertSingleGeneric(newAction)){
+        
+        response.error_msg = "error by mapActionHandler when inserting the new generic action";
+        return false;
+    }
+    
+    // TODO emit on yaml if requested
+    //if (request.emitYaml) {
+    //    ROSEE::YamlWorker yamlWorker;
+    //    yamlWorker.createYamlFile(
+    //}
+    
+    response.accepted = true;
+    return true;
 }
