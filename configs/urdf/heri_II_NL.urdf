@@ -7,6 +7,7 @@
   <!-- rosee plugin -->
   <gazebo>
     <plugin filename="libRoseePlugin.so" name="heri_controller">
+    <!--<plugin filename="libHeriIIPlugin.so" name="heri_controller">-->
       </plugin>
   </gazebo>
   <!-- /////////////////////////////////   Gazebo   ////////////////////////////////////// -->
@@ -103,10 +104,34 @@
     </collision>
   </link>
   <!-- I Put motors as joints, linked to tree with virtual links  -->
-  <link name="motor_finger1_virtual_link"/>
-  <link name="motor_finger2_virtual_link"/>
-  <link name="motor_finger3_virtual_link"/>
-  <link name="motor_thumb_virtual_link"/>
+  <link name="motor_finger1_virtual_link">
+   <inertial> <!-- We need inertial otherwise gazebo does not load the motor joints. I put very low inertia-->
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+  </link>
+  <link name="motor_finger2_virtual_link">
+   <inertial> <!-- We need inertial otherwise gazebo does not load the motor joints. I put very low inertia-->
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+  </link>
+  <link name="motor_finger3_virtual_link">
+     <inertial> <!-- We need inertial otherwise gazebo does not load the motor joints. I put very low inertia-->
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+  </link>
+  <link name="motor_thumb_virtual_link">
+     <inertial> <!-- We need inertial otherwise gazebo does not load the motor joints. I put very low inertia-->
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+  </link>
   <joint name="motor_finger1" type="revolute">
     <origin rpy="0 0 0" xyz="0 0 0"/>
     <parent link="base_link"/>
@@ -192,7 +217,7 @@
   </link>
   <!-- ///////////////////////////////////////   Joint of base_link and the first phalanx of the short finger   ////////////////////////////////////////// -->
   <joint name="SFB1__SFP1_1" type="revolute">
-    <origin rpy="1.5708 -0.29671 0" xyz="0.011 0 0.007"/>
+    <origin xyz="0.0211 0 0.007" rpy="1.5708 -0.29671 0" />
     <parent link="SFB1"/>
     <child link="SFB1_1"/>
     <axis xyz="0 0 -1"/>
