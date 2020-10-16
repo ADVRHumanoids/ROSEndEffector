@@ -39,13 +39,14 @@ public:
     /**
      * Default constructor
      */
-    RosServiceHandler(ros::NodeHandle *nh, ROSEE::MapActionHandler::Ptr);
+    RosServiceHandler(ros::NodeHandle *nh, ROSEE::MapActionHandler::Ptr, std::string path2saveYamlGeneric);
     bool init(unsigned int nFinger);
 
     
 private:
     
     MapActionHandler::Ptr _mapActionHandler;
+    std::string _path2saveYamlGeneric;
     ros::NodeHandle* _nh;
     ros::ServiceServer _serverPrimitiveAggregated;
     ros::ServiceServer _server_selectablePairInfo;

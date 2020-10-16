@@ -16,7 +16,7 @@
 
 #include <ros_end_effector/RosServiceHandler.h>
 
-ROSEE::RosServiceHandler::RosServiceHandler( ros::NodeHandle *nh, ROSEE::MapActionHandler::Ptr mapActionHandler) {
+ROSEE::RosServiceHandler::RosServiceHandler( ros::NodeHandle *nh, ROSEE::MapActionHandler::Ptr mapActionHandler, std::string path2saveYamlGeneric) {
     
     if (mapActionHandler == nullptr) {
         ROS_ERROR_STREAM ( "[RosServiceHandler " << __func__ << " ] the mapActionHandler in not initialized");
@@ -24,6 +24,7 @@ ROSEE::RosServiceHandler::RosServiceHandler( ros::NodeHandle *nh, ROSEE::MapActi
     }
     
     this->_mapActionHandler = mapActionHandler;
+    this->_path2saveYamlGeneric = path2saveYamlGeneric;
 
     this->_nh = nh;
     
@@ -440,11 +441,11 @@ bool ROSEE::RosServiceHandler::newGraspingActionCallback(
         return false;
     }
     
-    // TODO emit on yaml if requested
-    //if (request.emitYaml) {
-    //    ROSEE::YamlWorker yamlWorker;
-    //    yamlWorker.createYamlFile(
-    //}
+    if (request.emitYaml) {
+        ROSEE::YamlWorker yamlWorker;
+        yamlWorker.createYamlFile(newAction, _path2saveYamlGeneric);
+        response.emitted = true;
+    }
     
     response.accepted = true;
     return true;
