@@ -1,24 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <robot name="heri_II_NL" xmlns:xacro="http://ros.org/wiki/xacro">
 
+	<xacro:property name="exp" value="2.71828" />
+
     <!-- macro to for non linear functions, that are the same for each fingers-->
   <xacro:macro name="mimic_non_linear_long_finger" params="father_joint phalange regression_level:=high">
   
   	<xacro:if value="${phalange == 'proximal'}">    <!-- joint of the first phalange -->
-	 
-			<xacro:if value="${regression_level == 'low'}">
-				<xacro:property name="p" value="${[0.7528, -0.9162, 0.7495, 0.0005927]}"/>
-				<mimic joint="${father_joint}" nlFunPos="${p[0]}*x^3 + ${p[1]}*x^2 + ${p[2]}*x + ${p[3]}"/>
-			</xacro:if>
-			
-			<xacro:if value="${regression_level == 'medium'}">
-				<xacro:property name="p" value="${[-0.506, 1.698, -1.453, 0.8461, -0.002379 ]}"/>
-				<mimic joint="${father_joint}" nlFunPos="${p[0]}*x^4 + ${p[1]}*x^3 + ${p[2]}*x^2 + ${p[3]}*x + ${p[4]}"/>
-			</xacro:if>
-			
+
 			<xacro:if value="${regression_level == 'high'}">
-				<xacro:property name="p" value="${[-3.986, 8.428, -5.14, 0.6392, 0.6254, 0.001261]}"/>
-				<mimic joint="${father_joint}" nlFunPos="${p[0]}*x^5 + ${p[1]}*x^4 + ${p[2]}*x^3 + ${p[3]}*x^2 + ${p[4]}*x + ${p[5]}"/>
+				<xacro:property name="a" value="${[0.08519, 21500000000000, -714900,  0.2555]}"/>
+				<xacro:property name="b" value="${[0.9172,  32.2,           -17.93,   0.7317]}"/>
+				<xacro:property name="c" value="${[0.1817,  5.513,          4.61,     1.105]}"/>
+				<mimic joint="${father_joint}" nlFunPos="${a[0]}*${exp}^(-((x-${b[0]})/${c[0]})^2) + ${a[1]}*${exp}^(-((x-${b[1]})/${c[1]})^2) + ${a[2]}*${exp}^(-((x-${b[2]})/${c[2]})^2) + ${a[3]}*${exp}^(-((x-${b[3]})/${c[3]})^2)"/>
 			</xacro:if>
 			
     </xacro:if>
@@ -37,7 +31,7 @@
 			</xacro:if>
 			
 			<xacro:if value="${regression_level == 'high'}">
-				<xacro:property name="p" value="${[0.1099, -0.6142, 0.4386, 0.658,  0.0009892]}"/>
+				<xacro:property name="p" value="${[-0.1028, 0.4311, -0.6019, 0.9364,  -0.01132]}"/>
 				<mimic joint="${father_joint}" nlFunPos="${p[0]}*x^4 + ${p[1]}*x^3 + ${p[2]}*x^2 +${p[3]}*x + ${p[4]}"/>
 			</xacro:if>
 			
@@ -57,8 +51,8 @@
 			</xacro:if>
 			
 			<xacro:if value="${regression_level == 'high'}">
-				<xacro:property name="p" value="${[0.08032, -0.216, -0.07007, 0.5351, 0.000428]}"/>
-				<mimic joint="${father_joint}" nlFunPos="${p[0]}*x^4 + ${p[1]}*x^3 + ${p[2]}*x^2 +${p[3]}*x + ${p[4]}"/>
+				<xacro:property name="p" value="${[-0.06965, 0.4258, -0.7659, 0.3528, 0.4078, 0.007414]}"/>
+				<mimic joint="${father_joint}" nlFunPos="${p[0]}*x^5 + ${p[1]}*x^4 + ${p[2]}*x^3 +${p[3]}*x^2 + ${p[4]}*x + ${p[5]}"/>
 			</xacro:if>
 			
     </xacro:if>
@@ -76,7 +70,7 @@
 				</xacro:if>
 				
 				<xacro:if value="${regression_level == 'high'}">
-  				<xacro:property name="p" value="${[-9.144, 11.02, -3.932, 1.401, -0.002157]}"/>
+  				<xacro:property name="p" value="${[0.3378, -1.179, 1.103, 0.7363, 0.01468]}"/>
 					<mimic joint="${father_joint}" nlFunPos="${p[0]}*x^4 + ${p[1]}*x^3 + ${p[2]}*x^2 + ${p[3]}*x + ${p[4]}"/>
 				</xacro:if>
 				
@@ -90,7 +84,7 @@
 				</xacro:if>
 				
 				<xacro:if value="${regression_level == 'high'}">
-  				<xacro:property name="p" value="${[6.076, -7.902, 2.248, 0.739, 0.001644]}"/>
+  				<xacro:property name="p" value="${[-0.3366, 1.674, -2.506, 1.552, -0.02812]}"/>
 					<mimic joint="${father_joint}" nlFunPos="${p[0]}*x^4 + ${p[1]}*x^3 + ${p[2]}*x^2 + ${p[3]}*x + ${p[4]}"/>
 				</xacro:if>
 				
@@ -238,7 +232,7 @@
     <parent link="SFB1" />
     <child link="SFB1_1" />
     <axis xyz="0 0 -1" />
-    <limit lower="-0.1" upper="0.9" effort="10" velocity="1" />
+    <limit lower="-0.1" upper="1.22" effort="10" velocity="1" />
     <dynamics damping="0.003" friction="0.003"/>
     <xacro:mimic_non_linear_short_finger father_joint="motor_thumb" phalange="proximal" />
   </joint>
@@ -273,7 +267,7 @@
     <parent link="SFB1_1" />
     <child link="SFP1_2" />
     <axis xyz="0 0 -1" />
-    <limit lower="-0.1" upper="1.2" effort="10" velocity="1" />
+    <limit lower="-0.1" upper="1.22" effort="10" velocity="1" />
     <dynamics damping="0.003" friction="0.003"/>
     <xacro:mimic_non_linear_short_finger father_joint="motor_thumb" phalange="distal" />
   </joint>
@@ -344,7 +338,7 @@
     <parent link="LFB1" />
     <child link="LFP1_1" />
     <axis xyz="0 0 -1" />
-    <limit lower="-0.1" upper="0.9" effort="10" velocity="1" />
+    <limit lower="-0.1" upper="0.56" effort="10" velocity="1" />
     <dynamics damping="0.003" friction="0.003"/>
     <xacro:mimic_non_linear_long_finger father_joint="motor_finger1" phalange="proximal" />
   </joint>
@@ -379,7 +373,7 @@
     <parent link="LFP1_1" />
     <child link="LFP1_2" />
     <axis xyz="0 0 -1" />
-    <limit lower="-0.1" upper="0.5" effort="10" velocity="1" />
+    <limit lower="-0.1" upper="1.22" effort="10" velocity="1" />
     <dynamics damping="0.06" friction="0.05"/>
     <xacro:mimic_non_linear_long_finger father_joint="motor_finger1" phalange="middle" />
   </joint>
@@ -414,7 +408,7 @@
     <parent link="LFP1_2" />
     <child link="LFP1_3" />
     <axis xyz="0 0 -1" />
-    <limit lower="-0.1" upper="0.5" effort="10" velocity="1" />
+    <limit lower="-0.1" upper="1.22" effort="10" velocity="1" />
     <dynamics damping="0.003" friction="0.003"/>
     <xacro:mimic_non_linear_long_finger father_joint="motor_finger1" phalange="distal" />
   </joint>
@@ -486,7 +480,7 @@
     <parent link="LFB2" />
     <child link="LFP2_1" />
     <axis xyz="0 0 -1" />
-    <limit lower="-0.1" upper="0.73" effort="10" velocity="1" />
+    <limit lower="-0.1" upper="0.56" effort="10" velocity="1" />
     <dynamics damping="0.003" friction="0.003"/>
     <xacro:mimic_non_linear_long_finger father_joint="motor_finger2" phalange="proximal" />
   </joint>
@@ -521,7 +515,7 @@
     <parent link="LFP2_1" />
     <child link="LFP2_2" />
     <axis xyz="0 0 -1" />
-    <limit lower="-0.1" upper="0.5" effort="10" velocity="1"/>
+    <limit lower="-0.1" upper="1.22" effort="10" velocity="1"/>
     <dynamics damping="0.003" friction="0.003"/>
     <xacro:mimic_non_linear_long_finger father_joint="motor_finger2" phalange="middle" />
   </joint>
@@ -557,7 +551,7 @@
     <parent link="LFP2_2" />
     <child link="LFP2_3" />
     <axis xyz="0 0 -1" />
-    <limit lower="-0.1" upper="0.5" effort="10" velocity="1"/>
+    <limit lower="-0.1" upper="1.22" effort="10" velocity="1"/>
     <dynamics damping="0.06" friction="0.05"/>
     <xacro:mimic_non_linear_long_finger father_joint="motor_finger2" phalange="distal" />
   </joint>
@@ -629,7 +623,7 @@
     <parent link="LFB3" />
     <child link="LFP3_1" />
     <axis xyz="0 0 -1" />
-    <limit lower="-0.1" upper="0.9" effort="10" velocity="1" />
+    <limit lower="-0.1" upper="0.56" effort="10" velocity="1" />
     <dynamics damping="0.003" friction="0.003"/>
     <xacro:mimic_non_linear_long_finger father_joint="motor_finger3" phalange="proximal" />
   </joint>
@@ -664,7 +658,7 @@
     <parent link="LFP3_1" />
     <child link="LFP3_2" />
     <axis xyz="0 0 -1" />
-    <limit lower="-0.1" upper="0.5" effort="10" velocity="1"/>
+    <limit lower="-0.1" upper="1.22" effort="10" velocity="1"/>
     <dynamics damping="0.003" friction="0.003"/>
     <xacro:mimic_non_linear_long_finger father_joint="motor_finger3" phalange="middle" />
   </joint>
@@ -699,7 +693,7 @@
     <parent link="LFP3_2" />
     <child link="LFP3_3" />
     <axis xyz="0 0 -1" />
-    <limit lower="-0.1" upper="0.5" effort="10" velocity="1"/>
+    <limit lower="-0.1" upper="1.22" effort="10" velocity="1"/>
     <dynamics damping="0.003" friction="0.003"/>
     <xacro:mimic_non_linear_long_finger father_joint="motor_finger3" phalange="distal" />
   </joint>
