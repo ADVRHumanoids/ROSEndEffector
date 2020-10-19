@@ -720,4 +720,61 @@
     <xacro:mimic_non_linear_long_finger father_joint="motor_finger3" phalange="distal" />
   </joint>
 
+  <!-- //////////////////////////////////////////// virtual links to put a frame on fingertip "skin" //////////////////////////////////////////-->
+  <link name="LFP3_3_tip">
+   <inertial> <!-- We need inertial otherwise gazebo does not load the motor joints. I put very low inertia-->
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+  </link>
+  <joint name="LFP3_3__LFP3_3_tip" type="fixed">
+    <origin rpy="1.5708 0 -0.13" xyz="0.0175 -0.0111 0"/>
+    <parent link="LFP3_3"/>
+    <child link="LFP3_3_tip"/>
+    <axis xyz="0 0 0"/>
+  </joint>
+
+  <link name="LFP2_3_tip">
+   <inertial> <!-- We need inertial otherwise gazebo does not load the motor joints. I put very low inertia-->
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+  </link>
+  <joint name="LFP2_3__LFP2_3_tip" type="fixed">
+    <origin rpy="1.5708 0 -0.13" xyz="0.0175 -0.0111 0"/>
+    <parent link="LFP2_3"/>
+    <child link="LFP2_3_tip"/>
+    <axis xyz="0 0 0"/>
+  </joint>
+
+  <link name="LFP1_3_tip">
+   <inertial> <!-- We need inertial otherwise gazebo does not load the motor joints. I put very low inertia-->
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+  </link>
+  <joint name="LFP1_3__LFP1_3_tip" type="fixed">
+    <origin rpy="1.5708 0 -0.13" xyz="0.0175 -0.0111 0"/>
+    <parent link="LFP1_3"/>
+    <child link="LFP1_3_tip"/>
+    <axis xyz="0 0 0"/>
+  </joint>
+
+  <link name="SFP1_2_tip">
+   <inertial> <!-- We need inertial otherwise gazebo does not load the motor joints. I put very low inertia-->
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+  </link>
+  <joint name="SFP1_2__SFP1_2_tip" type="fixed">
+    <origin rpy="1.5708 0 -0.13" xyz="0.0175 -0.0111 0"/>
+    <parent link="SFP1_2"/>
+    <child link="SFP1_2_tip"/>
+    <axis xyz="0 0 0"/>
+  </joint>
+
 </robot>
