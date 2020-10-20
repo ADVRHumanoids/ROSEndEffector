@@ -360,6 +360,7 @@ bool ROSEE::RosServiceHandler::selectablePairInfoCallback(
     return true;        
 }
 
+//TODO error msg useless becaus if return false the response is not send
 bool ROSEE::RosServiceHandler::newGraspingActionCallback(
         rosee_msg::NewGenericGraspingActionSrv::Request& request,
         rosee_msg::NewGenericGraspingActionSrv::Response& response){
@@ -370,6 +371,7 @@ bool ROSEE::RosServiceHandler::newGraspingActionCallback(
     if (request.newAction.action_name.empty()) {
         
         response.error_msg = "action_name can not be empty";
+        ROS_ERROR_STREAM ( "[RosServiceHandler " << __func__ << " ] " << response.error_msg);
         return false;
     }
     
@@ -378,12 +380,16 @@ bool ROSEE::RosServiceHandler::newGraspingActionCallback(
         request.newAction.action_motor_position.position.size() != request.newAction.action_motor_position.name.size()) {
         
         response.error_msg = "action_motor_position is empty or badly formed";
+        ROS_ERROR_STREAM ( "[RosServiceHandler " << __func__ << " ] " << response.error_msg);
+
         return false;
     }
     
     if (request.newAction.action_motor_count.name.size() != request.newAction.action_motor_count.count.size()) {
         
         response.error_msg = "action_motor_count is badly formed, name and count have different sizes";
+        ROS_ERROR_STREAM ( "[RosServiceHandler " << __func__ << " ] " << response.error_msg);
+
         return false;
     }
     
@@ -393,6 +399,8 @@ bool ROSEE::RosServiceHandler::newGraspingActionCallback(
     if (_mapActionHandler->getGeneric(request.newAction.action_name, false) != nullptr) {
         
         response.error_msg = "A generic action with name '" + request.newAction.action_name + "' already exists";
+        ROS_ERROR_STREAM ( "[RosServiceHandler " << __func__ << " ] " << response.error_msg);
+
         return false;
         
     }
@@ -404,7 +412,8 @@ bool ROSEE::RosServiceHandler::newGraspingActionCallback(
     
     for (int i = 0; i < request.newAction.action_motor_position.name.size(); i++){
         
-        std::vector<double> one_dof(request.newAction.action_motor_position.position.at(i));
+        std::vector<double> one_dof{request.newAction.action_motor_position.position.at(i)};
+        ROS_WARN_STREAM (one_dof.at(i));
         
         jp.insert(std::make_pair(request.newAction.action_motor_position.name.at(i),
                                  one_dof));
@@ -430,6 +439,8 @@ bool ROSEE::RosServiceHandler::newGraspingActionCallback(
     } catch (const ROSEE::Utils::DifferentKeysException<ROSEE::JointPos, ROSEE::JointsInvolvedCount>) {
         
         response.error_msg = "action_motor_position and action_motor_count have different names element. They must be the same because they refer to actuator of the end-effector";
+        ROS_ERROR_STREAM ( "[RosServiceHandler " << __func__ << " ] " << response.error_msg);
+
         return false;
     } 
     
@@ -438,12 +449,19 @@ bool ROSEE::RosServiceHandler::newGraspingActionCallback(
     if (! _mapActionHandler->insertSingleGeneric(newAction)){
         
         response.error_msg = "error by mapActionHandler when inserting the new generic action";
+        ROS_ERROR_STREAM ( "[RosServiceHandler " << __func__ << " ] " << response.error_msg);
+
         return false;
     }
     
+    ROS_INFO_STREAM ( "[RosServiceHandler " << __func__ << " ] The new action is inserted in the system");
+
+    
     if (request.emitYaml) {
+        
         ROSEE::YamlWorker yamlWorker;
-        yamlWorker.createYamlFile(newAction, _path2saveYamlGeneric);
+        auto path = yamlWorker.createYamlFile(newAction, _path2saveYamlGeneric);
+        ROS_INFO_STREAM ( "[RosServiceHandler " << __func__ << " ] The received new action has been stored in " << path);
         response.emitted = true;
     }
     

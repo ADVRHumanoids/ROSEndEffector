@@ -83,7 +83,7 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
     init_grapsing_primitive();
     
     //services, be sure to have mapActionHandler filled (it is done in init_grapsing_primitive)
-    _ros_service_handler = std::make_shared<RosServiceHandler>(&_nh, mapActionHandlerPtr, folderForActions+"/generics");
+    _ros_service_handler = std::make_shared<RosServiceHandler>(&_nh, mapActionHandlerPtr, folderForActions+"/generics/");
     _ros_service_handler->init(_ee->getFingers().size());
     
     // actions
