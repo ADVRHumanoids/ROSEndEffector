@@ -25,6 +25,8 @@
 #include <rosee_msg/GraspingActionsAvailable.h>
 #include <rosee_msg/GraspingAction.h>
 #include <rosee_msg/MotorPosition.h>
+#include <rosee_msg/NewGenericGraspingAction.h>
+#include <rosee_msg/NewGenericGraspingActionSrv.h>
 
 
 namespace ROSEE {
@@ -37,17 +39,19 @@ public:
     /**
      * Default constructor
      */
-    RosServiceHandler(ros::NodeHandle *nh, ROSEE::MapActionHandler::Ptr);
+    RosServiceHandler(ros::NodeHandle *nh, ROSEE::MapActionHandler::Ptr, std::string path2saveYamlGeneric);
     bool init(unsigned int nFinger);
 
     
 private:
     
     MapActionHandler::Ptr _mapActionHandler;
+    std::string _path2saveYamlGeneric;
     ros::NodeHandle* _nh;
     ros::ServiceServer _serverPrimitiveAggregated;
     ros::ServiceServer _server_selectablePairInfo;
     ros::ServiceServer _serverGraspingActions;
+    ros::ServiceServer _serverNewGraspingAction;
     
     unsigned int nFinger;
     
@@ -80,6 +84,11 @@ private:
                         ROSEE::MapActionHandler::ActionPrimitiveMap primitiveMap);
     rosee_msg::GraspingPrimitiveAggregated fillPrimitiveAggregatedMsg(
                         ROSEE::ActionPrimitive::Ptr primitive);
+    
+    
+    bool newGraspingActionCallback(
+        rosee_msg::NewGenericGraspingActionSrv::Request& request,
+        rosee_msg::NewGenericGraspingActionSrv::Response& response);
 };
 
 } //end namespace
