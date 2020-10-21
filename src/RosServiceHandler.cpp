@@ -361,6 +361,7 @@ bool ROSEE::RosServiceHandler::selectablePairInfoCallback(
 }
 
 //TODO error msg useless becaus if return false the response is not send
+//at today (2020) it seems there not exist a method to return false plus an error message.
 bool ROSEE::RosServiceHandler::newGraspingActionCallback(
         rosee_msg::NewGenericGraspingActionSrv::Request& request,
         rosee_msg::NewGenericGraspingActionSrv::Response& response){
@@ -372,7 +373,7 @@ bool ROSEE::RosServiceHandler::newGraspingActionCallback(
         
         response.error_msg = "action_name can not be empty";
         ROS_ERROR_STREAM ( "[RosServiceHandler " << __func__ << " ] " << response.error_msg);
-        return false;
+        return true; //so the client receive the response
     }
     
     if (request.newAction.action_motor_position.name.size() == 0 ||
@@ -382,7 +383,7 @@ bool ROSEE::RosServiceHandler::newGraspingActionCallback(
         response.error_msg = "action_motor_position is empty or badly formed";
         ROS_ERROR_STREAM ( "[RosServiceHandler " << __func__ << " ] " << response.error_msg);
 
-        return false;
+        return true; //so the client receive the response
     }
     
     if (request.newAction.action_motor_count.name.size() != request.newAction.action_motor_count.count.size()) {
@@ -390,7 +391,7 @@ bool ROSEE::RosServiceHandler::newGraspingActionCallback(
         response.error_msg = "action_motor_count is badly formed, name and count have different sizes";
         ROS_ERROR_STREAM ( "[RosServiceHandler " << __func__ << " ] " << response.error_msg);
 
-        return false;
+        return true; //so the client receive the response
     }
     
     // TODO request.newAction.action_motor_count : if empty, ActionGeneric costructor will consider all joint
@@ -401,7 +402,7 @@ bool ROSEE::RosServiceHandler::newGraspingActionCallback(
         response.error_msg = "A generic action with name '" + request.newAction.action_name + "' already exists";
         ROS_ERROR_STREAM ( "[RosServiceHandler " << __func__ << " ] " << response.error_msg);
 
-        return false;
+        return true; //so the client receive the response
         
     }
 
@@ -412,9 +413,7 @@ bool ROSEE::RosServiceHandler::newGraspingActionCallback(
     
     for (int i = 0; i < request.newAction.action_motor_position.name.size(); i++){
         
-        std::vector<double> one_dof{request.newAction.action_motor_position.position.at(i)};
-        ROS_WARN_STREAM (one_dof.at(i));
-        
+        std::vector<double> one_dof{request.newAction.action_motor_position.position.at(i)};        
         jp.insert(std::make_pair(request.newAction.action_motor_position.name.at(i),
                                  one_dof));
     }
@@ -441,27 +440,27 @@ bool ROSEE::RosServiceHandler::newGraspingActionCallback(
         response.error_msg = "action_motor_position and action_motor_count have different names element. They must be the same because they refer to actuator of the end-effector";
         ROS_ERROR_STREAM ( "[RosServiceHandler " << __func__ << " ] " << response.error_msg);
 
-        return false;
+        return true; //so the client receive the response
     } 
     
-    // TODO rosee main node use always mapActionHandler to check if an action exists. Thus, we need to add this new 
+    //u rosee main node use always mapActionHandler to check if an action exists. Thus, we need to add this new 
     // action into the mapActionHandler "database" (ie private member map of the generic actions)
     if (! _mapActionHandler->insertSingleGeneric(newAction)){
         
         response.error_msg = "error by mapActionHandler when inserting the new generic action";
         ROS_ERROR_STREAM ( "[RosServiceHandler " << __func__ << " ] " << response.error_msg);
 
-        return false;
+        return true; //so the client receive the response
     }
     
-    ROS_INFO_STREAM ( "[RosServiceHandler " << __func__ << " ] The new action is inserted in the system");
+    ROS_INFO_STREAM ( "[RosServiceHandler " << __func__ << " ] The new action '"<< newAction->getName() << "' is inserted in the system");
 
     
     if (request.emitYaml) {
         
         ROSEE::YamlWorker yamlWorker;
         auto path = yamlWorker.createYamlFile(newAction, _path2saveYamlGeneric);
-        ROS_INFO_STREAM ( "[RosServiceHandler " << __func__ << " ] The received new action has been stored in " << path);
+        ROS_INFO_STREAM ( "[RosServiceHandler " << __func__ << " ] The received new action '"<< newAction->getName() << "' has been stored in " << path);
         response.emitted = true;
     }
     
