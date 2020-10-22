@@ -86,6 +86,22 @@ std::ostream& ROSEE::operator << (std::ostream& output, const ROSEE::JointsInvol
     return output;
 }
 
+std::ostream& ROSEE::operator<<(std::ostream& out, const ROSEE::Action::Type type){
+    
+        const char* s = 0;
+#define PROCESS_VAL(p) case(p): s = #p; break;
+    switch(type){
+        PROCESS_VAL(ROSEE::Action::Type::Primitive);     
+        PROCESS_VAL(ROSEE::Action::Type::Generic);     
+        PROCESS_VAL(ROSEE::Action::Type::Composed);
+        PROCESS_VAL(ROSEE::Action::Type::Timed);
+        PROCESS_VAL(ROSEE::Action::Type::None);
+    }
+#undef PROCESS_VAL
+
+    return out << s;
+}
+
 /********************************************* CLASS ACTION **************************************/
 ROSEE::Action::Action () {
 

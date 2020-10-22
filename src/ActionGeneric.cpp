@@ -22,9 +22,8 @@ ROSEE::ActionGeneric::ActionGeneric () {}
 ROSEE::ActionGeneric::ActionGeneric(std::string actionName) : Action (actionName, Action::Type::Generic) {}
 
 ROSEE::ActionGeneric::ActionGeneric(std::string actionName, ROSEE::JointPos jointPos) : Action(actionName, Action::Type::Generic) {
-
-    this->jointPos = jointPos;
-    //consider the position 0 as not used joint
+    
+    //HACK TODO now consider the position 0 as not used joint
     for (auto jp : jointPos) {
         bool zeros = std::all_of(jp.second.begin(), jp.second.end(), [](double i) { return i==0.0; });
         if (zeros) {
@@ -34,26 +33,64 @@ ROSEE::ActionGeneric::ActionGeneric(std::string actionName, ROSEE::JointPos join
 
         }
     } 
+    
+    this->jointPos = jointPos;
+
 }
 
 ROSEE::ActionGeneric::ActionGeneric(std::string actionName, ROSEE::JointPos jointPos, JointsInvolvedCount jic) : 
                             Action(actionName, Action::Type::Generic) {
+                      
+    if (jic.empty()) {
+        //HACK TODO now consider the position 0 as not used joint
+        for (auto jp : jointPos) {
+            bool zeros = std::all_of(jp.second.begin(), jp.second.end(), [](double i) { return i==0.0; });
+            if (zeros) {
+                jointsInvolvedCount.insert (std::make_pair (jp.first, 0) );
+            } else {
+                jointsInvolvedCount.insert (std::make_pair (jp.first, 1) );
 
-    if ( ! ROSEE::Utils::keys_equal(jointPos, jic) ) {
-        throw ROSEE::Utils::DifferentKeysException<ROSEE::JointPos, ROSEE::JointsInvolvedCount>(&jointPos, &jic);
-    }
+            }
+        }
         
-    this->jointPos = jointPos;
-    this->jointsInvolvedCount = jic;
+    } else {
+        if ( ! ROSEE::Utils::keys_equal(jointPos, jic) ) {
+            throw ROSEE::Utils::DifferentKeysException<ROSEE::JointPos, ROSEE::JointsInvolvedCount>(&jointPos, &jic);
+        }     
+        this->jointsInvolvedCount = jic;
+    }
     
+    this->jointPos = jointPos;
+
 }
 
 
 ROSEE::ActionGeneric::ActionGeneric(std::string actionName, ROSEE::JointPos jointPos, JointsInvolvedCount jic, 
                                   std::set<std::string> fingersInvolved) : Action(actionName, Action::Type::Generic) {
     
+    if (jic.empty()) {
+        //HACK TODO now consider the position 0 as not used joint
+        for (auto jp : jointPos) {
+            bool zeros = std::all_of(jp.second.begin(), jp.second.end(), [](double i) { return i==0.0; });
+            if (zeros) {
+                jointsInvolvedCount.insert (std::make_pair (jp.first, 0) );
+            } else {
+                jointsInvolvedCount.insert (std::make_pair (jp.first, 1) );
+
+            }
+        } 
+        
+    } else {
+        
+        if ( ! ROSEE::Utils::keys_equal(jointPos, jic) ) {
+            throw ROSEE::Utils::DifferentKeysException<ROSEE::JointPos, ROSEE::JointsInvolvedCount>(&jointPos, &jic);
+        }
+        
+        this->jointsInvolvedCount = jic;
+    }
+    
     this->jointPos = jointPos;
-    this->jointsInvolvedCount = jic;
+
     this->fingersInvolved = fingersInvolved;
 }
 

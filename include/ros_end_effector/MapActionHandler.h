@@ -39,6 +39,8 @@ namespace ROSEE {
 class MapActionHandler {
 
 public:
+    
+    typedef std::shared_ptr<MapActionHandler> Ptr;
 
     MapActionHandler();
 
@@ -92,7 +94,10 @@ public:
     ROSEE::ActionPrimitive::Ptr getPrimitive (std::string primitiveName, std::string key) const;
     std::vector<ROSEE::ActionPrimitive::Ptr> getPrimitive (ROSEE::ActionPrimitive::Type, std::string key) const;
     
-    std::shared_ptr<ROSEE::ActionGeneric> getGeneric (std::string name) const;
+    /**
+     * @note these functions return generics and composed (because composed are a derived class of generic)
+     */
+    std::shared_ptr<ROSEE::ActionGeneric> getGeneric (std::string name, bool verbose = true) const;
     std::map <std::string, std::shared_ptr<ROSEE::ActionGeneric>> getAllGenerics () const;
     
     std::shared_ptr<ROSEE::ActionTimed> getTimed (std::string name) const;
@@ -143,6 +148,14 @@ public:
     std::set<std::string> getFingertipsForPinch ( std::string finger, ROSEE::ActionPrimitive::Type pinchType) const;
     std::map <std::string, std::set<std::string> > getPinchTightPairsMap ( ) const;
     std::map <std::string, std::set<std::string> > getPinchLoosePairsMap ( ) const;
+    
+    /***************************** Other *******************************************/
+    
+    /** 
+     * @brief This is needed by rosservicehandler which has to include a new doable action, if received the service
+     * 
+     */
+    bool insertSingleGeneric(ROSEE::ActionGeneric::Ptr generic);
 
 private:
     

@@ -171,11 +171,13 @@ std::map<std::string, std::set<std::string> > ROSEE::MapActionHandler::getPinchL
     return pinchLoosePairsMap;
 }
 
-std::shared_ptr<ROSEE::ActionGeneric> ROSEE::MapActionHandler::getGeneric(std::string name) const {
+std::shared_ptr<ROSEE::ActionGeneric> ROSEE::MapActionHandler::getGeneric(std::string name, bool verbose) const {
     
     auto it = generics.find(name);
     if (it == generics.end() ) {
-         std::cerr << "[ERROR MapActionHandler " << __func__ << "] No generic function named '" << name << "'" << std::endl;    
+        if (verbose) {
+            std::cerr << "[ERROR MapActionHandler " << __func__ << "] No generic function named '" << name << "'" << std::endl;
+        }
         return nullptr;
     }
     
@@ -190,7 +192,7 @@ std::shared_ptr<ROSEE::ActionTimed> ROSEE::MapActionHandler::getTimed(std::strin
     
     auto it = timeds.find(name);
     if (it == timeds.end() ) {
-         std::cerr << "[ERROR MapActionHandler " << __func__ << "] No timed function named" << name << std::endl;    
+         std::cerr << "[ERROR MapActionHandler " << __func__ << "] No timed function named '" << name << "'" << std::endl;    
         return nullptr;
     }
     
@@ -357,6 +359,26 @@ bool ROSEE::MapActionHandler::parseAllTimeds(std::string pathFolder) {
     }
     
     return true;
+}
+
+
+bool ROSEE::MapActionHandler::insertSingleGeneric(ROSEE::ActionGeneric::Ptr generic) {
+    
+    auto it = generics.find(generic->getName());
+    
+    if (it != generics.end()){
+       
+         std::cerr << "[ERROR MapActionHandler " << __func__ << "] Trying to insert generic action with name " <<
+            generic->getName() << "which already exists" << std::endl;
+        
+        return false;
+    }
+    
+    //it as hint beause we already did the lookup in the find above
+    generics.insert(it, std::make_pair(generic->getName(), generic));
+    
+    return true;
+    
 }
 
 

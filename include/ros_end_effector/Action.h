@@ -81,7 +81,6 @@ public:
      */
     enum Type {Primitive, Generic, Composed, Timed, None};
 
-
     /* destructor of base must be virtual */
     virtual ~Action() {};
     
@@ -110,6 +109,7 @@ public:
      * store this info differently so they are in charge of providing the read.
      * @return JointsPos the map indicating how the position of the joint
      */
+    //TODO rename getJointsPos
     virtual JointPos getJointPos () const = 0;
     
     /**
@@ -117,6 +117,7 @@ public:
      * this function is equal to \ref getJointPos.
      * @return vector containing all the joint pos of the action
      */
+    //TODO rename getAllJointsPos
     virtual std::vector < ROSEE::JointPos > getAllJointPos () const = 0;
 
     /** @brief Overridable functions, if we want to make them more action-specific */
@@ -148,6 +149,13 @@ protected:
     JointsInvolvedCount jointsInvolvedCount;
 
 };
+
+/**
+ * To print the action type enum as the real name (eg primitive) and not as the enum number
+ * REmember to add here if new type are implemented
+ */
+std::ostream& operator <<(std::ostream& out, const ROSEE::Action::Type type);
+
 }
 
 #endif // __ROSEE_ACTION_H

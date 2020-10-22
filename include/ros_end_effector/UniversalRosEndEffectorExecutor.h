@@ -34,17 +34,10 @@
 #include <ros_end_effector/MapActionHandler.h>
 #include <ros_end_effector/YamlWorker.h>
 #include <ros_end_effector/RosActionServer.h>
+#include <ros_end_effector/RosServiceHandler.h>
 
 #include <ros_end_effector/ActionPrimitive.h>
 #include <ros_end_effector/ActionComposed.h>
-
-/// new messages from rosee_msg package
-//for services to gui
-#include <rosee_msg/ActionsInfo.h> //service
-#include <rosee_msg/ActionInfo.h>  //message
-#include <rosee_msg/SelectablePairInfo.h>  //message
-#include <rosee_msg/ROSEEActionControl.h> //msg
-#include <rosee_msg/ROSEECommandAction.h> //action
 
 namespace ROSEE
 {
@@ -77,15 +70,6 @@ private:
     bool init_grapsing_primitive();
     
     bool init_action_server();
-    
-    bool init_actionsInfo_services() ;
-    
-    bool actionsInfoCallback (rosee_msg::ActionsInfo::Request& request,
-        rosee_msg::ActionsInfo::Response& response);
-    
-    bool selectablePairInfoCallback( rosee_msg::SelectablePairInfo::Request& request,
-                                     rosee_msg::SelectablePairInfo::Response& response);
-
     
     ros::NodeHandle _nh;
     ros::Timer _loop_timer;
@@ -123,13 +107,9 @@ private:
     
     std::shared_ptr<ROSEE::ActionGeneric> _graspParsed;
     
-    MapActionHandler mapActionHandler;
+    MapActionHandler::Ptr mapActionHandlerPtr;
     
-    //for service info to gui 
-    std::vector<rosee_msg::ActionInfo> _actionsInfoVect;
-    ros::ServiceServer _ros_server_actionsInfo;
-    ros::ServiceServer _ros_server_selectablePairInfo;
-    
+    std::shared_ptr <RosServiceHandler> _ros_service_handler;
     std::shared_ptr <RosActionServer> _ros_action_server;
     
     // we need this as global member because in send_feedback we need it...

@@ -18,6 +18,24 @@
 
 #include <ros_end_effector/ActionPrimitive.h>
 
+// std::ostream& operator<<(std::ostream& out, const ROSEE::ActionPrimitive::Type type){
+//     const char* s = 0;
+// #define PROCESS_VAL(p) case(p): s = #p; break;
+//     switch(type){
+//         PROCESS_VAL(ROSEE::ActionPrimitive::Type::PinchTight);     
+//         PROCESS_VAL(ROSEE::ActionPrimitive::Type::PinchLoose);     
+//         PROCESS_VAL(ROSEE::ActionPrimitive::Type::MultiplePinchTight);
+//         PROCESS_VAL(ROSEE::ActionPrimitive::Type::Trig);
+//         PROCESS_VAL(ROSEE::ActionPrimitive::Type::TipFlex);
+//         PROCESS_VAL(ROSEE::ActionPrimitive::Type::FingFlex);
+//         PROCESS_VAL(ROSEE::ActionPrimitive::Type::SingleJointMultipleTips);
+//         PROCESS_VAL(ROSEE::ActionPrimitive::Type::None);
+//     }
+// #undef PROCESS_VAL
+// 
+//     return out << s;
+// }
+
 ROSEE::ActionPrimitive::ActionPrimitive(std::string name,  unsigned int maxStoredActionStates, ActionPrimitive::Type primitiveType) : 
     Action(name, Action::Type::Primitive), maxStoredActionStates(maxStoredActionStates), primitiveType(primitiveType) {};
 
