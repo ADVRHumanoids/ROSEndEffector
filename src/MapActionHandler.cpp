@@ -22,7 +22,7 @@ ROSEE::MapActionHandler::ActionPrimitiveMap ROSEE::MapActionHandler::getPrimitiv
     
     auto it = primitives.find (primitiveName);
     if (it == primitives.end() ){
-        std::cerr << "[ERROR MapActionHandler::" << __func__ << "] Not found any action with name " << primitiveName << std::endl;
+        std::cerr << "[ERROR MapActionHandler::" << __func__ << "] Not found any primitive action with name " << primitiveName << std::endl;
         return ActionPrimitiveMap();
     }
     
@@ -111,7 +111,7 @@ std::vector<ROSEE::ActionPrimitive::Ptr> ROSEE::MapActionHandler::getPrimitive(R
     }
     
     if (theMaps.size() == 0 ) {
-        std::cerr << "[ERROR MapActionHandler::" << __func__ << "] No action of type '" 
+        std::cerr << "[ERROR MapActionHandler::" << __func__ << "] No primitive action of type '" 
         << type << "' has as key a set of dimension " <<
         key.size() << " (passed 2nd argument)" << std::endl;
         return std::vector<ROSEE::ActionPrimitive::Ptr>();
@@ -133,7 +133,7 @@ std::vector<ROSEE::ActionPrimitive::Ptr> ROSEE::MapActionHandler::getPrimitive(R
     }
     
     if (returnVect.size() == 0) {
-        std::cerr << "[ERROR MapActionHandler::" << __func__ << "] Not found any action of type '" << type << "' with key [ " ;
+        std::cerr << "[ERROR MapActionHandler::" << __func__ << "] Not found any primitive action of type '" << type << "' with key [ " ;
         for (auto keyEl : key) {
             std::cerr << keyEl << ", ";
         }
