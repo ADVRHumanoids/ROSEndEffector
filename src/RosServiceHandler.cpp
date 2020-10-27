@@ -239,6 +239,10 @@ void ROSEE::RosServiceHandler::fillCommonInfoGraspingActionMsg(ROSEE::Action::Pt
         }
         graspingMsg->action_motor_positions.push_back(motorPosMsg); 
     }
+    
+    for (auto elementInvolved : action->getFingersInvolved()) {
+        graspingMsg->elements_involved.push_back(elementInvolved);
+    }
 }
 
 bool ROSEE::RosServiceHandler::primitiveAggregatedCallback(
