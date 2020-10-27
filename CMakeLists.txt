@@ -374,9 +374,18 @@ if(CATKIN_ENABLE_TESTING)
                                               ROSEEParser
                                               ROSEEInterface
                                               FindActions)  
+                                              
+    add_executable(ServiceHandler_test test/test_service_handler.cpp)
+    target_link_libraries(ServiceHandler_test ${catkin_LIBRARIES}
+                                              gtest
+                                              ROSEEParser
+                                              ROSEEInterface
+                                              MapActionHandler
+                                              RosServiceHandler)  
     
     list(APPEND testsExecutable 
-        EEInterface_test FindPinches_test FindTrigs_test ComposedAction_test TimedAction_test SendAction_test
+        #EEInterface_test FindPinches_test FindTrigs_test ComposedAction_test TimedAction_test SendAction_test ServiceHandler_test
+        ServiceHandler_test
     )
     list(APPEND handsForTests
          test_ee test_ee_spread two_finger two_finger_mimic

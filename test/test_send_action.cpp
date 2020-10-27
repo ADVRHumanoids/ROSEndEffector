@@ -59,10 +59,10 @@ protected:
         
         folderForActions = p.getActionPath();
         if ( folderForActions.size() == 0 ){ //if no action path is set in the yaml file...
-            folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/" + ee->getName();
+            std::cout << "[TEST SEND ACTIONS] parser FAIL: action_path in the config file is missing" << std::endl;
+            return;
         }
 
-        /** Find all the actions **/
         //note: test on the findActions part is done in other test files
         parserMoveIt = std::make_shared<ROSEE::ParserMoveIt>();
         if (! parserMoveIt->init ("robot_description", false) ) {
@@ -71,6 +71,7 @@ protected:
             return;
         }
                 
+        //note: calls to find*** (like findTrig) are done in the specific testu
         actionsFinder = std::make_shared<ROSEE::FindActions>(parserMoveIt);
 
                                                                           
@@ -130,7 +131,6 @@ protected:
 
     ClbkHelper clbkHelper;
     
-protected:
     void setMainNode();
     void sendAction( ROSEE::Action::Ptr action, double percentageWanted);
     void testAction( ROSEE::Action::Ptr actionSent, double percentageWanted);
@@ -273,7 +273,8 @@ TEST_F ( testSendAction, sendSimpleGeneric ) {
         
     }
 
-    ROSEE::Action::Ptr action = std::make_shared<ROSEE::ActionGeneric>("testAllUpperLim", jp, jpc);
+    //ROSEE::Action::Ptr action = std::make_shared<ROSEE::ActionGeneric>("testAllUpperLim", jp, jpc);
+    ROSEE::Action::Ptr action = std::make_shared<ROSEE::ActionGeneric>("AAAAAAAAAAAAAAAA", jp, jpc);
     //emit the yaml so roseeExecutor can find the action
     yamlWorker.createYamlFile( action.get(), folderForActions + "/generics/" );
 
