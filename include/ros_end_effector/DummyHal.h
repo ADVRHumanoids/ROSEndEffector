@@ -18,6 +18,8 @@
 #ifndef __ROSEE_DUMMY_HAL__
 #define __ROSEE_DUMMY_HAL__
 
+#include <ros/ros.h>
+
 #include <ros_end_effector/EEHal.h>
 
 #include <string>
@@ -37,21 +39,24 @@ namespace ROSEE {
         typedef std::shared_ptr<DummyHal> Ptr;
         typedef std::shared_ptr<const DummyHal> ConstPtr;
         
-        DummyHal( ROSEE::EEInterface::Ptr ee_interface );
-        virtual ~DummyHal();
-        
-        
-        virtual bool getMotorPosition( std::string joint_name, double& motor_position );
-        virtual bool getMotorVelocity( std::string joint_name, double& motor_velocity );
-        virtual bool getMotorEffort( std::string joint_name, double& motor_effort );
-        
-        virtual bool setPositionReference( std::string joint_name, double position_reference );
-                
-        
+        DummyHal( ros::NodeHandle* nh);
+        virtual ~DummyHal() {};
         
         virtual bool sense();
         virtual bool move();
+      
+    private:
+        /**
+         * @brief this will publish to joint_state_publisher
+         */
+        ros::Publisher _hal_joint_state_pub;
         
+        /**
+         * @brief this will subscribe to joint_state_publisher
+         */
+        ros::Subscriber _hal_joint_state_sub;
+        
+        void hal_js_clbk(const sensor_msgs::JointState::ConstPtr& msg);
         
     };
     

@@ -17,43 +17,27 @@
 
 #include <ros_end_effector/DummyHal.h>
 
-ROSEE::DummyHal::DummyHal ( ROSEE::EEInterface::Ptr ee_interface ) : EEHal ( ee_interface ) {
-
-}
-
-
-bool ROSEE::DummyHal::getMotorPosition ( std::string joint_name, double& motor_position ) {
-
-    return getJointPosition(joint_name, motor_position);
-}
-
-bool ROSEE::DummyHal::getMotorVelocity ( std::string joint_name, double& motor_velocity ) {
-
-    return getJointVelocity(joint_name, motor_velocity);
-}
-
-bool ROSEE::DummyHal::getMotorEffort ( std::string joint_name, double& motor_effort ) {
-
-    return getJointEffort(joint_name, motor_effort);
-}
-
-
-bool ROSEE::DummyHal::setPositionReference ( std::string joint_name, double position_reference ) {
-
-    setJointPosition(joint_name, position_reference);
-    return true;
+ROSEE::DummyHal::DummyHal ( ros::NodeHandle *nh) : EEHal ( nh ) {
+    
+    std::string out;
+    
+    _hal_joint_state_pub = nh->advertise<sensor_msgs::JointState>("/dummyHal/joint_command", 1);
+    _hal_joint_state_sub = nh->subscribe("/dummyHal/joint_states", 1, &ROSEE::DummyHal::hal_js_clbk, this);
 }
 
 
 bool ROSEE::DummyHal::sense() {
+    //do nothing, it is the hal_js_clbk who "sense"
     return true;
 }
 
 bool ROSEE::DummyHal::move() {
+    _hal_joint_state_pub.publish(_mr_msg);
     return true;
 }
 
-
-ROSEE::DummyHal::~DummyHal() {
-
+void ROSEE::DummyHal::hal_js_clbk(const sensor_msgs::JointState::ConstPtr& msg) {
+    
+    _js_msg = *msg;
 }
+

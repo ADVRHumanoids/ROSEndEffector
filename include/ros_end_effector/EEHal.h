@@ -18,11 +18,12 @@
 #ifndef __ROSEE_EE_HAL__
 #define __ROSEE_EE_HAL__
 
-#include <ros_end_effector/IMotor.h>
 
-#include <ros_end_effector/EEInterface.h>
+#include <ros/ros.h>
+#include <sensor_msgs/JointState.h>
 
 #include <string>
+#include <vector>
 #include <memory>
 
 namespace ROSEE {
@@ -39,32 +40,31 @@ namespace ROSEE {
         typedef std::shared_ptr<EEHal> Ptr;
         typedef std::shared_ptr<const EEHal> ConstPtr;
         
-        EEHal( ROSEE::EEInterface::Ptr ee_interface );
-        virtual ~EEHal();
+        EEHal ( ros::NodeHandle* nh );
+        virtual ~EEHal() {};
         
         virtual bool sense() = 0;
         
         virtual bool move() = 0;
         
-        virtual bool setMotorPositionReference (std::string motor_name, double position_ref) = 0;
+        virtual bool publish_joint_state();
         
-        virtual bool getMotorPosition (std::string motor_name, double &position) = 0; 
-        
+        //virtual bool setMotorPositionReference(std::string motor, double pos) = 0;
+        //virtual bool getJointPosition(std::string joint, std::vector<double> &pos ) = 0;
+                        
     protected:
         
-       // virtual bool setMotorPositionReference (std::string motor_name, double position_ref) = 0;
+        ros::NodeHandle* _nh; 
         
-       // virtual bool getMotorPosition (std::string motor_name, double &position) = 0; 
-        //virtual bool getJointVelocity( std::string joint_name, double& joint_velocity);
-        //virtual bool getJointEffort( std::string joint_name, double& joint_effort);
+        sensor_msgs::JointState _mr_msg;
+        ros::Subscriber _motor_reference_sub;
+        virtual void motor_reference_clbk(const sensor_msgs::JointState::ConstPtr& msg);
         
-        ROSEE::EEInterface::Ptr _ee_interface;
+        sensor_msgs::JointState _js_msg;
+        ros::Publisher _joint_state_pub;
         
     private:
         
-        //std::map<std::string, double> _joint_position;
-        //std::map<std::string, double> _joint_velocity;
-        //std::map<std::string, double> _joint_effort;
     };
     
 }

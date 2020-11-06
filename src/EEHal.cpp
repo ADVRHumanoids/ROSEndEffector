@@ -17,12 +17,31 @@
 
 #include <ros_end_effector/EEHal.h>
 
-ROSEE::EEHal::EEHal ( ROSEE::EEInterface::Ptr ee_interface ) : _ee_interface ( ee_interface ) {
+ROSEE::EEHal::EEHal(ros::NodeHandle* nh) {
+    
+    _nh = nh;
+    
+    //init sub to receive reference from UniversalROSEEEX
+    //TODO take topic name from roslaunch
+    std::string motor_reference_topic  = "/ros_end_effector/motor_reference_pos";
 
+    _motor_reference_sub = _nh->subscribe(motor_reference_topic, 1,
+                                          &ROSEE::EEHal::motor_reference_clbk, this);
+    
+    std::string joint_state_topic = "/ros_end_effector/joint_states";
+    
+    _joint_state_pub = _nh->advertise<sensor_msgs::JointState>(joint_state_topic, 10);
+    
 }
 
+void ROSEE::EEHal::motor_reference_clbk(const sensor_msgs::JointState::ConstPtr& msg) {
+    
+    _mr_msg = *msg;
+    
+}
 
-
-ROSEE::EEHal::~EEHal() {
-
+bool ROSEE::EEHal::publish_joint_state() {
+    
+    _joint_state_pub.publish(_js_msg);
+    
 }
