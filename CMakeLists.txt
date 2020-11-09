@@ -25,6 +25,13 @@ find_package(catkin REQUIRED COMPONENTS srdfdom
 # find_package(matlogger2 REQUIRED)
 find_package(Eigen3 REQUIRED)
 
+#Xbot stuff
+#option(XBOT2_ENABLE_XENO OFF "Compile against xenomai") #TODO necessary?
+#find_package(xbot2 REQUIRED)
+#add_xbot2_device(XBot2HalCommunication src/XBot2HalCommunication.cpp)
+#install(TARGETS XBot2HalCommunication DESTINATION lib)
+
+
 ###################################
 ## catkin specific configuration ##
 ###################################
@@ -60,9 +67,15 @@ add_library(ROSEEInterface
 )
 
 add_library(DummyHal
-    src/EEHal.cpp
-    src/DummyHal.cpp
+     src/DummyHal.cpp
 )
+
+add_library(EEHal
+     src/EEHal.cpp
+)
+#add_library(XBot2Hal
+#    src/XBot2Hal.cpp 
+#)
 
 add_library(UniversalRosEndEffectorExecutor
     src/UniversalRosEndEffectorExecutor.cpp
@@ -135,8 +148,9 @@ add_library(ActionTimed
 
 add_executable(UniversalRosEndEffector src/UniversalRosEndEffector.cpp)
 add_executable(UniversalFindActions src/UniversalFindActions.cpp)
-# add_dependencies(UniversalRosEndEffector rosee_msg_generate_messages_cpp)
-# add_dependencies(UniversalFindActions rosee_msg_generate_messages_cpp)
+add_executable(EEHalExecutor src/EEHalExecutor.cpp)
+# add_dependencies(UniversalRosEndEffectorExecutor ros_end_effector_generate_messages_cpp)
+# add_dependencies(UniversalFindActions ros_end_effector_generate_messages_cpp)
 
 
 ## Add cmake target dependencies of the executable
@@ -154,10 +168,6 @@ target_link_libraries(ROSEEInterface
     ROSEEParser
 )
 
-target_link_libraries(DummyHal
-    yaml-cpp
-)
-
 target_link_libraries(UniversalRosEndEffectorExecutor
     ${catkin_LIBRARIES}
     ROSEEParser
@@ -167,10 +177,13 @@ target_link_libraries(UniversalRosEndEffectorExecutor
     RosActionServer
     RosServiceHandler
     
-    # do it automatically
-    DummyHal
-    
 )
+
+#target_link_libraries(XBot2Hal
+#    XBot2HalCommunication
+#    xbot2::xbot2
+#    EEHal
+#)
 
 target_link_libraries(YamlWorker
     yaml-cpp
@@ -255,8 +268,14 @@ target_link_libraries(ParserMoveIt
     ${catkin_LIBRARIES}
 )
 
+target_link_libraries(DummyHal
+    ${catkin_LIBRARIES}
+    EEHal 
+)
+
 target_link_libraries(UniversalRosEndEffector
     UniversalRosEndEffectorExecutor
+    
 )
 
 target_link_libraries(UniversalFindActions
@@ -272,6 +291,12 @@ target_link_libraries(UniversalFindActions
     ActionTimed
     ActionGeneric
     MapActionHandler
+)
+
+target_link_libraries(EEHalExecutor
+    ${catkin_LIBRARIES}
+    EEHal
+    DummyHal
 )
 
 

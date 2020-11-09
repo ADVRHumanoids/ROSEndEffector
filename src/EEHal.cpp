@@ -17,90 +17,31 @@
 
 #include <ros_end_effector/EEHal.h>
 
-ROSEE::EEHal::EEHal ( ROSEE::EEInterface::Ptr ee_interface ) : _ee_inteface ( ee_interface ) {
+ROSEE::EEHal::EEHal(ros::NodeHandle* nh) {
+    
+    _nh = nh;
+    
+    //init sub to receive reference from UniversalROSEEEX
+    //TODO take topic name from roslaunch
+    std::string motor_reference_topic  = "/ros_end_effector/motor_reference_pos";
 
-    std::vector<std::string> joints = _ee_inteface->getActuatedJoints ();
-    for ( auto& j: joints ) {
-
-        _joint_postion[j] = 0;
-        _joint_velocity[j] = 0;
-        _joint_effort[j] = 0;
-    };
-
-}
-
-
-bool ROSEE::EEHal::setJointPosition ( std::string joint_name, double joint_position ) {
-
-    if ( _joint_postion.count ( joint_name ) ) {
-
-        _joint_postion.at ( joint_name ) = joint_position;
-        return true;
-    }
-
-    return false;
-}
-
-bool ROSEE::EEHal::setJointVelocity ( std::string joint_name, double joint_velocity ) {
-
-    if ( _joint_velocity.count ( joint_name ) ) {
-
-        _joint_velocity.at ( joint_name ) = joint_velocity;
-        return true;
-    }
-
-    return false;
-}
-
-bool ROSEE::EEHal::setJointEffort ( std::string joint_name, double joint_effort ) {
-
-    if ( _joint_effort.count ( joint_name ) ) {
-
-        _joint_effort.at ( joint_name ) = joint_effort;
-        return true;
-    }
-
-    return false;
-}
-
-bool ROSEE::EEHal::getJointPosition ( std::string joint_name, double& joint_position ) {
-
-    if ( _joint_postion.count ( joint_name ) ) {
-
-        joint_position = _joint_postion.at ( joint_name );
-        return true;
-    }
-
-    return false;
+    _motor_reference_sub = _nh->subscribe(motor_reference_topic, 1,
+                                          &ROSEE::EEHal::motor_reference_clbk, this);
+    
+    std::string joint_state_topic = "/ros_end_effector/joint_states";
+    
+    _joint_state_pub = _nh->advertise<sensor_msgs::JointState>(joint_state_topic, 10);
     
 }
 
-bool ROSEE::EEHal::getJointVelocity ( std::string joint_name, double& joint_velocity ) {
-
-    if ( _joint_velocity.count ( joint_name ) ) {
-
-        joint_velocity = _joint_velocity.at ( joint_name );
-        return true;
-    }
-
-    return false;
+void ROSEE::EEHal::motor_reference_clbk(const sensor_msgs::JointState::ConstPtr& msg) {
+    
+    _mr_msg = *msg;
     
 }
 
-bool ROSEE::EEHal::getJointEffort ( std::string joint_name, double& joint_effort ) {
-
-    if ( _joint_effort.count ( joint_name ) ) {
-
-        joint_effort = _joint_effort.at ( joint_name );
-        return true;
-    }
-
-    return false;
-
-}
-
-
-
-ROSEE::EEHal::~EEHal() {
-
+bool ROSEE::EEHal::publish_joint_state() {
+    
+    _joint_state_pub.publish(_js_msg);
+    
 }
