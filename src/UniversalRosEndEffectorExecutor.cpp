@@ -58,7 +58,7 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
     init_grapsing_primitive();
     
     //services, check on mapActionHandlerPtr is done inside the costructor
-    _ros_service_handler = std::make_shared<RosServiceHandler>(&_nh, mapActionHandlerPtr);
+    _ros_service_handler = std::make_shared<RosServiceHandler>(&_nh, mapActionHandlerPtr, folderForActions+"/generics/");
     _ros_service_handler->init(_ee->getFingers().size());
     
     // actions

@@ -144,10 +144,7 @@ void testSendAction::setMainNode() {
 
     //TODO put a checkReady service instead of sleeping?
     sleep(5); // lets wait for test_rosee_startup to be ready
-    std::string topic_name_js;
-
-    nh.param<std::string>("/rosee/joint_states_topic", topic_name_js, "");
-    
+    std::string topic_name_js = "/ros_end_effector/joint_states";    
     ASSERT_TRUE ( topic_name_js.size() > 0);
     
     receiveRobStateSub = nh.subscribe (topic_name_js, 1, &ClbkHelper::jointStateClbk, &clbkHelper);
