@@ -3,42 +3,51 @@
 /** CLIENT   ****************/
 
 
-ROSEE::XBotEEClient::XBotEEClient(XBot::Hal::DeviceInfo devinfo) : DeviceClientTpl( devinfo )
+ROSEE::XBotEEClient::XBotEEClient(XBot::Hal::DeviceInfo devinfo, unsigned int nMotors) : DeviceClientTpl( devinfo )
 {
+    _nMotors = nMotors;
+    _tx.motor_id = new unsigned int[nMotors]();
+    _rx.motor_id = new unsigned int[nMotors]();
+    _tx.motor_position_reference = new double[nMotors]();
+    _rx.motor_position_actual = new double[nMotors]();
 }
 
 
-bool ROSEE::XBotEEClient::setMotorPositionReference(std::string motor_name, double position_ref) {
+bool ROSEE::XBotEEClient::setMotorsPositionsReferences(std::vector<unsigned int> motor_id, std::vector<double> position_refs) {
    // _tx.motor_name = motor_name;
-    _tx.motor_position_ref = position_ref;
-   return true;
+    
+    if (motor_id.size() != _nMotors || position_refs.size() != _nMotors) {
+        //TODO print error
+        return false;
+    }
+    
+    for (int i=0; i<_nMotors; i++){
+        _tx.motor_id[i] = motor_id[i];
+        _tx.motor_position_reference[i] = position_refs[i];
+    }
+    return true;
 }
 
-bool ROSEE::XBotEEClient::getMotorPosition(std::string motor_name, double& position) {
-        std::map <std::string, double> motors_position_refs;
-/*
-    auto it = _rx.motors_position_refs.find(motor_name);
+bool ROSEE::XBotEEClient::getMotorsPositions(std::vector<unsigned int>& motor_id, std::vector<double> &positions) {
     
-    if (it != _rx.motors_position_refs.end() ) {
+    for (int i=0; i<_nMotors; i++){
         
-        position = it->second;
-        return true;
+        motor_id.push_back(_rx.motor_id[i]);
+        positions.push_back(_rx.motor_position_actual[i]);
         
-    }*/
+    }
 
-    position = _rx.motor_position;
-    
-    return false;
+    return true;
 }
 
 /********************** Xbot DRIVER *******************************************/
-ROSEE::XBotGazeboDriver::XBotGazeboDriver(XBot::Hal::DeviceInfo devinfo):
+ROSEE::XBotEEDriver::XBotEEDriver(XBot::Hal::DeviceInfo devinfo):
     DeviceDriverTpl(devinfo)
 {
 
 }
 
-bool ROSEE::XBotGazeboDriver::move_impl()
+bool ROSEE::XBotEEDriver::move_impl()
 {
     
 //     for (auto it = _rx.motors_position_refs) {
@@ -49,13 +58,13 @@ bool ROSEE::XBotGazeboDriver::move_impl()
     return true;
 }
 
-bool ROSEE::XBotGazeboDriver::sense_impl()
+bool ROSEE::XBotEEDriver::sense_impl()
 {
     // do stuff with _rx
     return true;
 }
 
-ROSEE::XBotGazeboDriverContainer::XBotGazeboDriverContainer(std::vector<XBot::Hal::DeviceInfo> devinfo):
+ROSEE::XBotEEDriverContainer::XBotEEDriverContainer(std::vector<XBot::Hal::DeviceInfo> devinfo):
     DeviceContainer(devinfo),
     _srv_alive(false)
 {
@@ -73,7 +82,7 @@ ROSEE::XBotGazeboDriverContainer::XBotGazeboDriverContainer(std::vector<XBot::Ha
         );
 }
 
-bool ROSEE::XBotGazeboDriverContainer::sense_all()
+bool ROSEE::XBotEEDriverContainer::sense_all()
 {
     if(!_srv_alive)
     {
@@ -86,7 +95,7 @@ bool ROSEE::XBotGazeboDriverContainer::sense_all()
     return ret && DeviceContainer::sense_all();
 }
 
-bool ROSEE::XBotGazeboDriverContainer::move_all()
+bool ROSEE::XBotEEDriverContainer::move_all()
 {
     DeviceContainer::move_all();
 
@@ -96,5 +105,27 @@ bool ROSEE::XBotGazeboDriverContainer::move_all()
 }
 
 
+ROSEE::HeriIIAdapter::HeriIIAdapter(XBot::Hal::DeviceInfo devInfo):
+    DeviceTplCommon(devInfo) {
+    //TODO init heri
+    
+}
 
-XBOT2_REGISTER_DEVICE(ROSEE::XBotGazeboDriverContainer, ROSEE::XBotEEClientContainer, XbotEE)
+bool ROSEE::HeriIIAdapter::sense() {
+    //TODO fill _rx with moto pos
+
+    return false;
+}
+
+bool ROSEE::HeriIIAdapter::move() {
+    //TODO read _tx and trasmit to heri PDO
+
+    return true;
+}
+
+
+
+
+
+
+XBOT2_REGISTER_DEVICE(ROSEE::XBotEEDriverContainer, ROSEE::XBotEEClientContainer, XbotEE)

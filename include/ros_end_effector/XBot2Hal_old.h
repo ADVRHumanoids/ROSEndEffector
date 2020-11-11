@@ -4,8 +4,6 @@
 #include <ros_end_effector/EEHal.h>
 #include <ros_end_effector/XBot2HalCommunication.h>
 #include <xbot2/xbot2.h>
-#include <xbot2/robot_interface/robot_interface_xbot_rt.h>
-
 
 
 #include <string>
@@ -17,26 +15,34 @@ namespace ROSEE {
     * @brief Concrete class which communicate directly with ROS topics
     * 
     */
-class XBot2Hal : public ROSEE::EEHal
+class XBot2Hal : public XBot::ControlPlugin,
+                 public ROSEE::EEHal
 {
 
 public:
     
     typedef std::shared_ptr<XBot2Hal> Ptr;
     typedef std::shared_ptr<const XBot2Hal> ConstPtr;
+    
+    using ControlPlugin::ControlPlugin;
 
-    XBot2Hal( ros::NodeHandle* nh );
+   // XBot2Hal( ROSEE::EEInterface::Ptr ee_interface );
     virtual ~XBot2Hal() { };
     
     bool sense() ;
     
     bool move() ;
+    
+    bool setMotorPositionReference (std::string motor_name, double position_ref) ;
+    
+    bool getMotorPosition (std::string motor_name, double &position) ; 
         
 private:
     
-    XBot::RobotInterface::Ptr _robot;
-    XBot::JointNameMap _jointPositionActualMap;
-    XBot::JointNameMap _jointPositionReferenceMap;
+    //xbot stuffs
+    std::shared_ptr<ROSEE::XBotEEBase> _xbot_ee_client;
+    //ROSEE::XBotEEClient _xbot_ee_client;
+    
 
 };
 

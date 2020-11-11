@@ -11,16 +11,16 @@ struct ROSEEPacket
     struct Rx
     {
         
-        //std::string motor_name;
-        double motor_position;
+        unsigned int* motor_id;
+        double* motor_position_actual;
              
     };
 
     struct Tx
     {
         //std::map <std::string, double> motors_position_refs;
-       // std::string motor_name;
-        double motor_position_ref;
+        unsigned int* motor_id;
+        double* motor_position_reference;
 
     };
 

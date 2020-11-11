@@ -58,12 +58,13 @@ namespace ROSEE {
         
         sensor_msgs::JointState _mr_msg;
         ros::Subscriber _motor_reference_sub;
-        virtual void motor_reference_clbk(const sensor_msgs::JointState::ConstPtr& msg);
         
         sensor_msgs::JointState _js_msg;
         ros::Publisher _joint_state_pub;
         
     private:
+        void motor_reference_clbk(const sensor_msgs::JointState::ConstPtr& msg);
+
         
     };
     

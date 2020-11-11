@@ -19,9 +19,9 @@ find_package(catkin REQUIRED COMPONENTS srdfdom
 find_package(Eigen3 REQUIRED)
 
 #Xbot stuff
-#option(XBOT2_ENABLE_XENO OFF "Compile against xenomai") #TODO necessary?
-#find_package(xbot2 REQUIRED)
-#add_xbot2_device(XBot2HalCommunication src/XBot2HalCommunication.cpp)
+option(XBOT2_ENABLE_XENO OFF "Compile against xenomai") #TODO necessary?
+find_package(xbot2 REQUIRED)
+add_xbot2_device(XBot2HalCommunication src/XBot2HalCommunication.cpp)
 #install(TARGETS XBot2HalCommunication DESTINATION lib)
 
 
@@ -66,9 +66,10 @@ add_library(DummyHal
 add_library(EEHal
      src/EEHal.cpp
 )
-#add_library(XBot2Hal
-#    src/XBot2Hal.cpp 
-#)
+
+add_library(XBot2Hal
+    src/XBot2Hal.cpp 
+)
 
 add_library(UniversalRosEndEffectorExecutor
     src/UniversalRosEndEffectorExecutor.cpp
@@ -172,11 +173,11 @@ target_link_libraries(UniversalRosEndEffectorExecutor
     
 )
 
-#target_link_libraries(XBot2Hal
-#    XBot2HalCommunication
-#    xbot2::xbot2
-#    EEHal
-#)
+target_link_libraries(XBot2Hal
+   #XBot2HalCommunication
+   xbot2::xbot2
+   EEHal
+)
 
 target_link_libraries(YamlWorker
     yaml-cpp
@@ -290,6 +291,9 @@ target_link_libraries(EEHalExecutor
     ${catkin_LIBRARIES}
     EEHal
     DummyHal
+    XBot2Hal
+    #TODO how to automatically add new concrete hals here? We include all files from a specific folder
+    # containing only hals?
 )
 
 

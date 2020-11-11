@@ -44,4 +44,6 @@ bool ROSEE::EEHal::publish_joint_state() {
     
     _joint_state_pub.publish(_js_msg);
     
+    return true;
+    
 }

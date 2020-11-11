@@ -4,17 +4,38 @@
 <!-- |    EDITING THIS FILE BY HAND IS NOT RECOMMENDED                                 | -->
 <!-- =================================================================================== -->
 <robot name="robotiq_2f_140" xmlns:xacro="http://ros.org/wiki/xacro">
+  
+  <gazebo>
+      <plugin name='xbot2_gz_joint_server' filename='libxbot2_gz_joint_server.so'>
+        <pid>
+            <gain name="small_mot"  p="0.1"  d="0.05"/>
+            <gain name="medium_mot" p="1000" d="10"/>
+            <gain name="big_mot"    p="3000" d="10"/>
+            <gain name="wheel_mot"  p="0" d="30"/>
+            <gain name="null"  p="0" d="0" i="0"/>
 
+            <gain name="finger_joint" profile="small_mot"/>
+            <gain name="left_outer_finger_joint" profile="null"/>
+            <gain name="left_inner_finger_joint" profile="null"/>
+            <gain name="left_inner_finger_pad_joint" profile="null"/>
+            
+            <gain name="right_outer_finger_joint" profile="null"/>
+            <gain name="right_inner_finger_joint" profile="null"/>
+            <gain name="right_inner_finger_pad_joint" profile="null"/>
+            
+            <gain name="left_inner_knuckle_joint" profile="null"/>
+            <gain name="right_inner_knuckle_joint" profile="null"/>
+            <gain name="right_outer_knuckle_joint" profile="null"/>
+        </pid>
+    </plugin>
+  </gazebo>
+  
   <link name="world"/>
   <joint name="virtualFixed" type="fixed">
     <parent link="world"/>
     <child link="robotiq_arg2f_base_link"/>
   </joint>
   <!-- rosee plugin -->
-  <gazebo>
-    <plugin filename="libRoseePlugin.so" name="robotiq3f_controller">
-      </plugin>
-  </gazebo>
 
   <gazebo reference="robotiq_arg2f_base_link">
     <fudgeFactor value="0.1"/>
