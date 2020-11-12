@@ -25,10 +25,10 @@
 #include <ros_end_effector/YamlWorker.h>
 #include <ros_end_effector/Utils.h>
 
-#include <ros_end_effector/Action.h>
-#include <ros_end_effector/ActionPrimitive.h>
-#include <ros_end_effector/ActionTimed.h>
-#include <ros_end_effector/ActionGeneric.h>
+#include <ros_end_effector/GraspingActions/Action.h>
+#include <ros_end_effector/GraspingActions/ActionPrimitive.h>
+#include <ros_end_effector/GraspingActions/ActionTimed.h>
+#include <ros_end_effector/GraspingActions/ActionGeneric.h>
 
 
 

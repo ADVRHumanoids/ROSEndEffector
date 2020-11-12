@@ -27,16 +27,16 @@
 //to create directories
 #include <ros_end_effector/Utils.h>
 
-#include <ros_end_effector/Action.h>
-#include <ros_end_effector/ActionPrimitive.h>
-#include <ros_end_effector/ActionPinchTight.h>
-#include <ros_end_effector/ActionPinchLoose.h>
-#include <ros_end_effector/ActionTrig.h>
-#include <ros_end_effector/ActionSingleJointMultipleTips.h>
-#include <ros_end_effector/ActionMultiplePinchTight.h>
+#include <ros_end_effector/GraspingActions/Action.h>
+#include <ros_end_effector/GraspingActions/ActionPrimitive.h>
+#include <ros_end_effector/GraspingActions/ActionPinchTight.h>
+#include <ros_end_effector/GraspingActions/ActionPinchLoose.h>
+#include <ros_end_effector/GraspingActions/ActionTrig.h>
+#include <ros_end_effector/GraspingActions/ActionSingleJointMultipleTips.h>
+#include <ros_end_effector/GraspingActions/ActionMultiplePinchTight.h>
 
-#include <ros_end_effector/ActionComposed.h>
-#include <ros_end_effector/ActionTimed.h>
+#include <ros_end_effector/GraspingActions/ActionComposed.h>
+#include <ros_end_effector/GraspingActions/ActionTimed.h>
 
 namespace ROSEE
 {
