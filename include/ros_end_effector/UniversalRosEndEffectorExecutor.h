@@ -34,8 +34,8 @@
 #include <ros_end_effector/RosActionServer.h>
 #include <ros_end_effector/RosServiceHandler.h>
 
-#include <ros_end_effector/ActionPrimitive.h>
-#include <ros_end_effector/ActionComposed.h>
+#include <ros_end_effector/GraspingActions/ActionPrimitive.h>
+#include <ros_end_effector/GraspingActions/ActionComposed.h>
 
 namespace ROSEE
 {

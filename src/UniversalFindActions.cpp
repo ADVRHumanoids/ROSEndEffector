@@ -18,10 +18,10 @@
 #include <ros/ros.h>
 //#include <ros_end_effector/UniversalRosEndEffectorExecutor.h>
 #include <ros_end_effector/FindActions.h>
-#include <ros_end_effector/Action.h>
-#include <ros_end_effector/ActionComposed.h>
-#include <ros_end_effector/ActionTimed.h>
-#include <ros_end_effector/ActionGeneric.h>
+#include <ros_end_effector/GraspingActions/Action.h>
+#include <ros_end_effector/GraspingActions/ActionComposed.h>
+#include <ros_end_effector/GraspingActions/ActionTimed.h>
+#include <ros_end_effector/GraspingActions/ActionGeneric.h>
 #include <ros_end_effector/ParserMoveIt.h>
 #include <ros_end_effector/Parser.h> //to take urdf from conf file
 

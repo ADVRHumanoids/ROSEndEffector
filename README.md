@@ -30,3 +30,25 @@ This project has received funding from the European Union’s Horizon 2020
 research and innovation programme under grant agreement no. 732287. 
 
 
+
+## NOTES about XBOT2 usage
+- Check robotiq2f srdf for correctess. Each link/joint must belong to a chain, even the virtual link/joint
+- In urdf, add the xbot plugin. Again check the robotiq2f, each non fixed joint must have a PID ! even the mimic. put 0 gains for mimics. And keep the mimic joint plugin, maybe in future will be integrated in xbot
+- rosee.world has the clock plugin added. This is already done, the world is used by each hand
+
+- Running:
+  - 1 terminal roscore (maybe not necessary)
+  - 2 terminal: source xbot, rosee_gaz_plugin, and launch rosee_gazebo_plugin launch file with hand name
+  - 3 terminal: set_xbot2_config, export xbot_root, and finally xbot2-core --verbose
+  - 4 terminal: rosservice call /xbotcore/ros_ctrl/switch 1  otherwise command through ros are not read
+  
+  - other stuff:
+    - To publish via topic, the field ctrl_mode must be set (to 1 for position?)
+    - If command is too brute, xbot stops the joint device by default, to restore: rosservice call /xbotcore/joint_master/set_control_mask 1
+    
+*TODO*
+- Check all other hands
+- Test the whole ROSEE + XBOT2 + Gazebo, automatize launch files if necessary
+- A method to choose between xbot joint server and rosee plugin in the urdf
+
+

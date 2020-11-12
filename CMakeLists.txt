@@ -26,9 +26,9 @@ find_package(catkin REQUIRED COMPONENTS srdfdom
 find_package(Eigen3 REQUIRED)
 
 #Xbot stuff
-#option(XBOT2_ENABLE_XENO OFF "Compile against xenomai") #TODO necessary?
-#find_package(xbot2 REQUIRED)
-#add_xbot2_device(XBot2HalCommunication src/XBot2HalCommunication.cpp)
+option(XBOT2_ENABLE_XENO OFF "Compile against xenomai") #TODO necessary?
+find_package(xbot2 REQUIRED)
+add_xbot2_device(XBot2HalCommunication src/HAL/XBot2HalCommunication.cpp)
 #install(TARGETS XBot2HalCommunication DESTINATION lib)
 
 
@@ -67,15 +67,16 @@ add_library(ROSEEInterface
 )
 
 add_library(DummyHal
-     src/DummyHal.cpp
+     src/HAL/DummyHal.cpp
 )
 
 add_library(EEHal
-     src/EEHal.cpp
+     src/HAL/EEHal.cpp
 )
-#add_library(XBot2Hal
-#    src/XBot2Hal.cpp 
-#)
+
+add_library(XBot2Hal
+    src/HAL/XBot2Hal.cpp 
+)
 
 add_library(UniversalRosEndEffectorExecutor
     src/UniversalRosEndEffectorExecutor.cpp
@@ -106,39 +107,39 @@ add_library(MapActionHandler
 )
 
 add_library(Action 
-    src/Action.cpp 
+    src/GraspingActions/Action.cpp 
 )
 
 add_library(ActionPrimitive 
-    src/ActionPrimitive.cpp
+    src/GraspingActions/ActionPrimitive.cpp
 )
 
 add_library(ActionPinchTight
-    src/ActionPinchTight.cpp
+    src/GraspingActions/ActionPinchTight.cpp
 )
 add_library(ActionPinchGeneric
-    src/ActionPinchGeneric.cpp
+    src/GraspingActions/ActionPinchGeneric.cpp
 )
 add_library(ActionPinchLoose
-    src/ActionPinchLoose.cpp
+    src/GraspingActions/ActionPinchLoose.cpp
 )
 add_library(ActionTrig
-    src/ActionTrig.cpp
+    src/GraspingActions/ActionTrig.cpp
 )
 add_library(ActionSingleJointMultipleTips
-    src/ActionSingleJointMultipleTips.cpp
+    src/GraspingActions/ActionSingleJointMultipleTips.cpp
 )
 add_library(ActionMultiplePinchTight
-    src/ActionMultiplePinchTight.cpp
+    src/GraspingActions/ActionMultiplePinchTight.cpp
 )
 add_library(ActionGeneric
-    src/ActionGeneric.cpp 
+    src/GraspingActions/ActionGeneric.cpp 
 )
 add_library(ActionComposed
-    src/ActionComposed.cpp 
+    src/GraspingActions/ActionComposed.cpp 
 )
 add_library(ActionTimed
-    src/ActionTimed.cpp 
+    src/GraspingActions/ActionTimed.cpp 
 )
 
 ## Add cmake target dependencies of the library
@@ -148,9 +149,9 @@ add_library(ActionTimed
 
 add_executable(UniversalRosEndEffector src/UniversalRosEndEffector.cpp)
 add_executable(UniversalFindActions src/UniversalFindActions.cpp)
-add_executable(EEHalExecutor src/EEHalExecutor.cpp)
-# add_dependencies(UniversalRosEndEffectorExecutor ros_end_effector_generate_messages_cpp)
-# add_dependencies(UniversalFindActions ros_end_effector_generate_messages_cpp)
+add_executable(EEHalExecutor src/HAL/EEHalExecutor.cpp)
+# # add_dependencies(UniversalRosEndEffectorExecutor ros_end_effector_generate_messages_cpp)
+# # add_dependencies(UniversalFindActions ros_end_effector_generate_messages_cpp)
 
 
 ## Add cmake target dependencies of the executable
@@ -179,11 +180,11 @@ target_link_libraries(UniversalRosEndEffectorExecutor
     
 )
 
-#target_link_libraries(XBot2Hal
-#    XBot2HalCommunication
-#    xbot2::xbot2
-#    EEHal
-#)
+target_link_libraries(XBot2Hal
+   #XBot2HalCommunication
+   xbot2::xbot2
+   EEHal
+)
 
 target_link_libraries(YamlWorker
     yaml-cpp
@@ -297,6 +298,9 @@ target_link_libraries(EEHalExecutor
     ${catkin_LIBRARIES}
     EEHal
     DummyHal
+    XBot2Hal
+    #TODO how to automatically add new concrete hals here? We include all files from a specific folder
+    # containing only hals?
 )
 
 

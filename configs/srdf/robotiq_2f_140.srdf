@@ -15,6 +15,21 @@
     <group name="finger_2">
         <chain base_link="robotiq_arg2f_base_link" tip_link="right_inner_finger_pad" />
     </group>
+    
+    <!--XBOT TRIAL-->
+    <group name="virtual1">
+        <chain base_link="robotiq_arg2f_base_link" tip_link="left_inner_knuckle" />
+    </group>
+    <group name="virtual2">
+        <chain base_link="robotiq_arg2f_base_link" tip_link="right_inner_knuckle" />
+    </group>
+    <group name="chains">
+      <group name="finger_1" />
+      <group name="finger_2" />
+      <group name="virtual1" />
+      <group name="virtual2" />
+   </group>
+    <!--XBOT TRIAL END-->
 
     <group name="end_effector_fingers">
       <group name="finger_1" />
