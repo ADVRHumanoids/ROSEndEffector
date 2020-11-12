@@ -49,5 +49,6 @@ research and innovation programme under grant agreement no. 732287.
 *TODO*
 - Check all other hands
 - Test the whole ROSEE + XBOT2 + Gazebo, automatize launch files if necessary
+- A method to choose between xbot joint server and rosee plugin in the urdf
 
 
