@@ -5,10 +5,10 @@
 
 #include <ros_end_effector/FindActions.h>
 #include <ros_end_effector/ParserMoveIt.h>
-#include <ros_end_effector/ActionPrimitive.h>
-#include <ros_end_effector/ActionTrig.h>
-#include <ros_end_effector/ActionComposed.h>
-#include <ros_end_effector/ActionPinchGeneric.h>
+#include <ros_end_effector/GraspingActions/ActionPrimitive.h>
+#include <ros_end_effector/GraspingActions/ActionTrig.h>
+#include <ros_end_effector/GraspingActions/ActionComposed.h>
+#include <ros_end_effector/GraspingActions/ActionPinchGeneric.h>
 
 namespace {
 
