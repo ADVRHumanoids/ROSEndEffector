@@ -71,6 +71,11 @@ add_library(XBot2Hal
     src/HAL/XBot2Hal.cpp 
 )
 
+add_library(XBot2HalDevice
+    src/HAL/XBot2HalDevice.cpp 
+)
+
+
 add_library(UniversalRosEndEffectorExecutor
     src/UniversalRosEndEffectorExecutor.cpp
 )
@@ -174,6 +179,12 @@ target_link_libraries(UniversalRosEndEffectorExecutor
 )
 
 target_link_libraries(XBot2Hal
+   #XBot2HalCommunication
+   xbot2::xbot2
+   EEHal
+)
+
+target_link_libraries(XBot2HalDevice
    #XBot2HalCommunication
    xbot2::xbot2
    EEHal
@@ -292,6 +303,7 @@ target_link_libraries(EEHalExecutor
     EEHal
     DummyHal
     XBot2Hal
+    XBot2HalDevice
     #TODO how to automatically add new concrete hals here? We include all files from a specific folder
     # containing only hals?
 )

@@ -3,21 +3,42 @@
 
 ROSEE::XBot2Hal::XBot2Hal( ros::NodeHandle* nh ) : EEHal ( nh ) {
     
-   // XBot::Hal::DeviceInfo devinfo{"XBotEE_0", "XbotEE", 1};
-    //_xbot_ee_client = std::make_shared<ROSEE::XBotEEClient>(devinfo);
-    //_xbot_ee_client = ROSEE::XBotEEClient(devinfo);
+    //little HACK to be sure xbot is ready and gazebo is unpaused (this service is on after xbot2-core
+    // is on AND gazebo is unpaused
+    ROS_INFO_STREAM("[XBot2Hal constructor]: wait for xbot2core and gazebo to be ready...");
+    ros::service::waitForService("/xbotcore/ros_ctrl/switch", -1);
+    ROS_INFO_STREAM("[XBot2Hal constructor]: xbot2core and gazebo ready!");
     
-    //TODO is there a method to wait for xbot core to be active?
+    //We call the xbot service to command the hand through ros
+//     std_srvs::SetBool serviceMsg;
+//     serviceMsg.request.data = 1;
+//     
+//     ros::ServiceClient client = nh->serviceClient<std_srvs::SetBool>("/xbotcore/ros_ctrl/status");
+//     if (client.call(serviceMsg) ) {
+//         if (!serviceMsg.response.success){
+//             ROS_ERROR_STREAM("[XBot2Hal constructor]: Failed to call /xbotcore/ros_ctrl/switch with error message: " << serviceMsg.response.message << ". Aborting");
+//             exit(-1);
+//         }    
+//         ROS_INFO_STREAM("[XBot2Hal constructor]: Succesfully called /xbotcore/ros_ctrl/switch");
+//  
+//     } else {
+//         ROS_ERROR_STREAM("[XBot2Hal constructor]: Failed to call /xbotcore/ros_ctrl/switch, aborting");
+//         exit(-1);
+//     }
     
     std::string path_to_config_file = XBot::Utils::getXBotConfig();
     
-    //NOTE Also Arturo in "xbot2_wip/src/rt_plugin/control_plugin.cpp" does this cast, hence should be safe
     _robot = XBot::RobotInterface::getRobot(path_to_config_file);
     
+    auto robot = 
+        std::static_pointer_cast<XBot::RobotInterfaceXBot2Rt>(_robot);
+        
     _mr_msg.name.resize(_robot->getJointNum());
     _mr_msg.position.resize(_robot->getJointNum());
     _js_msg.name.resize(_robot->getJointNum());
     _js_msg.position.resize(_robot->getJointNum());
+    _js_msg.velocity.resize(_robot->getJointNum());
+    _js_msg.effort.resize(_robot->getJointNum());
     
 }
 
@@ -26,10 +47,11 @@ bool ROSEE::XBot2Hal::sense() {
     
     _robot->sense();
     _robot->getJointPosition(_jointPositionActualMap);
-    
     if (_js_msg.name.size() != _jointPositionActualMap.size() ||
         _js_msg.position.size() != _jointPositionActualMap.size()) {
-        //TODO print error
+        
+        ROS_ERROR_STREAM("[XBot2Hal::" << __func__ << "] size of _js_msg is different from the size" <<
+            " or what received from the robot (_jointPositionActualMap)");
         return false;
     }
     

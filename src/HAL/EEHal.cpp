@@ -42,6 +42,7 @@ void ROSEE::EEHal::motor_reference_clbk(const sensor_msgs::JointState::ConstPtr&
 
 bool ROSEE::EEHal::publish_joint_state() {
     
+    //NOTE _js_msg must be filled by the derived class
     _joint_state_pub.publish(_js_msg);
     
     return true;

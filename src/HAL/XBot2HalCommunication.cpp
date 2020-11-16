@@ -99,7 +99,7 @@ bool ROSEE::XBotEEDriverContainer::move_all()
 {
     DeviceContainer::move_all();
 
-    _cli->send();
+    _cli->send(); 
 
     return true;
 }
