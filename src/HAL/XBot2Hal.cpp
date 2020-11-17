@@ -10,24 +10,23 @@ ROSEE::XBot2Hal::XBot2Hal( ros::NodeHandle* nh ) : EEHal ( nh ) {
     ROS_INFO_STREAM("[XBot2Hal constructor]: xbot2core and gazebo ready!");
     
     //We call the xbot service to command the hand through ros
-//     std_srvs::SetBool serviceMsg;
-//     serviceMsg.request.data = 1;
-//     
-//     ros::ServiceClient client = nh->serviceClient<std_srvs::SetBool>("/xbotcore/ros_ctrl/status");
-//     if (client.call(serviceMsg) ) {
-//         if (!serviceMsg.response.success){
-//             ROS_ERROR_STREAM("[XBot2Hal constructor]: Failed to call /xbotcore/ros_ctrl/switch with error message: " << serviceMsg.response.message << ". Aborting");
-//             exit(-1);
-//         }    
-//         ROS_INFO_STREAM("[XBot2Hal constructor]: Succesfully called /xbotcore/ros_ctrl/switch");
-//  
-//     } else {
-//         ROS_ERROR_STREAM("[XBot2Hal constructor]: Failed to call /xbotcore/ros_ctrl/switch, aborting");
-//         exit(-1);
-//     }
+    std_srvs::SetBool serviceMsg;
+    serviceMsg.request.data = true;
+    ros::ServiceClient client = nh->serviceClient<std_srvs::SetBool>("/xbotcore/ros_ctrl/switch");
+    if (client.call(serviceMsg) ) {
+        if (!serviceMsg.response.success){
+            ROS_ERROR_STREAM("[XBot2Hal constructor]: Failed to call /xbotcore/ros_ctrl/switch with error message: " << serviceMsg.response.message << ". Aborting");
+            exit(-1);
+        }    
+        ROS_INFO_STREAM("[XBot2Hal constructor]: Succesfully called /xbotcore/ros_ctrl/switch");
+ 
+    } else {
+        ROS_ERROR_STREAM("[XBot2Hal constructor]: Failed to call /xbotcore/ros_ctrl/switch. Aborting");
+        exit(-1);
+    }
+    
     
     std::string path_to_config_file = XBot::Utils::getXBotConfig();
-    
     _robot = XBot::RobotInterface::getRobot(path_to_config_file);
     
     auto robot = 
