@@ -38,7 +38,7 @@ research and innovation programme under grant agreement no. 732287.
 
 - Running:
   - 1 terminal roscore (maybe not necessary)
-  - 2 terminal: source xbot, rosee_gaz_plugin, and launch rosee_gazebo_plugin launch file with hand name
+  - 2 terminal: source xbot, source rosee, set_xbot2_config (necessary?), and launch rosee_gazebo_plugin (or rosee_startup) file with hand name
   - 3 terminal: set_xbot2_config, export xbot_root, and finally xbot2-core --verbose
   - 4 terminal: rosservice call /xbotcore/ros_ctrl/switch 1  otherwise command through ros are not read
   
