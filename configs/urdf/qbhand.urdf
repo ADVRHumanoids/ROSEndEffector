@@ -4,6 +4,61 @@
 <!-- |    EDITING THIS FILE BY HAND IS NOT RECOMMENDED                                 | -->
 <!-- =================================================================================== -->
 <robot name="qbhand" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+
+  <gazebo>
+      <plugin name='xbot2_gz_joint_server' filename='libxbot2_gz_joint_server.so'>
+        <pid>
+            <gain name="small_mot"  p="0.000005"  d="0.0000005"/>
+            <gain name="medium_mot" p="1000" d="10"/>
+            <gain name="big_mot"    p="3000" d="10"/>
+            <gain name="wheel_mot"  p="0" d="30"/>
+            <gain name="null"  p="0" d="0" i="0"/>
+
+            <gain name="qbhand_synergy_joint" profile="small_mot"/>
+
+            <gain name="qbhand_index_knuckle_joint" profile="null"/>
+            <gain name="qbhand_index_proximal_joint" profile="null"/>
+            <gain name="qbhand_index_proximal_virtual_joint" profile="null"/>            
+            <gain name="qbhand_index_middle_joint" profile="null"/>
+            <gain name="qbhand_index_middle_virtual_joint" profile="null"/>
+            <gain name="qbhand_index_distal_joint" profile="null"/>         
+            <gain name="qbhand_index_distal_virtual_joint" profile="null"/>
+
+            <gain name="qbhand_little_knuckle_joint" profile="null"/>
+            <gain name="qbhand_little_proximal_joint" profile="null"/>
+            <gain name="qbhand_little_proximal_virtual_joint" profile="null"/>            
+            <gain name="qbhand_little_middle_joint" profile="null"/>
+            <gain name="qbhand_little_middle_virtual_joint" profile="null"/>
+            <gain name="qbhand_little_distal_joint" profile="null"/>         
+            <gain name="qbhand_little_distal_virtual_joint" profile="null"/>
+
+            <gain name="qbhand_middle_knuckle_joint" profile="null"/>
+            <gain name="qbhand_middle_proximal_joint" profile="null"/>
+            <gain name="qbhand_middle_proximal_virtual_joint" profile="null"/>            
+            <gain name="qbhand_middle_middle_joint" profile="null"/>
+            <gain name="qbhand_middle_middle_virtual_joint" profile="null"/>
+            <gain name="qbhand_middle_distal_joint" profile="null"/>         
+            <gain name="qbhand_middle_distal_virtual_joint" profile="null"/>
+
+            <gain name="qbhand_ring_knuckle_joint" profile="null"/>
+            <gain name="qbhand_ring_proximal_joint" profile="null"/>
+            <gain name="qbhand_ring_proximal_virtual_joint" profile="null"/>            
+            <gain name="qbhand_ring_middle_joint" profile="null"/>
+            <gain name="qbhand_ring_middle_virtual_joint" profile="null"/>
+            <gain name="qbhand_ring_distal_joint" profile="null"/>         
+            <gain name="qbhand_ring_distal_virtual_joint" profile="null"/>
+
+            <gain name="qbhand_thumb_knuckle_joint" profile="null"/>
+            <gain name="qbhand_thumb_proximal_joint" profile="null"/>
+            <gain name="qbhand_thumb_proximal_virtual_joint" profile="null"/>            
+            <gain name="qbhand_thumb_distal_joint" profile="null"/>
+            <gain name="qbhand_thumb_distal_virtual_joint" profile="null"/>
+
+        </pid>
+    </plugin>
+  </gazebo>
+
   <material name="qbhand/optional">
     <color rgba="0.0 0.5 0.8 1.0"/>
   </material>
