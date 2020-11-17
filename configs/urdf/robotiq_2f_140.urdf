@@ -8,7 +8,7 @@
   <gazebo>
       <plugin name='xbot2_gz_joint_server' filename='libxbot2_gz_joint_server.so'>
         <pid>
-            <gain name="small_mot"  p="0.1"  d="0.05"/>
+            <gain name="small_mot"  p="1"  d="0.05"/>
             <gain name="medium_mot" p="1000" d="10"/>
             <gain name="big_mot"    p="3000" d="10"/>
             <gain name="wheel_mot"  p="0" d="30"/>

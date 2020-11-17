@@ -45,7 +45,10 @@ ROSEE::XBot2Hal::XBot2Hal( ros::NodeHandle* nh ) : EEHal ( nh ) {
 
 bool ROSEE::XBot2Hal::sense() {
     
-    _robot->sense();
+    if (! _robot->sense()){
+        return false;
+    }
+    
     _robot->getJointPosition(_jointPositionActualMap);
     if (_js_msg.name.size() != _jointPositionActualMap.size() ||
         _js_msg.position.size() != _jointPositionActualMap.size()) {
@@ -71,12 +74,13 @@ bool ROSEE::XBot2Hal::move() {
     
     //NOTE if robot does not move, check if "rosservice call /xbotcore/ros_ctrl/switch 1"
     for (int i=0; i<_mr_msg.position.size(); i++) {
-        
-        _jointPositionReferenceMap.insert(std::make_pair(
-            _mr_msg.name.at(i), _mr_msg.position.at(i)));
+
+        _jointPositionReferenceMap[_mr_msg.name.at(i)] = _mr_msg.position.at(i);
     }
     
-    _robot->setPositionReference(_jointPositionReferenceMap);
-    _robot->move();
-    return true;
+    if (! _robot->setPositionReference(_jointPositionReferenceMap)) {
+        return false;
+    }
+
+    return  _robot->move();
 }
