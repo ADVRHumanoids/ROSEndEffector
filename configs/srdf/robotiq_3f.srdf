@@ -19,6 +19,13 @@
         <chain base_link="palm" tip_link="finger_middle_link_3" />
     </group>
 
+    <!--XBOT wants all chain-finger in a supergroup called chains -->
+    <group name="chains">
+      <group name="finger_1" />
+      <group name="finger_2" />
+      <group name="finger_middle" />
+   </group>
+
     <group name="end_effector_fingers">
       <group name="finger_1" />
       <group name="finger_2" />

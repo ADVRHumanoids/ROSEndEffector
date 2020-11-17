@@ -16,7 +16,8 @@
         <chain base_link="robotiq_arg2f_base_link" tip_link="right_inner_finger_pad" />
     </group>
     
-    <!--XBOT TRIAL-->
+    <!--XBOT wants all fingers, also the passive, in a chain, and all 
+         in a supergroup "chains"-->
     <group name="virtual1">
         <chain base_link="robotiq_arg2f_base_link" tip_link="left_inner_knuckle" />
     </group>

@@ -15,13 +15,19 @@ rosee_gazebo_plugins_args: #robot name
     joint_name: palm_finger_1_joint
     pid: {p: 0.1, i: 0.05, d: 0.01}
 
+
+
+
 XBotInterface:
   urdf_path: "/home/tori/ROSEE/src/ROSEndEffector/configs/urdf/robotiq_3f.urdf"
   srdf_path: "/home/tori/ROSEE/src/ROSEndEffector/configs/srdf/robotiq_3f.srdf"
 
 ModelInterface:
   model_type: "RBDL"
-  is_model_floating_base: "false" 
+  is_model_floating_base: "false"
+  
+RobotInterface:
+  framework_name: "ROS" 
 
 xbotcore_threads:
     rt_slow:  {sched: fifo , prio: 60, period: 0.5, core_id: 0}
