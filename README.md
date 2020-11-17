@@ -32,8 +32,15 @@ research and innovation programme under grant agreement no. 732287.
 
 
 ## NOTES about XBOT2 usage
-- Check robotiq2f srdf for correctess. Each link/joint must belong to a chain, even the virtual link/joint
-- In urdf, add the xbot plugin. Again check the robotiq2f, each non fixed joint must have a PID ! even the mimic. put 0 gains for mimics. And keep the mimic joint plugin, maybe in future will be integrated in xbot
+
+- For a new hand, each non fixed joint (even the virtual, passive and mimic) must belong to a chain (convention that  I used is to add a
+  virtualXXX named chain, if it is necessary
+- Also, all the chains must belong to the supergroup "chains" (name is fixed)
+- Check robotiq2f srdf for correctess
+
+- In urdf, add the xbot gazebo plugin. Each joint must have a PID, even the mimic and passive. simply put 0 gains for them. And keep the mimic joint plugin ( maybe in future will be integrated in xbot), it is this one that move the mimic (since for xbot they have 0 gains).
+- Again check the robotiq2f urdf as example
+
 - rosee.world has the clock plugin added. This is already done, the world is used by each hand
 
 - Running:
