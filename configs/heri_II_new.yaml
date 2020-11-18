@@ -104,7 +104,7 @@ Motor_actuation_info:
         motor_urdf_name: motor_thumb
         joint_1 : SFB1__SFP1_1
         joint_2 : SFP1_1__SFP1_2
-        pid: {p: 100000.0, i: 0, d: 0} #This should be the same pid indicated above in HeriHandESC_X LpHandESC_X LpESC_X
+        pid: {p: 1.0, i: 0, d: 0} #This should be the same pid indicated above in HeriHandESC_X LpHandESC_X LpESC_X
         K_t : 0.0418 # Torque coefficent of the motor [Nm/A]
         r : 0.008 # Radius of the pulley [m]
         R_M : 2.62 # Eletrical terminal resistance of the motor [ohm]

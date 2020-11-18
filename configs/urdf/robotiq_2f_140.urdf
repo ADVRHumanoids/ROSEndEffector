@@ -35,7 +35,7 @@
     <parent link="world"/>
     <child link="robotiq_arg2f_base_link"/>
   </joint>
-  <!-- rosee plugin -->
+
 
   <gazebo reference="robotiq_arg2f_base_link">
     <fudgeFactor value="0.1"/>
