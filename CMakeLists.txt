@@ -19,10 +19,18 @@ find_package(catkin REQUIRED COMPONENTS srdfdom
 find_package(Eigen3 REQUIRED)
 
 #Xbot stuff
-option(XBOT2_ENABLE_XENO OFF "Compile against xenomai") #TODO necessary?
-find_package(xbot2 REQUIRED)
-add_xbot2_device(XBot2HalCommunication src/HAL/XBot2HalCommunication.cpp)
-#install(TARGETS XBot2HalCommunication DESTINATION lib)
+option(BUILD_WITH_XBOT2 "Compile also the HAL used with XBot2" ON)
+
+if (BUILD_WITH_XBOT2)
+    message("Compiling with XBOT2")
+    option(XBOT2_ENABLE_XENO OFF "Compile against xenomai") #TODO necessary?
+    find_package(xbot2 REQUIRED)
+    add_xbot2_device(XBot2HalCommunication src/HAL/XBot2HalCommunication.cpp)
+    #install(TARGETS XBot2HalCommunication DESTINATION lib)
+
+else()
+    message("Compiling without XBOT2")
+endif(BUILD_WITH_XBOT2)
 
 
 ###################################
@@ -67,13 +75,15 @@ add_library(EEHal
      src/HAL/EEHal.cpp
 )
 
-add_library(XBot2Hal
-    src/HAL/XBot2Hal.cpp 
-)
+if (BUILD_WITH_XBOT2)
+    add_library(XBot2Hal
+        src/HAL/XBot2Hal.cpp 
+    )
 
-add_library(XBot2HalDevice
-    src/HAL/XBot2HalDevice.cpp 
-)
+    add_library(XBot2HalDevice
+        src/HAL/XBot2HalDevice.cpp 
+    )
+endif(BUILD_WITH_XBOT2)
 
 
 add_library(UniversalRosEndEffectorExecutor
@@ -178,17 +188,20 @@ target_link_libraries(UniversalRosEndEffectorExecutor
     
 )
 
-target_link_libraries(XBot2Hal
-   #XBot2HalCommunication
-   xbot2::xbot2
-   EEHal
-)
+if(BUILD_WITH_XBOT2)
+    target_link_libraries(XBot2Hal
+    #XBot2HalCommunication
+    xbot2::xbot2
+    EEHal
+    )
 
-target_link_libraries(XBot2HalDevice
-   #XBot2HalCommunication
-   xbot2::xbot2
-   EEHal
-)
+    target_link_libraries(XBot2HalDevice
+    #XBot2HalCommunication
+    xbot2::xbot2
+    EEHal
+    )
+endif(BUILD_WITH_XBOT2)
+
 
 target_link_libraries(YamlWorker
     yaml-cpp
@@ -298,16 +311,25 @@ target_link_libraries(UniversalFindActions
     MapActionHandler
 )
 
-target_link_libraries(EEHalExecutor
-    ${catkin_LIBRARIES}
-    EEHal
-    DummyHal
-    XBot2Hal
-    XBot2HalDevice
-    #TODO how to automatically add new concrete hals here? We include all files from a specific folder
-    # containing only hals?
-)
-
+if(BUILD_WITH_XBOT2)
+    target_link_libraries(EEHalExecutor
+        ${catkin_LIBRARIES}
+        EEHal
+        DummyHal
+        XBot2Hal
+        XBot2HalDevice
+        #TODO how to automatically add new concrete hals here? We include all files from a specific folder
+        # containing only hals?
+    )
+else()
+    target_link_libraries(EEHalExecutor
+        ${catkin_LIBRARIES}
+        EEHal
+        DummyHal
+        #TODO how to automatically add new concrete hals here? We include all files from a specific folder
+        # containing only hals?
+    )
+endif(BUILD_WITH_XBOT2)
 
 
 #############
@@ -409,3 +431,5 @@ macro(optional_build name path ONOFF)
 endmacro(optional_build name path ONOFF)
 
 optional_build(documentation doc ON)
+
+#unset(BUILD_WITH_XBOT2 CACHE) # todo check if necesasry

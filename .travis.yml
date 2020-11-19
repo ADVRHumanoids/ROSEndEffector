@@ -53,7 +53,7 @@ script:
 #Build ROSEE
 - mkdir -p build
 - cd build
-- cmake .. -DBUILD_documentation=ON
+- cmake -DBUILD_documentation=ON -DBUILD_WITH_XBOT2=OFF .. 
 - make
 - make dox
 

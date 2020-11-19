@@ -9,8 +9,8 @@ int main ( int argc, char **argv ) {
     ros::init ( argc, argv, "EEHalExecutor" );
     ros::NodeHandle nh("EEHalExecutor");
     //TODO load the correct derived class
-    //ROSEE::EEHal::Ptr eeHalPtr = std::make_shared<ROSEE::DummyHal>(&nh);
-    ROSEE::EEHal::Ptr eeHalPtr = std::make_shared<ROSEE::XBot2Hal>(&nh);
+    ROSEE::EEHal::Ptr eeHalPtr = std::make_shared<ROSEE::DummyHal>(&nh);
+    //ROSEE::EEHal::Ptr eeHalPtr = std::make_shared<ROSEE::XBot2Hal>(&nh);
     
     //TODO take rate from param
     ros::Rate r(100);
