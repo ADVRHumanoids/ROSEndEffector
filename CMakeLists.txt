@@ -79,10 +79,6 @@ if (BUILD_WITH_XBOT2)
     add_library(XBot2Hal
         src/HAL/XBot2Hal.cpp 
     )
-
-    add_library(XBot2HalDevice
-        src/HAL/XBot2HalDevice.cpp 
-    )
 endif(BUILD_WITH_XBOT2)
 
 

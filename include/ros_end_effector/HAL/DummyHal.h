@@ -42,8 +42,8 @@ namespace ROSEE {
         DummyHal( ros::NodeHandle* nh);
         virtual ~DummyHal() {};
         
-        virtual bool sense();
-        virtual bool move();
+        virtual bool sense() override;
+        virtual bool move() override;
       
     private:
         /**

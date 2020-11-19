@@ -56,9 +56,17 @@ namespace ROSEE {
         
         ros::NodeHandle* _nh; 
         
+        /**
+         * The references that must be read in the move() to send to the real/simulated robot
+         * TODO put private and create a get ? (no set)
+         */
         sensor_msgs::JointState _mr_msg;
         ros::Subscriber _motor_reference_sub;
         
+        /**
+         * The states that must be filled in the sense(), reading info from real/simulated robot
+         * TODO put private and create a set (no get) ?
+         */
         sensor_msgs::JointState _js_msg;
         ros::Publisher _joint_state_pub;
         

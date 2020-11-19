@@ -2,7 +2,6 @@
 #define __ROSEE_XBOT2_HAL__
 
 #include <ros_end_effector/HAL/EEHal.h>
-#include <ros_end_effector/HAL/XBot2HalCommunication.h>
 #include <xbot2/xbot2.h>
 #include <xbot2/robot_interface/robot_interface_xbot_rt.h>
 #include <std_srvs/SetBool.h>
