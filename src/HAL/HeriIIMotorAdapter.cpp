@@ -1,6 +1,6 @@
 #include <ros_end_effector/HAL/HeriIIMotorAdapter.h>
 
-XBot::Hal::HeriIIMotorAdapter::HeriIIMotorAdapter(XBot::Hal::DeviceInfo devInfo, unsigned short int finger_id, unsigned short int motor_in_finger_id ):
+XBot::Hal::HeriIIMotorAdapter::HeriIIMotorAdapter(XBot::Hal::DeviceInfo devInfo ):
     DeviceTplCommon(devInfo) {
         
     

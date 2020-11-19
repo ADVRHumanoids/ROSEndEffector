@@ -47,3 +47,5 @@ double HeriIIMotorClient::getMotorCurrent() {
     
     return _rx.motor_current_actual;
 }
+
+XBOT2_REGISTER_DEVICE(HeriIIMotorClientContainer, HeriIIHand)

@@ -79,6 +79,19 @@ if (BUILD_WITH_XBOT2)
     add_library(XBot2Hal
         src/HAL/XBot2Hal.cpp 
     )
+    add_library(HeriIIMotorAdapter
+        src/HAL/HeriIIMotorAdapter.cpp 
+    )
+    add_library(HeriIIMotorDriver
+        src/HAL/HeriIIMotorDriver.cpp 
+    )
+    add_library(HeriIIMotorClient
+        src/HAL/HeriIIMotorClient.cpp 
+    )
+    add_library(HeriIIXBot2Hal
+        src/HAL/HeriIIXBot2Hal.cpp
+    )
+
 endif(BUILD_WITH_XBOT2)
 
 
@@ -186,15 +199,23 @@ target_link_libraries(UniversalRosEndEffectorExecutor
 
 if(BUILD_WITH_XBOT2)
     target_link_libraries(XBot2Hal
-    #XBot2HalCommunication
-    xbot2::xbot2
-    EEHal
+        #XBot2HalCommunication
+        xbot2::xbot2
+        EEHal
     )
 
-    target_link_libraries(XBot2HalDevice
-    #XBot2HalCommunication
-    xbot2::xbot2
-    EEHal
+    target_link_libraries(HeriIIMotorAdapter
+        xbot2::xbot2
+    )
+    target_link_libraries(HeriIIMotorDriver
+        xbot2::xbot2
+    )
+    target_link_libraries(HeriIIMotorClient
+        xbot2::xbot2
+    )
+    target_link_libraries(HeriIIXBot2Hal
+        xbot2::xbot2
+        EEHal
     )
 endif(BUILD_WITH_XBOT2)
 
