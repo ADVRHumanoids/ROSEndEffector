@@ -3,7 +3,6 @@
 XBot::Hal::HeriIIMotorAdapter::HeriIIMotorAdapter(XBot::Hal::DeviceInfo devInfo ):
     DeviceTplCommon(devInfo) {
         
-    
     //TODO fill finger id from deviceinfo??
     
 }
