@@ -14,12 +14,46 @@
  * limitations under the License.
  */
 
+#include <ros_end_effector/HAL/HeriIIMotorClient.h>
 #include <ros_end_effector/HAL/HeriIIMotorDriver.h>
 
 using namespace XBot::Hal;
 
+bool HeriIIMotorClient::setMotorPositionReference(double motorPositionReference){
+    
+    _tx.motor_position_reference = motorPositionReference;
+}
+
+bool HeriIIMotorClient::setMotorCurrentReference(double motorCurrentReference){
+    
+    _tx.motor_current_reference = motorCurrentReference; 
+}
+
+// double HeriIIMotorClient::getMotorPositionReference() {
+//     
+//     return _rx.motorPositionReference;    
+// }
+// 
+// double HeriIIMotorClient::getMotorCurrentReference() {
+//     
+//     return _rx.motorCurrentReference;
+// }
+
+double HeriIIMotorClient::getMotorPosition() {
+    
+    return _rx.motor_position_actual;
+}
+
+double HeriIIMotorClient::getMotorCurrent() {
+    
+    return _rx.motor_current_actual;
+}
+
+
+
+
 HeriIIMotorDriver::HeriIIMotorDriver(Hal::DeviceInfo devinfo):
-    DeviceDriverTpl(devinfo),
+    DeviceDriverTpl(devinfo)
 {
     //TODO fill finger id from deviceinfo??
 
@@ -39,7 +73,8 @@ bool HeriIIMotorDriver::sense_impl()
 }
 
 HeriIIMotorDriverContainer::HeriIIMotorDriverContainer(std::vector<Hal::DeviceInfo> devinfo):
-    DeviceContainer(devinfo)
+    DeviceContainer(devinfo),
+    _srv_alive(false)
 {
     std::vector<DeviceRt::Ptr> devs;
 
@@ -77,4 +112,4 @@ bool HeriIIMotorDriverContainer::move_all()
     return true;
 }
 
-XBOT2_REGISTER_DEVICE(HeriIIMotorDriverContainer, HeriIIHand)
+XBOT2_REGISTER_DEVICE(HeriIIMotorDriverContainer, HeriIIMotorClientContainer, HeriIIHand)

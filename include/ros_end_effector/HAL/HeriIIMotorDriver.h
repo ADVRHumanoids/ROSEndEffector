@@ -64,18 +64,21 @@ private:
     
 };
 
-class HeriIIMotorDriverContainer : public DeviceContainer<HeriIIMotorDriver>
+class HeriIIMotorDriverContainer : public XBot::Hal::DeviceContainer<HeriIIMotorDriver>
 {
 
 public:
 
-    HeriIIMotorDriverContainer(std::vector<DeviceInfo> devinfo);
+    HeriIIMotorDriverContainer(std::vector<XBot::Hal::DeviceInfo> devinfo);
 
     bool sense_all() override;
 
     bool move_all() override;
 
 private:
+    
+    bool _srv_alive;
+
 
     ClientManager::UniquePtr _cli;
 

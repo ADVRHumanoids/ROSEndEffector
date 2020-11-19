@@ -82,11 +82,8 @@ if (BUILD_WITH_XBOT2)
     add_library(HeriIIMotorAdapter
         src/HAL/HeriIIMotorAdapter.cpp 
     )
-    add_library(HeriIIMotorDriver
-        src/HAL/HeriIIMotorDriver.cpp 
-    )
-    add_library(HeriIIMotorClient
-        src/HAL/HeriIIMotorClient.cpp 
+    add_library(HeriIIMotorClientAndDriver
+        src/HAL/HeriIIMotorClientAndDriver.cpp 
     )
     add_library(HeriIIXBot2Hal
         src/HAL/HeriIIXBot2Hal.cpp
@@ -207,10 +204,7 @@ if(BUILD_WITH_XBOT2)
     target_link_libraries(HeriIIMotorAdapter
         xbot2::xbot2
     )
-    target_link_libraries(HeriIIMotorDriver
-        xbot2::xbot2
-    )
-    target_link_libraries(HeriIIMotorClient
+    target_link_libraries(HeriIIMotorClientAndDriver
         xbot2::xbot2
     )
     target_link_libraries(HeriIIXBot2Hal
@@ -334,7 +328,6 @@ if(BUILD_WITH_XBOT2)
         EEHal
         DummyHal
         XBot2Hal
-        XBot2HalDevice
         #TODO how to automatically add new concrete hals here? We include all files from a specific folder
         # containing only hals?
     )
