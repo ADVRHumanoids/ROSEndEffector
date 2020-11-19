@@ -19,6 +19,12 @@ rosee_gazebo_plugins_args: #robot name
 XBotInterface:
   urdf_path: "/home/tori/ROSEE/src/ROSEndEffector/configs/urdf/robotiq_2f_140.urdf"
   srdf_path: "/home/tori/ROSEE/src/ROSEndEffector/configs/srdf/robotiq_2f_140.srdf"
+  
+RobotInterface:
+  framework_name: "ROS"
+  
+#MasterCommunicationInterface:
+#  framework_name: "ROS"
 
 ModelInterface:
   model_type: "RBDL"

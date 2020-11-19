@@ -22,7 +22,7 @@ script:
 - sudo apt-get install ros-kinetic-desktop ros-kinetic-srdfdom
 
 # moveit 
-- sudo apt install ros-kinetic-moveit
+- sudo apt-get install ros-kinetic-moveit
 
 # basic tools
 - sudo apt-get install git cmake doxygen
@@ -53,7 +53,7 @@ script:
 #Build ROSEE
 - mkdir -p build
 - cd build
-- cmake .. -DBUILD_documentation=ON
+- cmake -DBUILD_documentation=ON -DBUILD_WITH_XBOT2=OFF .. 
 - make
 - make dox
 

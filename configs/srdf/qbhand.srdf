@@ -24,9 +24,21 @@
     <group name="little">
         <chain base_link="qbhand_palm_link" tip_link="qbhand_little_distal_link" />
     </group>
-    <!--<group name="palm">
+
+<!--  FOR XBOT -->
+    <group name="virtual1">
         <chain base_link="qbhand_palm_link" tip_link="qbhand_tendon_virtual_link" />
-    </group>-->
+    </group>
+
+    <group name="chains">
+      <group name="index" />
+      <group name="thumb" />
+      <group name="middle" />
+      <group name="ring" />
+      <group name="little" />
+      <group name="virtual1" />
+   </group>
+<!-- FOR XBOT END -->
     
     <group name="end_effector_fingers">
       <group name="thumb" />
@@ -34,7 +46,6 @@
       <group name="middle" />
       <group name="ring" />
       <group name="little" />
-      <!--<group name="palm" />-->
    </group>
 
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->

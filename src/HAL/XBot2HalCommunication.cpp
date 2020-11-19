@@ -35,7 +35,7 @@ bool ROSEE::XBotEEClient::getMotorsPositions(std::vector<unsigned int>& motor_id
         motor_id.push_back(_rx.motor_id[i]);
         positions.push_back(_rx.motor_position_actual[i]);
         
-    }
+    } 
 
     return true;
 }
@@ -99,7 +99,7 @@ bool ROSEE::XBotEEDriverContainer::move_all()
 {
     DeviceContainer::move_all();
 
-    _cli->send();
+    _cli->send(); 
 
     return true;
 }

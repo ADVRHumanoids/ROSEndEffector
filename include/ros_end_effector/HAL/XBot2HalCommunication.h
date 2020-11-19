@@ -21,6 +21,8 @@ public:
 
     virtual bool setMotorsPositionsReferences (std::vector<unsigned int> motor_id, std::vector<double> position_refs) = 0;
     
+    virtual bool setMotorsCurrentsReferences(std::vector<unsigned int> motor_id, std::vector<double> current_refs) = 0;
+    
     virtual bool getMotorsPositions (std::vector<unsigned int>& motor_id, std::vector<double> &positions) = 0; 
 
 };   
@@ -39,6 +41,8 @@ public:
     XBotEEClient(XBot::Hal::DeviceInfo, unsigned int nMotors);
 
     bool setMotorsPositionsReferences (std::vector<unsigned int> motor_id, std::vector<double> position_refs) override;
+    
+    bool setMotorsCurrentsReferences(std::vector<unsigned int> motor_id, std::vector<double> current_refs) override;
     
     bool getMotorsPositions (std::vector<unsigned int>& motor_id, std::vector<double> &positions) override; 
     
