@@ -22,7 +22,7 @@ script:
 - sudo apt-get install ros-kinetic-desktop ros-kinetic-srdfdom
 
 # moveit 
-- sudo apt install ros-kinetic-moveit
+- sudo apt-get install ros-kinetic-moveit
 
 # basic tools
 - sudo apt-get install git cmake doxygen
