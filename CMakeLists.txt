@@ -25,7 +25,7 @@ if (BUILD_WITH_XBOT2)
     message("Compiling with XBOT2")
     option(XBOT2_ENABLE_XENO OFF "Compile against xenomai") #TODO necessary?
     find_package(xbot2 REQUIRED)
-    add_xbot2_device(XBot2HalCommunication src/HAL/XBot2HalCommunication.cpp)
+    #add_xbot2_device(XBot2HalCommunication src/HAL/XBot2HalCommunication.cpp)
     #install(TARGETS XBot2HalCommunication DESTINATION lib)
 
 else()
@@ -82,12 +82,35 @@ if (BUILD_WITH_XBOT2)
     add_library(HeriIIMotorAdapter
         src/HAL/HeriIIMotorAdapter.cpp 
     )
-    add_library(HeriIIMotorClientAndDriver
-        src/HAL/HeriIIMotorClientAndDriver.cpp 
-    )
     add_library(HeriIIXBot2Hal
         src/HAL/HeriIIXBot2Hal.cpp
     )
+    
+    #This macro put as option the visibility=hidden. We need this library in HeriIIXBot2Hal, hence
+    # I copy the macro but without the hidden visibility option
+    #add_xbot2_device(HeriIIHandActuators src/HAL/HeriIIMotorClientAndDriver.cpp)
+
+    add_library(HeriIIHandActuators SHARED src/HAL/HeriIIMotorClientAndDriver.cpp)
+
+    set_target_properties(HeriIIHandActuators
+        PROPERTIES
+        OUTPUT_NAME xbotdev_HeriIIHandActuators)
+
+    target_link_libraries(HeriIIHandActuators
+        PRIVATE
+        xbot2::xbot2)
+        
+    target_compile_options(HeriIIHandActuators
+        PRIVATE
+        -fvisibility-inlines-hidden
+        #-fvisibility=hidden
+        )
+        
+    if(XBOT2_ENABLE_XENO)
+        set_xeno_flags(HeriIIHandActuators)
+    endif()
+
+    install(TARGETS HeriIIHandActuators DESTINATION lib)
 
 endif(BUILD_WITH_XBOT2)
 
@@ -196,7 +219,6 @@ target_link_libraries(UniversalRosEndEffectorExecutor
 
 if(BUILD_WITH_XBOT2)
     target_link_libraries(XBot2Hal
-        #XBot2HalCommunication
         xbot2::xbot2
         EEHal
     )
@@ -204,12 +226,11 @@ if(BUILD_WITH_XBOT2)
     target_link_libraries(HeriIIMotorAdapter
         xbot2::xbot2
     )
-    target_link_libraries(HeriIIMotorClientAndDriver
-        xbot2::xbot2
-    )
+    
     target_link_libraries(HeriIIXBot2Hal
         xbot2::xbot2
         EEHal
+        HeriIIHandActuators
     )
 endif(BUILD_WITH_XBOT2)
 
@@ -328,6 +349,7 @@ if(BUILD_WITH_XBOT2)
         EEHal
         DummyHal
         XBot2Hal
+        HeriIIXBot2Hal
         #TODO how to automatically add new concrete hals here? We include all files from a specific folder
         # containing only hals?
     )

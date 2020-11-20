@@ -30,6 +30,8 @@ namespace ROSEE {
 class HeriIIXBotHal : public ROSEE::EEHal
 {
     
+public:
+    
     typedef std::shared_ptr<HeriIIXBotHal> Ptr;
     typedef std::shared_ptr<const HeriIIXBotHal> ConstPtr;
         

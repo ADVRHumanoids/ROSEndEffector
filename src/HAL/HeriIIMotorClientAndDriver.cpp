@@ -85,7 +85,7 @@ HeriIIMotorDriverContainer::HeriIIMotorDriverContainer(std::vector<Hal::DeviceIn
     _cli = std::make_unique<ClientManager>(
         devs,
         "shm",
-        "HeriIIHand"
+        "HeriIIHandActuators"
         );
 
 }
@@ -112,4 +112,4 @@ bool HeriIIMotorDriverContainer::move_all()
     return true;
 }
 
-XBOT2_REGISTER_DEVICE(HeriIIMotorDriverContainer, HeriIIMotorClientContainer, HeriIIHand)
+XBOT2_REGISTER_DEVICE(HeriIIMotorDriverContainer, HeriIIMotorClientContainer, HeriIIHandActuators)

@@ -21,6 +21,16 @@
     <group name="thumb">
         <chain base_link="base_link" tip_link="SFP1_2" />
     </group>
+    
+    <!-- For Xbot2 -->
+    <group name="chains">
+      <group name="finger_1" />
+      <group name="finger_2" />
+      <group name="finger_3" />
+      <group name="thumb" />
+   </group>
+    <!-- For Xbot2 END -->
+
 
     <group name="end_effector_fingers">
       <group name="finger_1" />

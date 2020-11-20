@@ -5,9 +5,42 @@
 <!-- =================================================================================== -->
 <robot name="heri_II" xmlns:xacro="http://ros.org/wiki/xacro">
   <!-- rosee plugin -->
-  <gazebo>
+<!--  <gazebo>
     <plugin filename="libRoseePlugin.so" name="heri_controller">
       </plugin>
+  </gazebo>-->
+    
+    <gazebo>
+      <plugin name='xbot2_gz_joint_server' filename='libxbot2_gz_joint_server.so'>
+        <pid>
+            <gain name="small_mot"  p="1"  d="0.05"/>
+            <gain name="medium_mot" p="1000" d="10"/>
+            <gain name="big_mot"    p="3000" d="10"/>
+            <gain name="wheel_mot"  p="0" d="30"/>
+            <gain name="null"  p="0" d="0" i="0"/>
+
+            <gain name="BASE__LFB1" profile="null"/>
+            <gain name="LFB1__LFP1_1" profile="null"/>
+            <gain name="LFP1_1__LFP1_2" profile="null"/>
+            <gain name="LFP1_2__LFP1_3" profile="null"/>
+            
+            <gain name="BASE__LFB2" profile="null"/>
+            <gain name="LFB2__LFP2_1" profile="null"/>
+            <gain name="LFP2_1__LFP2_2" profile="null"/>
+            <gain name="LFP2_2__LFP2_3" profile="null"/>
+            
+            <gain name="BASE__LFB3" profile="null"/>
+            <gain name="LFB3__LFP3_1" profile="null"/>
+            <gain name="LFP3_1__LFP3_2" profile="null"/>
+            <gain name="LFP3_2__LFP3_3" profile="null"/>
+            
+            <gain name="BASE__SFB1" profile="null"/>
+            <gain name="SFB1__SFP1_1" profile="null"/>
+            <gain name="SFP1_1__SFP1_2" profile="null"/>
+            <gain name="LFP1_2__LFP1_3" profile="null"/>
+            
+        </pid>
+    </plugin>
   </gazebo>
   <!-- /////////////////////////////////   Gazebo   ////////////////////////////////////// -->
   <gazebo reference="base_link">

@@ -18,6 +18,12 @@
 
 ROSEE::HeriIIXBotHal::HeriIIXBotHal ( ros::NodeHandle* nh) : EEHal ( nh ) {
     
+      //little HACK to be sure xbot is ready and gazebo is unpaused (this service is on after xbot2-core
+    // is on AND gazebo is unpaused
+    ROS_INFO_STREAM("[XBot2Hal constructor]: wait for xbot2core and gazebo to be ready...");
+    ros::service::waitForService("/xbotcore/ros_ctrl/switch", -1);
+    ROS_INFO_STREAM("[XBot2Hal constructor]: xbot2core and gazebo ready!");
+    
     std::string path_to_config_file = XBot::Utils::getXBotConfig();
         
     _robot = XBot::RobotInterface::getRobot(path_to_config_file);
@@ -25,7 +31,7 @@ ROSEE::HeriIIXBotHal::HeriIIXBotHal ( ros::NodeHandle* nh) : EEHal ( nh ) {
     _robot2Rt = std::static_pointer_cast<XBot::RobotInterfaceXBot2Rt>(_robot);
     
     //actuator is the type written in the yaml file
-    _motors = dynamic_cast<XBot::Hal::HeriIIMotorClientContainer*>(  _robot2Rt->getDeviceContainer("actuator"));
+    _motors = dynamic_cast<XBot::Hal::HeriIIMotorClientContainer*>(_robot2Rt->getDeviceContainer("actuator"));
     
     if (! _motors) {
         ROS_ERROR_STREAM("[HeriIIXBotHal::" << __func__ << "] failed cast to heri II client container");
@@ -46,6 +52,13 @@ ROSEE::HeriIIXBotHal::HeriIIXBotHal ( ros::NodeHandle* nh) : EEHal ( nh ) {
     _js_msg.name[2] = "motor_finger3";
     _js_msg.name[3] = "motor_thumb";
         
+    
+    //debug
+    for (auto dev : _motors->get_device_vector()) {
+        std::cout << dev->get_name() << std::endl;
+        std::cout << dev->get_type() << std::endl;
+        std::cout << dev->get_id() << std::endl;
+    }
 }
 
 bool ROSEE::HeriIIXBotHal::move() {

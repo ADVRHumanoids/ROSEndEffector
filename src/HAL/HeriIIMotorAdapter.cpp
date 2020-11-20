@@ -3,8 +3,10 @@
 XBot::Hal::HeriIIMotorAdapter::HeriIIMotorAdapter(XBot::Hal::DeviceInfo devInfo ):
     DeviceTplCommon(devInfo) {
         
-    //TODO fill finger id from deviceinfo??
-    
+    //HACK we are sure that the name (given in the conf yaml) will have the format xxx-x
+    //TODO there is a better way to do this?
+        
+
 }
 
 bool XBot::Hal::HeriIIMotorAdapter::sense() {
@@ -19,5 +21,10 @@ bool XBot::Hal::HeriIIMotorAdapter::move() {
     return true;
 }
 
-
+//TODO somebody has to call the move and sense of the adapter... and also create the _srv
+//     _srv =  std::make_unique<ServerManager>(_rocket_vec,
+//                                         "shm",
+//                                         "HeriIIMotorAdapter");
+// and call the run and send for srv. In the example this is gazebo plugin attached to urdf, but for 
+// a real robot? we need a new node/executable?
 
