@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS srdfdom
                                         message_generation 
                                         moveit_ros_planning_interface
                                         rosee_msg
+                                        iit_heri_ii_hand_xbot2
                                         )
                                                                                
 # find_package(matlogger2 REQUIRED)
@@ -25,8 +26,6 @@ if (BUILD_WITH_XBOT2)
     message("Compiling with XBOT2")
     option(XBOT2_ENABLE_XENO OFF "Compile against xenomai") #TODO necessary?
     find_package(xbot2 REQUIRED)
-    #add_xbot2_device(XBot2HalCommunication src/HAL/XBot2HalCommunication.cpp)
-    #install(TARGETS XBot2HalCommunication DESTINATION lib)
 
 else()
     message("Compiling without XBOT2")
@@ -43,7 +42,7 @@ endif(BUILD_WITH_XBOT2)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  INCLUDE_DIRS include
+    INCLUDE_DIRS include
 #  LIBRARIES ros_end_effector
 #  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
@@ -57,6 +56,7 @@ include_directories(
   include
   ${catkin_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIRS}
+  ${iit_heri_ii_hand_xbot2_INCLUDE_DIRS}
 )
 
 add_library(ROSEEParser
@@ -76,41 +76,14 @@ add_library(EEHal
 )
 
 if (BUILD_WITH_XBOT2)
+
     add_library(XBot2Hal
-        src/HAL/XBot2Hal.cpp 
+        src/HAL/XBot2Hal.cpp
     )
-    add_library(HeriIIMotorAdapter
-        src/HAL/HeriIIMotorAdapter.cpp 
-    )
+
     add_library(HeriIIXBot2Hal
         src/HAL/HeriIIXBot2Hal.cpp
     )
-    
-    #This macro put as option the visibility=hidden. We need this library in HeriIIXBot2Hal, hence
-    # I copy the macro but without the hidden visibility option
-    #add_xbot2_device(HeriIIHandActuators src/HAL/HeriIIMotorClientAndDriver.cpp)
-
-    add_library(HeriIIHandActuators SHARED src/HAL/HeriIIMotorClientAndDriver.cpp)
-
-    set_target_properties(HeriIIHandActuators
-        PROPERTIES
-        OUTPUT_NAME xbotdev_HeriIIHandActuators)
-
-    target_link_libraries(HeriIIHandActuators
-        PRIVATE
-        xbot2::xbot2)
-        
-    target_compile_options(HeriIIHandActuators
-        PRIVATE
-        -fvisibility-inlines-hidden
-        #-fvisibility=hidden
-        )
-        
-    if(XBOT2_ENABLE_XENO)
-        set_xeno_flags(HeriIIHandActuators)
-    endif()
-
-    install(TARGETS HeriIIHandActuators DESTINATION lib)
 
 endif(BUILD_WITH_XBOT2)
 
@@ -222,15 +195,12 @@ if(BUILD_WITH_XBOT2)
         xbot2::xbot2
         EEHal
     )
-
-    target_link_libraries(HeriIIMotorAdapter
-        xbot2::xbot2
-    )
     
     target_link_libraries(HeriIIXBot2Hal
+        ${catkin_LIBRARIES}
         xbot2::xbot2
         EEHal
-        HeriIIHandActuators
+    
     )
 endif(BUILD_WITH_XBOT2)
 

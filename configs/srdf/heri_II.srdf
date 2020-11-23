@@ -10,24 +10,41 @@
     <!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group-->
     <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
     <group name="finger_1">
-        <chain base_link="base_link" tip_link="LFP1_3" />
+        <chain base_link="base_link" tip_link="LFP1_3_tip" />
     </group>
     <group name="finger_2">
-        <chain base_link="base_link" tip_link="LFP2_3" />
+        <chain base_link="base_link" tip_link="LFP2_3_tip" />
     </group>
     <group name="finger_3">
-        <chain base_link="base_link" tip_link="LFP3_3" />
+        <chain base_link="base_link" tip_link="LFP3_3_tip" />
     </group>
     <group name="thumb">
-        <chain base_link="base_link" tip_link="SFP1_2" />
+        <chain base_link="base_link" tip_link="SFP1_2_tip" />
     </group>
     
-    <!-- For Xbot2 -->
+<!-- For Xbot2 -->   
+    <group name="virtual1">
+        <chain base_link="base_link" tip_link="motor_finger1_virtual_link" />
+    </group>
+    <group name="virtual2">
+        <chain base_link="base_link" tip_link="motor_finger2_virtual_link" />
+    </group>
+    <group name="virtual3">
+        <chain base_link="base_link" tip_link="motor_finger3_virtual_link" />
+    </group>
+    <group name="virtualThumb">
+        <chain base_link="base_link" tip_link="motor_thumb_virtual_link" />
+    </group>
+    
     <group name="chains">
       <group name="finger_1" />
       <group name="finger_2" />
       <group name="finger_3" />
       <group name="thumb" />
+      <group name="virtual1" />
+      <group name="virtual2" />
+      <group name="virtual3" />
+      <group name="virtualThumb" />
    </group>
     <!-- For Xbot2 END -->
 

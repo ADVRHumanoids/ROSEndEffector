@@ -20,7 +20,7 @@
 #include <xbot2/xbot2.h>
 #include <xbot2/robot_interface/robot_interface_xbot_rt.h>
 
-#include <ros_end_effector/HAL/HeriIIMotorClient.h>
+#include <iit_heri_ii_hand_xbot2/HeriIIMotorClient.h>
 #include <ros_end_effector/HAL/EEHal.h>
 
 namespace ROSEE {
