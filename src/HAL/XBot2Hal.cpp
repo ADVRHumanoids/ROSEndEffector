@@ -48,11 +48,9 @@ ROSEE::XBot2Hal::XBot2Hal( ros::NodeHandle* nh ) : EEHal ( nh ) {
 
 
 bool ROSEE::XBot2Hal::sense() {
-    
     if (! _robot->sense()){
         return false;
     }
-    
     _robot->getJointPosition(_jointPositionActualMap);
     if (_js_msg.name.size() != _jointPositionActualMap.size() ||
         _js_msg.position.size() != _jointPositionActualMap.size()) {

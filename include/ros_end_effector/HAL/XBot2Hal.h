@@ -27,9 +27,9 @@ public:
     XBot2Hal( ros::NodeHandle* nh );
     virtual ~XBot2Hal() { };
     
-    bool sense() ;
+    virtual bool sense() override;
     
-    bool move() ;
+    virtual bool move() override;
         
 private:
     

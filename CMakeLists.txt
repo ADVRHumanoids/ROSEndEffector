@@ -184,14 +184,6 @@ target_link_libraries(UniversalRosEndEffectorExecutor
     
 )
 
-if(BUILD_WITH_XBOT2)
-    target_link_libraries(XBot2Hal
-        xbot2::xbot2
-        EEHal
-    )
-endif(BUILD_WITH_XBOT2)
-
-
 target_link_libraries(YamlWorker
     yaml-cpp
     Action
@@ -275,11 +267,6 @@ target_link_libraries(ParserMoveIt
     ${catkin_LIBRARIES}
 )
 
-target_link_libraries(DummyHal
-    ${catkin_LIBRARIES}
-    EEHal 
-)
-
 target_link_libraries(UniversalRosEndEffector
     UniversalRosEndEffectorExecutor
     
@@ -303,7 +290,22 @@ target_link_libraries(UniversalFindActions
 target_link_libraries(EEHalExecutor
     ${catkin_LIBRARIES}
     EEHal
+    #debug below:
+    XBot2Hal
 )
+
+target_link_libraries(DummyHal
+    ${catkin_LIBRARIES}
+    EEHal 
+)
+
+if(BUILD_WITH_XBOT2)
+    target_link_libraries(XBot2Hal
+        xbot2::xbot2
+        EEHal
+
+    )
+endif(BUILD_WITH_XBOT2)
 
 
 #############

@@ -3,6 +3,8 @@
     <arg name="gazebo" default="false" />
     <arg name="hand_name"/> 
     <arg name="gdb" default="false"/> <!-- for debug with gdb -->
+    <arg name="hal_lib" default="DummyHal"/>
+
 
     <!-- send urdf to parameter server. This is necessary because sometimes UniversalRosEndEffector can not put them in time and joint state pub crashes-->
     <!-- BE SURE that the values are the same in the ros_ee_config_path file -->
@@ -27,7 +29,8 @@
     <include file="$(find ros_end_effector)/launch/EEHalExecutor.launch">
         <arg name="gazebo" value="$(arg gazebo)"/>
         <arg name="hand_name" value="$(arg hand_name)"/> 
-
+        <arg name="hal_lib" value="$(arg hal_lib)"/> 
+        <arg name="gdb" value="$(arg gdb)"/> 
     </include>   
      
     <!-- start robot state publisher to transform joint pos into tf for rviz, so it is always on, gazebo or not -->

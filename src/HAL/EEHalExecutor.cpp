@@ -1,9 +1,7 @@
 #include <ros/ros.h>
 
 #include <ros_end_effector/HAL/EEHal.h>
-#include <ros_end_effector/HAL/DummyHal.h>
 #include <ros_end_effector/HAL/XBot2Hal.h>
-#include <ros_end_effector/HAL/HeriIIXBotHal.h>
 
 #include <ros_end_effector/Utils.h>
 
@@ -11,21 +9,29 @@ int main ( int argc, char **argv ) {
 
     ros::init ( argc, argv, "EEHalExecutor" );
     ros::NodeHandle nh("EEHalExecutor");
-    //TODO load the correct derived class
-    //ROSEE::EEHal::Ptr eeHalPtr = std::make_shared<ROSEE::DummyHal>(&nh);
-      //ROSEE::EEHal::Ptr eeHalPtr = std::make_shared<ROSEE::XBot2Hal>(&nh);
-    //ROSEE::EEHal::Ptr eeHalPtr = std::make_shared<ROSEE::HeriIIXBotHal>(&nh);
-      
-      ROSEE::EEHal::Ptr eeHalPtr = ROSEE::Utils::loadObject<ROSEE::EEHal, ros::NodeHandle*>
-                                        ("XBot2Hal.so", "create_object", &nh);
-      
     
+    std::string hal_lib;
+    if ( ! nh.getParam ( "/rosee/hal_library_name", hal_lib ) ) {
+        ROS_ERROR_STREAM( "Ros parameter 'hal_library_name' not found" );
+        return -1;
+    }
+      
+    std::unique_ptr<ROSEE::EEHal> eeHalPtr = ROSEE::Utils::loadObject<ROSEE::EEHal, ros::NodeHandle*>
+                                         (hal_lib, "create_object_"+hal_lib, &nh);
+
+    
+    if (eeHalPtr == nullptr) {
+        ROS_ERROR_STREAM( "[EEHalExecutor ERROR] in loading the EEHal Object" );
+        return -1;    
+    }
+    
+    ROS_INFO_STREAM ( "[EEHalExecutor] Loaded "<<  hal_lib << " HAL"  );   
+      
     //TODO take rate from param
     ros::Rate r(100);
     while(ros::ok()) {
         
-        
-        //TODO check order of theseload
+        //TODO check order of these
         
         //receive info from robot, and fill _js_msg
         eeHalPtr->sense();

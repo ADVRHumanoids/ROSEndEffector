@@ -47,6 +47,12 @@ static void out2file ( std::string pathFile, std::string output) {
     fout << output;
 }
 
+// static std::string get_environment_variable( std::string const & key )
+// {
+//     char * val = getenv( key.c_str() );
+//     return val == NULL ? std::string("") : std::string(val);
+// }
+
 static std::vector <std::string> getFilesInDir ( std::string pathFolder ) {
     
     boost::filesystem::path p (pathFolder);
@@ -208,9 +214,19 @@ struct DifferentKeysException : public std::exception {
     }
 };
 
-
+/**
+ * @brief Utils to dynamically load an object. This is used to dynamically load 
+ *  a derived object from a node that only knows the base interface. 
+ *  For example, we call the create_object(ros::nodeHandle) method of a derived EEHAL class
+ *  The object must be a library which will return a RetType pointer with the function_name
+ *  This function will "convert" to smart pointer for convenience
+ * @param lib_name the name of the compiled library (eg DummyHal). Do not add the suffix .so
+ * @param function_name The method of \param lib_name which will return a RetType*. 
+ * @param args arguments for the \param function_name, if the case
+ * @return std::shared_ptr<RetType> a pointer to the new created object
+ */
 template <typename RetType, typename... Args>
-std::shared_ptr<RetType> loadObject(std::string lib_name, 
+std::unique_ptr<RetType> loadObject(std::string lib_name, 
                                     std::string function_name,
                                     Args... args) {
     
@@ -220,22 +236,24 @@ std::shared_ptr<RetType> loadObject(std::string lib_name,
         return nullptr;
     } 
     
-    void* lib_handle = dlopen(lib_name.c_str(), RTLD_LAZY);
+    std::string lib_name_path = "lib" + lib_name +".so"; 
+    
+    void* lib_handle = dlopen(lib_name_path.c_str(), RTLD_LAZY);
     if (!lib_handle) {
-        std::cerr << "[Utils::loadObject] ERROR in opening the library:" << dlerror() << std::endl;
+        std::cerr << "[Utils::loadObject] ERROR in opening the library: " << dlerror() << std::endl;
         return nullptr;
     }
     
     RetType* (*function)(Args... args);
     function = reinterpret_cast<RetType* (*)(Args... args)>(dlsym(lib_handle, function_name.c_str()));
     if (dlerror() != NULL)  {
-        std::cerr << "[Utils::loadObject] ERROR in returning the function:" << dlerror() << std::endl;
+        std::cerr << "[Utils::loadObject] ERROR in returning the function: " << dlerror() << std::endl;
         return nullptr;
     }
     
     RetType* objectRaw = function(args...);
     
-    std::shared_ptr<RetType> objectPtr(objectRaw);
+    std::unique_ptr<RetType> objectPtr(objectRaw);
     
     dlclose(lib_handle);
     

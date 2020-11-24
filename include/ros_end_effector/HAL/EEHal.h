@@ -77,11 +77,9 @@ namespace ROSEE {
         ros::Publisher _joint_state_pub;
         
     private:
-        void motor_reference_clbk(const sensor_msgs::JointState::ConstPtr& msg);
-
         
+        void motor_reference_clbk(const sensor_msgs::JointState::ConstPtr& msg);
     };
-    
 }
 
 #endif // __ROSEE_EE_HAL__
