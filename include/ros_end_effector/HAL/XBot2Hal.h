@@ -39,7 +39,7 @@ private:
 
 };
 
-
+HAL_CREATE_OBJECT(XBot2Hal)
     
 } //namespace roseee
 

@@ -21,6 +21,8 @@
 #include <cmath>
 #include <memory>
 #include <iostream>
+#include <dlfcn.h>
+
 
 //to find relative path for the config files and create directories
 #include <boost/filesystem.hpp>
@@ -205,6 +207,41 @@ struct DifferentKeysException : public std::exception {
         return "Maps have different keys";
     }
 };
+
+
+template <typename RetType, typename... Args>
+std::shared_ptr<RetType> loadObject(std::string lib_name, 
+                                    std::string function_name,
+                                    Args... args) {
+    
+    if (lib_name.empty()) {
+        
+        std::cerr << "[Utils::loadObject] ERROR: Please specify lib_name" << std::endl;
+        return nullptr;
+    } 
+    
+    void* lib_handle = dlopen(lib_name.c_str(), RTLD_LAZY);
+    if (!lib_handle) {
+        std::cerr << "[Utils::loadObject] ERROR in opening the library:" << dlerror() << std::endl;
+        return nullptr;
+    }
+    
+    RetType* (*function)(Args... args);
+    function = reinterpret_cast<RetType* (*)(Args... args)>(dlsym(lib_handle, function_name.c_str()));
+    if (dlerror() != NULL)  {
+        std::cerr << "[Utils::loadObject] ERROR in returning the function:" << dlerror() << std::endl;
+        return nullptr;
+    }
+    
+    RetType* objectRaw = function(args...);
+    
+    std::shared_ptr<RetType> objectPtr(objectRaw);
+    
+    dlclose(lib_handle);
+    
+    return objectPtr;
+}
+
 
 //default template as high_resolution_clock
 //copied from https://codereview.stackexchange.com/questions/196245/extremely-simple-timer-class-in-c

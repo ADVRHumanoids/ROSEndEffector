@@ -26,6 +26,12 @@
 #include <vector>
 #include <memory>
 
+//Macro to be used in each concrete HAL that will define the create_object functions
+#define HAL_CREATE_OBJECT(className) \
+    extern "C" ::ROSEE::EEHal* create_object_##className ( ros::NodeHandle* nh) { \
+        return new className(nh); \
+    } \
+
 namespace ROSEE {
     
     
@@ -42,7 +48,7 @@ namespace ROSEE {
         
         EEHal ( ros::NodeHandle* nh );
         virtual ~EEHal() {};
-        
+                
         virtual bool sense() = 0;
         
         virtual bool move() = 0;

@@ -13,7 +13,6 @@ find_package(catkin REQUIRED COMPONENTS srdfdom
                                         message_generation 
                                         moveit_ros_planning_interface
                                         rosee_msg
-                                        iit_heri_ii_hand_xbot2
                                         )
                                                                                
 # find_package(matlogger2 REQUIRED)
@@ -56,7 +55,6 @@ include_directories(
   include
   ${catkin_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIRS}
-  ${iit_heri_ii_hand_xbot2_INCLUDE_DIRS}
 )
 
 add_library(ROSEEParser
@@ -79,10 +77,6 @@ if (BUILD_WITH_XBOT2)
 
     add_library(XBot2Hal
         src/HAL/XBot2Hal.cpp
-    )
-
-    add_library(HeriIIXBot2Hal
-        src/HAL/HeriIIXBot2Hal.cpp
     )
 
 endif(BUILD_WITH_XBOT2)
@@ -195,13 +189,6 @@ if(BUILD_WITH_XBOT2)
         xbot2::xbot2
         EEHal
     )
-    
-    target_link_libraries(HeriIIXBot2Hal
-        ${catkin_LIBRARIES}
-        xbot2::xbot2
-        EEHal
-    
-    )
 endif(BUILD_WITH_XBOT2)
 
 
@@ -313,25 +300,10 @@ target_link_libraries(UniversalFindActions
     MapActionHandler
 )
 
-if(BUILD_WITH_XBOT2)
-    target_link_libraries(EEHalExecutor
-        ${catkin_LIBRARIES}
-        EEHal
-        DummyHal
-        XBot2Hal
-        HeriIIXBot2Hal
-        #TODO how to automatically add new concrete hals here? We include all files from a specific folder
-        # containing only hals?
-    )
-else()
-    target_link_libraries(EEHalExecutor
-        ${catkin_LIBRARIES}
-        EEHal
-        DummyHal
-        #TODO how to automatically add new concrete hals here? We include all files from a specific folder
-        # containing only hals?
-    )
-endif(BUILD_WITH_XBOT2)
+target_link_libraries(EEHalExecutor
+    ${catkin_LIBRARIES}
+    EEHal
+)
 
 
 #############
