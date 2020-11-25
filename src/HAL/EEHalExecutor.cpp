@@ -16,7 +16,7 @@ int main ( int argc, char **argv ) {
         return -1;
     }
       
-    std::unique_ptr<ROSEE::EEHal> eeHalPtr = ROSEE::Utils::loadObject<ROSEE::EEHal, ros::NodeHandle*>
+    std::unique_ptr<ROSEE::EEHal> eeHalPtr = ROSEE::Utils::loadObject<ROSEE::EEHal>
                                          (hal_lib, "create_object_"+hal_lib, &nh);
 
     
