@@ -82,7 +82,7 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_motor_reference_pub() {
     _motor_reference_pub = _nh.advertise<sensor_msgs::JointState> ( motor_reference_topic, motor_reference_queue );
     _motors_num = _motors_names.size();
     //mr = motor reference
-    _mr_msg.name.resize ( _motors_num );
+    _mr_msg.name = _motors_names;
     _mr_msg.position.resize ( _motors_num );
     _mr_msg.velocity.resize ( _motors_num );
     _mr_msg.effort.resize ( _motors_num ); 
@@ -278,9 +278,51 @@ bool ROSEE::UniversalRosEndEffectorExecutor::updateGoal() {
         return false;
     }
     } 
+
+    //WE reset this so if it is not used it stay to zero
+    _qref_optional = Eigen::VectorXd::Zero(_motors_num);
+    if (goal.optional_motors_names.size() != 0) {
+        readOptionalCommands(goal.optional_motors_names, goal.optional_motors_commands);
+    }
     
     return updateRefGoal(goal.percentage);
     
+}
+
+bool ROSEE::UniversalRosEndEffectorExecutor::readOptionalCommands(
+        std::vector<std::string> motors_names, std::vector<double> motors_commands) {
+    
+    bool flag = true;
+    
+    if (motors_names.size() != motors_commands.size() &&
+        motors_names.size() != _motors_num) {
+        ROS_ERROR_STREAM ( "In receiving the goal command, the optional field is formed badly: " 
+            << "optional_motors_names and optional_motors_commands and number of motors have different size (" 
+            <<  motors_names.size() << " and " << motors_commands.size() << " and " << _motors_num
+            << " respectively).  I will ignore the optional command");
+        return false;
+    } 
+    
+
+    for (int i=0; i<motors_names.size(); i++) {
+        
+        int id =-1;
+        _ee->getInternalIdForJoint ( motors_names.at(i), id );
+        if( id >= 0 ) {
+            // NOTE assume single dof
+            _qref_optional[id] = motors_commands.at(i);
+        }
+        
+        else {
+            ROS_WARN_STREAM ( "Trying to send an optional command to motor: " << motors_names.at(i) 
+            << " which is not defined" );
+            flag = false;
+        }
+    }
+    
+    //TODO we have to filter also qref_optional ??
+    
+    return flag;
 }
 
 bool ROSEE::UniversalRosEndEffectorExecutor::updateRefGoal(double percentage) {
@@ -381,6 +423,7 @@ bool ROSEE::UniversalRosEndEffectorExecutor::publish_motor_reference() {
         _ee->getInternalIdForJoint ( motor_name, id );
         _mr_msg.name[id] = motor_name;
         _mr_msg.position[id] =_qref_filtered[id] ;
+        _mr_msg.effort[id] = _qref_optional[id];
     }
 
     _motor_reference_pub.publish ( _mr_msg );

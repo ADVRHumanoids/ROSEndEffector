@@ -69,6 +69,7 @@ private:
     bool publish_motor_reference();
     
     bool updateGoal(); //the "new" pinch/grasp callback (now used for all actions)
+    bool readOptionalCommands(std::vector<std::string> motors_names, std::vector<double> motors_commands);
     bool updateRefGoal(double percentage = 1.0);
     double sendFeedbackGoal(std::string currentAction = "");
     bool update_send_timed();
@@ -93,7 +94,7 @@ private:
     
     std::string folderForActions;
 
-    Eigen::VectorXd _qref, _qref_filtered;
+    Eigen::VectorXd _qref, _qref_filtered, _qref_optional;
     
     ROSEE::Utils::SecondOrderFilter<Eigen::VectorXd> _filt_q;
     
