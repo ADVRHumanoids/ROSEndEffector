@@ -103,6 +103,8 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_qref_filter() {
 
     // initialize references
     _qref.resize ( _motors_num );
+    _qref_optional.resize ( _motors_num );
+    _qref_optional.setZero();
     // TBD init from current position reference
     _qref.setZero();
     // reset filter
@@ -280,7 +282,7 @@ bool ROSEE::UniversalRosEndEffectorExecutor::updateGoal() {
     } 
 
     //WE reset this so if it is not used it stay to zero
-    _qref_optional = Eigen::VectorXd::Zero(_motors_num);
+    _qref_optional.setZero();
     if (goal.optional_motors_names.size() != 0) {
         readOptionalCommands(goal.optional_motors_names, goal.optional_motors_commands);
     }
