@@ -15,6 +15,7 @@
     <param name = "/rosee/primitive_aggregated_srv_name" value="primitives_aggregated_available" />
     <param name = "/rosee/selectable_finger_pair_info" value="selectable_finger_pair_info" />
     <param name = "/rosee/grasping_action_srv_name" value = "grasping_actions_available" />
+    <param name = "/rosee/hand_info" value = "hand_info" />
 
     <!-- param for action server -->
     <param name = "/rosee/rosAction_grasping_command" value="action_command" />

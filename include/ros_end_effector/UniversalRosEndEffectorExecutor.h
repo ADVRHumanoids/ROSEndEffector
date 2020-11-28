@@ -36,6 +36,7 @@
 
 #include <ros_end_effector/GraspingActions/ActionPrimitive.h>
 #include <ros_end_effector/GraspingActions/ActionComposed.h>
+#include <rosee_msg/HandInfo.h>
 
 namespace ROSEE
 {

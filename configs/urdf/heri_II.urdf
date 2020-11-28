@@ -12,12 +12,12 @@
      The finger joints (mimic) will be moved by libroboticsgroup_gazebo_mimic_joint_plugin, using the non linear
      relationship, so please use the fork https://github.com/torydebra/roboticsgroup_gazebo_plugins 
 -->
-<!--  
-	<gazebo>
+  
+<!--	<gazebo>
     <plugin filename="libRoseePlugin.so" name="heri_controller">
       </plugin>
-  </gazebo>
--->
+  </gazebo>-->
+
 
 <!-- Plugin to make simulated heri works with xbot and gazebo. To be used with XBot2Hal
 		 The gains for mimics are all zero for mimic because the libroboticsgroup_gazebo_mimic_joint_plugin
@@ -32,10 +32,10 @@
 		    <gain name="wheel_mot"  p="0" d="30"/>
 		    <gain name="null"  p="0" d="0" i="0"/>
 
-				<gain name="motor_finger1" profile="small_mot"/>
-				<gain name="motor_finger2" profile="small_mot"/>
-				<gain name="motor_finger3" profile="small_mot"/>
-				<gain name="motor_thumb" profile="small_mot"/>
+            <gain name="motor_finger1" profile="small_mot"/>
+            <gain name="motor_finger2" profile="small_mot"/>
+            <gain name="motor_finger3" profile="small_mot"/>
+            <gain name="motor_thumb" profile="small_mot"/>
 
 		    <gain name="BASE__LFB1" profile="null"/>
 		    <gain name="LFB1__LFP1_1" profile="null"/>

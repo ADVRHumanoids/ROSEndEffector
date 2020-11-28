@@ -34,9 +34,6 @@ ROSEE::XBot2Hal::XBot2Hal( ros::NodeHandle* nh ) : EEHal ( nh ) {
     
     _robot = XBot::RobotInterface::getRobot(path_to_config_file);
     
-    auto robot = 
-        std::static_pointer_cast<XBot::RobotInterfaceXBot2Rt>(_robot);
-        
     _mr_msg.name.resize(_robot->getJointNum());
     _mr_msg.position.resize(_robot->getJointNum());
     _js_msg.name.resize(_robot->getJointNum());

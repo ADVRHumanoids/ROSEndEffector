@@ -67,8 +67,9 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
     _ros_action_server = std::make_shared<RosActionServer> (actionGraspingCommandName , &_nh);
     timed_requested = false;
     timed_index = -1;
-
+    
     init_joint_state_sub();
+    
 }
 
 bool ROSEE::UniversalRosEndEffectorExecutor::init_motor_reference_pub() {
