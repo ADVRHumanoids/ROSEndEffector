@@ -34,7 +34,7 @@ XBotInterface:
   #urdf_path: "/home/tori/ROSEE/src/ROSEndEffector/configs/urdf/heri_II.urdf"
   #srdf_path: "/home/tori/ROSEE/src/ROSEndEffector/configs/srdf/heri_II.srdf"
   urdf_path: "configs/urdf/heri_II.urdf"
-  srdf_path: "configs/urdf/heri_II.srdf"
+  srdf_path: "configs/srdf/heri_II.srdf"
   
 ModelInterface:
   model_type: "RBDL"
