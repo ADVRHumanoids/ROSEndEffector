@@ -236,10 +236,15 @@ std::unique_ptr<RetType> loadObject(std::string lib_name,
     } 
     
     std::string lib_name_path = "lib" + lib_name +".so"; 
-    
+
+    //clear old errors
+    dlerror();
+
     void* lib_handle = dlopen(lib_name_path.c_str(), RTLD_LAZY);
-    if (!lib_handle) {
-        std::cerr << "[Utils::loadObject] ERROR in opening the library: " << dlerror() << std::endl;
+    auto error = dlerror();
+
+    if (!lib_handle || error != NULL) {
+        std::cerr << "[Utils::loadObject] ERROR in opening the library: " << error << std::endl;
         return nullptr;
     }
     
@@ -248,7 +253,7 @@ std::unique_ptr<RetType> loadObject(std::string lib_name,
     
     RetType* (*function)(Args... args);
     function = reinterpret_cast<RetType* (*)(Args... args)>(dlsym(lib_handle, function_name.c_str()));
-    auto error = dlerror();
+    error = dlerror();
     if ( error != NULL)  {
         std::cerr << "[Utils::loadObject] ERROR in returning the function: " << error << std::endl;
         return nullptr;
