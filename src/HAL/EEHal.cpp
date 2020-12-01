@@ -191,7 +191,7 @@ bool ROSEE::EEHal::parseHandInfo() {
             ++finger_jac) {
             
             std::string finger_name = finger_jac->first.as<std::string>();
-            Eigen::MatrixXd jacobian = ROSEE::UtilsYaml::yamlMatrixToEigen(finger_jac->second);
+            Eigen::MatrixXd jacobian = ROSEE::Utils::yamlMatrixToEigen(finger_jac->second);
         
             tips_jacobians.insert(std::make_pair(finger_name, jacobian));
         }
@@ -199,27 +199,27 @@ bool ROSEE::EEHal::parseHandInfo() {
     
     if(node["hand_info"]["transmission_matrix"]){
 
-       transmission_matrix = ROSEE::UtilsYaml::yamlMatrixToEigen(node["hand_info"]["transmission_matrix"]);
+       transmission_matrix = ROSEE::Utils::yamlMatrixToEigen(node["hand_info"]["transmission_matrix"]);
     }
     
     if(node["hand_info"]["motors_stiffness_diagonal"]){
 
-       motors_stiffness_diagonal = ROSEE::UtilsYaml::yamlVectorToEigen(node["hand_info"]["motors_stiffness_diagonal"]);
+       motors_stiffness_diagonal = ROSEE::Utils::yamlVectorToEigen(node["hand_info"]["motors_stiffness_diagonal"]);
     }
     
     if(node["hand_info"]["tips_frictions"]){
 
-       tips_frictions = ROSEE::UtilsYaml::yamlVectorToEigen(node["hand_info"]["tips_frictions"]);
+       tips_frictions = ROSEE::Utils::yamlVectorToEigen(node["hand_info"]["tips_frictions"]);
     }
     
     if(node["hand_info"]["tips_force_limits"]){
 
-       tips_force_limits = ROSEE::UtilsYaml::yamlVectorToEigen(node["hand_info"]["tips_force_limits"]);
+       tips_force_limits = ROSEE::Utils::yamlVectorToEigen(node["hand_info"]["tips_force_limits"]);
     }
     
     if(node["hand_info"]["motors_torque_limits"]){
 
-       motors_torque_limits = ROSEE::UtilsYaml::yamlVectorToEigen(node["hand_info"]["motors_torque_limits"]);
+       motors_torque_limits = ROSEE::Utils::yamlVectorToEigen(node["hand_info"]["motors_torque_limits"]);
     }
     
     return true;

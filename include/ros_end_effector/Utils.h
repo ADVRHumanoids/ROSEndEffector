@@ -23,9 +23,6 @@
 #include <iostream>
 #include <dlfcn.h>
 
-#include <std_msgs/Float32MultiArray.h>
-#include <Eigen/Dense>
-
 //to find relative path for the config files and create directories
 #include <boost/filesystem.hpp>
 #include <fstream>
@@ -246,10 +243,14 @@ std::unique_ptr<RetType> loadObject(std::string lib_name,
         return nullptr;
     }
     
+    //clear old errors
+    dlerror();
+    
     RetType* (*function)(Args... args);
     function = reinterpret_cast<RetType* (*)(Args... args)>(dlsym(lib_handle, function_name.c_str()));
-    if (dlerror() != NULL)  {
-        std::cerr << "[Utils::loadObject] ERROR in returning the function: " << dlerror() << std::endl;
+    auto error = dlerror();
+    if ( error != NULL)  {
+        std::cerr << "[Utils::loadObject] ERROR in returning the function: " << error << std::endl;
         return nullptr;
     }
     
@@ -260,57 +261,6 @@ std::unique_ptr<RetType> loadObject(std::string lib_name,
     dlclose(lib_handle);
     
     return objectPtr;
-}
-
-/**
- * @brief Utility to fill the Float32MultiArray ROS message from an eigen matrix.
- * The Float32MultiArray matrix will be stored in column major, independently from the
- * eigen matrix that can be row major (even by default eigen matrix is column major,
- * it can be templatizate specifing the row major)
- */
-static std_msgs::Float32MultiArray eigenMatrixToFloat32MultiArray (Eigen::MatrixXd eigenMatrix) {
-    
-    std_msgs::Float32MultiArray rosMatrix;
-    
-    unsigned int nRow = eigenMatrix.rows();
-    unsigned int nCol = eigenMatrix.cols();
-    unsigned int size = nRow*nCol;
-    
-    if (size == 0){ //no reason to continue
-        return rosMatrix;
-    }
-    
-    rosMatrix.layout.dim.push_back(std_msgs::MultiArrayDimension());
-    rosMatrix.layout.dim.push_back(std_msgs::MultiArrayDimension());
-    rosMatrix.layout.dim[0].label = "column";
-    rosMatrix.layout.dim[0].size = nCol;
-    rosMatrix.layout.dim[0].stride = nCol*nRow;
-    
-    rosMatrix.layout.dim[1].label = "row";
-    rosMatrix.layout.dim[1].size = nRow;
-    rosMatrix.layout.dim[1].stride = nRow;
-    
-    rosMatrix.layout.data_offset = 0;
-  
-    rosMatrix.data.resize(size);
-    int posRow = 0;
-    for (int iCol=0; iCol<nCol; iCol++){
-        for (int iRow=0; iRow<nRow; iRow++){
-            posRow = iCol*nRow;
-            rosMatrix.data.at(posRow + iRow) = eigenMatrix(iRow,iCol);
-        }
-    }
-    
-    return rosMatrix;
-
-    
-}
-
-static std::vector<float> eigenVectorToStdVector (Eigen::VectorXd eigenVector) {
-    
-    std::vector<float> stdVect(eigenVector.data(), eigenVector.data() + eigenVector.size());
-    
-    return stdVect;
 }
 
 //default template as high_resolution_clock

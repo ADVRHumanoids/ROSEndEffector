@@ -5,7 +5,7 @@
 #include <Eigen/Dense>
 
 
-namespace ROSEE { namespace UtilsYaml {
+namespace ROSEE { namespace Utils {
 
 /**
  * @brief given a yaml node with a structure like

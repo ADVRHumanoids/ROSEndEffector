@@ -31,9 +31,11 @@ rosee_gazebo_plugins_args: #robot name
    
 ############ XBOT config############################  
 XBotInterface:
-  urdf_path: "/home/tori/ROSEE/src/ROSEndEffector/configs/urdf/heri_II.urdf"
-  srdf_path: "/home/tori/ROSEE/src/ROSEndEffector/configs/srdf/heri_II.srdf"
-
+  #urdf_path: "/home/tori/ROSEE/src/ROSEndEffector/configs/urdf/heri_II.urdf"
+  #srdf_path: "/home/tori/ROSEE/src/ROSEndEffector/configs/srdf/heri_II.srdf"
+  urdf_path: "configs/urdf/heri_II.urdf"
+  srdf_path: "configs/urdf/heri_II.srdf"
+  
 ModelInterface:
   model_type: "RBDL"
   is_model_floating_base: "false"
@@ -48,13 +50,17 @@ xbotcore_threads:
   
 xbotcore_devices:
 
-    joint_gz:
-        names: [__joint_srdf__]  # take all joint ids from srdf/urdf
-        thread: rt_main  # allocate this device on rt_main thread
+    #joint_gz:
+    #    names: [__joint_srdf__]  # take all joint ids from srdf/urdf
+    #    thread: rt_main  # allocate this device on rt_main thread
 
-    joint_master:
-       master: true  # this is a master device for all 'joint' devices
-       thread: rt_main
+    #joint_master:
+    #   master: true  # this is a master device for all 'joint' devices
+    #  thread: rt_main
+    
+    HeriIIBoard:
+        names: ["heri_board"] 
+        thread: rt_main
  
 xbotcore_plugins:
 
@@ -72,8 +78,7 @@ xbotcore_param:
     /xbot_internal/ros_io/call_timeout: {value: 1.0, type: chrono}
     /rt_slow/memory_hooks: {value: false, type: bool}
     /jm/enable_safety: {value: false, type: bool}
-    
-      
+          
 ################## Specific info for rosee planner ############################
 hand_info:
   #The order here will be the order followed by the other info
@@ -148,4 +153,54 @@ hand_info:
   tips_force_limits: [1, 1, 1, 1]
   # I know this below can be in the urdf... but EEHal for now does not have access to urdf
   motors_torque_limits: [1, 1, 1, 1]
-       
+
+##############
+### real hand
+##############
+
+ec_board_ctrl :
+  #eth_iface: rteth0
+  eth_iface: enp3s0
+  #sync_cycle_time_ns: 500000
+  #sync_cycle_time_ns: 1000000
+  #sync_cycle_time_ns: 2000000
+  #sync_cycle_time_ns: 5000000
+  #sync_cycle_time_ns: 10000000
+  #sync_cycle_time_ns: 100000000
+  sync_cycle_time_ns: 0
+  sync_cycle_offset_ns: 1000000000
+  sync_point_ns : 500000
+  power_off_boards: false
+  reset_micro : true
+  
+ec_boards_base :
+  app_mode : run_mode
+  #app_mode : config_mode
+  robot_name : NoNe
+  read_SDOs : false
+  use_pipes : true
+  log_level : 1
+  #fault_power_off : true
+  # only for TestESC
+  #use_ecat_pos_as_id : true
+
+LpESC_X:
+  sign: 1
+  pos_offset: 0
+  control_mode : 3B_motor_pos_ctrl
+  pid :
+    position: [100000.0 , 0.0 , 1.0]
+
+LpHandESC_X:
+  sign: 1
+  pos_offset: 0
+  control_mode : 3B_motor_pos_ctrl
+  pid :
+    position: [100000.0 , 0.0 , 1.0]
+
+HeriHandESC_X:
+  sign: 1
+  pos_offset: 0
+  control_mode : 3B_motor_pos_ctrl
+  pid :
+    position: [100000.0 , 0.0 , 1.0]

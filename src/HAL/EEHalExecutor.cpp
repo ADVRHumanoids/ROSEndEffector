@@ -7,6 +7,7 @@
 #include <ros_end_effector/HAL/XBot2Hal.h>
 
 #include <ros_end_effector/Utils.h>
+#include <ros_end_effector/UtilsEigen.h>
 
 #include <ros_end_effector/HandInfoServices.h>
 
