@@ -2,6 +2,7 @@
 <launch>
     
     <arg name="hand_name"/> 
+    <arg name="hal_lib" default="DummyHal"/>
 
     <!-- send urdf to parameter server. This is necessary because sometimes UniversalRosEndEffector can not put them in time and joint state pub crashes-->
     <!-- BE SURE that the values are the same in the ros_ee_config_path file -->
@@ -12,6 +13,7 @@
     <param name = "/rosee/primitive_aggregated_srv_name" value="primitives_aggregated_available" />
     <param name = "/rosee/selectable_finger_pair_info" value="selectable_finger_pair_info" />
     <param name = "/rosee/grasping_action_srv_name" value = "grasping_actions_available" />
+    <param name = "/rosee/hand_info" value = "hand_info" />
     <param name = "/rosee/new_grasping_action_srv_name" value = "new_generic_grasping_action" />
     
     <!-- param for action server -->
@@ -21,9 +23,11 @@
     <param name="rate" value="100.0"/>
     
     <node type="UniversalRosEndEffector" name="UniversalRosEndEffector" pkg="ros_end_effector"/>
+    
     <include file="$(find ros_end_effector)/launch/EEHalExecutor.launch">
         <arg name="gazebo" value="0"/>
         <arg name="hand_name" value="$(arg hand_name)"/> 
+        <arg name="hal_lib" value="$(arg hal_lib)"/> 
     </include>   
 
 
