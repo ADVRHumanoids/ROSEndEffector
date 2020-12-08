@@ -51,15 +51,15 @@ script:
 - cd ../../
 
 # download and install xbot2
-#- wget https://github.com/ADVRHumanoids/XBotControl/releases/download/2.0-devel-core-updated/xenial-latest.tar.gz
-#- tar -xvf xenial-latest.tar.gz && cd xenial-16.04-2020_11_25_20_18_06
-#- sudo ./install.sh
-#- cd ../
+- wget https://github.com/ADVRHumanoids/XBotControl/releases/download/2.0-devel-core-updated/xenial-latest.tar.gz
+- tar -xvf xenial-latest.tar.gz && cd xenial-16.04-2020_11_25_20_18_06
+- sudo ./install.sh
+- cd ../
 
 #Build ROSEE
 - mkdir -p build
 - cd build
-- cmake -DBUILD_documentation=ON -DBUILD_WITH_XBOT2=OFF .. 
+- cmake -DBUILD_documentation=ON -DBUILD_WITH_XBOT2=ON .. 
 - make
 - make dox
 
