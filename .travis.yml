@@ -51,6 +51,8 @@ script:
 - cd ../../
 
 # download and install xbot2
+# xbot dependencies
+- sudo apt-get install libmatio-dev
 - wget https://github.com/ADVRHumanoids/XBotControl/releases/download/2.0-devel-core-updated/xenial-latest.tar.gz
 - tar -xvf xenial-latest.tar.gz && cd xenial-16.04-2020_11_25_20_18_06
 - sudo ./install.sh
