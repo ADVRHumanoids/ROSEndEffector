@@ -59,6 +59,7 @@ script:
 - chmod +x ./setup.sh
 - ./setup.sh
 - cd ../
+- source /opt/xbot/xbot2_setup.sh
 
 #Build ROSEE
 - mkdir -p build
