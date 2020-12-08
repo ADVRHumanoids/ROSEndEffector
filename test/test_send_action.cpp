@@ -7,7 +7,7 @@
 #include <ros_end_effector/ParserMoveIt.h>
 #include <ros_end_effector/FindActions.h>
 #include <ros_end_effector/EEInterface.h>
-#include <ros_end_effector/ActionGeneric.h>
+#include <ros_end_effector/GraspingActions/ActionGeneric.h>
 #include <ros_end_effector/Utils.h>
 #include <ros_end_effector/YamlWorker.h>
 
