@@ -34,9 +34,6 @@ ROSEE::XBot2Hal::XBot2Hal( ros::NodeHandle* nh ) : EEHal ( nh ) {
     
     _robot = XBot::RobotInterface::getRobot(path_to_config_file);
     
-    auto robot = 
-        std::static_pointer_cast<XBot::RobotInterfaceXBot2Rt>(_robot);
-        
     _mr_msg.name.resize(_robot->getJointNum());
     _mr_msg.position.resize(_robot->getJointNum());
     _js_msg.name.resize(_robot->getJointNum());
@@ -48,11 +45,9 @@ ROSEE::XBot2Hal::XBot2Hal( ros::NodeHandle* nh ) : EEHal ( nh ) {
 
 
 bool ROSEE::XBot2Hal::sense() {
-    
     if (! _robot->sense()){
         return false;
     }
-    
     _robot->getJointPosition(_jointPositionActualMap);
     if (_js_msg.name.size() != _jointPositionActualMap.size() ||
         _js_msg.position.size() != _jointPositionActualMap.size()) {

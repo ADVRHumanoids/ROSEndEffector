@@ -35,11 +35,13 @@ bool ROSEE::RosServiceHandler::init(unsigned int nFinger) {
     
     this->nFinger = nFinger;
     
-    std::string graspingActionsSrvName, actionInfoServiceName, selectablePairInfoServiceName,
-        newGraspingActionServiceName;
+    std::string graspingActionsSrvName, actionInfoServiceName, 
+      selectablePairInfoServiceName, handInfoServiceName, newGraspingActionServiceName;
+
     _nh->param<std::string>("/rosee/grasping_action_srv_name", graspingActionsSrvName, "grasping_actions_available");
     _nh->param<std::string>("/rosee/primitive_aggregated_srv_name", actionInfoServiceName, "primitives_aggregated_available");
     _nh->param<std::string>("/rosee/selectable_finger_pair_info", selectablePairInfoServiceName, "selectable_finger_pair_info");
+    _nh->param<std::string>("/rosee/hand_info", handInfoServiceName, "hand_info");
     _nh->param<std::string>("/rosee/new_grasping_action_srv_name", newGraspingActionServiceName, "new_generic_grasping_action");
     
     _serverGraspingActions = _nh->advertiseService(graspingActionsSrvName, 
@@ -51,10 +53,11 @@ bool ROSEE::RosServiceHandler::init(unsigned int nFinger) {
     _server_selectablePairInfo = _nh->advertiseService(selectablePairInfoServiceName, 
         &RosServiceHandler::selectablePairInfoCallback, this);
     
+    _serverHandInfo = _nh->advertiseService(handInfoServiceName, 
+        &RosServiceHandler::handInfoCallback, this);
+
     _serverNewGraspingAction = _nh->advertiseService(newGraspingActionServiceName, 
         &RosServiceHandler::newGraspingActionCallback, this);
-
-
     
     return true;
 }
@@ -364,6 +367,31 @@ bool ROSEE::RosServiceHandler::selectablePairInfoCallback(
     return true;        
 }
 
+bool ROSEE::RosServiceHandler::handInfoCallback(
+        rosee_msg::HandInfo::Request& request,
+        rosee_msg::HandInfo::Response& response) {
+    
+    //empty request for now
+
+    
+    if (! ros::service::exists("/EEHalExecutor/hand_info", false) ) {
+        return false;
+    }
+    
+    ros::ServiceClient handInfoClient = 
+        _nh->serviceClient<rosee_msg::HandInfo>("/EEHalExecutor/hand_info");
+    rosee_msg::HandInfo handInfoMsg;
+    if (handInfoClient.call(handInfoMsg)) {
+        
+        response = handInfoMsg.response;
+        
+    } else {
+        return false;
+    }
+    
+    return true;
+}
+        
 //TODO error msg useless becaus if return false the response is not send
 //at today (2020) it seems there not exist a method to return false plus an error message.
 bool ROSEE::RosServiceHandler::newGraspingActionCallback(

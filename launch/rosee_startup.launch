@@ -3,6 +3,8 @@
     <arg name="gazebo" default="false" />
     <arg name="hand_name"/> 
     <arg name="gdb" default="false"/> <!-- for debug with gdb -->
+    <arg name="hal_lib" default="DummyHal"/>
+
 
     <!-- send urdf to parameter server. This is necessary because sometimes UniversalRosEndEffector can not put them in time and joint state pub crashes-->
     <!-- BE SURE that the values are the same in the ros_ee_config_path file -->
@@ -13,6 +15,7 @@
     <param name = "/rosee/primitive_aggregated_srv_name" value="primitives_aggregated_available" />
     <param name = "/rosee/selectable_finger_pair_info" value="selectable_finger_pair_info" />
     <param name = "/rosee/grasping_action_srv_name" value = "grasping_actions_available" />
+    <param name = "/rosee/hand_info" value = "hand_info" />
     <param name = "/rosee/new_grasping_action_srv_name" value = "new_generic_grasping_action" />
 
     <!-- param for action server -->
@@ -28,7 +31,8 @@
     <include file="$(find ros_end_effector)/launch/EEHalExecutor.launch">
         <arg name="gazebo" value="$(arg gazebo)"/>
         <arg name="hand_name" value="$(arg hand_name)"/> 
-
+        <arg name="hal_lib" value="$(arg hal_lib)"/> 
+        <arg name="gdb" value="$(arg gdb)"/> 
     </include>   
      
     <!-- start robot state publisher to transform joint pos into tf for rviz, so it is always on, gazebo or not -->

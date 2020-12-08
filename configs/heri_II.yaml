@@ -9,22 +9,198 @@ ros_end_effector:
 # the one used by "official" ros plugin http://gazebosim.org/tutorials/?tut=ros_control
 rosee_gazebo_plugins_args: #robot name
   #Controller for each joint. type now is only JointPositionControllerfor JointVelocityController
-  SFB1__SFP1_1_position_controller:
+  motor_finger1_position_controller:
     type: JointPositionController
-    joint_name: SFB1__SFP1_1
+    joint_name: motor_finger1
     pid: {p: 0.3, i: 0.001, d: 0.00005}
 
-  LFB1__LFP1_1_position_controller:
+  motor_finger2_position_controller:
     type: JointPositionController
-    joint_name: LFB1__LFP1_1
+    joint_name: motor_finger2
     pid: {p: 0.3, i: 0.001, d: 0.00005}
 
-  LFB2__LFP2_1_position_controller:
+  motor_finger3_position_controller:
     type: JointPositionController
-    joint_name: LFB2__LFP2_1
+    joint_name: motor_finger3
     pid: {p: 0.3, i: 0.001, d: 0.00005}
     
-  LFB3__LFP3_1_position_controller:
+  motor_thumb_position_controller:
     type: JointPositionController
-    joint_name: LFB3__LFP3_1
+    joint_name: motor_thumb
     pid: {p: 0.3, i: 0.001, d: 0.00005}
+   
+############ XBOT config############################  
+XBotInterface:
+  #urdf_path: "/home/tori/ROSEE/src/ROSEndEffector/configs/urdf/heri_II.urdf"
+  #srdf_path: "/home/tori/ROSEE/src/ROSEndEffector/configs/srdf/heri_II.srdf"
+  urdf_path: "configs/urdf/heri_II.urdf"
+  srdf_path: "configs/srdf/heri_II.srdf"
+  
+ModelInterface:
+  model_type: "RBDL"
+  is_model_floating_base: "false"
+  
+RobotInterface:
+  framework_name: "ROS" 
+
+xbotcore_threads:
+    rt_slow:  {sched: fifo , prio: 60, period: 0.5, core_id: 0}
+    rt_main:  {sched: fifo , prio: 60, period: 0.001, core_id: 2}
+    nrt_main: {sched: other, prio: 0 , period: 0.005}
+  
+xbotcore_devices:
+
+    #joint_gz:
+    #    names: [__joint_srdf__]  # take all joint ids from srdf/urdf
+    #    thread: rt_main  # allocate this device on rt_main thread
+
+    #joint_master:
+    #   master: true  # this is a master device for all 'joint' devices
+    #  thread: rt_main
+    
+    HeriIIBoard:
+        names: ["heri_board"] 
+        thread: rt_main
+ 
+xbotcore_plugins:
+
+    # this plugin is shipped with xbot2, and it generates the
+    # ROS api for the framework
+    # it is not designed to be real-time safe, so it must executed
+    # inside a thread with `other` priority
+    ros_io: {thread: nrt_main, type: ros_io}
+    ros_ctrl: {thread: nrt_main, type: ros_control} 
+
+# additional parameters that don't relate to any plugin 
+xbotcore_param:
+    /jm/tx_filter_autostart: {value: true, type: bool}  # autostart joint filter
+    /jm/tx_filter_cutoff: {value: 2.0, type: double}    # set default filter bandwidth
+    /xbot_internal/ros_io/call_timeout: {value: 1.0, type: chrono}
+    /rt_slow/memory_hooks: {value: false, type: bool}
+    /jm/enable_safety: {value: false, type: bool}
+          
+################## Specific info for rosee planner ############################
+hand_info:
+  #The order here will be the order followed by the other info
+  fingers_names: [finger_1, finger_2, finger_3, thumb]
+  motors_names: [motor_finger1, motor_finger2, motor_finger3, motor_thumb]
+  #
+  tips_jacobians: #a [n_joints x 6] matrix for each fingertips (ie contact point)
+    finger_1:
+      - [532.80990646, 0.0, 342.49522219, 1, 2, 3]
+      - [0.0, 532.93344713, 233.88792491, 1, 2, 3]
+      - [0.0, 0.0, 1.0, 1, 2, 3]
+      - [532.80990646, 0.0, 342.49522219, 1 , 2, 3]
+      - [0.0, 532.93344713, 233.88792491, 1, 2, 3]
+      - [0.0, 0.0, 1.0, 1, 2, 3]
+      - [532.80990646, 0.0, 342.49522219, 1 , 2 , 3]
+      - [0.0, 532.93344713, 233.88792491, 1, 2, 3]
+      - [0.0, 0.0, 1.0, 1, 2, 3]
+      - [532.80990646, 0.0, 342.49522219, 1 , 2 , 3]
+      - [0.0, 532.93344713, 233.88792491, 1, 2, 3]
+    finger_2:
+      - [532.80990646, 0.0, 342.49522219, 1 , 2 , 3]
+      - [0.0, 532.93344713, 233.88792491, 1, 2, 3]
+      - [0.0, 0.0, 1.0, 1, 2, 3]
+      - [532.80990646, 0.0, 342.49522219, 1 , 2 , 3]
+      - [0.0, 532.93344713, 233.88792491, 1, 2, 3]
+      - [0.0, 0.0, 1.0, 1, 2, 3]
+      - [532.80990646, 0.0, 342.49522219, 1 , 2 , 3]
+      - [0.0, 532.93344713, 233.88792491, 1, 2, 3]
+      - [0.0, 0.0, 1.0, 1, 2, 3]
+      - [532.80990646, 0.0, 342.49522219, 1 , 2 , 3]
+      - [0.0, 532.93344713, 233.88792491, 1, 2, 3]
+    finger_3:
+      - [532.80990646, 0.0, 342.49522219, 1 , 2 , 3]
+      - [0.0, 532.93344713, 233.88792491, 1, 2, 3]
+      - [0.0, 0.0, 1.0, 1, 2, 3]
+      - [532.80990646, 0.0, 342.49522219, 1 , 2 , 3]
+      - [0.0, 532.93344713, 233.88792491, 1, 2, 3]
+      - [0.0, 0.0, 1.0, 1, 2, 3]
+      - [532.80990646, 0.0, 342.49522219, 1 , 2 , 3]
+      - [0.0, 532.93344713, 233.88792491, 1, 2, 3]
+      - [0.0, 0.0, 1.0, 1, 2, 3]
+      - [532.80990646, 0.0, 342.49522219, 1 , 2 , 3]
+      - [0.0, 532.93344713, 233.88792491, 1, 2, 3]
+    thumb:
+      - [532.80990646, 0.0, 342.49522219, 1 , 2 , 3]
+      - [0.0, 532.93344713, 233.88792491, 1, 2, 3]
+      - [0.0, 0.0, 1.0, 1, 2, 3]
+      - [532.80990646, 0.0, 342.49522219, 1 , 2 , 3]
+      - [0.0, 532.93344713, 233.88792491, 1, 2, 3]
+      - [0.0, 0.0, 1.0, 1, 2, 3]
+      - [532.80990646, 0.0, 342.49522219, 1 , 2 , 3]
+      - [0.0, 532.93344713, 233.88792491, 1, 2, 3]
+      - [0.0, 0.0, 1.0, 1, 2, 3]
+      - [532.80990646, 0.0, 342.49522219, 1 , 2 , 3]
+      - [0.0, 532.93344713, 233.88792491, 1, 2, 3]
+  #
+  transmission_matrix: #[n_joints x n_motors]
+    - [532.80990646, 0.0, 342.49522219, 1]
+    - [0.0, 532.93344713, 233.88792491, 1]
+    - [0.0, 0.0, 1.0, 1, 2, 3]
+    - [532.80990646, 0.0, 342.49522219, 1 ]
+    - [0.0, 532.93344713, 233.88792491, 1]
+    - [0.0, 0.0, 1.0, 1]
+    - [532.80990646, 0.0, 342.49522219, 1 ]
+    - [0.0, 532.93344713, 233.88792491, 1]
+    - [0.0, 0.0, 1.0, 1]
+    - [532.80990646, 0.0, 342.49522219, 1]
+    - [0.0, 532.93344713, 233.88792491, 1]
+  #
+  motors_stiffness_diagonal: [1, 2, 3, 4]
+  tips_frictions: [1, 1, 1, 1]
+  tips_force_limits: [1, 1, 1, 1]
+  # I know this below can be in the urdf... but EEHal for now does not have access to urdf
+  motors_torque_limits: [1, 1, 1, 1]
+
+##############
+### real hand
+##############
+
+ec_board_ctrl :
+  #eth_iface: rteth0
+  eth_iface: enp3s0
+  #sync_cycle_time_ns: 500000
+  #sync_cycle_time_ns: 1000000
+  #sync_cycle_time_ns: 2000000
+  #sync_cycle_time_ns: 5000000
+  #sync_cycle_time_ns: 10000000
+  #sync_cycle_time_ns: 100000000
+  sync_cycle_time_ns: 0
+  sync_cycle_offset_ns: 1000000000
+  sync_point_ns : 500000
+  power_off_boards: false
+  reset_micro : true
+  
+ec_boards_base :
+  app_mode : run_mode
+  #app_mode : config_mode
+  robot_name : NoNe
+  read_SDOs : false
+  use_pipes : true
+  log_level : 1
+  #fault_power_off : true
+  # only for TestESC
+  #use_ecat_pos_as_id : true
+
+LpESC_X:
+  sign: 1
+  pos_offset: 0
+  control_mode : 3B_motor_pos_ctrl
+  pid :
+    position: [100000.0 , 0.0 , 1.0]
+
+LpHandESC_X:
+  sign: 1
+  pos_offset: 0
+  control_mode : 3B_motor_pos_ctrl
+  pid :
+    position: [100000.0 , 0.0 , 1.0]
+
+HeriHandESC_X:
+  sign: 1
+  pos_offset: 0
+  control_mode : 3B_motor_pos_ctrl
+  pid :
+    position: [100000.0 , 0.0 , 1.0]

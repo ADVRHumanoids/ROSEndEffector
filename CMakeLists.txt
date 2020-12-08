@@ -32,8 +32,6 @@ if (BUILD_WITH_XBOT2)
     message("Compiling with XBOT2")
     option(XBOT2_ENABLE_XENO OFF "Compile against xenomai") #TODO necessary?
     find_package(xbot2 REQUIRED)
-    add_xbot2_device(XBot2HalCommunication src/HAL/XBot2HalCommunication.cpp)
-    #install(TARGETS XBot2HalCommunication DESTINATION lib)
 
 else()
     message("Compiling without XBOT2")
@@ -50,7 +48,7 @@ endif(BUILD_WITH_XBOT2)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  INCLUDE_DIRS include
+    INCLUDE_DIRS include
 #  LIBRARIES ros_end_effector
 #  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
@@ -83,13 +81,11 @@ add_library(EEHal
 )
 
 if (BUILD_WITH_XBOT2)
+
     add_library(XBot2Hal
-        src/HAL/XBot2Hal.cpp 
+        src/HAL/XBot2Hal.cpp
     )
 
-    add_library(XBot2HalDevice
-        src/HAL/XBot2HalDevice.cpp 
-    )
 endif(BUILD_WITH_XBOT2)
 
 
@@ -115,6 +111,10 @@ add_library(RosActionServer
 
 add_library(RosServiceHandler
     src/RosServiceHandler.cpp
+)
+
+add_library(HandInfoServices
+    src/HandInfoServices.cpp
 )
 
 add_library(MapActionHandler
@@ -195,21 +195,6 @@ target_link_libraries(UniversalRosEndEffectorExecutor
     
 )
 
-if(BUILD_WITH_XBOT2)
-    target_link_libraries(XBot2Hal
-    #XBot2HalCommunication
-    xbot2::xbot2
-    EEHal
-    )
-
-    target_link_libraries(XBot2HalDevice
-    #XBot2HalCommunication
-    xbot2::xbot2
-    EEHal
-    )
-endif(BUILD_WITH_XBOT2)
-
-
 target_link_libraries(YamlWorker
     yaml-cpp
     Action
@@ -240,6 +225,11 @@ target_link_libraries(RosServiceHandler
     ${catkin_LIBRARIES}
 )
 add_dependencies(RosServiceHandler rosee_msg_generate_messages_cpp)
+
+target_link_libraries(HandInfoServices
+    ${catkin_LIBRARIES}
+)
+add_dependencies(HandInfoServices rosee_msg_generate_messages_cpp)
 
 target_link_libraries(ActionPinchTight
     ActionPinchGeneric
@@ -293,11 +283,6 @@ target_link_libraries(ParserMoveIt
     ${catkin_LIBRARIES}
 )
 
-target_link_libraries(DummyHal
-    ${catkin_LIBRARIES}
-    EEHal 
-)
-
 target_link_libraries(UniversalRosEndEffector
     UniversalRosEndEffectorExecutor
     
@@ -318,23 +303,24 @@ target_link_libraries(UniversalFindActions
     MapActionHandler
 )
 
+target_link_libraries(EEHalExecutor
+    ${catkin_LIBRARIES}
+    EEHal
+    HandInfoServices
+    yaml-cpp
+    #KEEP THIS. ERROR HAPPENS OTHERWISE
+    XBot2Hal
+)
+
+target_link_libraries(DummyHal
+    ${catkin_LIBRARIES}
+    EEHal 
+)
+
 if(BUILD_WITH_XBOT2)
-    target_link_libraries(EEHalExecutor
-        ${catkin_LIBRARIES}
+    target_link_libraries(XBot2Hal
+        xbot2::xbot2
         EEHal
-        DummyHal
-        XBot2Hal
-        XBot2HalDevice
-        #TODO how to automatically add new concrete hals here? We include all files from a specific folder
-        # containing only hals?
-    )
-else()
-    target_link_libraries(EEHalExecutor
-        ${catkin_LIBRARIES}
-        EEHal
-        DummyHal
-        #TODO how to automatically add new concrete hals here? We include all files from a specific folder
-        # containing only hals?
     )
 endif(BUILD_WITH_XBOT2)
 

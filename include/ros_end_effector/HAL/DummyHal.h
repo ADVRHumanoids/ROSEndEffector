@@ -27,7 +27,6 @@
 
 namespace ROSEE {
     
-    
     /**
      * @brief Class representing an end-effector
      * 
@@ -42,8 +41,8 @@ namespace ROSEE {
         DummyHal( ros::NodeHandle* nh);
         virtual ~DummyHal() {};
         
-        virtual bool sense();
-        virtual bool move();
+        virtual bool sense() override;
+        virtual bool move() override;
       
     private:
         /**
@@ -60,6 +59,7 @@ namespace ROSEE {
         
     };
     
+HAL_CREATE_OBJECT(DummyHal)    
 }
 
-#endif // __ROSEE_I_DUMMY_HAL__
+#endif // __ROSEE_DUMMY_HAL__

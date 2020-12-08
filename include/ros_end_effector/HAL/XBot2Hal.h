@@ -2,7 +2,6 @@
 #define __ROSEE_XBOT2_HAL__
 
 #include <ros_end_effector/HAL/EEHal.h>
-#include <ros_end_effector/HAL/XBot2HalCommunication.h>
 #include <xbot2/xbot2.h>
 #include <xbot2/robot_interface/robot_interface_xbot_rt.h>
 #include <std_srvs/SetBool.h>
@@ -28,9 +27,9 @@ public:
     XBot2Hal( ros::NodeHandle* nh );
     virtual ~XBot2Hal() { };
     
-    bool sense() ;
+    virtual bool sense() override;
     
-    bool move() ;
+    virtual bool move() override;
         
 private:
     
@@ -40,7 +39,7 @@ private:
 
 };
 
-
+HAL_CREATE_OBJECT(XBot2Hal)
     
 } //namespace roseee
 
