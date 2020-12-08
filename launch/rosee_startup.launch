@@ -16,6 +16,7 @@
     <param name = "/rosee/selectable_finger_pair_info" value="selectable_finger_pair_info" />
     <param name = "/rosee/grasping_action_srv_name" value = "grasping_actions_available" />
     <param name = "/rosee/hand_info" value = "hand_info" />
+    <param name = "/rosee/new_grasping_action_srv_name" value = "new_generic_grasping_action" />
 
     <!-- param for action server -->
     <param name = "/rosee/rosAction_grasping_command" value="action_command" />

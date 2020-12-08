@@ -69,6 +69,7 @@ public:
      * @return std::string the filename (with the path) of the file created/overwritten
      */                             
     std::string createYamlFile ( const Action* action, std::string pathFolder) ;
+    std::string createYamlFile ( const ActionGeneric::Ptr, std::string pathFolder) ;
         
     /**
      * @brief Parse a yaml file and return the map with all the actions present in the file. 
@@ -107,6 +108,7 @@ private:
      * @return std::string a string formatted as yaml file, ready to be put in the file
      */
     std::string emitYaml  ( const Action* action) ;
+    std::string emitYaml  ( const ActionGeneric::Ptr action) ;
 
 
 
