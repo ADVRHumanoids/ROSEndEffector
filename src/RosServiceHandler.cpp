@@ -388,6 +388,9 @@ bool ROSEE::RosServiceHandler::handInfoCallback(
     } else {
         return false;
     }
+    
+    return true;
+}
         
 //TODO error msg useless becaus if return false the response is not send
 //at today (2020) it seems there not exist a method to return false plus an error message.

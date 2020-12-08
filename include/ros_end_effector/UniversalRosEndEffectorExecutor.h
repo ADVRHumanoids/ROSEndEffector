@@ -65,7 +65,7 @@ private:
     bool init_motor_reference_pub();
     bool init_qref_filter();    
     void init_joint_state_sub();
-    bool init_grapsing_primitive();    
+    bool init_grasping_primitive();    
 
     bool publish_motor_reference();
     
