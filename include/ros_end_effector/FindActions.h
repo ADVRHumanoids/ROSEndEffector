@@ -12,6 +12,8 @@
 #include <ros_end_effector/GraspingActions/ActionSingleJointMultipleTips.h>
 #include <ros_end_effector/GraspingActions/ActionMultiplePinchTight.h>
 
+#include <muParser.h>
+
 
 #define N_EXP_COLLISION 5000 //5000 is ok
 #define N_EXP_DISTANCES 5000 //? is ok
@@ -80,6 +82,9 @@ public:
 private:
     
     std::shared_ptr < ROSEE::ParserMoveIt > parserMoveIt;
+    
+    //lets store this, we access at each setRandomPos
+    std::map<std::string, std::pair<std::string, std::string>> mimicNLRelMap;
     
     /**
      * @brief principal function which check for collisions with moveit functions when looking for tight pinches
@@ -259,7 +264,8 @@ private:
     
     /**
      * @brief set to \ref DEFAULT_JOINT_POS all the passive joints (defined so in
-     * the urdf file)
+     * the urdf file). this is necessary because moveit setToRandomPositions modify the position of passive joints,
+     * we do not want that
      */
     void setToDefaultPositionPassiveJoints(moveit::core::RobotState * kinematic_state);
     
@@ -289,7 +295,17 @@ private:
      */
     std::pair < std::string, std::string > getFingertipsPair (std::pair <std::string, std::string> fingersPair) const;
 
-
+    /**
+     * @brief This function set the random position of joint considering:
+     * 
+     *   - Non linear mimic joint relationship, if present
+     *   - Passive joints, which default position will be assured
+     *   - Positional limit of also mimic joint will be enforced
+     * 
+     *   These three things are not present in the moveit setToRandomPositions. So we use the moveit one but then 
+     *   we change a bit the things.
+     */
+    void setToRandomPositions(robot_state::RobotState* kinematic_state);
 
 
 };

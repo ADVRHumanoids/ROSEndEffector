@@ -1,0 +1,5 @@
+#WARNING: DO NOT USE TAB FOR IDENT YAML FILE: This is not permitted by the YAML spec
+## urdf and srdf filename
+ros_end_effector:
+  urdf_path: "urdf/heri_II_NL.urdf"
+  srdf_path: "srdf/heri_II_NL.srdf"
