@@ -13,17 +13,17 @@
      relationship, so please use the fork https://github.com/torydebra/roboticsgroup_gazebo_plugins 
 -->
   
-<!--	<gazebo>
+	<gazebo>
     <plugin filename="libRoseePlugin.so" name="heri_controller">
       </plugin>
-  </gazebo>-->
+  </gazebo>
 
 
 <!-- Plugin to make simulated heri works with xbot and gazebo. To be used with XBot2Hal
 		 The gains for mimics are all zero for mimic because the libroboticsgroup_gazebo_mimic_joint_plugin
      will move them (please use the same fork above). 
 -->  
-  <gazebo>
+<!--  <gazebo>
     <plugin name='xbot2_gz_joint_server' filename='libxbot2_gz_joint_server.so'>
       <pid>
 		    <gain name="small_mot"  p="0.3"  d="0.00005"/>
@@ -58,7 +58,7 @@
 		    <gain name="LFP1_2__LFP1_3" profile="null"/>      
       </pid>
     </plugin>
-	</gazebo>
+	</gazebo>-->
   <!-- /////////////////////////////////   Gazebo   ////////////////////////////////////// -->
   <gazebo reference="base_link">
     <fudgeFactor value="0.5"/>
