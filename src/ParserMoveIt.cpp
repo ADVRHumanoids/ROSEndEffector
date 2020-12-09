@@ -30,7 +30,7 @@ bool ROSEE::ParserMoveIt::init ( std::string robot_description, bool verbose ) {
         std::cerr << "[PARSER::"  << __func__ << "]: init() already called by someone " << std::endl;;
         return false;
     }
-    // it is a ros param in the launch, take care that also sdrf is read 
+    // it is a ros param in the launch, take care that also sdrf is read by robot_mo
     // (param for srd is robot_description_semantic)
     this->robot_description = robot_description;
     
@@ -133,6 +133,56 @@ std::string ROSEE::ParserMoveIt::getFingertipOfFinger (std::string fingerName) c
         return "";
     }
 }
+
+std::pair<std::string, std::string> ROSEE::ParserMoveIt::getMimicNLFatherOfJoint(std::string mimicNLJointName) const {
+    
+    std::pair<std::string, std::string> retPair;
+    
+    auto it = mimicNLFatherOfJointMap.find(mimicNLJointName);
+    
+    if (it != mimicNLFatherOfJointMap.end()) {
+        retPair = it->second;
+    }
+    return retPair;
+}
+
+std::map<std::string, std::pair<std::string, std::string>> ROSEE::ParserMoveIt::getMimicNLFatherOfJointMap() const {
+    
+    return mimicNLFatherOfJointMap;
+    
+}
+
+std::string ROSEE::ParserMoveIt::getMimicNLJointOfFather(std::string mimicNLFatherName, std::string mimicNLJointName) const {
+    
+    auto map = getMimicNLJointsOfFather(mimicNLFatherName);
+    
+    auto it = map.find(mimicNLJointName);
+    
+    if (it != map.end()) {
+        return it->second;
+    }
+    
+    return "";
+}
+
+std::map<std::string, std::string> ROSEE::ParserMoveIt::getMimicNLJointsOfFather(std::string mimicNLFatherName) const {
+    
+    std::map<std::string, std::string> map;
+    
+    auto it = mimicNLJointsOfFatherMap.find(mimicNLFatherName);
+    
+    if (it != mimicNLJointsOfFatherMap.end()) {
+        map = it->second;
+    }
+    return map;
+}
+
+std::map<std::string, std::map<std::string, std::string>> ROSEE::ParserMoveIt::getMimicNLJointsOfFatherMap() const {
+    
+    return mimicNLJointsOfFatherMap;
+    
+}
+
 
 robot_model::RobotModelPtr ROSEE::ParserMoveIt::getCopyModel() const {
     robot_model_loader::RobotModelLoader robot_model_loader(robot_description); 
@@ -442,7 +492,8 @@ void ROSEE::ParserMoveIt::lookForFingertips(bool verbose) {
 
 void ROSEE::ParserMoveIt::lookForActiveJoints() { 
     
-    for (auto joint : robot_model->getActiveJointModels() ) { //this function return not fixed not mimic but CAN return PASSIVE joints
+    for (auto joint : robot_model->getActiveJointModels() ) { 
+        // robot_model->getActiveJointModels() returns not fixed not mimic but CAN return PASSIVE joints
         if (! joint->isPassive() ) {
             activeJointNames.push_back(joint->getName());
             activeJointModels.push_back(joint);
@@ -524,5 +575,39 @@ void ROSEE::ParserMoveIt::getRealDescendantLinkModelsRecursive (
         //recursion
         getRealDescendantLinkModelsRecursive( cj->getChildLinkModel(), linksVect, cj, jointsVect );
     }
+    
+}
+
+
+void ROSEE::ParserMoveIt::parseNonLinearMimicRelations (std::string xml) {
+        
+        
+    //we do not make urdf verification here, it is already done before by robot model loader of moveit,
+    //and also by Parser with parseUrdf
+    TiXmlDocument tiDoc;
+    tiDoc.Parse(xml.c_str());
+    //std::cout << robot_description << std::endl;
+    TiXmlElement* jointEl = tiDoc.FirstChildElement("robot")->FirstChildElement("joint") ;
+            
+    while (jointEl) {
+        
+        std::string jointName = jointEl->Attribute("name");
+        auto mimicEl = jointEl->FirstChildElement("mimic");
+        if (mimicEl) {
+            auto nlAttr = mimicEl->Attribute("nlFunPos");
+            if (nlAttr) {
+                //std::cout << jointName << std::endl;
+                //std::cout << nlAttr << std::endl;
+                //std::cout << mimicEl->Attribute("joint") << std::endl;
+                std::string fatherName = mimicEl->Attribute("joint");
+                mimicNLFatherOfJointMap.insert ( std::make_pair( jointName,
+                                                        std::make_pair(fatherName, nlAttr)) );
+                
+                mimicNLJointsOfFatherMap[fatherName].insert(std::make_pair(jointName, nlAttr)) ;
+            }
+        }
+        
+        jointEl = jointEl->NextSiblingElement("joint");
+    }                
     
 }
