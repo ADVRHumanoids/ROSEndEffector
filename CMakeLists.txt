@@ -24,6 +24,10 @@ find_package(catkin REQUIRED COMPONENTS srdfdom
                                                                                
 # find_package(matlogger2 REQUIRED)
 find_package(Eigen3 REQUIRED)
+#TODO on my pc, find_package works. On iit pc, I need the find_library. Why?
+#find_package(muparser REQUIRED) 
+find_library(_MUPARSER_LIB muparser REQUIRED)
+find_package(yaml-cpp REQUIRED)
 
 #Xbot stuff
 option(BUILD_WITH_XBOT2 "Compile also the HAL used with XBot2" ON)
@@ -277,6 +281,7 @@ target_link_libraries(FindActions
     ActionPinchLoose
     ActionSingleJointMultipleTips
     ActionMultiplePinchTight
+    muparser
 )
 
 target_link_libraries(ParserMoveIt

@@ -35,17 +35,20 @@ XBotInterface:
   #srdf_path: "/home/tori/ROSEE/src/ROSEndEffector/configs/srdf/heri_II.srdf"
   urdf_path: "configs/urdf/heri_II.urdf"
   srdf_path: "configs/srdf/heri_II.srdf"
+  joint_map_path: "configs/heri_II_jp.yaml"
   
 ModelInterface:
   model_type: "RBDL"
   is_model_floating_base: "false"
   
 RobotInterface:
-  framework_name: "ROS" 
+  framework_name: "ROS"
 
 xbotcore_threads:
-    rt_slow:  {sched: fifo , prio: 60, period: 0.5, core_id: 0}
+    #rt_slow:  {sched: fifo , prio: 60, period: 0.5, core_id: 0}
     rt_main:  {sched: fifo , prio: 60, period: 0.001, core_id: 2}
+    heri_nrt_main: {sched: other, prio: 0 , period: 0.001}
+    heri_nrt_2: {sched: other, prio: 0 , period: 0.001}
     nrt_main: {sched: other, prio: 0 , period: 0.005}
   
 xbotcore_devices:
@@ -54,13 +57,13 @@ xbotcore_devices:
     #    names: [__joint_srdf__]  # take all joint ids from srdf/urdf
     #    thread: rt_main  # allocate this device on rt_main thread
 
-    #joint_master:
-    #   master: true  # this is a master device for all 'joint' devices
-    #  thread: rt_main
+    joint_master:
+      master: true  # this is a master device for all 'joint' devices
+      thread: rt_main
     
     HeriIIBoard:
-        names: ["heri_board"] 
-        thread: rt_main
+        names: ["heri_board_112", "heri_board_113"]
+        thread: heri_nrt_main
  
 xbotcore_plugins:
 
@@ -69,7 +72,11 @@ xbotcore_plugins:
     # it is not designed to be real-time safe, so it must executed
     # inside a thread with `other` priority
     ros_io: {thread: nrt_main, type: ros_io}
-    ros_ctrl: {thread: nrt_main, type: ros_control} 
+    #ros_ctrl: {thread: nrt_main, type: ros_control} 
+    
+    HeriIIXBot2Plugin:
+        thread: heri_nrt_2
+        type: HeriIIXBot2Plugin
 
 # additional parameters that don't relate to any plugin 
 xbotcore_param:

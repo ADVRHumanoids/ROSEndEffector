@@ -1,0 +1,780 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot name="heri_II_NL" xmlns:xacro="http://ros.org/wiki/xacro">
+
+	<xacro:property name="exp" value="2.71828" />
+
+    <!-- macro to for non linear functions, that are the same for each fingers-->
+  <xacro:macro name="mimic_non_linear_long_finger" params="father_joint phalange regression_level:=high">
+  
+  	<xacro:if value="${phalange == 'proximal'}">    <!-- joint of the first phalange -->
+
+			<xacro:if value="${regression_level == 'high'}">
+				<xacro:property name="a" value="${[0.08519, 21500000000000, -714900,  0.2555]}"/>
+				<xacro:property name="b" value="${[0.9172,  32.2,           -17.93,   0.7317]}"/>
+				<xacro:property name="c" value="${[0.1817,  5.513,          4.61,     1.105]}"/>
+				<mimic joint="${father_joint}" nlFunPos="${a[0]}*${exp}^(-((x-${b[0]})/${c[0]})^2) + ${a[1]}*${exp}^(-((x-${b[1]})/${c[1]})^2) + ${a[2]}*${exp}^(-((x-${b[2]})/${c[2]})^2) + ${a[3]}*${exp}^(-((x-${b[3]})/${c[3]})^2)"/>
+			</xacro:if>
+			
+    </xacro:if>
+    
+    
+	  <xacro:if value="${phalange == 'middle'}">    <!-- joint of the 2 phalange -->
+	 
+			<xacro:if value="${regression_level == 'low'}">
+				<xacro:property name="p" value="${[-0.2668, 0.8847 , -0.01172]}"/>
+				<mimic joint="${father_joint}" nlFunPos="${p[0]}*x^2 + ${p[1]}*x + ${p[2]}"/>
+			</xacro:if>
+			
+			<xacro:if value="${regression_level == 'medium'}">
+				<xacro:property name="p" value="${[-0.4089, 0.3219, 0.679, 0.0003435]}"/>
+				<mimic joint="${father_joint}" nlFunPos="${p[0]}*x^3 + ${p[1]}*x^2 + ${p[2]}*x + ${p[3]}"/>
+			</xacro:if>
+			
+			<xacro:if value="${regression_level == 'high'}">
+				<xacro:property name="p" value="${[-0.1028, 0.4311, -0.6019, 0.9364,  -0.01132]}"/>
+				<mimic joint="${father_joint}" nlFunPos="${p[0]}*x^4 + ${p[1]}*x^3 + ${p[2]}*x^2 +${p[3]}*x + ${p[4]}"/>
+			</xacro:if>
+			
+    </xacro:if>
+    
+    
+	  <xacro:if value="${phalange == 'distal'}">    <!-- joint of the 3 phalange -->
+	 
+			<xacro:if value="${regression_level == 'low'}">
+				<xacro:property name="p" value="${[-0.2502, 0.5836, -0.001989]}"/>
+				<mimic joint="${father_joint}" nlFunPos="${p[0]}*x^2 + ${p[1]}*x + ${p[2]}"/>
+			</xacro:if>
+			
+			<xacro:if value="${regression_level == 'medium'}">
+				<xacro:property name="p" value="${[-0.06593, -0.1553, 0.5505, -0.00004385]}"/>
+				<mimic joint="${father_joint}" nlFunPos="${p[0]}*x^3 + ${p[1]}*x^2 + ${p[2]}*x + ${p[3]}"/>
+			</xacro:if>
+			
+			<xacro:if value="${regression_level == 'high'}">
+				<xacro:property name="p" value="${[-0.06965, 0.4258, -0.7659, 0.3528, 0.4078, 0.007414]}"/>
+				<mimic joint="${father_joint}" nlFunPos="${p[0]}*x^5 + ${p[1]}*x^4 + ${p[2]}*x^3 +${p[3]}*x^2 + ${p[4]}*x + ${p[5]}"/>
+			</xacro:if>
+			
+    </xacro:if>
+      
+	</xacro:macro>
+	
+	
+  <xacro:macro name="mimic_non_linear_short_finger" params="father_joint phalange regression_level:=high">
+      
+   	  <xacro:if value="${phalange == 'proximal'}">    <!-- joint of the first phalange of thumb -->
+  	 
+				<xacro:if value="${regression_level == 'low'}">
+  				<xacro:property name="p" value="${[1.93, -1.221, 1.145, 0.001959]}"/>
+					<mimic joint="${father_joint}" nlFunPos="${p[0]}*x^3 + ${p[1]}*x^2 + ${p[2]}*x + ${p[3]}"/>
+				</xacro:if>
+				
+				<xacro:if value="${regression_level == 'high'}">
+  				<xacro:property name="p" value="${[0.3378, -1.179, 1.103, 0.7363, 0.01468]}"/>
+					<mimic joint="${father_joint}" nlFunPos="${p[0]}*x^4 + ${p[1]}*x^3 + ${p[2]}*x^2 + ${p[3]}*x + ${p[4]}"/>
+				</xacro:if>
+				
+      </xacro:if>
+      
+   	  <xacro:if value="${phalange == 'distal'}">    <!-- joint of the 2 phalange of thumb -->
+  	 
+				<xacro:if value="${regression_level == 'low'}">
+  				<xacro:property name="p" value="${[-1.014, 1.182, -0.009797]}"/>
+					<mimic joint="${father_joint}" nlFunPos="${p[0]}*x^2 + ${p[1]}*x + ${p[2]}"/>
+				</xacro:if>
+				
+				<xacro:if value="${regression_level == 'high'}">
+  				<xacro:property name="p" value="${[-0.3366, 1.674, -2.506, 1.552, -0.02812]}"/>
+					<mimic joint="${father_joint}" nlFunPos="${p[0]}*x^4 + ${p[1]}*x^3 + ${p[2]}*x^2 + ${p[3]}*x + ${p[4]}"/>
+				</xacro:if>
+				
+      </xacro:if>
+        		
+	</xacro:macro>
+	
+  <!-- Import all Gazebo-customization elements, including Gazebo colors -->
+  <xacro:include filename="$(find ros_end_effector)/configs/urdf/iit_heri_ros.gazebo" />
+
+  <!-- Import Rviz colors -->
+  <xacro:include filename="$(find ros_end_effector)/configs/urdf/materials.xacro" />
+
+  <!-- ///////////////////////////////////////   Short Finger   ////////////////////////////////////////// -->
+  <!-- ///////////////////////////////////////   base_link   ////////////////////////////////////////// -->
+  <link name="world"/>
+
+  <joint name="world_base" type="fixed">
+    <!-- z!= from 1 is necessary because otherwise the hand has tremors. I think this is because it compentetrate
+     with the terrain ? -->
+    <origin xyz="0 0 0.015" rpy="0 0 0" />
+    <parent link="world" />
+    <child link="base_link"/>
+  </joint>
+  
+  <link name="base_link">
+    <inertial>
+      <origin xyz="0.00030739 0.003138 -0.0012876" rpy="0 0 0" />
+      <mass value="0.73864" />
+      <inertia ixx="0.0010292" ixy="-6.0935E-06" ixz="1.0739E-05" iyy="0.0011781" iyz="1.3882E-05" izz="0.00089393" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/base_heri_ii.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/base_heri_ii.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <!-- I Put motors as joints, linked to tree with virtual links  -->
+  <link name="motor_finger1_virtual_link">
+   <inertial> <!-- We need inertial otherwise gazebo does not load the motor joints. I put very low inertia-->
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+  </link>
+  <link name="motor_finger2_virtual_link">
+   <inertial> <!-- We need inertial otherwise gazebo does not load the motor joints. I put very low inertia-->
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+  </link>
+  <link name="motor_finger3_virtual_link">
+     <inertial> <!-- We need inertial otherwise gazebo does not load the motor joints. I put very low inertia-->
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+  </link>
+  <link name="motor_thumb_virtual_link">
+     <inertial> <!-- We need inertial otherwise gazebo does not load the motor joints. I put very low inertia-->
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+  </link>
+  <joint name="motor_finger1" type="revolute">
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="motor_finger1_virtual_link"/>
+    <limit lower="0" upper="2.5" effort="10" velocity="1" />
+    <dynamics damping="0.003" friction="0.003"/>
+  </joint>
+  <joint name="motor_finger2" type="revolute">
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="motor_finger2_virtual_link"/>
+    <limit lower="0" upper="2.5" effort="10" velocity="1" />
+    <dynamics damping="0.003" friction="0.003"/>
+  </joint>
+  <joint name="motor_finger3" type="revolute">
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="motor_finger3_virtual_link"/>
+    <limit lower="0" upper="2.5" effort="10" velocity="1" />
+    <dynamics damping="0.003" friction="0.003"/>
+  </joint>
+  <joint name="motor_thumb" type="revolute">
+    <origin xyz="7.6421E-05 -0.031634 0.1213" rpy="1.5708 -1.5708 0" />
+    <parent link="base_link"/>
+    <child link="motor_thumb_virtual_link"/>
+    <limit lower="0" upper="2" effort="10" velocity="1" />
+    <dynamics damping="0.003" friction="0.003"/>
+  </joint>
+
+  <!-- ///////////////////////////////////////   Base_Link of the short_finger   ////////////////////////////////////////// -->
+  <link name="SFB1">
+    <inertial>
+      <origin xyz="3.9400487E-03 0 6.4488006E-03" rpy="0 0 0" />
+      <mass value="4.1065000E-03" />
+      <inertia ixx="4.3061452E-07" ixy="0" ixz="-1.2027573E-07" iyy="3.9605806E-07" iyz="0" izz="3.9738552E-07" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/SFB1.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/SFB1.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- ///////////////////////////////////////   Joint of BASE and the base_link of the short finger   ////////////////////////////////////////// -->
+  <joint name="BASE__SFB1" type="revolute">
+    <origin xyz="7.6421E-05 -0.031634 0.1213" rpy="1.5708 -1.5708 0" />
+    <parent link="base_link" />
+    <child link="SFB1" />
+    <axis xyz="0 0 1" />
+    <limit lower="-0.1" upper="0.1" effort="10" velocity="1" />
+    <dynamics damping="0.003" friction="0.003"/>
+  </joint>
+
+  <!-- ///////////////////////////////////////   First phalanx of the Short_Finger   ////////////////////////////////////////// -->
+  <link name="SFB1_1">
+    <inertial>
+      <origin xyz="0.013537693 -0.00011389541 0.00014514898" rpy="0 0 0" />
+      <mass value="0.021630428" />
+      <inertia ixx="1.7547572E-06" ixy="1.2425281E-07" ixz="-5.2776703E-08" iyy="7.3422819E-06" iyz="-1.1395559E-09" izz="7.1587820E-06" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/SFB1_1.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/SFB1_1.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- ///////////////////////////////////////   Joint of base_link and the first phalanx of the short finger   ////////////////////////////////////////// -->
+  <joint name="SFB1__SFP1_1" type="revolute">
+    <origin xyz="0.0211 0 0.007" rpy="1.5708 -0.29671 0" />
+    <parent link="SFB1" />
+    <child link="SFB1_1" />
+    <axis xyz="0 0 -1" />
+    <limit lower="-0.1" upper="1.22" effort="10" velocity="1" />
+    <dynamics damping="0.003" friction="0.003"/>
+    <xacro:mimic_non_linear_short_finger father_joint="motor_thumb" phalange="proximal" />
+  </joint>
+
+  <!-- ///////////////////////////////////////   Tip phalanx of the short finger   ////////////////////////////////////////// -->
+  <link name="SFP1_2">
+    <inertial>
+      <origin xyz="0.012398348 -0.00034958691 0.000050212619" rpy="0 0 0" />
+      <mass value="0.02226615" />
+      <inertia ixx="1.7400409E-06" ixy="4.4309075E-07" ixz="-1.3771833E-08" iyy="6.8917616E-06" iyz="6.4562527E-09" izz="6.4653229E-06" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/SFP1_2.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/SFP1_2.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- ///////////////////////////////////////   Joint of first and tip phalanxs of the short finger   ////////////////////////////////////////// -->
+  <joint name="SFP1_1__SFP1_2" type="revolute">
+    <origin xyz="0.035 0 0" rpy="0 0 0" />
+    <parent link="SFB1_1" />
+    <child link="SFP1_2" />
+    <axis xyz="0 0 -1" />
+    <limit lower="-0.1" upper="1.22" effort="10" velocity="1" />
+    <dynamics damping="0.003" friction="0.003"/>
+    <xacro:mimic_non_linear_short_finger father_joint="motor_thumb" phalange="distal" />
+  </joint>
+
+<!-- ///////////////////////////////////////   Long finger 1   ////////////////////////////////////////// -->
+
+  <!-- ///////////////////////////////////////   Base_Link of the long_finger   ////////////////////////////////////////// -->
+  <link name="LFB1">
+    <inertial>
+      <origin xyz="0.000045491656 -0.0037522651 0.0064111226" rpy="0 0 0" />
+      <mass value="0.0039598861" />
+      <inertia ixx="4.3061452E-07" ixy="0" ixz="-1.2027573E-07" iyy="3.9605806E-07" iyz="0" izz="3.9738552E-07" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFB1.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFB1.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- ///////////////////////////////////////   Joint of BASE and the base_link of the short finger   ////////////////////////////////////////// -->
+  <joint name="BASE__LFB1" type="revolute">
+    <origin xyz="-0.031002 0.025903 0.1213" rpy="1.5708 -1.5708 3.1415927" />
+    <parent link="base_link" />
+    <child link="LFB1" />
+    <axis xyz="0 0 1" />
+    <limit lower="-0.1" upper="0.1" effort="10" velocity="1" />
+    <dynamics damping="0.003" friction="0.003"/>
+  </joint>
+
+  <!-- ///////////////////////////////////////   First phalanx of the Long_Finger   ////////////////////////////////////////// -->
+  <link name="LFP1_1">
+    <inertial>
+      <origin xyz="0.013537693 -0.00011389541 0.00014514898" rpy="0 0 0" />
+      <mass value="0.021630428" />
+      <inertia ixx="1.7547572E-06" ixy="1.2425281E-07" ixz="-5.2776703E-08" iyy="7.3422819E-06" iyz="-1.1395559E-09" izz="7.1587820E-06" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFP1_1.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFP1_1.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- ///////////////////////////////////////   Joint of base_link and the first phalanx of the short finger   ////////////////////////////////////////// -->
+  <joint name="LFB1__LFP1_1" type="revolute">
+    <origin xyz="0.011 0 0.007" rpy="1.5708 -0.29671 0" />
+    <parent link="LFB1" />
+    <child link="LFP1_1" />
+    <axis xyz="0 0 -1" />
+    <limit lower="-0.1" upper="0.56" effort="10" velocity="1" />
+    <dynamics damping="0.003" friction="0.003"/>
+    <xacro:mimic_non_linear_long_finger father_joint="motor_finger1" phalange="proximal" />
+  </joint>
+
+  <!-- ///////////////////////////////////////   Second phalanx of the Long_Finger   ////////////////////////////////////////// -->
+  <link name="LFP1_2">
+    <inertial>
+      <origin xyz="0.012816858 0.00029615072 0.00012767631" rpy="0 0 0" />
+      <mass value="0.022869549" />
+      <inertia ixx="1.9943688E-06" ixy="1.3380251E-07" ixz="-5.3468405E-08" iyy="7.4922799E-06" iyz="-9.2812315E-10" izz="7.3102836E-06" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFP1_2.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFP1_2.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- ///////////////////////////////////////   Joint of base_link and the first phalanx of the long finger   ////////////////////////////////////////// -->
+  <joint name="LFP1_1__LFP1_2" type="revolute">
+    <origin xyz="0.035 0 0" rpy="0 0 0" />
+    <parent link="LFP1_1" />
+    <child link="LFP1_2" />
+    <axis xyz="0 0 -1" />
+    <limit lower="-0.1" upper="1.22" effort="10" velocity="1" />
+    <dynamics damping="0.06" friction="0.05"/>
+    <xacro:mimic_non_linear_long_finger father_joint="motor_finger1" phalange="middle" />
+  </joint>
+
+  <!-- ///////////////////////////////////////   Tip phalanx of the long finger   ////////////////////////////////////////// -->
+  <link name="LFP1_3">
+    <inertial>
+      <origin xyz="0.012398348 -0.00034958691 0.000050212619" rpy="0 0 0" />
+      <mass value="0.02226615" />
+      <inertia ixx="1.7400409E-06" ixy="4.4309075E-07" ixz="-1.3771833E-08" iyy="6.8917616E-06" iyz="6.4562527E-09" izz="6.4653229E-06" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFP1_3.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFP1_3.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- ///////////////////////////////////////   Joint of second and tip phalanxs of the long finger   ////////////////////////////////////////// -->
+  <joint name="LFP1_2__LFP1_3" type="revolute">
+    <origin xyz="0.035 0 0" rpy="0 0 0" />
+    <parent link="LFP1_2" />
+    <child link="LFP1_3" />
+    <axis xyz="0 0 -1" />
+    <limit lower="-0.1" upper="1.22" effort="10" velocity="1" />
+    <dynamics damping="0.003" friction="0.003"/>
+    <xacro:mimic_non_linear_long_finger father_joint="motor_finger1" phalange="distal" />
+  </joint>
+
+
+  <!-- ///////////////////////////////////////   Long finger 2   ////////////////////////////////////////// -->
+
+  <!-- ///////////////////////////////////////   Base_Link of the long_finger   ////////////////////////////////////////// -->
+  <link name="LFB2">
+    <inertial>
+      <origin xyz="0.000045491656 -0.0037522651 0.0064111226" rpy="0 0 0" />
+      <mass value="0.0039598861" />
+      <inertia ixx="4.3061452E-07" ixy="0" ixz="-1.2027573E-07" iyy="3.9605806E-07" iyz="0" izz="3.9738552E-07" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFB2.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFB2.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- ///////////////////////////////////////   Joint of BASE and the base_link of the short finger   ////////////////////////////////////////// -->
+  <joint name="BASE__LFB2" type="revolute">
+    <origin xyz="0 0.031903 0.1213" rpy="1.5708 -1.5708 3.1415927" />
+    <parent link="base_link" />
+    <child link="LFB2" />
+    <axis xyz="0 0 1" />
+    <limit lower="-0.1" upper="0.1" effort="10" velocity="1" />
+    <dynamics damping="0.003" friction="0.003"/>
+  </joint>
+
+  <!-- ///////////////////////////////////////   First phalanx of the Long_Finger   ////////////////////////////////////////// -->
+  <link name="LFP2_1">
+    <inertial>
+      <origin xyz="0.013537693 -0.00011389541 0.00014514898" rpy="0 0 0" />
+      <mass value="0.021630428" />
+      <inertia ixx="1.7547572E-06" ixy="1.2425281E-07" ixz="-5.2776703E-08" iyy="7.3422819E-06" iyz="-1.1395559E-09" izz="7.1587820E-06" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFP2_1.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFP2_1.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- ///////////////////////////////////////   Joint of base_link and the first phalanx of the short finger   ////////////////////////////////////////// -->
+  <joint name="LFB2__LFP2_1" type="revolute">
+    <origin xyz="0.011 0 0.007" rpy="1.5708 -0.29671 0" />
+    <parent link="LFB2" />
+    <child link="LFP2_1" />
+    <axis xyz="0 0 -1" />
+    <limit lower="-0.1" upper="0.56" effort="10" velocity="1" />
+    <dynamics damping="0.003" friction="0.003"/>
+    <xacro:mimic_non_linear_long_finger father_joint="motor_finger2" phalange="proximal" />
+  </joint>
+
+  <!-- ///////////////////////////////////////   Second phalanx of the Long_Finger   ////////////////////////////////////////// -->
+  <link name="LFP2_2">
+    <inertial>
+      <origin xyz="0.012816858 0.00029615072 0.00012767631" rpy="0 0 0" />
+      <mass value="0.022869549" />
+      <inertia ixx="1.9943688E-06" ixy="1.3380251E-07" ixz="-5.3468405E-08" iyy="7.4922799E-06" iyz="-9.2812315E-10" izz="7.3102836E-06" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFP2_2.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFP2_2.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- ///////////////////////////////////////   Joint of base_link and the first phalanx of the short finger   ////////////////////////////////////////// -->
+  <joint name="LFP2_1__LFP2_2" type="revolute">
+    <origin xyz="0.035 0 0" rpy="0 0 0" />
+    <parent link="LFP2_1" />
+    <child link="LFP2_2" />
+    <axis xyz="0 0 -1" />
+    <limit lower="-0.1" upper="1.22" effort="10" velocity="1"/>
+    <dynamics damping="0.003" friction="0.003"/>
+    <xacro:mimic_non_linear_long_finger father_joint="motor_finger2" phalange="middle" />
+  </joint>
+  
+
+  <!-- ///////////////////////////////////////   Tip phalanx of the long finger   ////////////////////////////////////////// -->
+  <link name="LFP2_3">
+    <inertial>
+      <origin xyz="0.012398348 -0.00034958691 0.000050212619" rpy="0 0 0" />
+      <mass value="0.02226615" />
+      <inertia ixx="1.7400409E-06" ixy="4.4309075E-07" ixz="-1.3771833E-08" iyy="6.8917616E-06" iyz="6.4562527E-09" izz="6.4653229E-06" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFP2_3.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFP2_3.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- ///////////////////////////////////////   Joint of second and tip phalanxs of the long finger   ////////////////////////////////////////// -->
+  <joint name="LFP2_2__LFP2_3" type="revolute">
+    <origin xyz="0.035 0 0" rpy="0 0 0" />
+    <parent link="LFP2_2" />
+    <child link="LFP2_3" />
+    <axis xyz="0 0 -1" />
+    <limit lower="-0.1" upper="1.22" effort="10" velocity="1"/>
+    <dynamics damping="0.06" friction="0.05"/>
+    <xacro:mimic_non_linear_long_finger father_joint="motor_finger2" phalange="distal" />
+  </joint>
+
+
+  <!-- ///////////////////////////////////////   Long finger 3   ////////////////////////////////////////// -->
+
+  <!-- ///////////////////////////////////////   Base_Link of the long_finger   ////////////////////////////////////////// -->
+  <link name="LFB3">
+    <inertial>
+      <origin xyz="0.000045491656 -0.0037522651 0.0064111226" rpy="0 0 0" />
+      <mass value="0.0039598861" />
+      <inertia ixx="4.3061452E-07" ixy="0" ixz="-1.2027573E-07" iyy="3.9605806E-07" iyz="0" izz="3.9738552E-07" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFB3.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFB3.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- ///////////////////////////////////////   Joint of BASE and the base_link of the short finger   ////////////////////////////////////////// -->
+  <joint name="BASE__LFB3" type="revolute">
+    <origin xyz="0.030998 0.025903 0.1213" rpy="1.5708 -1.5708 3.1415927" />
+    <parent link="base_link" />
+    <child link="LFB3" />
+    <axis xyz="0 0 1" />
+    <limit lower="-0.1" upper="0.1" effort="10" velocity="1" />
+    <dynamics damping="0.003" friction="0.003"/>
+  </joint>
+
+  <!-- ///////////////////////////////////////   First phalanx of the Long_Finger   ////////////////////////////////////////// -->
+  <link name="LFP3_1">
+    <inertial>
+      <origin xyz="0.013537693 -0.00011389541 0.00014514898" rpy="0 0 0" />
+      <mass value="0.021630428" />
+      <inertia ixx="1.7547572E-06" ixy="1.2425281E-07" ixz="-5.2776703E-08" iyy="7.3422819E-06" iyz="-1.1395559E-09" izz="7.1587820E-06" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFP3_1.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFP3_1.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- ///////////////////////////////////////   Joint of base_link and the first phalanx of the short finger   ////////////////////////////////////////// -->
+  <joint name="LFB3__LFP3_1" type="revolute">
+    <origin xyz="0.011 0 0.007" rpy="1.5708 -0.29671 0" />
+    <parent link="LFB3" />
+    <child link="LFP3_1" />
+    <axis xyz="0 0 -1" />
+    <limit lower="-0.1" upper="0.56" effort="10" velocity="1" />
+    <dynamics damping="0.003" friction="0.003"/>
+    <xacro:mimic_non_linear_long_finger father_joint="motor_finger3" phalange="proximal" />
+  </joint>
+
+  <!-- ///////////////////////////////////////   Second phalanx of the Long_Finger   ////////////////////////////////////////// -->
+  <link name="LFP3_2">
+    <inertial>
+      <origin xyz="0.012816858 0.00029615072 0.00012767631" rpy="0 0 0" />
+      <mass value="0.022869549" />
+      <inertia ixx="1.9943688E-06" ixy="1.3380251E-07" ixz="-5.3468405E-08" iyy="7.4922799E-06" iyz="-9.2812315E-10" izz="7.3102836E-06" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFP3_2.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFP3_2.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- ///////////////////////////////////////   Joint of base_link and the first phalanx of the short finger   ////////////////////////////////////////// -->
+  <joint name="LFP3_1__LFP3_2" type="revolute">
+    <origin xyz="0.035 0 0" rpy="0 0 0" />
+    <parent link="LFP3_1" />
+    <child link="LFP3_2" />
+    <axis xyz="0 0 -1" />
+    <limit lower="-0.1" upper="1.22" effort="10" velocity="1"/>
+    <dynamics damping="0.003" friction="0.003"/>
+    <xacro:mimic_non_linear_long_finger father_joint="motor_finger3" phalange="middle" />
+  </joint>
+
+  <!-- ///////////////////////////////////////   Tip phalanx of the long finger   ////////////////////////////////////////// -->
+  <link name="LFP3_3">
+    <inertial>
+      <origin xyz="0.012398348 -0.00034958691 0.000050212619" rpy="0 0 0" />
+      <mass value="0.02226615" />
+      <inertia ixx="1.7400409E-06" ixy="4.4309075E-07" ixz="-1.3771833E-08" iyy="6.8917616E-06" iyz="6.4562527E-09" izz="6.4653229E-06" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFP3_3.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ros_end_effector/configs/meshes/heri_II/LFP3_3.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- ///////////////////////////////////////   Joint of second and tip phalanxs of the long finger   ////////////////////////////////////////// -->
+  <joint name="LFP3_2__LFP3_3" type="revolute">
+    <origin xyz="0.035 0 0" rpy="0 0 0" />
+    <parent link="LFP3_2" />
+    <child link="LFP3_3" />
+    <axis xyz="0 0 -1" />
+    <limit lower="-0.1" upper="1.22" effort="10" velocity="1"/>
+    <dynamics damping="0.003" friction="0.003"/>
+    <xacro:mimic_non_linear_long_finger father_joint="motor_finger3" phalange="distal" />
+  </joint>
+
+  <!-- //////////////////////////////////////////// virtual links to put a frame on fingertip "skin" //////////////////////////////////////////-->
+  <link name="LFP3_3_tip">
+   <inertial> <!-- We need inertial otherwise gazebo does not load the motor joints. I put very low inertia-->
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+  </link>
+  <joint name="LFP3_3__LFP3_3_tip" type="fixed">
+    <origin rpy="1.5708 0 -0.13" xyz="0.0175 -0.0111 0"/>
+    <parent link="LFP3_3"/>
+    <child link="LFP3_3_tip"/>
+    <axis xyz="0 0 0"/>
+  </joint>
+
+  <link name="LFP2_3_tip">
+   <inertial> <!-- We need inertial otherwise gazebo does not load the motor joints. I put very low inertia-->
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+  </link>
+  <joint name="LFP2_3__LFP2_3_tip" type="fixed">
+    <origin rpy="1.5708 0 -0.13" xyz="0.0175 -0.0111 0"/>
+    <parent link="LFP2_3"/>
+    <child link="LFP2_3_tip"/>
+    <axis xyz="0 0 0"/>
+  </joint>
+
+  <link name="LFP1_3_tip">
+   <inertial> <!-- We need inertial otherwise gazebo does not load the motor joints. I put very low inertia-->
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+  </link>
+  <joint name="LFP1_3__LFP1_3_tip" type="fixed">
+    <origin rpy="1.5708 0 -0.13" xyz="0.0175 -0.0111 0"/>
+    <parent link="LFP1_3"/>
+    <child link="LFP1_3_tip"/>
+    <axis xyz="0 0 0"/>
+  </joint>
+
+  <link name="SFP1_2_tip">
+   <inertial> <!-- We need inertial otherwise gazebo does not load the motor joints. I put very low inertia-->
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+  </link>
+  <joint name="SFP1_2__SFP1_2_tip" type="fixed">
+    <origin rpy="1.5708 0 -0.13" xyz="0.0175 -0.0111 0"/>
+    <parent link="SFP1_2"/>
+    <child link="SFP1_2_tip"/>
+    <axis xyz="0 0 0"/>
+  </joint>
+
+</robot>
