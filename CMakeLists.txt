@@ -300,9 +300,14 @@ target_link_libraries(EEHalExecutor
     ${catkin_LIBRARIES}
     EEHal
     HandInfoServices
+    #KEEP THIS. ERROR HAPPENS OTHERWISE. not anymore?
+    #XBot2Hal
+)
+
+target_link_libraries(EEHal 
+    ${catkin_LIBRARIES}
     yaml-cpp
-    #KEEP THIS. ERROR HAPPENS OTHERWISE
-    XBot2Hal
+
 )
 
 target_link_libraries(DummyHal

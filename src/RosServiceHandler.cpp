@@ -16,7 +16,7 @@
 
 #include <ros_end_effector/RosServiceHandler.h>
 
-ROSEE::RosServiceHandler::RosServiceHandler( ros::NodeHandle *nh, ROSEE::MapActionHandler::Ptr mapActionHandler) {
+ROSEE::RosServiceHandler::RosServiceHandler( ros::NodeHandle *nh, ROSEE::MapActionHandler::Ptr mapActionHandler, std::string path2saveYamlGeneric) {
     
     if (mapActionHandler == nullptr) {
         ROS_ERROR_STREAM ( "[RosServiceHandler " << __func__ << " ] the mapActionHandler in not initialized");
@@ -24,6 +24,7 @@ ROSEE::RosServiceHandler::RosServiceHandler( ros::NodeHandle *nh, ROSEE::MapActi
     }
     
     this->_mapActionHandler = mapActionHandler;
+    this->_path2saveYamlGeneric = path2saveYamlGeneric;
 
     this->_nh = nh;
     
@@ -34,12 +35,14 @@ bool ROSEE::RosServiceHandler::init(unsigned int nFinger) {
     
     this->nFinger = nFinger;
     
-    std::string graspingActionsSrvName, actionInfoServiceName, selectablePairInfoServiceName,
-                handInfoServiceName;
+    std::string graspingActionsSrvName, actionInfoServiceName, 
+      selectablePairInfoServiceName, handInfoServiceName, newGraspingActionServiceName;
+
     _nh->param<std::string>("/rosee/grasping_action_srv_name", graspingActionsSrvName, "grasping_actions_available");
     _nh->param<std::string>("/rosee/primitive_aggregated_srv_name", actionInfoServiceName, "primitives_aggregated_available");
     _nh->param<std::string>("/rosee/selectable_finger_pair_info", selectablePairInfoServiceName, "selectable_finger_pair_info");
     _nh->param<std::string>("/rosee/hand_info", handInfoServiceName, "hand_info");
+    _nh->param<std::string>("/rosee/new_grasping_action_srv_name", newGraspingActionServiceName, "new_generic_grasping_action");
     
     _serverGraspingActions = _nh->advertiseService(graspingActionsSrvName, 
         &RosServiceHandler::graspingActionsCallback, this);
@@ -52,6 +55,9 @@ bool ROSEE::RosServiceHandler::init(unsigned int nFinger) {
     
     _serverHandInfo = _nh->advertiseService(handInfoServiceName, 
         &RosServiceHandler::handInfoCallback, this);
+
+    _serverNewGraspingAction = _nh->advertiseService(newGraspingActionServiceName, 
+        &RosServiceHandler::newGraspingActionCallback, this);
     
     return true;
 }
@@ -236,6 +242,10 @@ void ROSEE::RosServiceHandler::fillCommonInfoGraspingActionMsg(ROSEE::Action::Pt
         }
         graspingMsg->action_motor_positions.push_back(motorPosMsg); 
     }
+    
+    for (auto elementInvolved : action->getFingersInvolved()) {
+        graspingMsg->elements_involved.push_back(elementInvolved);
+    }
 }
 
 bool ROSEE::RosServiceHandler::primitiveAggregatedCallback(
@@ -378,6 +388,114 @@ bool ROSEE::RosServiceHandler::handInfoCallback(
     } else {
         return false;
     }
+    
+    return true;
+}
         
+//TODO error msg useless becaus if return false the response is not send
+//at today (2020) it seems there not exist a method to return false plus an error message.
+bool ROSEE::RosServiceHandler::newGraspingActionCallback(
+        rosee_msg::NewGenericGraspingActionSrv::Request& request,
+        rosee_msg::NewGenericGraspingActionSrv::Response& response){
+    
+    response.accepted = false;
+    response.emitted = false;
+    
+    if (request.newAction.action_name.empty()) {
+        
+        response.error_msg = "action_name can not be empty";
+        ROS_ERROR_STREAM ( "[RosServiceHandler " << __func__ << " ] " << response.error_msg);
+        return true; //so the client receive the response
+    }
+    
+    if (request.newAction.action_motor_position.name.size() == 0 ||
+        request.newAction.action_motor_position.position.size() == 0 ||
+        request.newAction.action_motor_position.position.size() != request.newAction.action_motor_position.name.size()) {
+        
+        response.error_msg = "action_motor_position is empty or badly formed";
+        ROS_ERROR_STREAM ( "[RosServiceHandler " << __func__ << " ] " << response.error_msg);
+
+        return true; //so the client receive the response
+    }
+    
+    if (request.newAction.action_motor_count.name.size() != request.newAction.action_motor_count.count.size()) {
+        
+        response.error_msg = "action_motor_count is badly formed, name and count have different sizes";
+        ROS_ERROR_STREAM ( "[RosServiceHandler " << __func__ << " ] " << response.error_msg);
+
+        return true; //so the client receive the response
+    }
+    
+    // TODO request.newAction.action_motor_count : if empty, ActionGeneric costructor will consider all joint
+    // with 0 position as not used. This may change in future when we will support not 0 default joint positions
+    
+    if (_mapActionHandler->getGeneric(request.newAction.action_name, false) != nullptr) {
+        
+        response.error_msg = "A generic action with name '" + request.newAction.action_name + "' already exists";
+        ROS_ERROR_STREAM ( "[RosServiceHandler " << __func__ << " ] " << response.error_msg);
+
+        return true; //so the client receive the response
+        
+    }
+
+    ROSEE::ActionGeneric::Ptr newAction;
+    ROSEE::JointPos jp;
+    ROSEE::JointsInvolvedCount jic;
+    std::set<std::string> elementInvolved;
+    
+    for (int i = 0; i < request.newAction.action_motor_position.name.size(); i++){
+        
+        std::vector<double> one_dof{request.newAction.action_motor_position.position.at(i)};        
+        jp.insert(std::make_pair(request.newAction.action_motor_position.name.at(i),
+                                 one_dof));
+    }
+    
+    for (int i = 0; i < request.newAction.action_motor_count.name.size(); i++){
+        
+        jic.insert(std::make_pair(request.newAction.action_motor_count.name.at(i),
+                                  request.newAction.action_motor_count.count.at(i)));
+    }
+    
+    for (int i = 0; i< request.newAction.elements_involved.size(); i++) {
+        
+        elementInvolved.insert(request.newAction.elements_involved.at(i));  
+    }
+    
+    //costructor will handle jpc and elementInvolved also if empty
+    try { newAction = std::make_shared<ROSEE::ActionGeneric>(request.newAction.action_name,
+                                                             jp,
+                                                             jic,
+                                                             elementInvolved);
+    
+    } catch (const ROSEE::Utils::DifferentKeysException<ROSEE::JointPos, ROSEE::JointsInvolvedCount>) {
+        
+        response.error_msg = "action_motor_position and action_motor_count have different names element. They must be the same because they refer to actuator of the end-effector";
+        ROS_ERROR_STREAM ( "[RosServiceHandler " << __func__ << " ] " << response.error_msg);
+
+        return true; //so the client receive the response
+    } 
+    
+    //u rosee main node use always mapActionHandler to check if an action exists. Thus, we need to add this new 
+    // action into the mapActionHandler "database" (ie private member map of the generic actions)
+    if (! _mapActionHandler->insertSingleGeneric(newAction)){
+        
+        response.error_msg = "error by mapActionHandler when inserting the new generic action";
+        ROS_ERROR_STREAM ( "[RosServiceHandler " << __func__ << " ] " << response.error_msg);
+
+        return true; //so the client receive the response
+    }
+    
+    ROS_INFO_STREAM ( "[RosServiceHandler " << __func__ << " ] The new action '"<< newAction->getName() << "' is inserted in the system");
+
+    
+    if (request.emitYaml) {
+        
+        ROSEE::YamlWorker yamlWorker;
+        auto path = yamlWorker.createYamlFile(newAction, _path2saveYamlGeneric);
+        ROS_INFO_STREAM ( "[RosServiceHandler " << __func__ << " ] The received new action '"<< newAction->getName() << "' has been stored in " << path);
+        response.emitted = true;
+    }
+    
+    response.accepted = true;
     return true;
 }

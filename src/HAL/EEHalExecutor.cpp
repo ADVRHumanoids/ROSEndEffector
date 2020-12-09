@@ -4,7 +4,6 @@
 #include <ros/ros.h>
 
 #include <ros_end_effector/HAL/EEHal.h>
-#include <ros_end_effector/HAL/XBot2Hal.h>
 
 #include <ros_end_effector/Utils.h>
 #include <ros_end_effector/UtilsEigen.h>

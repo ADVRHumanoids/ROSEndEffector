@@ -58,12 +58,12 @@ static std::vector <std::string> getFilesInDir ( std::string pathFolder ) {
     std::vector <std::string> retVect;
     
     if (! boost::filesystem::exists(p) ) {
-        std::cerr << "[ERROR " << __func__ << "] pathFolder" << pathFolder << " does not exists" << std::endl;
+        std::cerr << "[ERROR " << __func__ << "] path '" << pathFolder << "' does not exists" << std::endl;
         return retVect;
     }
     
     if (! boost::filesystem::is_directory(p)){ 
-        std::cerr << "[ERROR " << __func__ << "] pathFolder" << pathFolder << " is not a directory" << std::endl;
+        std::cerr << "[ERROR " << __func__ << "] path '" << pathFolder << "' is not a directory" << std::endl;
         return retVect;
     }
     
