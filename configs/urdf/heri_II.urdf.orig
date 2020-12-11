@@ -13,17 +13,17 @@
      relationship, so please use the fork https://github.com/torydebra/roboticsgroup_gazebo_plugins 
 -->
   
-	<gazebo>
+<!--	<gazebo>
     <plugin filename="libRoseePlugin.so" name="heri_controller">
       </plugin>
-  </gazebo>
+  </gazebo>-->
 
 
 <!-- Plugin to make simulated heri works with xbot and gazebo. To be used with XBot2Hal
 		 The gains for mimics are all zero for mimic because the libroboticsgroup_gazebo_mimic_joint_plugin
      will move them (please use the same fork above). 
 -->  
-<!--  <gazebo>
+  <gazebo>
     <plugin name='xbot2_gz_joint_server' filename='libxbot2_gz_joint_server.so'>
       <pid>
 		    <gain name="small_mot"  p="0.3"  d="0.00005"/>
@@ -58,7 +58,7 @@
 		    <gain name="LFP1_2__LFP1_3" profile="null"/>      
       </pid>
     </plugin>
-	</gazebo>-->
+	</gazebo>
   <!-- /////////////////////////////////   Gazebo   ////////////////////////////////////// -->
   <gazebo reference="base_link">
     <fudgeFactor value="0.5"/>
@@ -318,15 +318,25 @@
     <axis xyz="0 0 -1"/>
     <limit effort="10" lower="-0.1" upper="1.22" velocity="1"/>
     <dynamics damping="0.003" friction="0.003"/>
+<<<<<<< HEAD
     <!-- joint of the 2 phalange of thumb -->
     <mimic joint="motor_thumb" nlFunPos="-0.3366*x^4 + 1.674*x^3 + -2.506*x^2 + 1.552*x + -0.02812"/>
+=======
+    <mimic joint="SFB1__SFP1_1" multiplier="1.2" offset="0.2" nlFunPos="x^2"/>
+>>>>>>> nonLinear_moveit_col
   </joint>
   <gazebo>
     <plugin filename="libroboticsgroup_gazebo_mimic_joint_plugin.so" name="SFP1_1__SFP1_2_jointmimic_joint_plugin">
       <joint>motor_thumb</joint>
       <mimicJoint>SFP1_1__SFP1_2</mimicJoint>
+<<<<<<< HEAD
       <multiplier>0</multiplier>
       <offset>0</offset>
+=======
+      <multiplier>1.2</multiplier>
+      <offset>0.2</offset>
+      <nlFunPos>x^2</nlFunPos>
+>>>>>>> nonLinear_moveit_col
       <sensitiveness>0.0</sensitiveness>
       <!-- if absolute difference between setpoint and process value is below this threshold, do nothing; 0.0 = disable [rad] -->
       <maxEffort>10.0</maxEffort>
