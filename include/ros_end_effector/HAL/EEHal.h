@@ -105,9 +105,8 @@ namespace ROSEE {
         
         /**** Hand info matrices***/
         std::vector <std::string> fingers_names, motors_names;
-        std::unordered_map<std::string, Eigen::MatrixXd> tips_jacobians;
-        Eigen::MatrixXd transmission_matrix, motors_stiffness_diagonal;
-        Eigen::VectorXd tips_frictions, tips_force_limits, motors_torque_limits;
+        Eigen::MatrixXd motors_stiffness_diagonal;
+        Eigen::VectorXd tips_frictions, motors_torque_limits;
         
     private:
         
