@@ -76,7 +76,7 @@ int main ( int argc, char **argv ) {
     ROS_INFO_STREAM ( "[EEHalExecutor] Loaded "<<  hal_lib << " HAL"  );   
     
     ROSEE::HandInfoServices hand_info_service_handler (&nh);
-    if (eeHalPtr->parseHandInfo()) { 
+    if (eeHalPtr->isHandInfoPresent()) { 
         init_hand_info_response(hand_info_service_handler, eeHalPtr);
         hand_info_service_handler.init_ros_service();
         

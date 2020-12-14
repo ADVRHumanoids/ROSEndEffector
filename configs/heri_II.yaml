@@ -94,7 +94,6 @@ hand_info:
   #
   motors_stiffness_diagonal: [1, 2, 3, 4]
   tips_frictions: [1, 1, 1, 1]
-  tips_force_limits: [1, 1, 1, 1]
   # I know this below can be in the urdf... but EEHal for now does not have access to urdf
   motors_torque_limits: [1, 1, 1, 1]
 

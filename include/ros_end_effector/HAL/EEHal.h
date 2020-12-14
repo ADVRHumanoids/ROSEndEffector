@@ -69,14 +69,20 @@ namespace ROSEE {
         //Matrices needed by Grasp Planner ROSEE
         virtual bool getFingersNames(std::vector<std::string> &fingers_names);
         virtual bool getMotorsNames(std::vector<std::string> &motors_names);
-        virtual bool getTipsJacobians(std::unordered_map<std::string, Eigen::MatrixXd>& tips_jacobian);
-        virtual bool getTransmissionMatrix(Eigen::MatrixXd &transmission_matrix) ;
+        
         virtual bool getMotorStiffnessDiagonal(Eigen::VectorXd &motors_stiffness_diagonal);
         virtual bool getTipsFrictions(Eigen::VectorXd &tips_friction);
-        virtual bool getTipsForceLimits(Eigen::VectorXd &tips_force_limits);
         virtual bool getMotorTorqueLimits(Eigen::VectorXd &motors_torque_limits);
         
+        // These are dependent on hand configuration, hence can not be simply parsed by conf file so
+        // each derived HAL must implement them with some logic if they want to use the planne
+        virtual bool getTipsJacobians(std::unordered_map<std::string, Eigen::MatrixXd>& tips_jacobian) {return false;}
+        virtual bool getTransmissionMatrix(Eigen::MatrixXd &transmission_matrix) {return false;}
+        virtual bool getTipsForceLimits(Eigen::VectorXd &tips_force_limits) {return false;}
+
         virtual bool parseHandInfo();
+        
+        virtual bool isHandInfoPresent();
         
 
     protected:
@@ -104,6 +110,8 @@ namespace ROSEE {
         Eigen::VectorXd tips_frictions, tips_force_limits, motors_torque_limits;
         
     private:
+        
+        bool _hand_info_present;
         
         void motor_reference_clbk(const sensor_msgs::JointState::ConstPtr& msg);
     };
