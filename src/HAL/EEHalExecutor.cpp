@@ -9,6 +9,7 @@
 #include <ros_end_effector/UtilsEigen.h>
 
 #include <ros_end_effector/HandInfoServices.h>
+#include <geometry_msgs/Point.h>
 
 bool init_hand_info_response(ROSEE::HandInfoServices& hand_info_service_handler, 
                              std::unique_ptr<ROSEE::EEHal>& eeHalPtr) {
@@ -16,8 +17,9 @@ bool init_hand_info_response(ROSEE::HandInfoServices& hand_info_service_handler,
     
     std::vector <std::string> fingers_names, motors_names;
     std::unordered_map<std::string, Eigen::MatrixXd> tips_jacobians;
+    std::unordered_map<std::string, Eigen::Vector3d> tips_forces;
     Eigen::MatrixXd transmission_matrix;
-    Eigen::VectorXd motors_stiffness, tips_frictions, tips_force_limits, motors_torque_limits;
+    Eigen::VectorXd motors_stiffness, tips_frictions, motors_torque_limits;
 
     eeHalPtr->getFingersNames(fingers_names);
     eeHalPtr->getMotorsNames(motors_names);
@@ -26,7 +28,7 @@ bool init_hand_info_response(ROSEE::HandInfoServices& hand_info_service_handler,
     eeHalPtr->getTransmissionMatrix(transmission_matrix);
     eeHalPtr->getMotorStiffness(motors_stiffness);
     eeHalPtr->getTipsFrictions(tips_frictions);
-    eeHalPtr->getTipsForceLimits(tips_force_limits);
+    eeHalPtr->getTipsForces(tips_forces);
     eeHalPtr->getMotorTorqueLimits(motors_torque_limits);
     
     hand_info_service_handler.response.fingers_names = fingers_names;
@@ -39,14 +41,19 @@ bool init_hand_info_response(ROSEE::HandInfoServices& hand_info_service_handler,
     hand_info_service_handler.response.transmission_matrix = 
         ROSEE::Utils::eigenMatrixToFloat32MultiArray(transmission_matrix);
         
-    hand_info_service_handler.response.motors_stiffness_diagonal =
+    hand_info_service_handler.response.motors_stiffness =
         ROSEE::Utils::eigenVectorToStdVector(motors_stiffness);
         
     hand_info_service_handler.response.tips_frictions =
         ROSEE::Utils::eigenVectorToStdVector(tips_frictions);
     
-    hand_info_service_handler.response.tips_force_limits =
-        ROSEE::Utils::eigenVectorToStdVector(tips_force_limits);
+    for (auto it : tips_forces) {
+        geometry_msgs::Point point;
+        point.x = it.second[0];
+        point.y = it.second[1];
+        point.z = it.second[2];
+        hand_info_service_handler.response.tips_forces.push_back(point);
+    }
         
     hand_info_service_handler.response.motors_torque_limits =
         ROSEE::Utils::eigenVectorToStdVector(motors_torque_limits);
