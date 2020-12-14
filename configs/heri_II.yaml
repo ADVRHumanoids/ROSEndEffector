@@ -92,7 +92,7 @@ hand_info:
   fingers_names: [finger_1, finger_2, finger_3, thumb]
   motors_names: [motor_finger1, motor_finger2, motor_finger3, motor_thumb]
   #
-  motors_stiffness_diagonal: [1, 2, 3, 4]
+  motors_stiffness: [1, 2, 3, 4]
   tips_frictions: [1, 1, 1, 1]
   # I know this below can be in the urdf... but EEHal for now does not have access to urdf
   motors_torque_limits: [1, 1, 1, 1]

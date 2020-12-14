@@ -70,7 +70,7 @@ namespace ROSEE {
         virtual bool getFingersNames(std::vector<std::string> &fingers_names);
         virtual bool getMotorsNames(std::vector<std::string> &motors_names);
         
-        virtual bool getMotorStiffnessDiagonal(Eigen::VectorXd &motors_stiffness_diagonal);
+        virtual bool getMotorStiffness(Eigen::VectorXd &motors_stiffness);
         virtual bool getTipsFrictions(Eigen::VectorXd &tips_friction);
         virtual bool getMotorTorqueLimits(Eigen::VectorXd &motors_torque_limits);
         
@@ -105,8 +105,7 @@ namespace ROSEE {
         
         /**** Hand info matrices***/
         std::vector <std::string> fingers_names, motors_names;
-        Eigen::MatrixXd motors_stiffness_diagonal;
-        Eigen::VectorXd tips_frictions, motors_torque_limits;
+        Eigen::VectorXd tips_frictions, motors_torque_limits, motors_stiffness;
         
     private:
         

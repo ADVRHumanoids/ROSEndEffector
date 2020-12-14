@@ -17,14 +17,14 @@ bool init_hand_info_response(ROSEE::HandInfoServices& hand_info_service_handler,
     std::vector <std::string> fingers_names, motors_names;
     std::unordered_map<std::string, Eigen::MatrixXd> tips_jacobians;
     Eigen::MatrixXd transmission_matrix;
-    Eigen::VectorXd motors_stiffness_diagonal, tips_frictions, tips_force_limits, motors_torque_limits;
+    Eigen::VectorXd motors_stiffness, tips_frictions, tips_force_limits, motors_torque_limits;
 
     eeHalPtr->getFingersNames(fingers_names);
     eeHalPtr->getMotorsNames(motors_names);
 
     eeHalPtr->getTipsJacobians(tips_jacobians);
     eeHalPtr->getTransmissionMatrix(transmission_matrix);
-    eeHalPtr->getMotorStiffnessDiagonal(motors_stiffness_diagonal);
+    eeHalPtr->getMotorStiffness(motors_stiffness);
     eeHalPtr->getTipsFrictions(tips_frictions);
     eeHalPtr->getTipsForceLimits(tips_force_limits);
     eeHalPtr->getMotorTorqueLimits(motors_torque_limits);
@@ -40,7 +40,7 @@ bool init_hand_info_response(ROSEE::HandInfoServices& hand_info_service_handler,
         ROSEE::Utils::eigenMatrixToFloat32MultiArray(transmission_matrix);
         
     hand_info_service_handler.response.motors_stiffness_diagonal =
-        ROSEE::Utils::eigenVectorToStdVector(motors_stiffness_diagonal);
+        ROSEE::Utils::eigenVectorToStdVector(motors_stiffness);
         
     hand_info_service_handler.response.tips_frictions =
         ROSEE::Utils::eigenVectorToStdVector(tips_frictions);

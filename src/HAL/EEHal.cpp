@@ -78,11 +78,11 @@ bool ROSEE::EEHal::getMotorsNames(std::vector<std::string> &motors_names){
     
 }
 
-bool ROSEE::EEHal::getMotorStiffnessDiagonal(Eigen::VectorXd &motors_stiffness_diagonal){
+bool ROSEE::EEHal::getMotorStiffness(Eigen::VectorXd &motors_stiffness){
     
-    if (this->motors_stiffness_diagonal.size() != 0) {
+    if (this->motors_stiffness.size() != 0) {
     
-        motors_stiffness_diagonal = this->motors_stiffness_diagonal;
+        motors_stiffness = this->motors_stiffness;
         return true;
 
     } else {
@@ -149,9 +149,9 @@ bool ROSEE::EEHal::parseHandInfo() {
        motors_names = node["hand_info"]["motors_names"].as<std::vector<std::string>>();
     }
     
-    if(node["hand_info"]["motors_stiffness_diagonal"]){
+    if(node["hand_info"]["motors_stiffness"]){
 
-       motors_stiffness_diagonal = ROSEE::Utils::yamlVectorToEigen(node["hand_info"]["motors_stiffness_diagonal"]);
+       motors_stiffness = ROSEE::Utils::yamlVectorToEigen(node["hand_info"]["motors_stiffness"]);
     }
     
     if(node["hand_info"]["tips_frictions"]){
