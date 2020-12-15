@@ -94,8 +94,11 @@ hand_info:
   #
   motors_stiffness: [1, 2, 3, 4]
   tips_frictions: [1, 1, 1, 1]
-  # I know this below can be in the urdf... but EEHal for now does not have access to urdf
+  # I know these below can be in the urdf... but EEHal for now does not have access to urdf
   motors_torque_limits: [1, 1, 1, 1]
+  # tip frame position respect to last joint position, x and y coordinates (again present in the urdf)
+  tip_joint_to_tip_frame_x: [0.0175, 0.0175, 0.0175, 0.0175]
+  tip_joint_to_tip_frame_y: [-0.0111, -0.0111, -0.0111, -0.0111]
 
 ##############
 ### real hand

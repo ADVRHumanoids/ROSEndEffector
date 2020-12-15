@@ -30,9 +30,12 @@
 
 #include <Eigen/Dense>
 #include <yaml-cpp/yaml.h>
+#include <ros_end_effector/Utils.h>
+#include <ros_end_effector/UtilsEigen.h>
 
-//#include <ros_end_effector/Utils.h>
 #include <ros_end_effector/UtilsYAML.h>
+
+#include <rosee_msg/HandInfo.h>
 
 //Macro to be used in each concrete HAL that will define the create_object functions
 #define HAL_CREATE_OBJECT(className) \
@@ -73,6 +76,8 @@ namespace ROSEE {
         virtual bool getMotorStiffness(Eigen::VectorXd &motors_stiffness);
         virtual bool getTipsFrictions(Eigen::VectorXd &tips_friction);
         virtual bool getMotorTorqueLimits(Eigen::VectorXd &motors_torque_limits);
+        virtual bool getTipJointToTipFrameX(Eigen::VectorXd &tip_joint_to_tip_frame_x);
+        virtual bool getTipJointToTipFrameY(Eigen::VectorXd &tip_joint_to_tip_frame_y);
         
         // These are dependent on hand configuration, hence can not be simply parsed by conf file so
         // each derived HAL must implement them with some logic if they want to use the planne
@@ -83,6 +88,19 @@ namespace ROSEE {
         virtual bool parseHandInfo();
         
         virtual bool isHandInfoPresent();
+        
+        /**
+         * @brief init the service message with info parsed from yaml file, ie info that will not change according to hand configuration
+         * A derived HAL can override this if necessary, since this is called by EEHalExecutor
+         */
+        virtual bool init_hand_info_response() ;
+        
+        /**
+         * @brief Here service is advertise and callback set: if derived class wants to use different callback,
+         *   they must override this and do :
+         *         _hand_info_server = _nh->advertiseService(_hand_info_service_name, <custom_callback>);
+         */
+        virtual bool setHandInfoCallback();
         
 
     protected:
@@ -105,11 +123,22 @@ namespace ROSEE {
         
         /**** Hand info matrices***/
         std::vector <std::string> fingers_names, motors_names;
-        Eigen::VectorXd tips_frictions, motors_torque_limits, motors_stiffness;
+        Eigen::VectorXd tips_frictions, motors_torque_limits, motors_stiffness,
+                        tip_joint_to_tip_frame_x, tip_joint_to_tip_frame_y;
+        
+        ros::ServiceServer _hand_info_server;
+        rosee_msg::HandInfo::Response _hand_info_response;
+        std::string _hand_info_service_name;
+
         
     private:
         
         bool _hand_info_present;
+        
+        bool handInfoEEHalCallback(
+            rosee_msg::HandInfo::Request& request,
+            rosee_msg::HandInfo::Response& response);
+
         
         void motor_reference_clbk(const sensor_msgs::JointState::ConstPtr& msg);
     };

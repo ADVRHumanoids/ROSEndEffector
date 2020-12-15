@@ -110,10 +110,6 @@ add_library(RosServiceHandler
     src/RosServiceHandler.cpp
 )
 
-add_library(HandInfoServices
-    src/HandInfoServices.cpp
-)
-
 add_library(MapActionHandler
     src/MapActionHandler.cpp
 )
@@ -223,11 +219,6 @@ target_link_libraries(RosServiceHandler
 )
 add_dependencies(RosServiceHandler rosee_msg_generate_messages_cpp)
 
-target_link_libraries(HandInfoServices
-    ${catkin_LIBRARIES}
-)
-add_dependencies(HandInfoServices rosee_msg_generate_messages_cpp)
-
 target_link_libraries(ActionPinchTight
     ActionPinchGeneric
 )
@@ -304,7 +295,6 @@ target_link_libraries(UniversalFindActions
 target_link_libraries(EEHalExecutor
     ${catkin_LIBRARIES}
     EEHal
-    HandInfoServices
     #KEEP THIS. ERROR HAPPENS OTHERWISE. not anymore?
     #XBot2Hal
 )
@@ -312,8 +302,8 @@ target_link_libraries(EEHalExecutor
 target_link_libraries(EEHal 
     ${catkin_LIBRARIES}
     yaml-cpp
-
 )
+add_dependencies(EEHal rosee_msg_generate_messages_cpp)
 
 target_link_libraries(DummyHal
     ${catkin_LIBRARIES}

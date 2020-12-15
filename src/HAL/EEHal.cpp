@@ -33,6 +33,10 @@ ROSEE::EEHal::EEHal(ros::NodeHandle* nh) {
     _joint_state_pub = _nh->advertise<sensor_msgs::JointState>(joint_state_topic, 10);
     
     _hand_info_present = parseHandInfo();
+   
+    if (_hand_info_present) { 
+        _hand_info_service_name = "hand_info";
+    }
     
 }
 
@@ -117,6 +121,30 @@ bool ROSEE::EEHal::getMotorTorqueLimits(Eigen::VectorXd &motors_torque_limits){
     
 }
 
+bool ROSEE::EEHal::getTipJointToTipFrameX(Eigen::VectorXd &tip_joint_to_tip_frame_x) {
+   
+    if (this->tip_joint_to_tip_frame_x.size() != 0) {
+
+        tip_joint_to_tip_frame_x = this->tip_joint_to_tip_frame_x;
+        return true;
+
+    } else {
+        return false;
+    }  
+}
+
+bool ROSEE::EEHal::getTipJointToTipFrameY(Eigen::VectorXd &tip_joint_to_tip_frame_y) {
+   
+    if (this->tip_joint_to_tip_frame_y.size() != 0) {
+
+        tip_joint_to_tip_frame_y = this->tip_joint_to_tip_frame_y;
+        return true;
+
+    } else {
+        return false;
+    }  
+}
+
 bool ROSEE::EEHal::parseHandInfo() {
     
     std::string _rosee_config_path;
@@ -163,6 +191,52 @@ bool ROSEE::EEHal::parseHandInfo() {
 
        motors_torque_limits = ROSEE::Utils::yamlVectorToEigen(node["hand_info"]["motors_torque_limits"]);
     }
+    
+    if(node["hand_info"]["tip_joint_to_tip_frame_x"]){
+
+       tip_joint_to_tip_frame_x = ROSEE::Utils::yamlVectorToEigen(node["hand_info"]["tip_joint_to_tip_frame_x"]);
+    }
+    
+    if(node["hand_info"]["tip_joint_to_tip_frame_y"]){
+
+       tip_joint_to_tip_frame_y = ROSEE::Utils::yamlVectorToEigen(node["hand_info"]["tip_joint_to_tip_frame_y"]);
+    }
+    
+    return true;
+}
+
+bool ROSEE::EEHal::init_hand_info_response() {
+    
+    _hand_info_response.fingers_names = fingers_names;
+    
+    _hand_info_response.motors_names = motors_names;
+        
+    _hand_info_response.motors_stiffness =
+        ROSEE::Utils::eigenVectorToStdVector(motors_stiffness);
+        
+    _hand_info_response.tips_frictions =
+        ROSEE::Utils::eigenVectorToStdVector(tips_frictions);
+        
+    _hand_info_response.motors_torque_limits =
+        ROSEE::Utils::eigenVectorToStdVector(motors_torque_limits);
+    
+    return true;
+}
+
+bool ROSEE::EEHal::setHandInfoCallback() {
+    
+    _hand_info_server = _nh->advertiseService(_hand_info_service_name, 
+        &ROSEE::EEHal::handInfoEEHalCallback, this);
+    return true;
+}
+
+bool ROSEE::EEHal::handInfoEEHalCallback (    
+    rosee_msg::HandInfo::Request& request,
+    rosee_msg::HandInfo::Response& response) {
+   
+    //generic hal does not read the request
+    
+    response = _hand_info_response;
     
     return true;
 }

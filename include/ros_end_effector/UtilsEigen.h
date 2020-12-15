@@ -1,3 +1,6 @@
+#ifndef __ROSEE_UTILS_EIGEN__
+#define __ROSEE_UTILS_EIGEN__
+
 #include <Eigen/Dense>
 #include <std_msgs/Float32MultiArray.h>
 
@@ -59,3 +62,5 @@ static std::vector<float> eigenVectorToStdVector (Eigen::VectorXd eigenVector) {
 }
 
 }} //namespaces
+
+#endif // __ROSEE_UTILS_EIGEN__
