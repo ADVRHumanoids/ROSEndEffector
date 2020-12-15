@@ -24,7 +24,6 @@
   <!-- Examples: -->
   <!-- Use depend as a shortcut for packages that are both build and exec dependencies -->
     <depend>roscpp</depend>
-    <depend>iit_heri_ii_hand_xbot2</depend>
     <depend>muparser</depend>
   <!--   Note that this is equivalent to the following: -->
   <!--   <build_depend>roscpp</build_depend> -->
