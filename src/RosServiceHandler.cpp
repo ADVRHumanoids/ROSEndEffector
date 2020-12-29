@@ -370,10 +370,7 @@ bool ROSEE::RosServiceHandler::selectablePairInfoCallback(
 bool ROSEE::RosServiceHandler::handInfoCallback(
         rosee_msg::HandInfo::Request& request,
         rosee_msg::HandInfo::Response& response) {
-    
-    //empty request for now
 
-    
     if (! ros::service::exists("/EEHalExecutor/hand_info", false) ) {
         return false;
     }
@@ -381,6 +378,9 @@ bool ROSEE::RosServiceHandler::handInfoCallback(
     ros::ServiceClient handInfoClient = 
         _nh->serviceClient<rosee_msg::HandInfo>("/EEHalExecutor/hand_info");
     rosee_msg::HandInfo handInfoMsg;
+    
+    //request may be empty or not according to which hal we are using
+    handInfoMsg.request = request;
     if (handInfoClient.call(handInfoMsg)) {
         
         response = handInfoMsg.response;
