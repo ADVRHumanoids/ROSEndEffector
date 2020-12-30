@@ -81,9 +81,11 @@ namespace ROSEE {
         
         // These are dependent on hand configuration, hence can not be simply parsed by conf file so
         // each derived HAL must implement them with some logic if they want to use the planne
-        virtual bool getTipsJacobians(std::unordered_map<std::string, Eigen::MatrixXd>& tips_jacobian) {return false;}
+        virtual bool getTipsJacobiansNormal(std::unordered_map<std::string, Eigen::MatrixXd>& tips_jacobian_normal) {return false;}
+        virtual bool getTipsJacobiansFriction(std::unordered_map<std::string, Eigen::MatrixXd>& tips_jacobian_friction) {return false;}
         virtual bool getTransmissionMatrix(Eigen::MatrixXd &transmission_matrix) {return false;}
-        virtual bool getTipsForces(std::unordered_map<std::string, Eigen::Vector3d>& tips_forces) {return false;}
+        virtual bool getTipsForcesNormal(Eigen::VectorXd& tips_forces_normal) {return false;}
+        virtual bool getTipsForcesFriction(Eigen::VectorXd& tips_forces_friction) {return false;}
 
         virtual bool parseHandInfo();
         
