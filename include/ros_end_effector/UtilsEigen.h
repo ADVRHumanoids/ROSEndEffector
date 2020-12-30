@@ -25,6 +25,7 @@ static std_msgs::Float32MultiArray eigenMatrixToFloat32MultiArray (Eigen::Matrix
     unsigned int size = nRow*nCol;
     
     if (size == 0){ //no reason to continue
+        std::cerr << "[Utils::eigenMatrixToFloat32MultiArray] eigenMatrix passed has size 0" << std::endl;
         return rosMatrix;
     }
     
