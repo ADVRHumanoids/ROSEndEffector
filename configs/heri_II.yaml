@@ -92,10 +92,10 @@ hand_info:
   fingers_names: [finger_1, finger_2, finger_3, thumb]
   motors_names: [motor_finger1, motor_finger2, motor_finger3, motor_thumb]
   #
-  motors_stiffness: [1, 2, 3, 4]
-  tips_frictions: [1, 1, 1, 1]
+  motors_stiffness: [1, 1, 1, 1] # TODO but ask NIKOS
+  tips_frictions: [0.64, 0.64, 0.64, 0.64] #(Rubber against stainless steel 316)https://www.engineersedge.com/coeffients_of_friction.htm
   # I know these below can be in the urdf... but EEHal for now does not have access to urdf
-  motors_torque_limits: [1, 1, 1, 1]
+  motors_torque_limits: [3.3, 3.3, 3.3, 3.3] #Newton/meter, continuos torque, but peaks for short time can reach 5.3 N/m intermittent torque
   # tip frame position respect to last joint position, x and y coordinates (again present in the urdf)
   tip_joint_to_tip_frame_x: [0.0175, 0.0175, 0.0175, 0.0175]
   tip_joint_to_tip_frame_y: [-0.0111, -0.0111, -0.0111, -0.0111]
