@@ -84,6 +84,7 @@ namespace ROSEE {
         virtual bool getTipsJacobiansNormal(std::unordered_map<std::string, Eigen::MatrixXd>& tips_jacobian_normal) {return false;}
         virtual bool getTipsJacobiansFriction(std::unordered_map<std::string, Eigen::MatrixXd>& tips_jacobian_friction) {return false;}
         virtual bool getTransmissionMatrix(Eigen::MatrixXd &transmission_matrix) {return false;}
+        virtual bool getTransmissionSquareMatrices(std::unordered_map<std::string, Eigen::MatrixXd>& transmission_square_matrices) {return false;}
         virtual bool getTipsForcesNormal(Eigen::VectorXd& tips_forces_normal) {return false;}
         virtual bool getTipsForcesFriction(Eigen::VectorXd& tips_forces_friction) {return false;}
 
