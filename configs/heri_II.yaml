@@ -92,7 +92,11 @@ hand_info:
   fingers_names: [finger_1, finger_2, finger_3, thumb]
   motors_names: [motor_finger1, motor_finger2, motor_finger3, motor_thumb]
   #
-  motors_stiffness: [1, 1, 1, 1] # TODO but ask NIKOS
+  #K_t : 0.0418 # Torque coefficent of the motor [Nm/A]
+  #R_M : 2.62 # Eletrical terminal resistance of the motor [ohm]
+  #K_p : 1? p gain of pid
+  #stiffness = K_t * K_p / R_M = 0.0418 * 1 / 2.62 = 0.01595419847328244275
+  motors_stiffness: [0.01595419847328244275, 0.01595419847328244275, 0.01595419847328244275, 0.01595419847328244275] 
   tips_frictions: [0.64, 0.64, 0.64, 0.64] #(Rubber against stainless steel 316)https://www.engineersedge.com/coeffients_of_friction.htm
   # I know these below can be in the urdf... but EEHal for now does not have access to urdf
   motors_torque_limits: [3.3, 3.3, 3.3, 3.3] #Newton/meter, continuos torque, but peaks for short time can reach 5.3 N/m intermittent torque
