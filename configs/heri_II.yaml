@@ -94,9 +94,11 @@ hand_info:
   #
   #K_t : 0.0418 # Torque coefficent of the motor [Nm/A]
   #R_M : 2.62 # Eletrical terminal resistance of the motor [ohm]
-  #K_p : 1? p gain of pid
-  #stiffness = K_t * K_p / R_M = 0.0418 * 1 / 2.62 = 0.01595419847328244275
-  motors_stiffness: [0.01595419847328244275, 0.01595419847328244275, 0.01595419847328244275, 0.01595419847328244275] 
+  #K_p : 1? p gain of pid. It is hardcoded in the heri firmware
+  #Gratio = 138
+  #Ee = 0.9; Efficient of gearhead, The 0.9 is the maximum efficiency of the motor.
+  #stiffness = Gratio * Ee * K_t * K_p / R_M = 138 * 0.9 * 0.0418 * 1 / 2.62 = 1.981511450381679389315
+  motors_stiffness: [1.9815114503816793893155, 1.981511450381679389315, 1.981511450381679389315, 1.981511450381679389315] 
   tips_frictions: [0.64, 0.64, 0.64, 0.64] #(Rubber against stainless steel 316)https://www.engineersedge.com/coeffients_of_friction.htm
   # I know these below can be in the urdf... but EEHal for now does not have access to urdf
   motors_torque_limits: [3.3, 3.3, 3.3, 3.3] #Newton/meter, continuos torque, but peaks for short time can reach 5.3 N/m intermittent torque
