@@ -15,12 +15,12 @@ find_package(catkin REQUIRED COMPONENTS srdfdom
                                         rosee_msg
                                         )
                                                                                
-# find_package(matlogger2 REQUIRED)
 find_package(Eigen3 REQUIRED)
 #TODO on my pc, find_package works. On iit pc, I need the find_library. Why?
 #find_package(muparser REQUIRED) 
 find_library(_MUPARSER_LIB muparser REQUIRED)
 find_package(yaml-cpp REQUIRED)
+find_package(matlogger2 REQUIRED)
 
 #Xbot stuff
 option(BUILD_WITH_XBOT2 "Compile also the HAL used with XBot2" ON)
@@ -295,6 +295,7 @@ target_link_libraries(UniversalFindActions
 target_link_libraries(EEHalExecutor
     ${catkin_LIBRARIES}
     EEHal
+    matlogger2::matlogger2
     #KEEP THIS. ERROR HAPPENS OTHERWISE. not anymore?
     #XBot2Hal
 )

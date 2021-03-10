@@ -4,6 +4,8 @@
     <arg name="hand_name"/> 
     <arg name="gdb" default="false"/> <!-- for debug with gdb -->
     <arg name="hal_lib" default="DummyHal"/>
+    <arg name="matlogger_path" default=""/> <!--/home/pilot/src/ROSEndEffectorPackageManager-->
+
 
 
     <!-- send urdf to parameter server. This is necessary because sometimes UniversalRosEndEffector can not put them in time and joint state pub crashes-->
@@ -33,6 +35,8 @@
         <arg name="hand_name" value="$(arg hand_name)"/> 
         <arg name="hal_lib" value="$(arg hal_lib)"/> 
         <arg name="gdb" value="$(arg gdb)"/> 
+        <arg name="matlogger_path" value="$(arg matlogger_path)"/>
+
     </include>   
      
     <!-- start robot state publisher to transform joint pos into tf for rviz, so it is always on, gazebo or not -->

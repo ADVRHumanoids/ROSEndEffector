@@ -5,6 +5,9 @@
 
 #include <ros_end_effector/HAL/EEHal.h>
 
+#include <matlogger2/matlogger2.h>
+#include <matlogger2/utils/mat_appender.h>
+
 int main ( int argc, char **argv ) {
 
     ros::init ( argc, argv, "EEHalExecutor" );
@@ -15,7 +18,19 @@ int main ( int argc, char **argv ) {
         ROS_ERROR_STREAM( "Ros parameter 'hal_library_name' not found" );
         return -1;
     }
-      
+    
+    std::string matlogger_path;
+    XBot::MatLogger2::Ptr _logger; /* mt logger */
+
+    bool _logging = false;
+
+    if ( nh.getParam ( "/rosee/matlogger_path", matlogger_path ) && matlogger_path.size() != 0) {
+        ROS_INFO_STREAM( "Logging data into " << matlogger_path  );
+
+        _logger = XBot::MatLogger2::MakeLogger(matlogger_path); // date-time automatically appended
+        _logger->set_buffer_mode(XBot::VariableBuffer::Mode::circular_buffer);
+        _logging = true;
+    }
     std::unique_ptr<ROSEE::EEHal> eeHalPtr = ROSEE::Utils::loadObject<ROSEE::EEHal>
                                          (hal_lib, "create_object_"+hal_lib, &nh);
 
@@ -46,8 +61,21 @@ int main ( int argc, char **argv ) {
         //send _js_msg to external (ie to ROSEE main node)
         eeHalPtr->publish_joint_state();
         
+        
+        
         if (eeHalPtr->_pressure_active) {
             eeHalPtr->publish_pressure();
+        }
+        
+        if (_logging) {
+            _logger->add("motor_pos_ref", eeHalPtr->getMotorReference());
+            _logger->add("motor_pos", eeHalPtr->getJointPosition());
+            _logger->add("motor_eff", eeHalPtr->getJointEffort());
+            auto pressures =  eeHalPtr->getPressure();
+            _logger->add("pressure1", pressures.row(0));
+            _logger->add("pressure2", pressures.row(1));
+            _logger->add("pressure3", pressures.row(2));
+            _logger->add("pressure4", pressures.row(3));
         }
         
         ros::spinOnce();

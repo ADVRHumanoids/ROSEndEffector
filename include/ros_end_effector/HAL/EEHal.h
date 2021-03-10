@@ -110,6 +110,10 @@ namespace ROSEE {
         bool _pressure_active;
         bool publish_pressure();
 
+        Eigen::VectorXd getMotorReference() const;
+        Eigen::VectorXd getJointPosition() const;
+        Eigen::VectorXd getJointEffort() const;
+        Eigen::MatrixXd getPressure() const;
 
 
     protected:
