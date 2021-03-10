@@ -99,7 +99,7 @@ hand_info:
   #Ee = 0.9; Efficient of gearhead, The 0.9 is the maximum efficiency of the motor.
   #stiffness = Gratio * Ee * K_t * K_p / R_M = 138 * 0.9 * 0.0418 * 1 / 2.62 = 1.981511450381679389315
   motors_stiffness: [1.9815114503816793893155, 1.981511450381679389315, 1.981511450381679389315, 1.981511450381679389315] 
-  tips_frictions: [0.64, 0.64, 0.64, 0.64] #(Rubber against stainless steel 316)https://www.engineersedge.com/coeffients_of_friction.htm
+  tips_frictions: [0.5, 0.5, 0.5, 0.5] #(Rubber against stainless steel 316)https://www.engineersedge.com/coeffients_of_friction.htm
   # I know these below can be in the urdf... but EEHal for now does not have access to urdf
   motors_torque_limits: [3.3, 3.3, 3.3, 3.3] #Newton/meter, continuos torque, but peaks for short time can reach 5.3 N/m intermittent torque
   # tip frame position respect to last joint position, x and y coordinates (again present in the urdf)
