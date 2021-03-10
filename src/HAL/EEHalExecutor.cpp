@@ -46,6 +46,10 @@ int main ( int argc, char **argv ) {
         //send _js_msg to external (ie to ROSEE main node)
         eeHalPtr->publish_joint_state();
         
+        if (eeHalPtr->_pressure_active) {
+            eeHalPtr->publish_pressure();
+        }
+        
         ros::spinOnce();
         r.sleep();
         

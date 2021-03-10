@@ -36,6 +36,7 @@
 #include <ros_end_effector/UtilsYAML.h>
 
 #include <rosee_msg/HandInfo.h>
+#include <rosee_msg/MotorPhalangePressure.h>
 
 //Macro to be used in each concrete HAL that will define the create_object functions
 #define HAL_CREATE_OBJECT(className) \
@@ -105,6 +106,10 @@ namespace ROSEE {
          */
         virtual bool setHandInfoCallback();
         
+        bool _pressure_active;
+        bool publish_pressure();
+
+
 
     protected:
         
@@ -123,6 +128,12 @@ namespace ROSEE {
          */
         sensor_msgs::JointState _js_msg;
         ros::Publisher _joint_state_pub;
+        
+        //Heri specific message
+        bool initPressureSensing();
+        rosee_msg::MotorPhalangePressure _pressure_msg;
+        ros::Publisher _pressure_pub;
+
         
         /**** Hand info matrices***/
         std::vector <std::string> fingers_names, motors_names;
