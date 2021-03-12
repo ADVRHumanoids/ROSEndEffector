@@ -20,16 +20,19 @@ int main ( int argc, char **argv ) {
     }
     
     std::string matlogger_path;
-    XBot::MatLogger2::Ptr _logger; /* mt logger */
+    XBot::MatLogger2::Ptr logger; /* mt logger */
+    XBot::MatAppender::Ptr appender; /* mt logger */
 
-    bool _logging = false;
+    bool logging = false;
 
     if ( nh.getParam ( "/rosee/matlogger_path", matlogger_path ) && matlogger_path.size() != 0) {
         ROS_INFO_STREAM( "Logging data into " << matlogger_path  );
 
-        _logger = XBot::MatLogger2::MakeLogger(matlogger_path); // date-time automatically appended
-        _logger->set_buffer_mode(XBot::VariableBuffer::Mode::circular_buffer);
-        _logging = true;
+        logger = XBot::MatLogger2::MakeLogger(matlogger_path); // date-time automatically appended
+        appender = XBot::MatAppender::MakeInstance();
+        appender->add_logger(logger);
+        appender->start_flush_thread();        
+        logging = true;
     }
     std::unique_ptr<ROSEE::EEHal> eeHalPtr = ROSEE::Utils::loadObject<ROSEE::EEHal>
                                          (hal_lib, "create_object_"+hal_lib, &nh);
@@ -67,15 +70,15 @@ int main ( int argc, char **argv ) {
             eeHalPtr->publish_pressure();
         }
         
-        if (_logging) {
-            _logger->add("motor_pos_ref", eeHalPtr->getMotorReference());
-            _logger->add("motor_pos", eeHalPtr->getJointPosition());
-            _logger->add("motor_eff", eeHalPtr->getJointEffort());
+        if (logging) {
+            logger->add("motor_pos_ref", eeHalPtr->getMotorReference());
+            logger->add("motor_pos", eeHalPtr->getJointPosition());
+            logger->add("motor_eff", eeHalPtr->getJointEffort());
             auto pressures =  eeHalPtr->getPressure();
-            _logger->add("pressure1", pressures.row(0));
-            _logger->add("pressure2", pressures.row(1));
-            _logger->add("pressure3", pressures.row(2));
-            _logger->add("pressure4", pressures.row(3));
+            logger->add("pressure1", pressures.row(0));
+            logger->add("pressure2", pressures.row(1));
+            logger->add("pressure3", pressures.row(2));
+            logger->add("pressure4", pressures.row(3));
         }
         
         ros::spinOnce();
