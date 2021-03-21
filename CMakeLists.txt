@@ -13,6 +13,8 @@ find_package(catkin REQUIRED COMPONENTS srdfdom
                                         message_generation 
                                         moveit_ros_planning_interface
                                         rosee_msg
+                                        actionlib_msgs
+                                        actionlib
                                         )
                                                                                
 find_package(Eigen3 REQUIRED)

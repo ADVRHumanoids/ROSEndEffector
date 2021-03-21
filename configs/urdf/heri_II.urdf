@@ -185,28 +185,28 @@
     <origin rpy="0 0 0" xyz="0 0 0"/>
     <parent link="base_link"/>
     <child link="motor_finger1_virtual_link"/>
-    <limit effort="10" lower="0" upper="2.5" velocity="1"/>
+    <limit effort="10" lower="-0.1" upper="2.51" velocity="1"/>
     <dynamics damping="0.003" friction="0.003"/>
   </joint>
   <joint name="motor_finger2" type="revolute">
     <origin rpy="0 0 0" xyz="0 0 0"/>
     <parent link="base_link"/>
     <child link="motor_finger2_virtual_link"/>
-    <limit effort="10" lower="0" upper="2.5" velocity="1"/>
+    <limit effort="10" lower="-0.1" upper="2.51" velocity="1"/>
     <dynamics damping="0.003" friction="0.003"/>
   </joint>
   <joint name="motor_finger3" type="revolute">
     <origin rpy="0 0 0" xyz="0 0 0"/>
     <parent link="base_link"/>
     <child link="motor_finger3_virtual_link"/>
-    <limit effort="10" lower="0" upper="2.5" velocity="1"/>
+    <limit effort="10" lower="-0.1" upper="2.51" velocity="1"/>
     <dynamics damping="0.003" friction="0.003"/>
   </joint>
   <joint name="motor_thumb" type="revolute">
     <origin rpy="1.5708 -1.5708 0" xyz="7.6421E-05 -0.031634 0.1213"/>
     <parent link="base_link"/>
     <child link="motor_thumb_virtual_link"/>
-    <limit effort="10" lower="0" upper="2" velocity="1"/>
+    <limit effort="10" lower="-0.1" upper="1.71" velocity="1"/>
     <dynamics damping="0.003" friction="0.003"/>
   </joint>
   <!-- ///////////////////////////////////////   Base_Link of the short_finger   ////////////////////////////////////////// -->

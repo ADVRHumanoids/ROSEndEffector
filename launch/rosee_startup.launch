@@ -45,6 +45,6 @@
         <remap from="joint_states" to="/dummyHal/joint_states" />
     </node> 
     
-    <node type="rviz" name="rviz" pkg="rviz" args="-d $(find ros_end_effector)/configs/rviz/$(arg hand_name).rviz" />
+<!--    <node type="rviz" name="rviz" pkg="rviz" args="-d $(find ros_end_effector)/configs/rviz/$(arg hand_name).rviz" />-->
         
 </launch>

@@ -271,6 +271,42 @@ int main ( int argc, char **argv ) {
 
         std::cout << "The timed action parsed: " << std::endl;
         mapsHandler.getTimed("drill")->print();
+        
+        
+        // GRASP for HERI II
+        ROSEE::ActionComposed grasp ("full_grasp", true);
+        
+        for (auto trig : mapsHandler.getPrimitiveMap("trig")) {
+            grasp.sumAction  (trig.second) ; 
+        }
+        grasp.print();
+       
+        yamlWorker.createYamlFile (&grasp, folderForActions + "/generics/");
+    
+        
+        //Grap the strange handler
+        ROSEE::JointPos jp {
+            {"motor_finger1", {1.10}},
+            {"motor_finger2", {1.43}},
+            {"motor_finger3", {1.75}},
+            {"motor_thumb", {0.68}}    
+        };
+        
+        ROSEE::JointsInvolvedCount jpc {
+            {"motor_finger1", 1},
+            {"motor_finger2", 1},
+            {"motor_finger3", 1},
+            {"motor_thumb", 1} 
+        };
+       
+
+        ROSEE::ActionGeneric handleGrasp("handle_grasp", jp, jpc);
+        std::cout << std::endl << "handle_grasp action manually created: " << std::endl;
+
+        handleGrasp.print();
+        
+        yamlWorker.createYamlFile( &handleGrasp,  folderForActions + "/generics/" );
+
     }
 
      return 0;
