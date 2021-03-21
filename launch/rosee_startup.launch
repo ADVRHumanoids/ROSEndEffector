@@ -4,7 +4,7 @@
     <arg name="hand_name"/> 
     <arg name="gdb" default="false"/> <!-- for debug with gdb -->
     <arg name="hal_lib" default="DummyHal"/>
-    <arg name="matlogger_path" default=""/> <!--/home/pilot/src/ROSEndEffectorPackageManager-->
+    <arg name="matlogger_path" default="/home/embedded/ROSEE"/> <!--/home/pilot/src/ROSEndEffectorPackageManager-->
 
 
 
