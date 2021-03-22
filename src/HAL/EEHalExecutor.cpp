@@ -30,6 +30,8 @@ int main ( int argc, char **argv ) {
         eeHalPtr->init_hand_info_response();
         eeHalPtr->setHandInfoCallback();
     }
+    
+
       
     //TODO take rate from param
     ros::Rate r(100);
@@ -41,14 +43,21 @@ int main ( int argc, char **argv ) {
         eeHalPtr->sense();
         
         //make the robot move following the refs in _mr_msg
-        eeHalPtr->move();
+        //But be sure that someone has sent a motor command to the hal
+        if (eeHalPtr->checkCommandPub()) {
+            eeHalPtr->move();
+            ROS_WARN_STREAM_ONCE ("[EEHalExecutor] someone is publishing on '/ros_end_effector/motor_reference_pos', I will call the move()" );   
+            
+        } else {
+            ROS_WARN_STREAM_THROTTLE (60, "[EEHalExecutor] no-one is publishing on '/ros_end_effector/motor_reference_pos', I will not call the move()" );   
+        }
         
         //send _js_msg to external (ie to ROSEE main node)
         eeHalPtr->publish_joint_state();
         
         if (eeHalPtr->_pressure_active) {
             eeHalPtr->publish_pressure();
-        }
+        } 
         
         ros::spinOnce();
         r.sleep();

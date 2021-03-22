@@ -25,12 +25,12 @@ ROSEE::EEHal::EEHal(ros::NodeHandle* nh) {
     //TODO take topic name from roslaunch
     std::string motor_reference_topic  = "/ros_end_effector/motor_reference_pos";
 
-    _motor_reference_sub = _nh->subscribe(motor_reference_topic, 1,
+    _motor_reference_sub = _nh->subscribe(motor_reference_topic, 10,
                                           &ROSEE::EEHal::motor_reference_clbk, this);
     
     std::string joint_state_topic = "/ros_end_effector/joint_states";
     
-    _joint_state_pub = _nh->advertise<sensor_msgs::JointState>(joint_state_topic, 10);
+    _joint_state_pub = _nh->advertise<sensor_msgs::JointState>(joint_state_topic, 10);    
     
     _hand_info_present = parseHandInfo();
    
@@ -40,6 +40,13 @@ ROSEE::EEHal::EEHal(ros::NodeHandle* nh) {
     
     _pressure_active = false; // if a derived class want to use this, it must call initPressureSensing()
     
+
+    
+}
+
+bool ROSEE::EEHal::checkCommandPub() {
+    
+    return (_motor_reference_sub.getNumPublishers() > 0 && _mr_msg.name.size() != 0);
 }
 
 bool ROSEE::EEHal::isHandInfoPresent() { return _hand_info_present; }
