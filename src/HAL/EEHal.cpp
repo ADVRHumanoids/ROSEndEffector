@@ -270,3 +270,55 @@ bool ROSEE::EEHal::publish_pressure() {
     return true;
     
 }
+
+Eigen::VectorXd ROSEE::EEHal::getMotorReference() const {
+    
+    Eigen::VectorXd motorRef;
+    motorRef.resize(_mr_msg.name.size());
+    for (int i=0; i<_mr_msg.name.size(); i++ ) {
+        
+        motorRef(i) = _mr_msg.position.at(i);
+    }
+    
+    return motorRef;
+}
+
+Eigen::VectorXd ROSEE::EEHal::getJointPosition() const {
+
+    Eigen::VectorXd jointPos;
+    jointPos.resize(_js_msg.name.size());
+    for (int i=0; i<_js_msg.name.size(); i++ ) {
+        
+        jointPos(i) = _js_msg.position.at(i);
+    }
+    
+    return jointPos;
+}
+
+Eigen::VectorXd ROSEE::EEHal::getJointEffort() const {
+
+    Eigen::VectorXd jointEffort;
+    jointEffort.resize(_js_msg.name.size());
+    for (int i=0; i<_js_msg.name.size(); i++ ) {
+        
+        jointEffort(i) = _js_msg.effort.at(i);
+    }
+    
+    return jointEffort;
+}
+
+Eigen::MatrixXd ROSEE::EEHal::getPressure() const {
+
+    Eigen::MatrixXd pressure;
+    pressure.resize(4, _pressure_msg.pressure_finger1.size()); //message has 4 finger field
+    for (int i=0; i<_pressure_msg.pressure_finger1.size(); i++ ) {
+
+        pressure(0, i) = _pressure_msg.pressure_finger1.at(i);
+        pressure(1, i) = _pressure_msg.pressure_finger2.at(i);
+        pressure(2, i) = _pressure_msg.pressure_finger3.at(i);
+        pressure(3, i) = _pressure_msg.pressure_thumb.at(i);
+    }
+    
+    return pressure;
+    
+}
