@@ -67,6 +67,8 @@ namespace ROSEE {
         
         virtual bool publish_joint_state();
         
+        virtual bool checkCommandPub();
+        
         //virtual bool setMotorPositionReference(std::string motor, double pos) = 0;
         //virtual bool getJointPosition(std::string joint, std::vector<double> &pos ) = 0;
                         
