@@ -306,6 +306,32 @@ int main ( int argc, char **argv ) {
         handleGrasp.print();
         
         yamlWorker.createYamlFile( &handleGrasp,  folderForActions + "/generics/" );
+        
+        
+        
+        
+        //Grap 3f
+        ROSEE::JointPos jp3f {
+            {"motor_finger1", {2.51}},
+            {"motor_finger2", {2.51}},
+            {"motor_finger3", {0}},
+            {"motor_thumb", {1.71}}    
+        };
+        
+        ROSEE::JointsInvolvedCount jpc3f {
+            {"motor_finger1", 1},
+            {"motor_finger2", 1},
+            {"motor_finger3", 0},
+            {"motor_thumb", 1} 
+        };
+       
+
+        ROSEE::ActionGeneric threeFgrasp("3f_grasp", jp3f, jpc3f);
+        std::cout << std::endl << "3f_grasp action manually created: " << std::endl;
+
+        threeFgrasp.print();
+        
+        yamlWorker.createYamlFile( &threeFgrasp,  folderForActions + "/generics/" );
 
     }
 
