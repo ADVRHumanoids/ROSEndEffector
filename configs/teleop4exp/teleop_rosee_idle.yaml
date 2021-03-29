@@ -1,0 +1,64 @@
+XBotCore:
+  config_path: "robots/iit-teleop-ros-pkg/teleop_config/low_level/teleop_idle.yaml"
+
+XBotInterface:
+  urdf_path: "robots/iit-teleop-ros-pkg/teleop_urdf/urdf/teleop_fixed_base.urdf"
+  srdf_path: "robots/iit-teleop-ros-pkg/teleop_srdf/srdf/teleop_fixed_base.srdf"
+  joint_map_path: "robots/iit-teleop-ros-pkg/teleop_config/low_level/teleop_joint_map.yaml"
+
+RobotInterface:
+  framework_name: "ROS"
+
+ModelInterface:
+  model_type: "RBDL"
+  is_model_floating_base: "false"
+  
+MasterCommunicationInterface:
+  framework_name: "ROS"
+
+XBotRTPlugins:
+  plugins: ["HomingExample", "HeriHandPlugin", "PreGraspPlugin", "RoseeExpPlugin"] 
+  io_plugins: []
+  
+NRTPlugins:
+  plugins: [] 
+  
+TransmissionPlugins:
+  plugins: [] 
+
+WebServer:
+  enable: "true"
+  address: "127.0.0.1"
+  port: "8081"
+
+SimulationOptions:
+  verbose_mode: "true"
+
+CartesianInterface:
+    solver: "OpenSot"
+    problem_description:
+        solver_options:
+            regularization: 1e-4
+            back_end: "qpoases"
+
+        stack:
+            - ["ArmPosition"]
+            - ["ArmOrientation"]
+
+        constraints: ["JointLimits", "VelocityLimits"]
+
+        ArmPosition:
+            type: "Cartesian"
+            distal_link: "teleop_link5"
+            base_link: "base_link"
+            lambda: 0.2
+            indices: [0,1,2]
+
+        ArmOrientation:
+            type: "Cartesian"
+            distal_link: "teleop_link5"
+            base_link: "base_link"
+            lambda: 0.2
+            indices: [3,4,5]
+            use_body_jacobian: true
+
