@@ -1,9 +1,9 @@
 # ROS End-Effector 
-ROS End-Effector package: provides a ROS-based set of standard interfaces to command robotics end-effectors in an agnostic fashion.
+It provides a ROS-based set of standard interfaces to command robotics end-effectors in an agnostic fashion.
 
-Wiki is here: https://advrhumanoids.github.io/ROSEndEffectorDocs/
+The ROS End-Effector main documentation is here: https://advrhumanoids.github.io/ROSEndEffectorDocs/
 
-Documentation about the API of ROS End-Effector can be found here https://advrhumanoids.github.io/ROSEndEffector/index.html
+Doxygen-generated documentation about the API of ROS End-Effector can be found here: https://advrhumanoids.github.io/ROSEndEffector/index.html
 
 CI powered by Travis CI (.com) [![Build Status](https://travis-ci.com/ADVRHumanoids/ROSEndEffector.svg?branch=master)](https://travis-ci.com/ADVRHumanoids/ROSEndEffector)
 
@@ -28,4 +28,3 @@ More information: <a href="http://rosin-project.eu">rosin-project.eu</a>
 
 This project has received funding from the European Union’s Horizon 2020  
 research and innovation programme under grant agreement no. 732287. 
-

@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<launch>
+
+	<arg name="hand_name"/>
+    <arg name="gdb" default="false"/> <!-- for debug with gdb -->
+	
+  <!-- send this file to param server. Internally with the Parser, rob descr and rob descr semantic will be loaded with
+       file pointed by this config file -->
+	<param name="ros_ee_config_path" value="$(find ros_end_effector)/configs/$(arg hand_name).yaml"/> 
+
+	<node unless="$(arg gdb)" type="UniversalFindActions" name="UniversalFindActions" pkg="ros_end_effector" output="screen"/>
+    
+    <!-- run with gdb for debug -->
+    <node if="$(arg gdb)" type="UniversalFindActions" name="UniversalFindActions" pkg="ros_end_effector" output="screen" launch-prefix="xterm -e gdb --args" />
+</launch>

@@ -1,0 +1,62 @@
+ros_end_effector:
+  urdf_path: "urdf/robotiq_2f_140.urdf"
+  srdf_path: "srdf/robotiq_2f_140.srdf"
+  
+  
+## Arguments for rosee_plugin control for gazebo. Similar syntax to
+# the one used by "official" ros plugin http://gazebosim.org/tutorials/?tut=ros_control
+rosee_gazebo_plugins_args: #robot name
+  #Controller for each joint. type now is only JointPositionControllerfor JointVelocityController
+  finger_joint_controller:
+    type: JointPositionController
+    joint_name: finger_joint
+    pid: {p: 0.1, i: 0.05, d: 0.01}
+
+    
+    
+    
+    
+XBotInterface:
+  urdf_path: "/home/tori/ROSEE/src/ROSEndEffector/configs/urdf/robotiq_2f_140.urdf"
+  srdf_path: "/home/tori/ROSEE/src/ROSEndEffector/configs/srdf/robotiq_2f_140.srdf"
+  
+RobotInterface:
+  framework_name: "ROS"
+  
+#MasterCommunicationInterface:
+#  framework_name: "ROS"
+
+ModelInterface:
+  model_type: "RBDL"
+  is_model_floating_base: "false" 
+
+xbotcore_threads:
+    rt_slow:  {sched: fifo , prio: 60, period: 0.5, core_id: 0}
+    rt_main:  {sched: fifo , prio: 60, period: 0.001, core_id: 2}
+    nrt_main: {sched: other, prio: 0 , period: 0.005}
+  
+xbotcore_devices:
+
+    joint_gz:
+        names: [__joint_srdf__]  # take all joint ids from srdf/urdf
+        thread: rt_main  # allocate this device on rt_main thread
+
+    joint_master:
+        master: true  # this is a master device for all 'joint' devices
+        thread: rt_main
+ 
+xbotcore_plugins:
+
+    # this plugin is shipped with xbot2, and it generates the
+    # ROS api for the framework
+    # it is not designed to be real-time safe, so it must executed
+    # inside a thread with `other` priority
+    ros_io: {thread: nrt_main, type: ros_io}
+    ros_ctrl: {thread: nrt_main, type: ros_control} 
+
+# additional parameters that don't relate to any plugin 
+xbotcore_param:
+    /jm/tx_filter_autostart: {value: true, type: bool}  # autostart joint filter
+    /jm/tx_filter_cutoff: {value: 2.0, type: double}    # set default filter bandwidth
+    /xbot_internal/ros_io/call_timeout: {value: 1.0, type: chrono}
+    /rt_slow/memory_hooks: {value: false, type: bool}

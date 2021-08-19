@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="gazebo" default="false" />
+    <arg name="hand_name"/>
+    <arg name="hal_lib"/>
+    <arg name="gdb" default="false"/> <!-- for debug with gdb -->
+    <arg name="matlogger_path" default=""/> 
+
+    <param name="/rosee/hal_library_name" value="$(arg hal_lib)" />
+    <param name="/rosee/matlogger_path" value="$(arg matlogger_path)" />
+
+    <node unless="$(arg gdb)" type="EEHalExecutor" name="EEHalExecutor" pkg="ros_end_effector" output="screen"/>
+    <node if="$(arg gdb)" type="EEHalExecutor" name="EEHalExecutor" pkg="ros_end_effector" output="screen" launch-prefix="xterm -e gdb --args"/>
+    
+    <!-- Joint state publisher is necessary for mimic joint, not used if gazebo is used because there is the gazebo_ros_plugin which handles the mimic -->
+    <node unless="$(arg gazebo)" name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+        <!-- Input -->
+        <rosparam param="source_list">["/dummyHal/joint_command"] </rosparam>
+        <!-- Output -->
+        <remap from="joint_states" to="/dummyHal/joint_states" />
+    </node>
+    
+    <include if="$(arg gazebo)" file="$(find rosee_gazebo_plugins)/launch/gazebo.launch"> 
+    	  <arg name="hand_name" value="$(arg hand_name)"/>
+    </include>   
+
+    
+</launch>

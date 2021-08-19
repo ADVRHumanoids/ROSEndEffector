@@ -4,6 +4,13 @@ project(ros_end_effector)
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++11)
 
+##test code coverage
+option(ROSEE_ENABLE_COVERAGE "Compile with coverage information" ON)
+if(${ROSEE_ENABLE_COVERAGE})
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage -g")
+endif()
+
+
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
@@ -11,63 +18,29 @@ find_package(catkin REQUIRED COMPONENTS srdfdom
                                         kdl_parser
                                         roscpp
                                         message_generation 
+                                        moveit_ros_planning_interface
+                                        rosee_msg
                                         )
                                                                                
-# find_package(matlogger2 REQUIRED)
-
 find_package(Eigen3 REQUIRED)
+#TODO on my pc, find_package works. On iit pc, I need the find_library. Why?
+#find_package(muparser REQUIRED) 
+find_library(_MUPARSER_LIB muparser REQUIRED)
+find_package(yaml-cpp REQUIRED)
+find_package(matlogger2 REQUIRED)
 
+#Xbot stuff
+option(BUILD_WITH_XBOT2 "Compile also the HAL used with XBot2" ON)
 
+if (BUILD_WITH_XBOT2)
+    message("Compiling with XBOT2")
+    option(XBOT2_ENABLE_XENO OFF "Compile against xenomai") #TODO necessary?
+    find_package(xbot2 REQUIRED)
 
-## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
+else()
+    message("Compiling without XBOT2")
+endif(BUILD_WITH_XBOT2)
 
-
-## Uncomment this if the package has a setup.py. This macro ensures
-## modules and global scripts declared therein get installed
-## See http://ros.org/doc/api/catkin/html/user_guide/setup_dot_py.html
-# catkin_python_setup()
-
-################################################
-## Declare ROS messages, services and actions ##
-################################################
-
-add_message_files(
-DIRECTORY msgs
-FILES
-EEGraspControl.msg
-)
-
-add_message_files(
-DIRECTORY msgs
-FILES
-EEPinchControl.msg
-)
-
-generate_messages(
-DEPENDENCIES
-std_msgs
-)
-
-################################################
-## Declare ROS dynamic reconfigure parameters ##
-################################################
-
-## To declare and build dynamic reconfigure parameters within this
-## package, follow these steps:
-## * In the file package.xml:
-##   * add a build_depend and a exec_depend tag for "dynamic_reconfigure"
-## * In this file (CMakeLists.txt):
-##   * add "dynamic_reconfigure" to
-##     find_package(catkin REQUIRED COMPONENTS ...)
-##   * uncomment the "generate_dynamic_reconfigure_options" section below
-##     and list every .cfg file to be processed
-
-## Generate dynamic reconfigure parameters in the 'cfg' folder
-# generate_dynamic_reconfigure_options(
-#   cfg/DynReconf1.cfg
-#   cfg/DynReconf2.cfg
-# )
 
 ###################################
 ## catkin specific configuration ##
@@ -79,7 +52,7 @@ std_msgs
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
+    INCLUDE_DIRS include
 #  LIBRARIES ros_end_effector
 #  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
@@ -104,12 +77,84 @@ add_library(ROSEEInterface
 )
 
 add_library(DummyHal
-    src/EEHal.cpp
-    src/DummyHal.cpp
+     src/HAL/DummyHal.cpp
 )
+
+add_library(EEHal
+     src/HAL/EEHal.cpp
+)
+
+if (BUILD_WITH_XBOT2)
+
+    add_library(XBot2Hal
+        src/HAL/XBot2Hal.cpp
+    )
+
+endif(BUILD_WITH_XBOT2)
+
 
 add_library(UniversalRosEndEffectorExecutor
     src/UniversalRosEndEffectorExecutor.cpp
+)
+
+add_library(FindActions 
+    src/FindActions.cpp
+)
+
+add_library(ParserMoveIt
+    src/ParserMoveIt.cpp
+)
+
+add_library(YamlWorker
+    src/YamlWorker.cpp
+)
+
+add_library(RosActionServer
+    src/RosActionServer.cpp
+)
+
+add_library(RosServiceHandler
+    src/RosServiceHandler.cpp
+)
+
+add_library(MapActionHandler
+    src/MapActionHandler.cpp
+)
+
+add_library(Action 
+    src/GraspingActions/Action.cpp 
+)
+
+add_library(ActionPrimitive 
+    src/GraspingActions/ActionPrimitive.cpp
+)
+
+add_library(ActionPinchTight
+    src/GraspingActions/ActionPinchTight.cpp
+)
+add_library(ActionPinchGeneric
+    src/GraspingActions/ActionPinchGeneric.cpp
+)
+add_library(ActionPinchLoose
+    src/GraspingActions/ActionPinchLoose.cpp
+)
+add_library(ActionTrig
+    src/GraspingActions/ActionTrig.cpp
+)
+add_library(ActionSingleJointMultipleTips
+    src/GraspingActions/ActionSingleJointMultipleTips.cpp
+)
+add_library(ActionMultiplePinchTight
+    src/GraspingActions/ActionMultiplePinchTight.cpp
+)
+add_library(ActionGeneric
+    src/GraspingActions/ActionGeneric.cpp 
+)
+add_library(ActionComposed
+    src/GraspingActions/ActionComposed.cpp 
+)
+add_library(ActionTimed
+    src/GraspingActions/ActionTimed.cpp 
 )
 
 ## Add cmake target dependencies of the library
@@ -118,12 +163,11 @@ add_library(UniversalRosEndEffectorExecutor
 # add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 add_executable(UniversalRosEndEffector src/UniversalRosEndEffector.cpp)
+add_executable(UniversalFindActions src/UniversalFindActions.cpp)
+add_executable(EEHalExecutor src/HAL/EEHalExecutor.cpp)
+# # add_dependencies(UniversalRosEndEffectorExecutor ros_end_effector_generate_messages_cpp)
+# # add_dependencies(UniversalFindActions ros_end_effector_generate_messages_cpp)
 
-## Rename C++ executable without prefix
-## The above recommended prefix causes long target names, the following renames the
-## target back to the shorter version for ease of user use
-## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
-# set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
@@ -140,23 +184,147 @@ target_link_libraries(ROSEEInterface
     ROSEEParser
 )
 
-target_link_libraries(DummyHal
-    yaml-cpp
-)
-
 target_link_libraries(UniversalRosEndEffectorExecutor
     ${catkin_LIBRARIES}
     ROSEEParser
     ROSEEInterface
+    YamlWorker
+    MapActionHandler
+    RosActionServer
+    RosServiceHandler
     
-    # do it automatically
-    DummyHal
-    
+)
+
+target_link_libraries(YamlWorker
+    yaml-cpp
+    Action
+    ActionPrimitive
+    ActionPinchTight
+    ActionTrig
+    ActionPinchLoose
+    ActionSingleJointMultipleTips
+    ActionMultiplePinchTight
+    ActionComposed
+    ActionTimed
+)
+
+target_link_libraries(MapActionHandler
+    Action
+    ActionPrimitive
+    ActionGeneric
+    ActionTimed
+    YamlWorker
+)
+
+target_link_libraries(RosActionServer
+    ${catkin_LIBRARIES}
+)
+add_dependencies(RosActionServer rosee_msg_generate_messages_cpp)
+
+target_link_libraries(RosServiceHandler
+    ${catkin_LIBRARIES}
+)
+add_dependencies(RosServiceHandler rosee_msg_generate_messages_cpp)
+
+target_link_libraries(ActionPinchTight
+    ActionPinchGeneric
+)
+
+target_link_libraries(ActionPinchGeneric
+    ActionPrimitive
+)
+
+target_link_libraries(ActionPinchLoose
+    ActionPinchGeneric
+)
+
+target_link_libraries(ActionTrig
+    ActionPrimitive
+)
+
+target_link_libraries(ActionSingleJointMultipleTips
+    ActionPrimitive
+)
+
+target_link_libraries(ActionMultiplePinchTight
+    ActionPinchGeneric
+)
+
+target_link_libraries(ActionGeneric
+    Action
+)
+
+target_link_libraries(ActionComposed
+    ActionGeneric
+)
+
+target_link_libraries(ActionTimed
+    Action
+)
+
+target_link_libraries(FindActions
+    ${catkin_LIBRARIES}
+    ParserMoveIt
+    YamlWorker
+    Action
+    ActionPinchTight
+    ActionTrig
+    ActionPinchLoose
+    ActionSingleJointMultipleTips
+    ActionMultiplePinchTight
+    muparser
+)
+
+target_link_libraries(ParserMoveIt
+    ${catkin_LIBRARIES}
 )
 
 target_link_libraries(UniversalRosEndEffector
     UniversalRosEndEffectorExecutor
+    
 )
+
+target_link_libraries(UniversalFindActions
+    ParserMoveIt
+    ROSEEParser
+    FindActions
+    Action
+    ActionPrimitive
+    ActionTrig
+    ActionPinchTight
+    ActionPinchLoose
+    ActionSingleJointMultipleTips
+    ActionTimed
+    ActionGeneric
+    MapActionHandler
+)
+
+target_link_libraries(EEHalExecutor
+    ${catkin_LIBRARIES}
+    EEHal
+    matlogger2::matlogger2
+    #KEEP THIS. ERROR HAPPENS OTHERWISE. not anymore?
+    #XBot2Hal
+)
+
+target_link_libraries(EEHal 
+    ${catkin_LIBRARIES}
+    yaml-cpp
+)
+add_dependencies(EEHal rosee_msg_generate_messages_cpp)
+
+target_link_libraries(DummyHal
+    ${catkin_LIBRARIES}
+    EEHal 
+)
+
+if(BUILD_WITH_XBOT2)
+    target_link_libraries(XBot2Hal
+        xbot2::xbot2
+        EEHal
+    )
+endif(BUILD_WITH_XBOT2)
+
 
 #############
 ## Install ##
@@ -180,11 +348,11 @@ target_link_libraries(UniversalRosEndEffector
 # )
 
 ## Mark cpp header files for installation
-# install(DIRECTORY include/${PROJECT_NAME}/
-#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-#   FILES_MATCHING PATTERN "*.h"
-#   PATTERN ".svn" EXCLUDE
-# )
+install(DIRECTORY include/${PROJECT_NAME}/
+    DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+    FILES_MATCHING PATTERN "*.h"
+    PATTERN ".svn" EXCLUDE
+)
 
 install(DIRECTORY launch/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
@@ -205,13 +373,108 @@ install(DIRECTORY launch/
 if(CATKIN_ENABLE_TESTING)
 
     # Add gtest based cpp test target and link libraries
-    catkin_add_gtest(EEInterface-test test/test_ee_interface.cpp)
-    if(TARGET EEInterface-test)
-        target_link_libraries(EEInterface-test ${catkin_LIBRARIES}
-                                                ROSEEParser
-                                                ROSEEInterface)
-    endif()
+    #catkin_add_gtest(EEInterface_test test/test_ee_interface.cpp)
+    add_executable(EEInterface_test test/test_ee_interface.cpp)
+    target_link_libraries(EEInterface_test ${catkin_LIBRARIES}
+                                           ROSEEParser
+                                           ROSEEInterface
+                                           gtest)
+                                           
+    add_executable(FindPinches_test test/test_find_pinches.cpp)
+    target_link_libraries(FindPinches_test ${catkin_LIBRARIES}
+                                            FindActions
+                                            ActionPrimitive
+                                            ActionPinchTight
+                                            ActionPinchLoose
+                                            gtest)
+                                            
+    add_executable(FindTrigs_test test/test_find_trigs.cpp)
+    target_link_libraries(FindTrigs_test ${catkin_LIBRARIES}
+                                         FindActions
+                                         ActionPrimitive
+                                         ActionTrig
+                                         gtest)
+                                         
+    add_executable(ComposedAction_test test/test_composedAction.cpp)
+    target_link_libraries(ComposedAction_test ${catkin_LIBRARIES}
+                                              FindActions
+                                              Action
+                                              ActionPrimitive
+                                              ActionTrig
+                                              ActionComposed
+                                              gtest)
+                                              
+    add_executable(TimedAction_test test/test_timedAction.cpp)
+    target_link_libraries(TimedAction_test ${catkin_LIBRARIES}
+                                              FindActions
+                                              Action
+                                              ActionPrimitive
+                                              ActionTrig
+                                              ActionPinchGeneric
+                                              ActionComposed
+                                              gtest)
+                                              
+    add_executable(SendAction_test test/test_send_action.cpp)
+    target_link_libraries(SendAction_test ${catkin_LIBRARIES}
+                                              Action
+                                              ActionGeneric
+                                              ActionComposed
+                                              gtest
+                                              YamlWorker
+                                              ROSEEParser
+                                              ROSEEInterface
+                                              FindActions)  
+                                              
+    add_executable(ServiceHandler_test test/test_service_handler.cpp)
+    target_link_libraries(ServiceHandler_test ${catkin_LIBRARIES}
+                                              gtest
+                                              ROSEEParser
+                                              ROSEEInterface
+                                              MapActionHandler
+                                              RosServiceHandler)  
+    
+    list(APPEND testsExecutable 
+        EEInterface_test 
+        FindPinches_test 
+        FindTrigs_test 
+        ComposedAction_test 
+        TimedAction_test
+        SendAction_test 
+        ServiceHandler_test
+    )
+    list(APPEND handsForTests
+         test_ee 
+         test_ee_spread 
+         two_finger 
+         two_finger_mimic
+    )
+    
+    #run each test with each hand
+    foreach(hand ${handsForTests})
+        foreach(testEx ${testsExecutable})
+        
+            add_test(
+                NAME ${testEx}_${hand}
+                COMMAND ${testEx} ${hand}
+            )
 
+        endforeach()    
+    endforeach()
+    
+    #for code coverage, from Arturo xbot2
+    add_custom_target(test_clean_coverage
+        COMMAND /bin/sh ${CMAKE_CURRENT_SOURCE_DIR}/test/scripts/clean_gcov.sh
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    )
+    
+    add_custom_target(test_coverage
+        COMMAND lcov -c -d . --output-file main_coverage.info
+        #remove external libraries in the coverage
+        COMMAND lcov -r main_coverage.info '/usr*' 'boost*' 'eigen3*' 'c++*' '/opt*' -o main_coverage.info
+        COMMAND genhtml main_coverage.info --output-directory coverage_out
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    )
+                
 endif()
 
 ## Add folders to be run by python nosetests
@@ -230,3 +493,5 @@ macro(optional_build name path ONOFF)
 endmacro(optional_build name path ONOFF)
 
 optional_build(documentation doc ON)
+
+#unset(BUILD_WITH_XBOT2 CACHE) # todo check if necesasry

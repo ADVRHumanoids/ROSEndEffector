@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<robot name="two_finger_mimic">
+    
+    <group name="finger_1">
+        <chain base_link="base" tip_link="left_fingertip"/>
+    </group>
+    
+    <group name="finger_2">
+        <chain base_link="base" tip_link="right_fingertip"/>
+    </group>
+
+   
+   <group name="end_effector_fingers">
+      <group name="finger_1" />
+      <group name="finger_2" />
+   </group>
+   
+   <end_effector name="two_finger_mimic_end_effector" parent_link="motor" group="end_effector_fingers"/>
+
+</robot>

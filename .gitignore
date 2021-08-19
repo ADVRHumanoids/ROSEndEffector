@@ -32,4 +32,15 @@
 *.app
 
 *.kdev4
+*.kate-swp
 build/
+
+# yaml generated files
+configs/actions/
+
+#rviz configs
+configs/rviz/
+
+#pdf generated from urdf
+configs/urdf/*.pdf
+configs/urdf/*.gv

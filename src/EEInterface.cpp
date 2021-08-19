@@ -15,7 +15,7 @@
  * limitations under the License.
 */
 
-#include <ROSEndEffector/EEInterface.h>
+#include <ros_end_effector/EEInterface.h>
 
 ROSEE::EEInterface::EEInterface ( const ROSEE::Parser& p  ) {
     
@@ -24,6 +24,8 @@ ROSEE::EEInterface::EEInterface ( const ROSEE::Parser& p  ) {
     _upper_limits.resize(_joints_num);
     _lower_limits.resize(_joints_num);
     
+    // get the EE name
+    _ee_name = p.getEndEffectorName();
     
     // get the ee description
     _ee_description = p.getFingerJointMap();
@@ -64,6 +66,12 @@ ROSEE::EEInterface::EEInterface ( const ROSEE::Parser& p  ) {
 
 }
 
+std::string ROSEE::EEInterface::getName() {
+    
+    return _ee_name;
+}
+
+
 Eigen::VectorXd ROSEE::EEInterface::getLowerPositionLimits() {
 
     return _lower_limits;
@@ -99,9 +107,6 @@ bool ROSEE::EEInterface::getInternalIdsForFinger ( std::string finger_name, std:
 
 }
 
-
-
-
 const std::vector< std::string >& ROSEE::EEInterface::getFingers() {
     
     return _fingers_names;
@@ -112,9 +117,11 @@ bool ROSEE::EEInterface::isFinger ( std::string finger_name ) {
     return ( _ee_description.count(finger_name) > 0 );
 }
 
-void ROSEE::EEInterface::getActuatedJoints ( std::vector< std::string >& actuated_joints ) {
+
+
+const std::vector< std::string >&  ROSEE::EEInterface::getActuatedJoints () {
     
-    actuated_joints = _actuated_joints;
+    return _actuated_joints;
 }
 
 

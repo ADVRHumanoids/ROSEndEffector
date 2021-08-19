@@ -1,0 +1,158 @@
+#WARNING: DO NOT USE TAB FOR IDENT YAML FILE: This is not permitted by the YAML spec
+## urdf and srdf filename
+ros_end_effector:
+  urdf_path: "urdf/heri_II.urdf"
+  srdf_path: "srdf/heri_II.srdf"
+  
+  
+## Arguments for rosee_plugin control for gazebo. Similar syntax to
+# the one used by "official" ros plugin http://gazebosim.org/tutorials/?tut=ros_control
+rosee_gazebo_plugins_args: #robot name
+  #Controller for each joint. type now is only JointPositionControllerfor JointVelocityController
+  motor_finger1_position_controller:
+    type: JointPositionController
+    joint_name: motor_finger1
+    pid: {p: 0.3, i: 0.001, d: 0.00005}
+
+  motor_finger2_position_controller:
+    type: JointPositionController
+    joint_name: motor_finger2
+    pid: {p: 0.3, i: 0.001, d: 0.00005}
+
+  motor_finger3_position_controller:
+    type: JointPositionController
+    joint_name: motor_finger3
+    pid: {p: 0.3, i: 0.001, d: 0.00005}
+    
+  motor_thumb_position_controller:
+    type: JointPositionController
+    joint_name: motor_thumb
+    pid: {p: 0.3, i: 0.001, d: 0.00005}
+   
+############ XBOT config############################  
+XBotInterface:
+  #urdf_path: "/home/tori/ROSEE/src/ROSEndEffector/configs/urdf/heri_II.urdf"
+  #srdf_path: "/home/tori/ROSEE/src/ROSEndEffector/configs/srdf/heri_II.srdf"
+  urdf_path: "configs/urdf/heri_II.urdf"
+  srdf_path: "configs/srdf/heri_II.srdf"
+  joint_map_path: "configs/heri_II_jp.yaml"
+  
+ModelInterface:
+  model_type: "RBDL"
+  is_model_floating_base: "false"
+  
+RobotInterface:
+  framework_name: "ROS"
+
+xbotcore_threads:
+    #rt_slow:  {sched: fifo , prio: 60, period: 0.5, core_id: 0}
+    rt_main:  {sched: fifo , prio: 60, period: 0.001, core_id: 2}
+    heri_nrt_main: {sched: other, prio: 0 , period: 0.001}
+    heri_nrt_2: {sched: other, prio: 0 , period: 0.001}
+    nrt_main: {sched: other, prio: 0 , period: 0.005}
+  
+xbotcore_devices:
+
+    #joint_gz:
+    #    names: [__joint_srdf__]  # take all joint ids from srdf/urdf
+    #    thread: rt_main  # allocate this device on rt_main thread
+
+    joint_master:
+      master: true  # this is a master device for all 'joint' devices
+      thread: rt_main
+    
+    HeriIIBoard:
+        names: ["heri_board_112", "heri_board_113"]
+        thread: heri_nrt_main
+ 
+xbotcore_plugins:
+
+    # this plugin is shipped with xbot2, and it generates the
+    # ROS api for the framework
+    # it is not designed to be real-time safe, so it must executed
+    # inside a thread with `other` priority
+    ros_io: {thread: nrt_main, type: ros_io}
+    #ros_ctrl: {thread: nrt_main, type: ros_control} 
+    
+    HeriIIXBot2Plugin:
+        thread: heri_nrt_2
+        type: HeriIIXBot2Plugin
+
+# additional parameters that don't relate to any plugin 
+xbotcore_param:
+    /jm/tx_filter_autostart: {value: true, type: bool}  # autostart joint filter
+    /jm/tx_filter_cutoff: {value: 2.0, type: double}    # set default filter bandwidth
+    /xbot_internal/ros_io/call_timeout: {value: 1.0, type: chrono}
+    /rt_slow/memory_hooks: {value: false, type: bool}
+    /jm/enable_safety: {value: false, type: bool}
+          
+################## Specific info for rosee planner ############################
+hand_info:
+  #The order here will be the order followed by the other info
+  fingers_names: [finger_1, finger_2, finger_3, thumb]
+  motors_names: [motor_finger1, motor_finger2, motor_finger3, motor_thumb]
+  #
+  #K_t : 0.0418 # Torque coefficent of the motor [Nm/A]
+  #R_M : 2.62 # Eletrical terminal resistance of the motor [ohm]
+  #K_p : 1? p gain of pid. It is hardcoded in the heri firmware
+  #Gratio = 138
+  #Ee = 0.9; Efficient of gearhead, The 0.9 is the maximum efficiency of the motor.
+  #stiffness = Gratio * Ee * K_t * K_p / R_M = 138 * 0.9 * 0.0418 * 1 / 2.62 = 1.981511450381679389315
+  motors_stiffness: [1.9815114503816793893155, 1.981511450381679389315, 1.981511450381679389315, 1.981511450381679389315] 
+  tips_frictions: [0.5, 0.5, 0.5, 0.5] #(Rubber against stainless steel 316)https://www.engineersedge.com/coeffients_of_friction.htm
+  # I know these below can be in the urdf... but EEHal for now does not have access to urdf
+  motors_torque_limits: [3.3, 3.3, 3.3, 3.3] #Newton/meter, continuos torque, but peaks for short time can reach 5.3 N/m intermittent torque
+  # tip frame position respect to last joint position, x and y coordinates (again present in the urdf)
+  tip_joint_to_tip_frame_x: [0.0175, 0.0175, 0.0175, 0.0175]
+  tip_joint_to_tip_frame_y: [-0.0111, -0.0111, -0.0111, -0.0111]
+
+##############
+### real hand
+##############
+
+ec_board_ctrl :
+  #eth_iface: rteth0
+  eth_iface: enp3s0
+  #sync_cycle_time_ns: 500000
+  #sync_cycle_time_ns: 1000000
+  #sync_cycle_time_ns: 2000000
+  #sync_cycle_time_ns: 5000000
+  #sync_cycle_time_ns: 10000000
+  #sync_cycle_time_ns: 100000000
+  sync_cycle_time_ns: 0
+  sync_cycle_offset_ns: 1000000000
+  sync_point_ns : 500000
+  power_off_boards: false
+  reset_micro : true
+  
+ec_boards_base :
+  app_mode : run_mode
+  #app_mode : config_mode
+  robot_name : NoNe
+  read_SDOs : false
+  use_pipes : true
+  log_level : 1
+  #fault_power_off : true
+  # only for TestESC
+  #use_ecat_pos_as_id : true
+
+LpESC_X:
+  sign: 1
+  pos_offset: 0
+  control_mode : 3B_motor_pos_ctrl
+  pid :
+    position: [100000.0 , 0.0 , 1.0]
+
+LpHandESC_X:
+  sign: 1
+  pos_offset: 0
+  control_mode : 3B_motor_pos_ctrl
+  pid :
+    position: [100000.0 , 0.0 , 1.0]
+
+HeriHandESC_X:
+  sign: 1
+  pos_offset: 0
+  control_mode : 3B_motor_pos_ctrl
+  pid :
+    position: [100000.0 , 0.0 , 1.0]

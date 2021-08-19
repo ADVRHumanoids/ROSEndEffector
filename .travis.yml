@@ -11,6 +11,7 @@ notifications:
     on_failure: always
 
 before_install:
+
 script: 
 
 # install ros
@@ -20,6 +21,9 @@ script:
 
 - sudo apt-get update
 - sudo apt-get install ros-kinetic-desktop ros-kinetic-srdfdom
+
+# moveit 
+- sudo apt-get install ros-kinetic-moveit
 
 # basic tools
 - sudo apt-get install git cmake doxygen
@@ -32,17 +36,59 @@ script:
 - pwd
 - source /opt/ros/kinetic/setup.bash
 
-#Build
+
+# rosee_msgs from sources
+# NOTE: We can now clone, the old wget was because it was a private repo?
+#- wget https://github.com/ADVRHumanoids/rosee_msg/archive/v0.1.3.tar.gz
+#- tar -xvf v0.1.3.tar.gz && cd rosee_msg-0.1.3/
+- git clone -b devel https://github.com/ADVRHumanoids/rosee_msg.git
+- cd rosee_msg && mkdir build && cd build
+# workaround for installing ROS catkin package without catkin_workspace
+- cmake .. -DCMAKE_INSTALL_PREFIX:=/opt/ros/kinetic
+- sudo chmod -R 777 /opt/ros/kinetic
+- make install
+
+#install muparser
+- git clone https://github.com/beltoforion/muparser.git
+- cd muparser
+- cmake .
+- make
+- sudo make install
+- sudo ldconfig
+- cd ..
+
+# going back to working directory
+- cd ../../
+
+# download and install xbot2
+# xbot dependencies
+- sudo apt-get install libmatio-dev
+- wget https://github.com/ADVRHumanoids/XBotControl/releases/download/2.0-devel-core-updated/xenial-latest.tar.gz
+- tar -xvf xenial-latest.tar.gz && cd xenial-16.04-2020_12_13_21_10_00
+- sudo ./install.sh
+- chmod +x ./setup.sh
+- ./setup.sh
+- cd ../
+- source /opt/xbot/xbot2_setup.sh
+
+#Build ROSEE
 - mkdir -p build
 - cd build
-- cmake .. -DBUILD_documentation=ON
+- cmake -DBUILD_documentation=ON -DBUILD_WITH_XBOT2=ON .. 
 - make
 - make dox
 
 #tests
 - make tests
-- roscore &
-- make test ARGS="-V"
+- source devel/setup.bash
+- ctest --verbose
+# OLD WAY to test with roscore needed in this file. test with test_ee hand
+#- rosparam set -t $(rospack find ros_end_effector)/configs/urdf/test_ee.urdf robot_description
+#- rosparam set -t $(rospack find ros_end_effector)/configs/srdf/test_ee.srdf robot_description_semantic
+#- make test ARGS="-V" -i
+# to test with schunk hand we would need to install its package...
+# add other hand test...
+
 
 deploy:
   provider: pages

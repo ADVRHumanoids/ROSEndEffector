@@ -15,18 +15,15 @@
 * limitations under the License.
 */
 
-
 #include <ros/ros.h>
 
-#include <ROSEndEffector/UniversalRosEndEffectorExecutor.h>
-
+#include <ros_end_effector/UniversalRosEndEffectorExecutor.h>
 
 int main ( int argc, char **argv ) {
 
     ros::init ( argc, argv, "UniversalRosEndEffector" );
     
     ROSEE::UniversalRosEndEffectorExecutor executor("ros_end_effector");
-    
     executor.spin();
     
     return 0;

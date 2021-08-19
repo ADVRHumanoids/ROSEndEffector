@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="gazebo" default="false" />
+    <arg name="hand_name"/> 
+    <arg name="gdb" default="false"/> <!-- for debug with gdb -->
+    <arg name="hal_lib" default="DummyHal"/>
+    <arg name="matlogger_path" default=""/> <!--/home/pilot/src/ROSEndEffectorPackageManager-->
+
+
+
+    <!-- send urdf to parameter server. This is necessary because sometimes UniversalRosEndEffector can not put them in time and joint state pub crashes-->
+    <!-- BE SURE that the values are the same in the ros_ee_config_path file -->
+    <param name="robot_description" textfile="$(find ros_end_effector)/configs/urdf/$(arg hand_name).urdf"/>
+    <param name="robot_description_semantic" textfile="$(find ros_end_effector)/configs/srdf/$(arg hand_name).srdf" />
+
+    <!-- param for services names-->
+    <param name = "/rosee/primitive_aggregated_srv_name" value="primitives_aggregated_available" />
+    <param name = "/rosee/selectable_finger_pair_info" value="selectable_finger_pair_info" />
+    <param name = "/rosee/grasping_action_srv_name" value = "grasping_actions_available" />
+    <param name = "/rosee/hand_info" value = "hand_info" />
+    <param name = "/rosee/new_grasping_action_srv_name" value = "new_generic_grasping_action" />
+
+    <!-- param for action server -->
+    <param name = "/rosee/rosAction_grasping_command" value="action_command" />
+
+    <param name="ros_ee_config_path" value="$(find ros_end_effector)/configs/$(arg hand_name).yaml"/> 
+    <param name="rate" value="100.0"/>
+    
+    <node unless="$(arg gdb)" type="UniversalRosEndEffector" name="UniversalRosEndEffector" pkg="ros_end_effector" output="screen"/>
+    <!-- the debug mode -->
+    <node if="$(arg gdb)" type="UniversalRosEndEffector" name="UniversalRosEndEffector" pkg="ros_end_effector" output="screen" launch-prefix="xterm -e gdb --args"/>
+    
+    <include file="$(find ros_end_effector)/launch/EEHalExecutor.launch">
+        <arg name="gazebo" value="$(arg gazebo)"/>
+        <arg name="hand_name" value="$(arg hand_name)"/> 
+        <arg name="hal_lib" value="$(arg hal_lib)"/> 
+        <arg name="gdb" value="$(arg gdb)"/> 
+        <arg name="matlogger_path" value="$(arg matlogger_path)"/>
+
+    </include>   
+     
+    <!-- start robot state publisher to transform joint pos into tf for rviz, so it is always on, gazebo or not -->
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" output="screen" >
+        <param name="publish_frequency" type="double" value="200.0" />
+        <remap from="joint_states" to="/dummyHal/joint_states" />
+    </node> 
+    
+    <node type="rviz" name="rviz" pkg="rviz" args="-d $(find ros_end_effector)/configs/rviz/$(arg hand_name).rviz" />
+        
+</launch>

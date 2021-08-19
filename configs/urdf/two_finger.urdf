@@ -1,5 +1,11 @@
 <?xml version="1.0"?>
-<robot name="two_finger_end_effector">
+<robot name="two_finger">
+  <link name="world"/>
+    <joint name="virtualFixed" type="fixed">
+    <parent link="world"/>
+    <child link="motor"/>
+  </joint>
+  
   <link name="motor">
   <inertial>
     <mass value="1"/>
@@ -184,6 +190,9 @@
     <origin xyz="0.6 -0.5 0.0"/>
   </joint>
 
-  
+  <gazebo>
+    <plugin name="two_finger_controller" filename="libRoseePlugin.so">
+    </plugin>
+  </gazebo>
 
 </robot>

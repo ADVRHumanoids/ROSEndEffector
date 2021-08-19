@@ -1,0 +1,56 @@
+<?xml version="1.0" ?>
+<!--This does not replace URDF, and is not an extension of URDF.
+    This is a format for representing semantic information about the robot structure.
+    A URDF file must exist for this robot as well, where the joints and the links that are referenced are defined
+-->
+<robot name="qbhand">
+    <!--GROUPS: Representation of a set of joints and links. This can be useful for specifying DOF to plan for, defining arms, end effectors, etc-->
+    <!--LINKS: When a link is specified, the parent joint of that link (if it exists) is automatically included-->
+    <!--JOINTS: When a joint is specified, the child link of that joint (which will always exist) is automatically included-->
+    <!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group-->
+    <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
+    <group name="thumb">
+        <chain base_link="qbhand_palm_link" tip_link="qbhand_thumb_distal_link" />
+    </group>
+    <group name="index">
+        <chain base_link="qbhand_palm_link" tip_link="qbhand_index_distal_link" />
+    </group>
+    <group name="middle">
+        <chain base_link="qbhand_palm_link" tip_link="qbhand_middle_distal_link" />
+    </group>
+    <group name="ring">
+        <chain base_link="qbhand_palm_link" tip_link="qbhand_ring_distal_link" />
+    </group>
+    <group name="little">
+        <chain base_link="qbhand_palm_link" tip_link="qbhand_little_distal_link" />
+    </group>
+
+<!--  FOR XBOT -->
+    <group name="virtual1">
+        <chain base_link="qbhand_palm_link" tip_link="qbhand_tendon_virtual_link" />
+    </group>
+
+    <group name="chains">
+      <group name="index" />
+      <group name="thumb" />
+      <group name="middle" />
+      <group name="ring" />
+      <group name="little" />
+      <group name="virtual1" />
+   </group>
+<!-- FOR XBOT END -->
+    
+    <group name="end_effector_fingers">
+      <group name="thumb" />
+      <group name="index" />
+      <group name="middle" />
+      <group name="ring" />
+      <group name="little" />
+   </group>
+
+    <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
+    <virtual_joint name="virtualFixed" type="fixed" parent_frame="world" child_link="root_link" />
+    
+    <end_effector name="qbhand_end_effector" parent_link="root_link" group="end_effector_fingers"/>
+
+</robot>

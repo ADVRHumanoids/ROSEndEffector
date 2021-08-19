@@ -1,0 +1,68 @@
+<?xml version="1.0" ?>
+<!--This does not replace URDF, and is not an extension of URDF.
+    This is a format for representing semantic information about the robot structure.
+    A URDF file must exist for this robot as well, where the joints and the links that are referenced are defined
+-->
+<robot name="heri_II_heriPlugin">
+    <!--GROUPS: Representation of a set of joints and links. This can be useful for specifying DOF to plan for, defining arms, end effectors, etc-->
+    <!--LINKS: When a link is specified, the parent joint of that link (if it exists) is automatically included-->
+    <!--JOINTS: When a joint is specified, the child link of that joint (which will always exist) is automatically included-->
+    <!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group-->
+    <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
+    <group name="finger_1">
+        <chain base_link="base_link" tip_link="LFP1_3_tip" />
+    </group>
+    <group name="finger_2">
+        <chain base_link="base_link" tip_link="LFP2_3_tip" />
+    </group>
+    <group name="finger_3">
+        <chain base_link="base_link" tip_link="LFP3_3_tip" />
+    </group>
+    <group name="thumb">
+        <chain base_link="base_link" tip_link="SFP1_2_tip" />
+    </group>
+    
+<!-- For Xbot2 -->   
+    <group name="virtual1">
+        <chain base_link="base_link" tip_link="motor_finger1_virtual_link" />
+    </group>
+    <group name="virtual2">
+        <chain base_link="base_link" tip_link="motor_finger2_virtual_link" />
+    </group>
+    <group name="virtual3">
+        <chain base_link="base_link" tip_link="motor_finger3_virtual_link" />
+    </group>
+    <group name="virtualThumb">
+        <chain base_link="base_link" tip_link="motor_thumb_virtual_link" />
+    </group>
+    
+    <group name="chains">
+      <group name="finger_1" />
+      <group name="finger_2" />
+      <group name="finger_3" />
+      <group name="thumb" />
+      <group name="virtual1" />
+      <group name="virtual2" />
+      <group name="virtual3" />
+      <group name="virtualThumb" />
+   </group>
+    <!-- For Xbot2 END -->
+
+
+    <group name="end_effector_fingers">
+      <group name="finger_1" />
+      <group name="finger_2" />
+      <group name="finger_3" />
+      <group name="thumb" />
+   </group>
+
+   <end_effector name="heri_hand_end_effector" parent_link="base_link" group="end_effector_fingers"/>
+    <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
+    <virtual_joint name="virtualJointWorld" type="fixed" parent_frame="world" child_link="base_link" />
+    <!--PASSIVE JOINT: Purpose: this element is used to mark joints that are not actuated-->
+    <passive_joint name="BASE__LFB1" />
+    <passive_joint name="BASE__LFB2" />
+    <passive_joint name="BASE__LFB3" />
+    <passive_joint name="BASE__SFB1" />
+
+</robot>
