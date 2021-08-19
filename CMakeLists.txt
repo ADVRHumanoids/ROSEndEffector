@@ -4,6 +4,13 @@ project(ros_end_effector)
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++11)
 
+##test code coverage
+option(ROSEE_ENABLE_COVERAGE "Compile with coverage information" ON)
+if(${ROSEE_ENABLE_COVERAGE})
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage -g")
+endif()
+
+
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
@@ -366,40 +373,108 @@ install(DIRECTORY launch/
 if(CATKIN_ENABLE_TESTING)
 
     # Add gtest based cpp test target and link libraries
-    catkin_add_gtest(EEInterface_test test/test_ee_interface.cpp)
-    if(TARGET EEInterface_test)
-        target_link_libraries(EEInterface_test ${catkin_LIBRARIES}
-                                                ROSEEParser
-                                                ROSEEInterface)
-    endif()
+    #catkin_add_gtest(EEInterface_test test/test_ee_interface.cpp)
+    add_executable(EEInterface_test test/test_ee_interface.cpp)
+    target_link_libraries(EEInterface_test ${catkin_LIBRARIES}
+                                           ROSEEParser
+                                           ROSEEInterface
+                                           gtest)
+                                           
+    add_executable(FindPinches_test test/test_find_pinches.cpp)
+    target_link_libraries(FindPinches_test ${catkin_LIBRARIES}
+                                            FindActions
+                                            ActionPrimitive
+                                            ActionPinchTight
+                                            ActionPinchLoose
+                                            gtest)
+                                            
+    add_executable(FindTrigs_test test/test_find_trigs.cpp)
+    target_link_libraries(FindTrigs_test ${catkin_LIBRARIES}
+                                         FindActions
+                                         ActionPrimitive
+                                         ActionTrig
+                                         gtest)
+                                         
+    add_executable(ComposedAction_test test/test_composedAction.cpp)
+    target_link_libraries(ComposedAction_test ${catkin_LIBRARIES}
+                                              FindActions
+                                              Action
+                                              ActionPrimitive
+                                              ActionTrig
+                                              ActionComposed
+                                              gtest)
+                                              
+    add_executable(TimedAction_test test/test_timedAction.cpp)
+    target_link_libraries(TimedAction_test ${catkin_LIBRARIES}
+                                              FindActions
+                                              Action
+                                              ActionPrimitive
+                                              ActionTrig
+                                              ActionPinchGeneric
+                                              ActionComposed
+                                              gtest)
+                                              
+    add_executable(SendAction_test test/test_send_action.cpp)
+    target_link_libraries(SendAction_test ${catkin_LIBRARIES}
+                                              Action
+                                              ActionGeneric
+                                              ActionComposed
+                                              gtest
+                                              YamlWorker
+                                              ROSEEParser
+                                              ROSEEInterface
+                                              FindActions)  
+                                              
+    add_executable(ServiceHandler_test test/test_service_handler.cpp)
+    target_link_libraries(ServiceHandler_test ${catkin_LIBRARIES}
+                                              gtest
+                                              ROSEEParser
+                                              ROSEEInterface
+                                              MapActionHandler
+                                              RosServiceHandler)  
     
-    catkin_add_gtest(FindPinches_test test/test_find_pinches.cpp)
-    if(TARGET FindPinches_test)
-        target_link_libraries(FindPinches_test ${catkin_LIBRARIES}
-                                                 FindActions
-                                                 ActionPrimitive
-                                                 ActionPinchTight
-                                                 ActionPinchLoose)
-    endif()
+    list(APPEND testsExecutable 
+        EEInterface_test 
+        FindPinches_test 
+        FindTrigs_test 
+        ComposedAction_test 
+        TimedAction_test
+        SendAction_test 
+        ServiceHandler_test
+    )
+    list(APPEND handsForTests
+         test_ee 
+         test_ee_spread 
+         two_finger 
+         two_finger_mimic
+    )
     
-    catkin_add_gtest(FindTrigs_test test/test_find_trigs.cpp)
-    if(TARGET FindTrigs_test)
-        target_link_libraries(FindTrigs_test ${catkin_LIBRARIES}
-                                                 FindActions
-                                                 ActionPrimitive
-                                                 ActionTrig)
-    endif()
+    #run each test with each hand
+    foreach(hand ${handsForTests})
+        foreach(testEx ${testsExecutable})
+        
+            add_test(
+                NAME ${testEx}_${hand}
+                COMMAND ${testEx} ${hand}
+            )
+
+        endforeach()    
+    endforeach()
     
-    catkin_add_gtest(ComposedAction_test test/test_composedAction.cpp)
-    if(TARGET ComposedAction_test)
-        target_link_libraries(ComposedAction_test ${catkin_LIBRARIES}
-                                                 FindActions
-                                                 Action
-                                                 ActionPrimitive
-                                                 ActionTrig
-                                                 ActionComposed)
-    endif()
+    #for code coverage, from Arturo xbot2
+    add_custom_target(test_clean_coverage
+        COMMAND /bin/sh ${CMAKE_CURRENT_SOURCE_DIR}/test/scripts/clean_gcov.sh
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    )
     
+    add_custom_target(test_coverage
+        COMMAND lcov -c -d . --output-file main_coverage.info
+        #remove external libraries in the coverage
+        COMMAND lcov -r main_coverage.info '/usr*' 'boost*' 'eigen3*' 'c++*' '/opt*' -o main_coverage.info
+        COMMAND genhtml main_coverage.info --output-directory coverage_out
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    )
+                
 endif()
 
 ## Add folders to be run by python nosetests
