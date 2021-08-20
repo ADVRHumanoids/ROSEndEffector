@@ -14,6 +14,7 @@
 #include <rosee_msg/ROSEECommandAction.h>
 #include <actionlib/client/simple_action_client.h>
 
+#include <random>
 
 
 namespace {

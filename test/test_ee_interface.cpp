@@ -112,8 +112,7 @@ TEST_F ( testEEInterface, checkJointLimits) {
 
 TEST_F ( testEEInterface, checkIdJoints ) {
 
-    std::vector<std::string> actJoints;
-    ee->getActuatedJoints(actJoints);
+    std::vector<std::string> actJoints = ee->getActuatedJoints();
    // ASSERT_FALSE (actJoints.empty());  //a hand can have no actuated joints?
     
     // check if ids are unique
