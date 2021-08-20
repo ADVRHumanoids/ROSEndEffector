@@ -1,9 +1,0 @@
-<map id="/home/travis/build/ADVRHumanoids/ROSEndEffector/include/ros_end_effector/MapActionHandler.h" name="/home/travis/build/ADVRHumanoids/ROSEndEffector/include/ros_end_effector/MapActionHandler.h">
-<area shape="rect" id="node2" href="$RosServiceHandler_8h.html" title="/home/travis/build\l/ADVRHumanoids/ROSEndEffector\l/include/ros_end_effector\l/RosServiceHandler.h" alt="" coords="305,124,544,195"/>
-<area shape="rect" id="node3" href="$UniversalRosEndEffectorExecutor_8h.html" title="/home/travis/build\l/ADVRHumanoids/ROSEndEffector\l/include/ros_end_effector\l/UniversalRosEndEffectorExecutor.h" alt="" coords="143,243,392,313"/>
-<area shape="rect" id="node7" href="$MapActionHandler_8cpp.html" title="/home/travis/build\l/ADVRHumanoids/ROSEndEffector\l/src/MapActionHandler.cpp" alt="" coords="568,131,807,187"/>
-<area shape="rect" id="node8" href="$UniversalFindActions_8cpp.html" title="/home/travis/build\l/ADVRHumanoids/ROSEndEffector\l/src/UniversalFindActions.cpp" alt="" coords="831,131,1069,187"/>
-<area shape="rect" id="node6" href="$RosServiceHandler_8cpp.html" title="/home/travis/build\l/ADVRHumanoids/ROSEndEffector\l/src/RosServiceHandler.cpp" alt="" coords="416,250,655,306"/>
-<area shape="rect" id="node4" href="$UniversalRosEndEffector_8cpp.html" title="/home/travis/build\l/ADVRHumanoids/ROSEndEffector\l/src/UniversalRosEndEffector.cpp" alt="" coords="5,361,244,417"/>
-<area shape="rect" id="node5" href="$UniversalRosEndEffectorExecutor_8cpp.html" title="/home/travis/build\l/ADVRHumanoids/ROSEndEffector\l/src/UniversalRosEndEffectorExecutor.cpp" alt="" coords="268,361,555,417"/>
-</map>
