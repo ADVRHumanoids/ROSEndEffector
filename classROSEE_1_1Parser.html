@@ -39,9 +39,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
+      <li><a href="examples.html"><span>Examples</span></a></li>
       <li>
         <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -106,7 +108,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
 </div>
 <div id="dynsection-0-content" class="dyncontent" style="display:none;">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classROSEE_1_1Parser__coll__graph.svg" width="260" height="191"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classROSEE_1_1Parser__coll__graph.svg" width="191" height="235"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
 </div>
 </div>
 <table class="memberdecls">
@@ -133,19 +135,43 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a0acd8a760b06cca42cd82c7153aca1cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for the URDF information of the joints of the End-Effector  <a href="#a0acd8a760b06cca42cd82c7153aca1cc">More...</a><br /></td></tr>
 <tr class="separator:a0acd8a760b06cca42cd82c7153aca1cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a890265e1e270a8f4dfe462c5505b1144"><td class="memItemLeft" align="right" valign="top">std::map&lt; std::string, std::vector&lt; std::string &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classROSEE_1_1Parser.html#a890265e1e270a8f4dfe462c5505b1144">getFingerJointMap</a> () const </td></tr>
-<tr class="memdesc:a890265e1e270a8f4dfe462c5505b1144"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for a description of the End-Effector as a map of finger name, finger joint names  <a href="#a890265e1e270a8f4dfe462c5505b1144">More...</a><br /></td></tr>
+<tr class="memdesc:a890265e1e270a8f4dfe462c5505b1144"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for a description of the End-Effector as a map of finger name, finger joint names.  <a href="#a890265e1e270a8f4dfe462c5505b1144">More...</a><br /></td></tr>
 <tr class="separator:a890265e1e270a8f4dfe462c5505b1144"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ada42691b4c94efcaee76e8ceb2f9cd70"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classROSEE_1_1Parser.html#ada42691b4c94efcaee76e8ceb2f9cd70">getFingerJointMap</a> (std::map&lt; std::string, std::vector&lt; std::string &gt;&gt; &amp;finger_joint_map) const </td></tr>
+<tr class="memdesc:ada42691b4c94efcaee76e8ceb2f9cd70"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for the map between the finger kinematic chains and the related actuated joints, reference version of <a class="el" href="classROSEE_1_1Parser.html#a890265e1e270a8f4dfe462c5505b1144">getFingerJointMap</a>  <a href="#ada42691b4c94efcaee76e8ceb2f9cd70">More...</a><br /></td></tr>
+<tr class="separator:ada42691b4c94efcaee76e8ceb2f9cd70"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4afa0b0c6d4c548fceefad6809ff9c79"><td class="memItemLeft" align="right" valign="top">std::map&lt; std::string, std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classROSEE_1_1Parser.html#a4afa0b0c6d4c548fceefad6809ff9c79">getJointFingerMap</a> () const </td></tr>
+<tr class="memdesc:a4afa0b0c6d4c548fceefad6809ff9c79"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for a description of the End-Effector as a map of joint name, finger name  <a href="#a4afa0b0c6d4c548fceefad6809ff9c79">More...</a><br /></td></tr>
+<tr class="separator:a4afa0b0c6d4c548fceefad6809ff9c79"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af46eecc09b0f5c4efde67e8c687a9320"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classROSEE_1_1Parser.html#af46eecc09b0f5c4efde67e8c687a9320">getJointFingerMap</a> (std::map&lt; std::string, std::string &gt; &amp;joint_finger_map) const </td></tr>
+<tr class="memdesc:af46eecc09b0f5c4efde67e8c687a9320"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for a description of the End-Effector as a map of joint name, finger name  <a href="#af46eecc09b0f5c4efde67e8c687a9320">More...</a><br /></td></tr>
+<tr class="separator:af46eecc09b0f5c4efde67e8c687a9320"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3fc32676d15215b917b207ac3e51d7db"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classROSEE_1_1Parser.html#a3fc32676d15215b917b207ac3e51d7db">getEndEffectorName</a> () const </td></tr>
+<tr class="memdesc:a3fc32676d15215b917b207ac3e51d7db"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for the configure End-Effector name  <a href="#a3fc32676d15215b917b207ac3e51d7db">More...</a><br /></td></tr>
+<tr class="separator:a3fc32676d15215b917b207ac3e51d7db"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:accf6378ebc310e941ba0bf561fb0a74e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classROSEE_1_1Parser.html#accf6378ebc310e941ba0bf561fb0a74e">getActuatedJointsNumber</a> () const </td></tr>
 <tr class="memdesc:accf6378ebc310e941ba0bf561fb0a74e"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for the total number of actuated joints in the configuration files  <a href="#accf6378ebc310e941ba0bf561fb0a74e">More...</a><br /></td></tr>
 <tr class="separator:accf6378ebc310e941ba0bf561fb0a74e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a629a38e9fe53dd869bc9efd73817a118"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classROSEE_1_1Parser.html#a629a38e9fe53dd869bc9efd73817a118">printEndEffectorFingerJointsMap</a> () const </td></tr>
 <tr class="memdesc:a629a38e9fe53dd869bc9efd73817a118"><td class="mdescLeft">&#160;</td><td class="mdescRight">Utility to print the mapping between the End Effector finger chains and the related actuated joints.  <a href="#a629a38e9fe53dd869bc9efd73817a118">More...</a><br /></td></tr>
 <tr class="separator:a629a38e9fe53dd869bc9efd73817a118"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7cdc19ccad6cb61f449e739802e78c59"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classROSEE_1_1Parser.html#a7cdc19ccad6cb61f449e739802e78c59">getUrdfString</a> () const </td></tr>
+<tr class="memdesc:a7cdc19ccad6cb61f449e739802e78c59"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the whole urdf file parsed as a string  <a href="#a7cdc19ccad6cb61f449e739802e78c59">More...</a><br /></td></tr>
+<tr class="separator:a7cdc19ccad6cb61f449e739802e78c59"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae4df0918a1b7ca101d6e25dd3550a98f"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classROSEE_1_1Parser.html#ae4df0918a1b7ca101d6e25dd3550a98f">getSrdfString</a> () const </td></tr>
+<tr class="memdesc:ae4df0918a1b7ca101d6e25dd3550a98f"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the whole srdf file parsed as a string  <a href="#ae4df0918a1b7ca101d6e25dd3550a98f">More...</a><br /></td></tr>
+<tr class="separator:ae4df0918a1b7ca101d6e25dd3550a98f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a797185380f9a14fcfb6514a663cc2399"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classROSEE_1_1Parser.html#a797185380f9a14fcfb6514a663cc2399">getActionPath</a> () const </td></tr>
+<tr class="memdesc:a797185380f9a14fcfb6514a663cc2399"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the path where emit and parse grasping actions  <a href="#a797185380f9a14fcfb6514a663cc2399">More...</a><br /></td></tr>
+<tr class="separator:a797185380f9a14fcfb6514a663cc2399"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aed1993414bec57909a85321436ec3636"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classROSEE_1_1Parser.html#aed1993414bec57909a85321436ec3636">getRoseeConfigPath</a> () const </td></tr>
+<tr class="memdesc:aed1993414bec57909a85321436ec3636"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the filename (with path) of the yaml config file.  <a href="#aed1993414bec57909a85321436ec3636">More...</a><br /></td></tr>
+<tr class="separator:aed1993414bec57909a85321436ec3636"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Class responsible for parsing the YAML file providing the URDF, SRDF, the EE-HAL library implementation and the <a class="el" href="classROSEE_1_1EEInterface.html" title="Class representing and End-Effector. ">EEInterface</a>. </p>
 
-<p>Definition at line <a class="el" href="Parser_8h_source.html#l00042">42</a> of file <a class="el" href="Parser_8h_source.html">Parser.h</a>.</p>
+<p>Definition at line <a class="el" href="Parser_8h_source.html#l00046">46</a> of file <a class="el" href="Parser_8h_source.html">Parser.h</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a class="anchor" id="a291d12f281f702573509fd6b51f41d23"></a>
 <div class="memitem">
@@ -157,7 +183,7 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="Parser_8h_source.html#l00047">47</a> of file <a class="el" href="Parser_8h_source.html">Parser.h</a>.</p>
+<p>Definition at line <a class="el" href="Parser_8h_source.html#l00051">51</a> of file <a class="el" href="Parser_8h_source.html">Parser.h</a>.</p>
 
 </div>
 </div>
@@ -171,7 +197,7 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="Parser_8h_source.html#l00046">46</a> of file <a class="el" href="Parser_8h_source.html">Parser.h</a>.</p>
+<p>Definition at line <a class="el" href="Parser_8h_source.html#l00050">50</a> of file <a class="el" href="Parser_8h_source.html">Parser.h</a>.</p>
 
 </div>
 </div>
@@ -190,8 +216,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="Parser_8cpp_source.html#l00028">28</a> of file <a class="el" href="Parser_8cpp_source.html">Parser.cpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;                                              :</div><div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    _nh ( nh ) {</div><div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;</div><div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;}</div></div><!-- fragment -->
+<p>Definition at line <a class="el" href="Parser_8cpp_source.html#l00022">22</a> of file <a class="el" href="Parser_8cpp_source.html">Parser.cpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;                                              :</div><div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    _nh ( nh ) {</div><div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div><div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;}</div></div><!-- fragment -->
 </div>
 </div>
 <a class="anchor" id="ae515490fac9cd39aae49598eded15fbc"></a>
@@ -215,11 +241,31 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="Parser_8cpp_source.html#l00034">34</a> of file <a class="el" href="Parser_8cpp_source.html">Parser.cpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;                     {</div><div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div><div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;}</div></div><!-- fragment -->
+<p>Definition at line <a class="el" href="Parser_8cpp_source.html#l00028">28</a> of file <a class="el" href="Parser_8cpp_source.html">Parser.cpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;                     {</div><div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;</div><div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;}</div></div><!-- fragment -->
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="a797185380f9a14fcfb6514a663cc2399"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string ROSEE::Parser::getActionPath </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>get the path where emit and parse grasping actions </p>
+<dl class="section return"><dt>Returns</dt><dd>the path as a string </dd></dl>
+
+<p>Definition at line <a class="el" href="Parser_8cpp_source.html#l00458">458</a> of file <a class="el" href="Parser_8cpp_source.html">Parser.cpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160;                                           {</div><div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160;    <span class="keywordflow">return</span> _action_path;</div><div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;};</div></div><!-- fragment -->
+</div>
+</div>
 <a class="anchor" id="accf6378ebc310e941ba0bf561fb0a74e"></a>
 <div class="memitem">
 <div class="memproto">
@@ -236,8 +282,28 @@ Public Member Functions</h2></td></tr>
 <p>getter for the total number of actuated joints in the configuration files </p>
 <dl class="section return"><dt>Returns</dt><dd>int the number of actuated joints in the End-Effector </dd></dl>
 
-<p>Definition at line <a class="el" href="Parser_8cpp_source.html#l00323">323</a> of file <a class="el" href="Parser_8cpp_source.html">Parser.cpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;                                               {</div><div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;    </div><div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;    <span class="keywordflow">return</span> _joints_num;</div><div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;}</div></div><!-- fragment -->
+<p>Definition at line <a class="el" href="Parser_8cpp_source.html#l00411">411</a> of file <a class="el" href="Parser_8cpp_source.html">Parser.cpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;                                               {</div><div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;    </div><div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;    <span class="keywordflow">return</span> _joints_num;</div><div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;}</div></div><!-- fragment -->
+</div>
+</div>
+<a class="anchor" id="a3fc32676d15215b917b207ac3e51d7db"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string ROSEE::Parser::getEndEffectorName </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>getter for the configure End-Effector name </p>
+<dl class="section return"><dt>Returns</dt><dd>std::string the End-Effector name as reported in the URDF robot name </dd></dl>
+
+<p>Definition at line <a class="el" href="Parser_8cpp_source.html#l00441">441</a> of file <a class="el" href="Parser_8cpp_source.html">Parser.cpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;                                                {</div><div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;</div><div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;    <span class="keywordflow">return</span> _urdf_model-&gt;getName();</div><div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;}</div></div><!-- fragment -->
 </div>
 </div>
 <a class="anchor" id="a890265e1e270a8f4dfe462c5505b1144"></a>
@@ -253,11 +319,127 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>getter for a description of the End-Effector as a map of finger name, finger joint names </p>
-<dl class="section return"><dt>Returns</dt><dd>std::map&lt;std::string, std::vector&lt;std::string&gt; a map respresenting an End-Effector with a key representing the finger name and the values representing a vector of joint names. </dd></dl>
+<p>getter for a description of the End-Effector as a map of finger name, finger joint names. </p>
+<p>There exists another version to get the map as reference: getFingerJointMapAsReference</p>
+<dl class="section return"><dt>Returns</dt><dd>std::map&lt;std::string, std::vector&lt;std::string&gt;&gt; a map respresenting an End-Effector with a key representing the finger name and the values representing a vector of joint names. </dd></dl>
 
-<p>Definition at line <a class="el" href="Parser_8cpp_source.html#l00330">330</a> of file <a class="el" href="Parser_8cpp_source.html">Parser.cpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;                                                                                 {</div><div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;</div><div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;    <span class="keywordflow">return</span> _finger_joint_map;</div><div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;}</div></div><!-- fragment -->
+<p>Definition at line <a class="el" href="Parser_8cpp_source.html#l00416">416</a> of file <a class="el" href="Parser_8cpp_source.html">Parser.cpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;                                                                                {</div><div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;</div><div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;    <span class="keywordflow">return</span> _finger_joint_map;</div><div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;}</div></div><!-- fragment -->
+</div>
+</div>
+<a class="anchor" id="ada42691b4c94efcaee76e8ceb2f9cd70"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ROSEE::Parser::getFingerJointMap </td>
+          <td>(</td>
+          <td class="paramtype">std::map&lt; std::string, std::vector&lt; std::string &gt;&gt; &amp;&#160;</td>
+          <td class="paramname"><em>finger_joint_map</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>getter for the map between the finger kinematic chains and the related actuated joints, reference version of <a class="el" href="classROSEE_1_1Parser.html#a890265e1e270a8f4dfe462c5505b1144">getFingerJointMap</a> </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">finger_joint_map</td><td>a map between the finger kinematic chains and the related actuated joints </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
+
+<p>Definition at line <a class="el" href="Parser_8cpp_source.html#l00431">431</a> of file <a class="el" href="Parser_8cpp_source.html">Parser.cpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;                                                                                                        {</div><div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;</div><div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;    finger_joint_map = _finger_joint_map;</div><div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;}</div></div><!-- fragment -->
+</div>
+</div>
+<a class="anchor" id="a4afa0b0c6d4c548fceefad6809ff9c79"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::map&lt; std::string, std::string &gt; ROSEE::Parser::getJointFingerMap </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>getter for a description of the End-Effector as a map of joint name, finger name </p>
+<dl class="section return"><dt>Returns</dt><dd>std::map&lt;std::string, std::string&gt; a map respresenting an End-Effector with a key representing the joint name and the value representing the finger which the joint belongs to </dd></dl>
+
+<p>Definition at line <a class="el" href="Parser_8cpp_source.html#l00421">421</a> of file <a class="el" href="Parser_8cpp_source.html">Parser.cpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;                                                                    {</div><div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;    </div><div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;    <span class="keywordflow">return</span> _joint_finger_map;</div><div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;}</div></div><!-- fragment -->
+</div>
+</div>
+<a class="anchor" id="af46eecc09b0f5c4efde67e8c687a9320"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ROSEE::Parser::getJointFingerMap </td>
+          <td>(</td>
+          <td class="paramtype">std::map&lt; std::string, std::string &gt; &amp;&#160;</td>
+          <td class="paramname"><em>joint_finger_map</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>getter for a description of the End-Effector as a map of joint name, finger name </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">joint_finger_map</td><td>a map between the joint and the related finger kinematic chain</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
+
+<p>Definition at line <a class="el" href="Parser_8cpp_source.html#l00436">436</a> of file <a class="el" href="Parser_8cpp_source.html">Parser.cpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;                                                                                             {</div><div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;</div><div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;    joint_finger_map = _joint_finger_map;</div><div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;}</div></div><!-- fragment -->
+</div>
+</div>
+<a class="anchor" id="aed1993414bec57909a85321436ec3636"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string ROSEE::Parser::getRoseeConfigPath </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>get the filename (with path) of the yaml config file. </p>
+<p>Useful get to print infos about file parsed outside this class</p>
+<dl class="section return"><dt>Returns</dt><dd>a string that is the filepath of yaml config file </dd></dl>
+
+<p>Definition at line <a class="el" href="Parser_8cpp_source.html#l00454">454</a> of file <a class="el" href="Parser_8cpp_source.html">Parser.cpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;                                                {</div><div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;    <span class="keywordflow">return</span> _ros_ee_config_path;</div><div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;}</div></div><!-- fragment -->
+</div>
+</div>
+<a class="anchor" id="ae4df0918a1b7ca101d6e25dd3550a98f"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string ROSEE::Parser::getSrdfString </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>get the whole srdf file parsed as a string </p>
+<dl class="section return"><dt>Returns</dt><dd>a string containg the srdf file parsed </dd></dl>
+
+<p>Definition at line <a class="el" href="Parser_8cpp_source.html#l00450">450</a> of file <a class="el" href="Parser_8cpp_source.html">Parser.cpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;                                           {</div><div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;    <span class="keywordflow">return</span> _srdf_string;</div><div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;}</div></div><!-- fragment -->
 </div>
 </div>
 <a class="anchor" id="a0acd8a760b06cca42cd82c7153aca1cc"></a>
@@ -276,8 +458,28 @@ Public Member Functions</h2></td></tr>
 <p>getter for the URDF information of the joints of the End-Effector </p>
 <dl class="section return"><dt>Returns</dt><dd>std::map&lt;std::string, urdf::JointConstSharedPtr&gt; map between the joint name and the URDF info of the joint </dd></dl>
 
-<p>Definition at line <a class="el" href="Parser_8cpp_source.html#l00335">335</a> of file <a class="el" href="Parser_8cpp_source.html">Parser.cpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;                                                                                {</div><div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;</div><div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;    <span class="keywordflow">return</span> _urdf_joint_map;</div><div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;}</div></div><!-- fragment -->
+<p>Definition at line <a class="el" href="Parser_8cpp_source.html#l00426">426</a> of file <a class="el" href="Parser_8cpp_source.html">Parser.cpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;                                                                                {</div><div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;</div><div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;    <span class="keywordflow">return</span> _urdf_joint_map;</div><div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;}</div></div><!-- fragment -->
+</div>
+</div>
+<a class="anchor" id="a7cdc19ccad6cb61f449e739802e78c59"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string ROSEE::Parser::getUrdfString </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>get the whole urdf file parsed as a string </p>
+<dl class="section return"><dt>Returns</dt><dd>a string containg the urdf file parsed </dd></dl>
+
+<p>Definition at line <a class="el" href="Parser_8cpp_source.html#l00446">446</a> of file <a class="el" href="Parser_8cpp_source.html">Parser.cpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;                                           {</div><div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;    <span class="keywordflow">return</span> _urdf_string;</div><div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;}</div></div><!-- fragment -->
 </div>
 </div>
 <a class="anchor" id="a47625fa3893edcd015c8db2a2ad42092"></a>
@@ -296,8 +498,8 @@ Public Member Functions</h2></td></tr>
 <p>Initialization function using the ROS param ROSEEConfigPath. </p>
 <dl class="section return"><dt>Returns</dt><dd>bool true for success, false otherwise </dd></dl>
 
-<p>Definition at line <a class="el" href="Parser_8cpp_source.html#l00279">279</a> of file <a class="el" href="Parser_8cpp_source.html">Parser.cpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;                       {</div><div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;</div><div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;    <span class="comment">// try to retrive the path to config from the ROS param server TBD namespace should be take into account</span></div><div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;    <span class="keywordflow">if</span> ( _nh.getParam ( <span class="stringliteral">&quot;/ros_ee_config_path&quot;</span>, _ros_ee_config_path ) ) {</div><div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;</div><div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;        _is_initialized =  configure();</div><div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;        <span class="keywordflow">return</span> _is_initialized;</div><div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;    }</div><div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;</div><div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;    <span class="comment">// error</span></div><div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;    ROS_ERROR_STREAM ( <span class="stringliteral">&quot;in &quot;</span> &lt;&lt; __func__ &lt;&lt; <span class="stringliteral">&quot; : ros_ee_config_path not found on ROS parameter server&quot;</span> );</div><div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div><div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;</div><div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;}</div></div><!-- fragment -->
+<p>Definition at line <a class="el" href="Parser_8cpp_source.html#l00358">358</a> of file <a class="el" href="Parser_8cpp_source.html">Parser.cpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;                       {</div><div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;</div><div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;    <span class="comment">// try to retrive the path to config from the ROS param server TBD namespace should be take into account</span></div><div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;    <span class="keywordflow">if</span> ( _nh.getParam ( <span class="stringliteral">&quot;/ros_ee_config_path&quot;</span>, _ros_ee_config_path ) ) {</div><div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;</div><div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;        _is_initialized =  configure();</div><div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;        <span class="keywordflow">return</span> _is_initialized;</div><div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;    }</div><div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;</div><div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;    <span class="comment">// error</span></div><div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;    ROS_ERROR_STREAM ( <span class="stringliteral">&quot;in &quot;</span> &lt;&lt; __func__ &lt;&lt; <span class="stringliteral">&quot; : ros_ee_config_path not found on ROS parameter server&quot;</span> );</div><div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div><div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;</div><div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;}</div></div><!-- fragment -->
 </div>
 </div>
 <a class="anchor" id="af789f736f91cb612876d4d3782613207"></a>
@@ -323,8 +525,8 @@ Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>bool true for success, false otherwise </dd></dl>
 
-<p>Definition at line <a class="el" href="Parser_8cpp_source.html#l00294">294</a> of file <a class="el" href="Parser_8cpp_source.html">Parser.cpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;                                                      {</div><div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;</div><div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;    _ros_ee_config_path = path_to_cfg;</div><div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;</div><div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;    _is_initialized =  configure();</div><div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;    <span class="keywordflow">return</span> _is_initialized;</div><div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;}</div></div><!-- fragment -->
+<p>Definition at line <a class="el" href="Parser_8cpp_source.html#l00373">373</a> of file <a class="el" href="Parser_8cpp_source.html">Parser.cpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;                                                      {</div><div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;</div><div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;    _ros_ee_config_path = path_to_cfg;</div><div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;</div><div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;    _is_initialized =  configure();</div><div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;    <span class="keywordflow">return</span> _is_initialized;</div><div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;}</div></div><!-- fragment -->
 </div>
 </div>
 <a class="anchor" id="a629a38e9fe53dd869bc9efd73817a118"></a>
@@ -343,18 +545,18 @@ Public Member Functions</h2></td></tr>
 <p>Utility to print the mapping between the End Effector finger chains and the related actuated joints. </p>
 <dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
 
-<p>Definition at line <a class="el" href="Parser_8cpp_source.html#l00302">302</a> of file <a class="el" href="Parser_8cpp_source.html">Parser.cpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;                                                        {</div><div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;</div><div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;    <span class="keywordflow">if</span> ( _is_initialized ) {</div><div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;</div><div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;        ROS_INFO_STREAM ( <span class="stringliteral">&quot;ROS End Effector: Finger Joints Map&quot;</span> );</div><div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;        ROS_INFO_STREAM ( <span class="stringliteral">&quot;-------------------------&quot;</span> );</div><div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;        <span class="keywordflow">for</span> ( <span class="keyword">auto</span>&amp; chain_joints: _finger_joint_map ) {</div><div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;            ROS_INFO_STREAM ( chain_joints.first );</div><div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;</div><div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;            <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> i = 0; i &lt;  chain_joints.second.size(); i++ ) {</div><div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;                ROS_INFO_STREAM ( chain_joints.second.at ( i ) );</div><div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;            }</div><div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;</div><div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;            ROS_INFO_STREAM ( <span class="stringliteral">&quot;-------------------------&quot;</span> );</div><div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;        }</div><div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;    } <span class="keywordflow">else</span> {</div><div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;</div><div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;        ROS_ERROR_STREAM ( <span class="stringliteral">&quot;in &quot;</span> &lt;&lt; __func__ &lt;&lt; <span class="stringliteral">&quot; :  ROSEE::Parser needs to be initialized. Call init() frist.&quot;</span> );</div><div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;    }</div><div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;}</div></div><!-- fragment -->
+<p>Definition at line <a class="el" href="Parser_8cpp_source.html#l00381">381</a> of file <a class="el" href="Parser_8cpp_source.html">Parser.cpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;                                                        {</div><div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;</div><div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;    <span class="keywordflow">if</span> ( _is_initialized ) {</div><div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;</div><div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;        ROS_INFO_STREAM ( <span class="stringliteral">&quot;ROS End Effector: Finger Joints Map&quot;</span> );</div><div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;        ROS_INFO_STREAM ( <span class="stringliteral">&quot;-------------------------&quot;</span> );</div><div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;        <span class="keywordflow">for</span> ( <span class="keyword">auto</span>&amp; chain_joints: _finger_joint_map ) {</div><div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;            ROS_INFO_STREAM ( chain_joints.first );</div><div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;</div><div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;            <span class="keywordtype">int</span> nJointInFinger = chain_joints.second.size();</div><div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;            </div><div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;            <span class="keywordflow">if</span> ( nJointInFinger == 0 ) {</div><div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;                </div><div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;                ROS_INFO_STREAM ( <span class="stringliteral">&quot;No actuated joint in this finger&quot;</span> );</div><div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;                </div><div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;            } <span class="keywordflow">else</span> {</div><div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;                </div><div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;                <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> i = 0; i &lt; nJointInFinger ; i++ ) {</div><div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;                    ROS_INFO_STREAM ( chain_joints.second.at ( i ) );</div><div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;                }</div><div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;            }</div><div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;</div><div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;            ROS_INFO_STREAM ( <span class="stringliteral">&quot;-------------------------&quot;</span> );</div><div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;        }</div><div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;    } <span class="keywordflow">else</span> {</div><div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;</div><div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;        ROS_ERROR_STREAM ( <span class="stringliteral">&quot;in &quot;</span> &lt;&lt; __func__ &lt;&lt; <span class="stringliteral">&quot; :  ROSEE::Parser needs to be initialized. Call init() frist.&quot;</span> );</div><div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;    }</div><div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;}</div></div><!-- fragment -->
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>/home/travis/build/ADVRHumanoids/ROSEndEffector/include/ROSEndEffector/<a class="el" href="Parser_8h_source.html">Parser.h</a></li>
+<li>/home/travis/build/ADVRHumanoids/ROSEndEffector/include/ros_end_effector/<a class="el" href="Parser_8h_source.html">Parser.h</a></li>
 <li>/home/travis/build/ADVRHumanoids/ROSEndEffector/src/<a class="el" href="Parser_8cpp_source.html">Parser.cpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Apr 26 2021 01:47:57 for ROSEndEffector by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Aug 20 2021 21:13:33 for ROSEndEffector by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.11
 </small></address>

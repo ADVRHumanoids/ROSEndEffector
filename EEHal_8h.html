@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.11"/>
-<title>ROSEndEffector: /home/travis/build/ADVRHumanoids/ROSEndEffector/include/ROSEndEffector/EEHal.h File Reference</title>
+<title>ROSEndEffector: /home/travis/build/ADVRHumanoids/ROSEndEffector/include/ros_end_effector/HAL/EEHal.h File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -39,9 +39,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
+      <li><a href="examples.html"><span>Examples</span></a></li>
       <li>
         <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -82,27 +84,38 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_ff01678e85ec256c3ba95bfe0b2f3305.html">ROSEndEffector</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_e9ddc339859ffc45f1ebf081e0ce07bf.html">ros_end_effector</a></li><li class="navelem"><a class="el" href="dir_b67ebe1b6a3070b4bf777dcc4b801de9.html">HAL</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
-<a href="#namespaces">Namespaces</a>  </div>
+<a href="#namespaces">Namespaces</a> &#124;
+<a href="#define-members">Macros</a>  </div>
   <div class="headertitle">
 <div class="title">EEHal.h File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;<a class="el" href="IMotor_8h_source.html">ROSEndEffector/IMotor.h</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="EEInterface_8h_source.html">ROSEndEffector/EEInterface.h</a>&gt;</code><br />
+<div class="textblock"><code>#include &lt;ros/ros.h&gt;</code><br />
+<code>#include &lt;sensor_msgs/JointState.h&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
+<code>#include &lt;vector&gt;</code><br />
 <code>#include &lt;memory&gt;</code><br />
+<code>#include &lt;unordered_map&gt;</code><br />
+<code>#include &lt;fstream&gt;</code><br />
+<code>#include &lt;Eigen/Dense&gt;</code><br />
+<code>#include &lt;yaml-cpp/yaml.h&gt;</code><br />
+<code>#include &lt;<a class="el" href="Utils_8h_source.html">ros_end_effector/Utils.h</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="UtilsEigen_8h_source.html">ros_end_effector/UtilsEigen.h</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="UtilsYAML_8h_source.html">ros_end_effector/UtilsYAML.h</a>&gt;</code><br />
+<code>#include &lt;rosee_msg/HandInfo.h&gt;</code><br />
+<code>#include &lt;rosee_msg/MotorPhalangePressure.h&gt;</code><br />
 </div><div class="textblock"><div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Include dependency graph for EEHal.h:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
 </div>
 <div id="dynsection-0-content" class="dyncontent" style="display:none;">
-<div class="center"><iframe scrolling="no" frameborder="0" src="EEHal_8h__incl.svg" width="1263" height="291"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+<div class="center"><iframe scrolling="no" frameborder="0" src="EEHal_8h__incl.svg" width="1960" height="231"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
 </div>
 </div>
 </div><div class="textblock"><div id="dynsection-1" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
@@ -110,7 +123,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div id="dynsection-1-summary" class="dynsummary" style="display:block;">
 </div>
 <div id="dynsection-1-content" class="dyncontent" style="display:none;">
-<div class="center"><iframe scrolling="no" frameborder="0" src="EEHal_8h__dep__incl.svg" width="836" height="394"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+<div class="center"><iframe scrolling="no" frameborder="0" src="EEHal_8h__dep__incl.svg" width="1038" height="304"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
 </div>
 </div>
 </div>
@@ -126,11 +139,36 @@ Classes</h2></td></tr>
 Namespaces</h2></td></tr>
 <tr class="memitem:namespaceROSEE"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceROSEE.html">ROSEE</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:a83a97dc8def4c28545b8ac6ccc006c1a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="EEHal_8h.html#a83a97dc8def4c28545b8ac6ccc006c1a">HAL_CREATE_OBJECT</a>(className)</td></tr>
+<tr class="separator:a83a97dc8def4c28545b8ac6ccc006c1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Macro Definition Documentation</h2>
+<a class="anchor" id="a83a97dc8def4c28545b8ac6ccc006c1a"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define HAL_CREATE_OBJECT</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">className</td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line"><span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> <a class="code" href="classROSEE_1_1EEHal.html">::ROSEE::EEHal</a>* create_object_##className ( ros::NodeHandle* nh) { \</div><div class="line">        return <span class="keyword">new</span> className(nh); \</div><div class="line">    } \</div><div class="ttc" id="classROSEE_1_1EEHal_html"><div class="ttname"><a href="classROSEE_1_1EEHal.html">ROSEE::EEHal</a></div><div class="ttdoc">Class representing an end-effector. </div><div class="ttdef"><b>Definition:</b> <a href="EEHal_8h_source.html#l00054">EEHal.h:54</a></div></div>
+</div><!-- fragment -->
+<p>Definition at line <a class="el" href="EEHal_8h_source.html#l00042">42</a> of file <a class="el" href="EEHal_8h_source.html">EEHal.h</a>.</p>
+
+</div>
+</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Apr 26 2021 01:47:57 for ROSEndEffector by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Aug 20 2021 21:13:32 for ROSEndEffector by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.11
 </small></address>

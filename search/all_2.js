@@ -1,7 +1,4 @@
 var searchData=
 [
-  ['dummyhal',['DummyHal',['../classROSEE_1_1DummyHal.html',1,'ROSEE']]],
-  ['dummyhal',['DummyHal',['../classROSEE_1_1DummyHal.html#a355ddbe5d3360e39b767625a3e249791',1,'ROSEE::DummyHal']]],
-  ['dummyhal_2ecpp',['DummyHal.cpp',['../DummyHal_8cpp.html',1,'']]],
-  ['dummyhal_2eh',['DummyHal.h',['../DummyHal_8h.html',1,'']]]
+  ['binomial_5fcoefficent',['binomial_coefficent',['../namespaceROSEE_1_1Utils.html#aba8b2baa6146311f3b05224f84edef23',1,'ROSEE::Utils']]]
 ];

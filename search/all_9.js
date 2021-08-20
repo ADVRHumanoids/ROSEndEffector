@@ -1,15 +1,14 @@
 var searchData=
 [
-  ['secondorderfilter',['SecondOrderFilter',['../classROSEE_1_1Utils_1_1SecondOrderFilter.html',1,'ROSEE::Utils']]],
-  ['secondorderfilter',['SecondOrderFilter',['../classROSEE_1_1Utils_1_1SecondOrderFilter.html#ae8cbfad737042ca0cda6a9dd3b50ca00',1,'ROSEE::Utils::SecondOrderFilter::SecondOrderFilter()'],['../classROSEE_1_1Utils_1_1SecondOrderFilter.html#a95346eb0ad6c3906df130faf181ef21e',1,'ROSEE::Utils::SecondOrderFilter::SecondOrderFilter(double omega, double eps, double ts, const SignalType &amp;initial_state)']]],
-  ['secondorderfilter_3c_20eigen_3a_3avectorxd_20_3e',['SecondOrderFilter&lt; Eigen::VectorXd &gt;',['../classROSEE_1_1Utils_1_1SecondOrderFilter.html',1,'ROSEE::Utils']]],
-  ['sense',['sense',['../classROSEE_1_1DummyHal.html#a92024536fe2f2b8a1f1e4fed8c0cbfa6',1,'ROSEE::DummyHal::sense()'],['../classROSEE_1_1EEHal.html#a775292261de6c2dd89ff5085c868ac1b',1,'ROSEE::EEHal::sense()']]],
-  ['setdamping',['setDamping',['../classROSEE_1_1Utils_1_1SecondOrderFilter.html#ad396e35a8f9d6ded1ce81ddae9d0b9b6',1,'ROSEE::Utils::SecondOrderFilter']]],
-  ['setjointeffort',['setJointEffort',['../classROSEE_1_1EEHal.html#a4b5e0e83a2d964e319e11cce1bde9fae',1,'ROSEE::EEHal']]],
-  ['setjointposition',['setJointPosition',['../classROSEE_1_1EEHal.html#a2e10afefc50854cf7d895a0ca8d17c68',1,'ROSEE::EEHal']]],
-  ['setjointvelocity',['setJointVelocity',['../classROSEE_1_1EEHal.html#a20d36ab82153ebfd1e12a1f0ba101b53',1,'ROSEE::EEHal']]],
-  ['setomega',['setOmega',['../classROSEE_1_1Utils_1_1SecondOrderFilter.html#a60c7627287827aea54ff99b877feae50',1,'ROSEE::Utils::SecondOrderFilter']]],
-  ['setpositionreference',['setPositionReference',['../classROSEE_1_1DummyHal.html#a34f2eea897de46fadb7be9ed3c5d22c3',1,'ROSEE::DummyHal::setPositionReference()'],['../classROSEE_1_1IMotor.html#a3d61e0788d39138835ccd1c9faab50f0',1,'ROSEE::IMotor::setPositionReference()']]],
-  ['settimestep',['setTimeStep',['../classROSEE_1_1Utils_1_1SecondOrderFilter.html#afcf6d3ee2939a222b4e4f425a99ed0b5',1,'ROSEE::Utils::SecondOrderFilter']]],
-  ['spin',['spin',['../classROSEE_1_1UniversalRosEndEffectorExecutor.html#a5fe0a56faab3bbe91e0b5cb236cdb167',1,'ROSEE::UniversalRosEndEffectorExecutor']]]
+  ['independent',['independent',['../classROSEE_1_1ActionComposed.html#a9680ec0a67088564862a6cbd55868f96',1,'ROSEE::ActionComposed']]],
+  ['init',['init',['../classROSEE_1_1Parser.html#a47625fa3893edcd015c8db2a2ad42092',1,'ROSEE::Parser::init()'],['../classROSEE_1_1Parser.html#af789f736f91cb612876d4d3782613207',1,'ROSEE::Parser::init(const std::string &amp;path_to_cfg)'],['../classROSEE_1_1ParserMoveIt.html#a3263b369caff8941396fe61e5879ff1e',1,'ROSEE::ParserMoveIt::init()'],['../classROSEE_1_1RosServiceHandler.html#a3273a3d8d8c353d09d26fa1fe84290ec',1,'ROSEE::RosServiceHandler::init()']]],
+  ['init_5fhand_5finfo_5fresponse',['init_hand_info_response',['../classROSEE_1_1EEHal.html#af733bb9f08b4532170d8af1f64d375d3',1,'ROSEE::EEHal']]],
+  ['initpressuresensing',['initPressureSensing',['../classROSEE_1_1EEHal.html#a1eb22de766e1263cbb7ac8ee2a9bdc7b',1,'ROSEE::EEHal']]],
+  ['inneractionsnames',['innerActionsNames',['../classROSEE_1_1ActionComposed.html#a7faa272c2fb4461c3a66f8e48d75c676',1,'ROSEE::ActionComposed']]],
+  ['insertaction',['insertAction',['../classROSEE_1_1ActionTimed.html#a597f8bb8ee9328b8ac150b8d5781e793',1,'ROSEE::ActionTimed']]],
+  ['insertactionstate',['insertActionState',['../classROSEE_1_1ActionMultiplePinchTight.html#a2c3f2bc4007cff89c36e7d37b0d9394a',1,'ROSEE::ActionMultiplePinchTight::insertActionState()'],['../classROSEE_1_1ActionPinchLoose.html#ab834affa5627f3fce6fe903dc60c9ce6',1,'ROSEE::ActionPinchLoose::insertActionState()'],['../classROSEE_1_1ActionPinchTight.html#a30fb81f59db6b9acb8b8cb22fd0271cd',1,'ROSEE::ActionPinchTight::insertActionState()']]],
+  ['insertsinglegeneric',['insertSingleGeneric',['../classROSEE_1_1MapActionHandler.html#aaa23f326a81854c900640b2cff117ade',1,'ROSEE::MapActionHandler']]],
+  ['isfinger',['isFinger',['../classROSEE_1_1EEInterface.html#a43b3d0352faf02cc90064ef5dfea5ada',1,'ROSEE::EEInterface']]],
+  ['ishandinfopresent',['isHandInfoPresent',['../classROSEE_1_1EEHal.html#ab4acd80bbbf500008c9f69a0a32a3494',1,'ROSEE::EEHal']]],
+  ['isindependent',['isIndependent',['../classROSEE_1_1ActionComposed.html#a43405d8d36095034ca98c1e8e8e05fdb',1,'ROSEE::ActionComposed']]]
 ];

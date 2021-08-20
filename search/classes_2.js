@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['imotor',['IMotor',['../classROSEE_1_1IMotor.html',1,'ROSEE']]]
+  ['eehal',['EEHal',['../classROSEE_1_1EEHal.html',1,'ROSEE']]],
+  ['eeinterface',['EEInterface',['../classROSEE_1_1EEInterface.html',1,'ROSEE']]]
 ];

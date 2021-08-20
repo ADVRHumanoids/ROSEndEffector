@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['init',['init',['../classROSEE_1_1Parser.html#a47625fa3893edcd015c8db2a2ad42092',1,'ROSEE::Parser::init()'],['../classROSEE_1_1Parser.html#af789f736f91cb612876d4d3782613207',1,'ROSEE::Parser::init(const std::string &amp;path_to_cfg)']]],
-  ['isfinger',['isFinger',['../classROSEE_1_1EEInterface.html#a43b3d0352faf02cc90064ef5dfea5ada',1,'ROSEE::EEInterface']]]
+  ['differentkeysexception',['DifferentKeysException',['../structROSEE_1_1Utils_1_1DifferentKeysException.html#a099ecbceb59bf2c8e1ed01be6677eca1',1,'ROSEE::Utils::DifferentKeysException']]],
+  ['dummyhal',['DummyHal',['../classROSEE_1_1DummyHal.html#a7f6422daf4ae503e389a9ad48ef12a65',1,'ROSEE::DummyHal']]]
 ];

@@ -1,0 +1,4 @@
+<map id="ROSEE::ActionSingleJointMultipleTips" name="ROSEE::ActionSingleJointMultipleTips">
+<area shape="rect" id="node2" href="$classROSEE_1_1ActionPrimitive.html" title="Virtual class, Base of all the primitive actions. " alt="" coords="9,336,228,560"/>
+<area shape="rect" id="node3" href="$classROSEE_1_1Action.html" title="The pure virtual class representing an Action. " alt="" coords="23,5,215,288"/>
+</map>

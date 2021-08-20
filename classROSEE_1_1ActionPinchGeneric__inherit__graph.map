@@ -1,0 +1,7 @@
+<map id="ROSEE::ActionPinchGeneric" name="ROSEE::ActionPinchGeneric">
+<area shape="rect" id="node4" href="$classROSEE_1_1ActionMultiplePinchTight.html" title="Class to describe the action of &quot;pinching&quot; with more than 2 tips (with 2 tips there is the ActionPinc..." alt="" coords="5,777,207,1016"/>
+<area shape="rect" id="node5" href="$classROSEE_1_1ActionPinchLoose.html" title="The action of pinch with two tips. " alt="" coords="231,777,416,1016"/>
+<area shape="rect" id="node6" href="$classROSEE_1_1ActionPinchTight.html" title="The action of pinch with two tips. " alt="" coords="441,777,619,1016"/>
+<area shape="rect" id="node2" href="$classROSEE_1_1ActionPrimitive.html" title="Virtual class, Base of all the primitive actions. " alt="" coords="214,336,433,560"/>
+<area shape="rect" id="node3" href="$classROSEE_1_1Action.html" title="The pure virtual class representing an Action. " alt="" coords="227,5,419,288"/>
+</map>

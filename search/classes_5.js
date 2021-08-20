@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['universalrosendeffectorexecutor',['UniversalRosEndEffectorExecutor',['../classROSEE_1_1UniversalRosEndEffectorExecutor.html',1,'ROSEE']]]
+  ['parser',['Parser',['../classROSEE_1_1Parser.html',1,'ROSEE']]],
+  ['parsermoveit',['ParserMoveIt',['../classROSEE_1_1ParserMoveIt.html',1,'ROSEE']]]
 ];

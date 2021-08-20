@@ -1,7 +1,7 @@
-<map id="/home/travis/build/ADVRHumanoids/ROSEndEffector/src/DummyHal.cpp" name="/home/travis/build/ADVRHumanoids/ROSEndEffector/src/DummyHal.cpp">
-<area shape="rect" id="node2" href="$DummyHal_8h.html" title="ROSEndEffector/DummyHal.h" alt="" coords="1157,109,1367,136"/>
-<area shape="rect" id="node3" href="$EEHal_8h.html" title="ROSEndEffector/EEHal.h" alt="" coords="997,184,1172,211"/>
-<area shape="rect" id="node4" href="$IMotor_8h.html" title="ROSEndEffector/IMotor.h" alt="" coords="995,259,1174,285"/>
-<area shape="rect" id="node7" href="$EEInterface_8h.html" title="ROSEndEffector/EEInterface.h" alt="" coords="655,259,866,285"/>
-<area shape="rect" id="node10" href="$Parser_8h.html" title="ROSEndEffector/Parser.h" alt="" coords="617,333,795,360"/>
+<map id="/home/travis/build/ADVRHumanoids/ROSEndEffector/src/HAL/DummyHal.cpp" name="/home/travis/build/ADVRHumanoids/ROSEndEffector/src/HAL/DummyHal.cpp">
+<area shape="rect" id="node2" href="$DummyHal_8h.html" title="ros_end_effector/HAL\l/DummyHal.h" alt="" coords="540,109,699,151"/>
+<area shape="rect" id="node4" href="$EEHal_8h.html" title="ros_end_effector/HAL\l/EEHal.h" alt="" coords="740,199,899,240"/>
+<area shape="rect" id="node13" href="$Utils_8h.html" title="ros_end_effector/Utils.h" alt="" coords="957,288,1130,315"/>
+<area shape="rect" id="node20" href="$UtilsEigen_8h.html" title="ros_end_effector/UtilsEigen.h" alt="" coords="191,288,399,315"/>
+<area shape="rect" id="node22" href="$UtilsYAML_8h.html" title="ros_end_effector/UtilsYAML.h" alt="" coords="475,288,681,315"/>
 </map>

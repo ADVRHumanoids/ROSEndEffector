@@ -39,9 +39,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
+      <li><a href="examples.html"><span>Examples</span></a></li>
       <li>
         <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -97,7 +99,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="directory">
   <tr class="even"><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html#ac5c8f7e915689ab7e1662d26f2a03912">ConstPtr</a> typedef</td><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html">ROSEE::EEInterface</a></td><td class="entry"></td></tr>
   <tr><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html#ad5b9d431118df5e4b22e85f38db3a972">EEInterface</a>(const ROSEE::Parser &amp;p)</td><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html">ROSEE::EEInterface</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html#aeef63da3077a68d8882c8d5b7f1bf651">getActuatedJoints</a>(std::vector&lt; std::string &gt; &amp;actuated_joints)</td><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html">ROSEE::EEInterface</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html#ac8ee4cfd08601bc7ac14819de78066d5">getActuatedJoints</a>()</td><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html">ROSEE::EEInterface</a></td><td class="entry"></td></tr>
   <tr><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html#a67b35ff445084ce2181b23c82e596c54">getActuatedJointsInFinger</a>(std::string finger_name, std::vector&lt; std::string &gt; &amp;actuated_joints)</td><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html">ROSEE::EEInterface</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html#ae3b87b27efc57dd00fc5692f4ff269b8">getActuatedJointsNum</a>()</td><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html">ROSEE::EEInterface</a></td><td class="entry"></td></tr>
   <tr><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html#a253fcdcd07a04bdcf24ccc490c0bbbf4">getActuatedJointsNumInFinger</a>(std::string finger_name)</td><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html">ROSEE::EEInterface</a></td><td class="entry"></td></tr>
@@ -106,14 +108,15 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <tr class="even"><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html#a6879f2960a965545bcba58202b2533d5">getInternalIdForJoint</a>(std::string joint_name, int &amp;internal_id)</td><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html">ROSEE::EEInterface</a></td><td class="entry"></td></tr>
   <tr><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html#ac288f08c0c338031ea6e9ac888cfdb1a">getInternalIdsForFinger</a>(std::string finger_name, std::vector&lt; int &gt; &amp;internal_ids)</td><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html">ROSEE::EEInterface</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html#a01d410dc5b65b766120a8f6c4ef49be8">getLowerPositionLimits</a>()</td><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html">ROSEE::EEInterface</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html#ae3171b74f97abe47218110dc4e64d51a">getUpperPositionLimits</a>()</td><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html">ROSEE::EEInterface</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html#a43b3d0352faf02cc90064ef5dfea5ada">isFinger</a>(std::string finger_name)</td><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html">ROSEE::EEInterface</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html#ac42fe8a087fcded6c6d10569306f892b">Ptr</a> typedef</td><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html">ROSEE::EEInterface</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html#a2bfe24afa09fdf3b9290ffa9f0ab94e5">~EEInterface</a>()</td><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html">ROSEE::EEInterface</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html#a81ff8308e3307638ad156e5b514d43d8">getName</a>()</td><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html">ROSEE::EEInterface</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html#ae3171b74f97abe47218110dc4e64d51a">getUpperPositionLimits</a>()</td><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html">ROSEE::EEInterface</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html#a43b3d0352faf02cc90064ef5dfea5ada">isFinger</a>(std::string finger_name)</td><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html">ROSEE::EEInterface</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html#ac42fe8a087fcded6c6d10569306f892b">Ptr</a> typedef</td><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html">ROSEE::EEInterface</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html#a2bfe24afa09fdf3b9290ffa9f0ab94e5">~EEInterface</a>()</td><td class="entry"><a class="el" href="classROSEE_1_1EEInterface.html">ROSEE::EEInterface</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
 </table></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Apr 26 2021 01:47:57 for ROSEndEffector by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Aug 20 2021 21:13:33 for ROSEndEffector by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.11
 </small></address>

@@ -1,4 +1,4 @@
 <map id="ROSEE::EEHal" name="ROSEE::EEHal">
-<area shape="rect" id="node3" href="$classROSEE_1_1DummyHal.html" title="Class representing an end&#45;effector. " alt="" coords="5,432,187,612"/>
-<area shape="rect" id="node2" href="$classROSEE_1_1IMotor.html" title="Class representing a Motor. " alt="" coords="5,5,187,127"/>
+<area shape="rect" id="node2" href="$classROSEE_1_1DummyHal.html" title="Class representing an end&#45;effector. " alt="" coords="5,453,151,575"/>
+<area shape="rect" id="node3" href="$classROSEE_1_1XBot2Hal.html" title="Concrete class which communicate directly with ROS topics. " alt="" coords="175,453,309,575"/>
 </map>

@@ -1,8 +1,19 @@
-<map id="/home/travis/build/ADVRHumanoids/ROSEndEffector/include/ROSEndEffector/UniversalRosEndEffectorExecutor.h" name="/home/travis/build/ADVRHumanoids/ROSEndEffector/include/ROSEndEffector/UniversalRosEndEffectorExecutor.h">
-<area shape="rect" id="node6" href="$Parser_8h.html" title="ROSEndEffector/Parser.h" alt="" coords="454,363,633,389"/>
-<area shape="rect" id="node13" href="$EEInterface_8h.html" title="ROSEndEffector/EEInterface.h" alt="" coords="707,288,918,315"/>
-<area shape="rect" id="node17" href="$EEHal_8h.html" title="ROSEndEffector/EEHal.h" alt="" coords="995,213,1169,240"/>
-<area shape="rect" id="node19" href="$DummyHal_8h.html" title="ROSEndEffector/DummyHal.h" alt="" coords="1055,131,1266,158"/>
-<area shape="rect" id="node20" href="$Utils_8h.html" title="ROSEndEffector/Utils.h" alt="" coords="1345,131,1512,158"/>
-<area shape="rect" id="node18" href="$IMotor_8h.html" title="ROSEndEffector/IMotor.h" alt="" coords="993,288,1171,315"/>
+<map id="/home/travis/build/ADVRHumanoids/ROSEndEffector/include/ros_end_effector/UniversalRosEndEffectorExecutor.h" name="/home/travis/build/ADVRHumanoids/ROSEndEffector/include/ros_end_effector/UniversalRosEndEffectorExecutor.h">
+<area shape="rect" id="node7" href="$Parser_8h.html" title="ros_end_effector/Parser.h" alt="" coords="676,578,862,605"/>
+<area shape="rect" id="node11" href="$Utils_8h.html" title="ros_end_effector/Utils.h" alt="" coords="2601,667,2774,694"/>
+<area shape="rect" id="node22" href="$EEInterface_8h.html" title="ros_end_effector/EEInterface.h" alt="" coords="1191,489,1408,515"/>
+<area shape="rect" id="node26" href="$MapActionHandler_8h.html" title="ros_end_effector/MapAction\lHandler.h" alt="" coords="2401,213,2601,255"/>
+<area shape="rect" id="node28" href="$YamlWorker_8h.html" title="ros_end_effector/YamlWorker.h" alt="" coords="1467,303,1687,329"/>
+<area shape="rect" id="node30" href="$ActionPrimitive_8h.html" title="ros_end_effector/Grasping\lActions/ActionPrimitive.h" alt="" coords="1612,481,1803,523"/>
+<area shape="rect" id="node36" href="$ActionComposed_8h.html" title="ros_end_effector/Grasping\lActions/ActionComposed.h" alt="" coords="1878,385,2073,426"/>
+<area shape="rect" id="node39" href="$RosActionServer_8h.html" title="ros_end_effector/RosAction\lServer.h" alt="" coords="2970,571,3166,612"/>
+<area shape="rect" id="node41" href="$RosServiceHandler_8h.html" title="ros_end_effector/RosService\lHandler.h" alt="" coords="3786,124,3989,165"/>
+<area shape="rect" id="node29" href="$Action_8h.html" title="ros_end_effector/Grasping\lActions/Action.h" alt="" coords="1978,571,2168,612"/>
+<area shape="rect" id="node37" href="$ActionGeneric_8h.html" title="ros_end_effector/Grasping\lActions/ActionGeneric.h" alt="" coords="1879,481,2070,523"/>
+<area shape="rect" id="node38" href="$ActionTimed_8h.html" title="ros_end_effector/Grasping\lActions/ActionTimed.h" alt="" coords="2146,481,2336,523"/>
+<area shape="rect" id="node31" href="$ActionPinchTight_8h.html" title="ros_end_effector/Grasping\lActions/ActionPinchTight.h" alt="" coords="46,571,236,612"/>
+<area shape="rect" id="node32" href="$ActionPinchLoose_8h.html" title="ros_end_effector/Grasping\lActions/ActionPinchLoose.h" alt="" coords="1212,385,1409,426"/>
+<area shape="rect" id="node33" href="$ActionTrig_8h.html" title="ros_end_effector/Grasping\lActions/ActionTrig.h" alt="" coords="643,385,834,426"/>
+<area shape="rect" id="node34" href="$ActionSingleJointMultipleTips_8h.html" title="ros_end_effector/Grasping\lActions/ActionSingleJointMultiple\lTips.h" alt="" coords="858,377,1086,433"/>
+<area shape="rect" id="node35" href="$ActionMultiplePinchTight_8h.html" title="ros_end_effector/Grasping\lActions/ActionMultiplePinchTight.h" alt="" coords="260,571,499,612"/>
 </map>

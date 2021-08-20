@@ -1,0 +1,4 @@
+<map id="ROSEE::ActionTrig" name="ROSEE::ActionTrig">
+<area shape="rect" id="node2" href="$classROSEE_1_1ActionPrimitive.html" title="Virtual class, Base of all the primitive actions. " alt="" coords="5,336,224,560"/>
+<area shape="rect" id="node3" href="$classROSEE_1_1Action.html" title="The pure virtual class representing an Action. " alt="" coords="19,5,211,288"/>
+</map>
