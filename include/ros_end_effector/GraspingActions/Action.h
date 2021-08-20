@@ -126,7 +126,7 @@ public:
     /**
      * @brief Function to fill the argument passed with info about the action. Pure virtual because each derived
      * class has different infos and stored differently.
-     * check \ref YamlParser to correctly emit and parse the file
+     * check \ref YamlWorker to correctly emit and parse the file
      * @param out the yaml-cpp emitter which store infos about the action
      * @note this function does not print in a file, but simply fill a YAML::Emitter.
      */
@@ -134,7 +134,7 @@ public:
     /**
      * @brief function to fill members of the Action with infos taken from yaml files
      * @param yamlIt a YAML::const_iterator to the node that is loaded with YAML::LoadFile(dirPath + filename).
-     * check \ref YamlParser to correctly parse and emit the file
+     * check \ref YamlWorker to correctly parse and emit the file
      */
     virtual bool fillFromYaml ( YAML::const_iterator yamlIt ) = 0;
     

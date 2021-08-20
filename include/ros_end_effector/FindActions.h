@@ -125,7 +125,7 @@ private:
      * We need at least \param nFinger - 1 collision: eg. for triPinch -> 2collision,
      * for 4finger pinch -> 3 collision. But, with only this check, we can also find 
      * a configuration whith two distint normal pinch. To solve, we also check if the number of
-     * tips that collide in this configuration is exaclty \param nFinger,
+     * tips that collide in this configuration is exaclty \param nFinger ,
      * eg with 2 collision we can have 4 finger colliding because there are two
      * normal distinct pinch and not a 3-pinch... so we exlude these collisions.
      * The \param strict can solves another problem. If it is true (default) we take only
@@ -148,10 +148,10 @@ private:
     /**
      * @brief Support function to remove the joint limits from the model. This is done when looking for Loose Pinches.
      * @param mapOfLoosePinches [in] pointer to the map of loose pinches
-     * @param RobotModelPtr the pointer to the robot model
+     * @param kinematic_model_noBound the pointer to the robot model
      */
     void removeBoundsOfNotCollidingTips ( const std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchLoose >* mapOfLoosePinches, 
-                                          robot_model::RobotModelPtr );
+                                          robot_model::RobotModelPtr kinematic_model_noBound);
     
     /**
      * @brief function to "initialize" the map of ActionPinchLoose \p mapOfLoosePinches. 
@@ -248,7 +248,7 @@ private:
      * @brief Set to default pos the joints that do not move any of the tip included in the 
      * set \param tipsNames. Used by \ref findMultiplePinch function
      * @param tipsNames the tips involved
-     * @param jpos pointer to the map \ref JointPos with value to be setted if necessary
+     * @param jPos pointer to the map \ref JointPos with value to be setted if necessary
      * @return JointsInvolvedCount map, where value are 0 or 1 according to the usage of joint
      */
     ROSEE::JointsInvolvedCount setOnlyDependentJoints( std::set< std::string > tipsNames, 

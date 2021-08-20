@@ -217,11 +217,11 @@ struct DifferentKeysException : public std::exception {
  * @brief Utils to dynamically load an object. This is used to dynamically load 
  *  a derived object from a node that only knows the base interface. 
  *  For example, we call the create_object(ros::nodeHandle) method of a derived EEHAL class
- *  The object must be a library which will return a RetType pointer with the function_name
+ *  The object must be a library which will return a RetType pointer with the \p function_name
  *  This function will "convert" to smart pointer for convenience
  * @param lib_name the name of the compiled library (eg DummyHal). Do not add the suffix .so
  * @param function_name The method of \param lib_name which will return a RetType*. 
- * @param args arguments for the \param function_name, if the case
+ * @param args arguments for the \p function_name , if the case
  * @return std::shared_ptr<RetType> a pointer to the new created object
  */
 template <typename RetType, typename... Args>

@@ -103,19 +103,19 @@ public:
     std::map < std::string, std::string > getFingertipOfFingerMap () const;
     
     /**
-     * @brief This function returns the name of the finger which the passed \ref tipName
+     * @brief This function returns the name of the finger which the passed \p tipName
      *   belongs to
      * @param tipName the name of the tip
-     * @return the name of the finger which the tip belongs to, empty string if the tipName
+     * @return the name of the finger which the tip belongs to, empty string if the \p tipName
      *   is not in the map
      * @note use \ref getFingerOfFingertipMap to get the full map
      */
     std::string getFingerOfFingertip (std::string tipName) const;
     
     /**
-     * @brief This function returns the name of the fingertip that belongs to the passed \ref fingerName
+     * @brief This function returns the name of the fingertip that belongs to the passed \p fingerName
      * @param fingerName the name of the tip
-     * @return the name of the fingertip that belongs to the finger, empty string if the fingerName
+     * @return the name of the fingertip that belongs to the finger, empty string if the \p fingerName
      *   is not in the map
      * @note use \ref getFingertipOfFingerMap to get the full map
      */

@@ -108,15 +108,15 @@ public:
 
     /**
      * @brief function to return the map that contains all the singleJointMultipleTips primitive with that moves the specific number
-     *    of fingers \param nFingers. This is in practice, the file singleJointMultipleTips_*nFingers*.yaml
+     *    of fingers \p nFingers . This is in practice, the file singleJointMultipleTips_*nFingers*.yaml
      * 
      * It return only one map because per definition we have only one ActionPrimitiveMap of type singleJointMultipleTips with a defined number of 
      * nFinger. (Then inside it we can have more primitives ( when we have a hand with more joints that moves more than 1 finger), but
      * always with the same number of nFinger)
      * 
      * @param nFingers the number of the finger that the singleJointMultipleTips primitives moves
-     * @return A map with key the joint that moves the \param nFingers and as value the primitive with all the info to command it to the hand.
-     *      Obvioulsy we can have more joints that move a certain number (\param nFingers) of fingers
+     * @return A map with key the joint that moves the \p nFingers and as value the primitive with all the info to command it to the hand.
+     *      Obvioulsy we can have more joints that move a certain number (\p nFingers) of fingers
      * @todo return with the key as set instead??? or leave as it is?
      */
     std::map <std::string, ROSEE::ActionPrimitive::Ptr> getPrimitiveSingleJointMultipleTipsMap ( unsigned int nFingers ) const;   
@@ -131,7 +131,7 @@ public:
      * "the grasp". If we have only one joint that move all fingers, we return the singleJointMultipleTips action associated with this joint, even if
      * there is the possibility that this is not a grasp (but which hand has only one joint that moves all fingers and it is not for a grasp?)
      * 
-     * This function look first for a generic (or composed, that is a derived class of generic) action with name \param graspName, 
+     * This function look first for a generic (or composed, that is a derived class of generic) action with name \p graspName , 
      * that should have been created and emitted before calling the \ref parseAllActions (or \ref parseAllGenerics) 
      * (e.g. in UniversalFindActions putting all the trigs togheter, but we can also define the grasp in another way).
      *   

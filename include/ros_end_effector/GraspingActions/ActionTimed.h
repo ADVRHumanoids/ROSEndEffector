@@ -134,10 +134,11 @@ public:
     /** 
      * @brief Insert an action as last one in the time line 
      * @param action pointer to the action to be inserted
-     * @param marginBefore the time margin to wait before executing the \p action
-     * @param marginAfter the time margin to wait after executing the \p action
+     * @param marginBefore the time margin to wait before executing the \p action 
+     * @param marginAfter the time margin to wait after executing the \p action 
      * @param jointPosIndex (default == 0) the wanted jointPos of \p action to insert. Error the index is greater than the number
      *      of joint pos in the \p action. First element has index 0. 
+     * @param percentJointPos (default == 1) OPTIONAL argument to scale all the joint position of the \p action that is being inserted
      * @param newActionName (default == "") OPTIONAL argument if we want to store the \p action with a different name
      * @return False if some error happened
      * @warning We can't have inned actions with same name. So, if \p action name (or \p newActionName) is already present, 

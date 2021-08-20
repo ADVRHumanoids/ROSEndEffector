@@ -66,6 +66,7 @@ public:
     /**
      * @brief Create/overwrite yaml file and emit info on it about the given ActionComposed \p action
      * @param action [in] pointer to ActionComposed
+     * @param pathFolder folder where to store the file. It will be created if does not exist
      * @return std::string the filename (with the path) of the file created/overwritten
      */                             
     std::string createYamlFile ( const Action* action, std::string pathFolder) ;
@@ -74,7 +75,7 @@ public:
     /**
      * @brief Parse a yaml file and return the map with all the actions present in the file. 
      * For the moment, a \p actionType argument must be passed to create the right Action object
-     * @param filename the path of the file to be parsed
+     * @param fileWithPath the path of the file to be parsed
      */
     std::map < std::set < std::string>, ROSEE::ActionPrimitive::Ptr > parseYamlPrimitive (std::string fileWithPath);
     
@@ -82,13 +83,15 @@ public:
         
     /**
      * @brief Parse a composed Action
-     * @param filename the path of the file to be parsed
+     * @param fileWithPath the path of the file to be parsed
      * @return the ActionComposed parsed 
      */
     ROSEE::ActionComposed parseYamlComposed (std::string fileWithPath);
     
     /**
-     * 
+     * @brief Parse a timed Action
+     * @param fileWithPath the path of the file to be parsed
+     * @return the ActionTimed parsed 
      */
     std::shared_ptr < ROSEE::ActionTimed > parseYamlTimed ( std::string fileWithPath);
 
