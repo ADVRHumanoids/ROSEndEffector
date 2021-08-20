@@ -5,7 +5,7 @@ The ROS End-Effector main documentation is here: https://advrhumanoids.github.io
 
 Doxygen-generated documentation about the API of ROS End-Effector can be found here: https://advrhumanoids.github.io/ROSEndEffector/index.html
 
-CI powered by Travis CI (.com) [![Build Status](https://travis-ci.com/ADVRHumanoids/ROSEndEffector.svg?branch=master)](https://travis-ci.com/ADVRHumanoids/ROSEndEffector)
+CI powered by Travis CI (.com) [![Build Status](https://app.travis-ci.com/ADVRHumanoids/ROSEndEffector.svg?branch=master)](https://app.travis-ci.com/ADVRHumanoids/ROSEndEffector)
 
 https://travis-ci.com/ADVRHumanoids/ROSEndEffector
 
