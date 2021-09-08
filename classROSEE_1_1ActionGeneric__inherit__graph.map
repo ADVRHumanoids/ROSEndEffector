@@ -1,0 +1,4 @@
+<map id="ROSEE::ActionGeneric" name="ROSEE::ActionGeneric">
+<area shape="rect" id="node3" href="$classROSEE_1_1ActionComposed.html" title="A ActionComposed, which is formed by one or more Primitives (or even other composed). " alt="" coords="5,579,199,861"/>
+<area shape="rect" id="node2" href="$classROSEE_1_1Action.html" title="The pure virtual class representing an Action. " alt="" coords="6,5,198,288"/>
+</map>

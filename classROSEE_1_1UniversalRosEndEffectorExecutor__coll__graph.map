@@ -1,0 +1,6 @@
+<map id="ROSEE::UniversalRosEndEffectorExecutor" name="ROSEE::UniversalRosEndEffectorExecutor">
+<area shape="rect" id="node2" href="$classROSEE_1_1Utils_1_1Timer.html" title="{ROSEE::Utils::Timer\l\&lt; Clock \&gt;\n|&#45; start_point\l|+ Timer()\l+ reset()\l+ elapsed_time()\l}" alt="" coords="5,687,151,809"/>
+<area shape="rect" id="node3" href="$classROSEE_1_1Utils_1_1SecondOrderFilter.html" title="{ROSEE::Utils::SecondOrder\lFilter\&lt; Eigen::VectorXd \&gt;\n|&#45; _omega\l&#45; _eps\l&#45; _ts\l&#45; _b1\l&#45; _b2\l&#45; _a0\l&#45; _a1\l&#45; _a2\l&#45; _reset_has_been_called\l&#45; _y\l&#45; _yd\l&#45; _ydd\l&#45; _u\l&#45; _ud\l&#45; _udd\l|+ SecondOrderFilter()\l+ SecondOrderFilter()\l+ reset()\l+ process()\l+ getOutput()\l+ setOmega()\l+ getOmega()\l+ setDamping()\l+ getDamping()\l+ setTimeStep()\l+ getTimeStep()\l&#45; computeCoeff()\l}" alt="" coords="175,519,368,977"/>
+<area shape="rect" id="node5" title="STL class. " alt="" coords="755,147,841,224"/>
+<area shape="rect" id="node6" title="STL class. " alt="" coords="729,5,867,97"/>
+</map>

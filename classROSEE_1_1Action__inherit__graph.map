@@ -1,0 +1,12 @@
+<map id="ROSEE::Action" name="ROSEE::Action">
+<area shape="rect" id="node2" href="$classROSEE_1_1ActionGeneric.html" title="Class to handle a generic, simple action. " alt="" coords="143,409,306,604"/>
+<area shape="rect" id="node4" href="$classROSEE_1_1ActionPrimitive.html" title="Virtual class, Base of all the primitive actions. " alt="" coords="331,395,550,619"/>
+<area shape="rect" id="node11" href="$classROSEE_1_1ActionTimed.html" title="An action composed by other ones that must be executed one after other with some wait time (also 0) i..." alt="" coords="575,336,768,677"/>
+<area shape="rect" id="node3" href="$classROSEE_1_1ActionComposed.html" title="A ActionComposed, which is formed by one or more Primitives (or even other composed). " alt="" coords="8,725,201,1008"/>
+<area shape="rect" id="node5" href="$classROSEE_1_1ActionPinchGeneric.html" title="A base virtual class for the PinchTight and PinchLoose classes. " alt="" coords="225,806,421,927"/>
+<area shape="rect" id="node9" href="$classROSEE_1_1ActionSingleJointMultipleTips.html" title="Primitive which indicate a motion of n fingers moving ONLY ONE joint. " alt="" coords="446,725,673,1008"/>
+<area shape="rect" id="node10" href="$classROSEE_1_1ActionTrig.html" title="The action of moving some joints (see later) of a single finger in a full clousure position towards t..." alt="" coords="697,769,856,964"/>
+<area shape="rect" id="node6" href="$classROSEE_1_1ActionMultiplePinchTight.html" title="Class to describe the action of &quot;pinching&quot; with more than 2 tips (with 2 tips there is the ActionPinc..." alt="" coords="5,1063,207,1302"/>
+<area shape="rect" id="node7" href="$classROSEE_1_1ActionPinchLoose.html" title="The action of pinch with two tips. " alt="" coords="231,1063,416,1302"/>
+<area shape="rect" id="node8" href="$classROSEE_1_1ActionPinchTight.html" title="The action of pinch with two tips. " alt="" coords="441,1056,619,1309"/>
+</map>
