@@ -73,12 +73,10 @@ script:
 
 #Build ROSEE
 - mkdir -p build
-- ls #DEBUG
 - cd build
-- cmake .. -DBUILD_documentation=ON -DBUILD_WITH_XBOT2=ON
+- cmake -DBUILD_documentation=ON -DBUILD_WITH_XBOT2=ON ..
 - make
 - make dox
-- ls #DEBUG
 
 #tests
 - make tests
