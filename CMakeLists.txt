@@ -477,16 +477,6 @@ if(CATKIN_ENABLE_TESTING)
     endforeach()
     
 
-    foreach(hand ${handsForTests})
-         
-        add_test(
-            NAME ComposedAction_test_${hand}
-            COMMAND ComposedAction_test ${hand}
-        )
-   
-    endforeach()
-    
-
     #for code coverage, from Arturo xbot2
     add_custom_target(test_clean_coverage
         COMMAND /bin/sh ${CMAKE_CURRENT_SOURCE_DIR}/test/scripts/clean_gcov.sh
