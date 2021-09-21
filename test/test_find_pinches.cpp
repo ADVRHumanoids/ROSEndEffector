@@ -5,9 +5,9 @@
 
 #include <ros_end_effector/FindActions.h>
 #include <ros_end_effector/ParserMoveIt.h>
-#include <ros_end_effector/ActionPrimitive.h>
-#include <ros_end_effector/ActionPinchTight.h>
-#include <ros_end_effector/ActionPinchLoose.h>
+#include <ros_end_effector/GraspingActions/ActionPrimitive.h>
+#include <ros_end_effector/GraspingActions/ActionPinchTight.h>
+#include <ros_end_effector/GraspingActions/ActionPinchLoose.h>
 
 
 namespace {

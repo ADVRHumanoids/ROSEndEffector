@@ -5,9 +5,9 @@ The ROS End-Effector main documentation is here: https://advrhumanoids.github.io
 
 Doxygen-generated documentation about the API of ROS End-Effector can be found here: https://advrhumanoids.github.io/ROSEndEffector/index.html
 
-CI powered by Travis CI (.org) [![Build Status](https://travis-ci.org/ADVRHumanoids/ROSEndEffector.svg?branch=master)](https://travis-ci.org/ADVRHumanoids/ROSEndEffector)
+CI powered by Travis CI (.com) [![Build Status](https://app.travis-ci.com/ADVRHumanoids/ROSEndEffector.svg?branch=master)](https://app.travis-ci.com/ADVRHumanoids/ROSEndEffector)
 
-https://travis-ci.org/ADVRHumanoids/ROSEndEffector
+https://travis-ci.com/ADVRHumanoids/ROSEndEffector
 
 ***
 <!-- 
@@ -28,5 +28,3 @@ More information: <a href="http://rosin-project.eu">rosin-project.eu</a>
 
 This project has received funding from the European Union’s Horizon 2020  
 research and innovation programme under grant agreement no. 732287. 
-
-

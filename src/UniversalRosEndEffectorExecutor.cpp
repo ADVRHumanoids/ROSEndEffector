@@ -33,7 +33,6 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
     ROSEE::Parser p ( _nh );
     p.init (); //TBD check return
     p.printEndEffectorFingerJointsMap();
-    
 
     // retrieve the ee interface
     _ee = std::make_shared<ROSEE::EEInterface> ( p );
@@ -47,23 +46,53 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
         folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/" + _ee->getName();
     }
     
-    _all_joints =_ee->getActuatedJoints();
+    _motors_names =_ee->getActuatedJoints();
 
-    // prepare joint state publisher
-    std::string jstate_topic_name  = "joint_commands";
-    const int jstate_queue = 10;
+    // prepare publisher which publish motor references
+    init_motor_reference_pub();
+    
+    //init q_ref and the filter
+    init_qref_filter();
 
-    _joint_state_pub = _nh.advertise<sensor_msgs::JointState> ( jstate_topic_name, jstate_queue );
+    // primitives
+    init_grasping_primitive();
+    
+    //services, check on mapActionHandlerPtr is done inside the costructor
+    _ros_service_handler = std::make_shared<RosServiceHandler>(&_nh, mapActionHandlerPtr, folderForActions+"/generics/");
+    _ros_service_handler->init(_ee->getFingers().size());
+    
+    // actions
+    std::string actionGraspingCommandName;
+    _nh.param<std::string>("/rosee/rosAction_grasping_command", actionGraspingCommandName, "action_command");
+    _ros_action_server = std::make_shared<RosActionServer> (actionGraspingCommandName , &_nh);
+    timed_requested = false;
+    timed_index = -1;
+    
+    init_joint_state_sub();
+    
+}
 
-    _joint_num = _ee->getActuatedJointsNum();
-    _js_msg.name.resize ( _joint_num );
-    _js_msg.position.resize ( _joint_num );
-    _js_msg.velocity.resize ( _joint_num );
-    _js_msg.effort.resize ( _joint_num );
+bool ROSEE::UniversalRosEndEffectorExecutor::init_motor_reference_pub() {
+    
+    //Fixed topic, Hal will read always from here
+    std::string motor_reference_topic  = "motor_reference_pos";
+    const int motor_reference_queue = 10;
 
-    // allocate HAL TBD get from parser the lib to load
-    _hal = std::make_shared<ROSEE::DummyHal> ( _ee );
+    //We could use MotorPosition message... but with JointState the hal node has not to include
+    //our rosee_msg package, so maybe it is better use official ros JointState
+    _motor_reference_pub = _nh.advertise<sensor_msgs::JointState> ( motor_reference_topic, motor_reference_queue );
+    _motors_num = _motors_names.size();
+    //mr = motor reference
+    _mr_msg.name = _motors_names;
+    _mr_msg.position.resize ( _motors_num );
+    _mr_msg.velocity.resize ( _motors_num );
+    _mr_msg.effort.resize ( _motors_num ); 
+    
+    return true;
+}
 
+bool ROSEE::UniversalRosEndEffectorExecutor::init_qref_filter() {
+    
     // filter TBD select filter profile
     const double DAMPING_FACT = 1.0;
     const double BW_MEDIUM = 2.0;
@@ -74,52 +103,37 @@ ROSEE::UniversalRosEndEffectorExecutor::UniversalRosEndEffectorExecutor ( std::s
     _filt_q.setOmega ( omega );
 
     // initialize references
-    _qref.resize ( _joint_num );
+    _qref.resize ( _motors_num );
+    _qref_optional.resize ( _motors_num );
+    _qref_optional.setZero();
     // TBD init from current position reference
     _qref.setZero();
     // reset filter
     _filt_q.reset ( _qref );
-
-    // primitives
-    init_grapsing_primitive();
     
-    // actions
-    init_action_server();
-    timed_requested = false;
-    timed_index = -1;
-
-    // services (only for gui now)
-    init_actionsInfo_services();
-
-    // this should be done by hal?
-    init_robotState_sub();
-
+    return true;
 }
 
-bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive() {
 
-    // parse YAML for End-Effector cconfiguration
-    //TODO safe to remove this? remove and test it
-    ROSEE::YamlWorker yamlWorker ;
-    
-    std::string folderForActionsComposed = folderForActions + "/generics/";
+bool ROSEE::UniversalRosEndEffectorExecutor::init_grasping_primitive() {
 
     // get all action in the handler
-    mapActionHandler.parseAllActions(folderForActions);
+    mapActionHandlerPtr = std::make_shared<ROSEE::MapActionHandler>();
+    mapActionHandlerPtr->parseAllActions(folderForActions);
 
     // pinch tight
-    _pinchParsedMap = mapActionHandler.getPrimitiveMap("pinchTight");
+    _pinchParsedMap = mapActionHandlerPtr->getPrimitiveMap("pinchTight");
     
     // pinch loose
-    if (mapActionHandler.getPrimitiveMap(ROSEE::ActionPrimitive::Type::PinchLoose).size()>0) {
+    if (mapActionHandlerPtr->getPrimitiveMap(ROSEE::ActionPrimitive::Type::PinchLoose).size()>0) {
         //another method to get the map
-        _pinchLooseParsedMap = mapActionHandler.getPrimitiveMap(ROSEE::ActionPrimitive::Type::PinchLoose).at(0);
+        _pinchLooseParsedMap = mapActionHandlerPtr->getPrimitiveMap(ROSEE::ActionPrimitive::Type::PinchLoose).at(0);
     } 
     
     // trig, tip flex and fing flex
-    _trigParsedMap = mapActionHandler.getPrimitiveMap("trig");
-    _tipFlexParsedMap = mapActionHandler.getPrimitiveMap("tipFlex");
-    _fingFlexParsedMap = mapActionHandler.getPrimitiveMap("fingFlex");
+    _trigParsedMap = mapActionHandlerPtr->getPrimitiveMap("trig");
+    _tipFlexParsedMap = mapActionHandlerPtr->getPrimitiveMap("tipFlex");
+    _fingFlexParsedMap = mapActionHandlerPtr->getPrimitiveMap("fingFlex");
 
     // NOTE maps useful just to recap
     ROS_INFO_STREAM ( "PINCHES-TIGHT:" );
@@ -144,51 +158,39 @@ bool ROSEE::UniversalRosEndEffectorExecutor::init_grapsing_primitive() {
     }
     
     // composed actions
-    _graspParsed = mapActionHandler.getGeneric("grasp");
+    _graspParsed = mapActionHandlerPtr->getGeneric("grasp");
     
     // recap
+    ROS_INFO_STREAM ( "GRASP:" );
     if (_graspParsed != nullptr) {
-        ROS_INFO_STREAM ( "GRASP:" );
         _graspParsed->print();
     }
     
     return true;
 }
 
-bool ROSEE::UniversalRosEndEffectorExecutor::init_action_server () {
-    
-    _ros_action_server = std::make_shared<RosActionServer> ("action_command" , &_nh);
-    return true;
-}
+void ROSEE::UniversalRosEndEffectorExecutor::init_joint_state_sub () {
 
-//**************************** TODO this should be in the hal? **********************************************//
-void ROSEE::UniversalRosEndEffectorExecutor::init_robotState_sub () {
-
-    //to get joint state from gazebo, if used
-    std::string topic_name_js;
-    _nh.param<std::string>("/rosee/joint_states_topic", topic_name_js, "/ros_end_effector/joint_states");
+    //Fixed topic, Hal will publish always here
+    std::string topic_name_js = "/ros_end_effector/joint_states";
     
     ROS_INFO_STREAM ( "Getting joint pos from '" << topic_name_js << "'" );
     
-    jointPosSub = _nh.subscribe (topic_name_js, 1, 
-                                 &ROSEE::UniversalRosEndEffectorExecutor::jointStateClbk, this);
+    _joint_state_sub = _nh.subscribe (topic_name_js, 1, 
+                                 &ROSEE::UniversalRosEndEffectorExecutor::joint_state_clbk, this);
 }
 
-void ROSEE::UniversalRosEndEffectorExecutor::jointStateClbk(const sensor_msgs::JointStateConstPtr& msg) {
+void ROSEE::UniversalRosEndEffectorExecutor::joint_state_clbk(const sensor_msgs::JointStateConstPtr& msg) {
     
-    //store only joint pos now, this should not be here anyaway...
-    //HACK if gazebo is used, here we store all joint info received, also the fixed and not actuated 
-    // but anyway they will not be used, but check if size is used.
+    //We store all what we receive from hal node, to not loose time in the clbk to not consider the not motors
     for (int i=0; i< msg->name.size(); i++) {
         std::vector <double> one_dof { msg->position.at(i) };
-        jointPos[msg->name.at(i)] = one_dof;
-        
+        _joint_actual_pos[msg->name.at(i)] = one_dof;
     }
 }
-//**************************** above this should be in the hal? **********************************************//
 
 
-// set q ref, similarly to pinch and grasp clbk
+// set q ref
 bool ROSEE::UniversalRosEndEffectorExecutor::updateGoal() {
     
     rosee_msg::ROSEEActionControl goal = _ros_action_server->getGoal();
@@ -213,7 +215,7 @@ bool ROSEE::UniversalRosEndEffectorExecutor::updateGoal() {
         
     case ROSEE::Action::Type::Primitive :
     {
-        ROSEE::ActionPrimitive::Ptr primitive = mapActionHandler.getPrimitive (goal.action_name, goal.selectable_items);
+        ROSEE::ActionPrimitive::Ptr primitive = mapActionHandlerPtr->getPrimitive (goal.action_name, goal.selectable_items);
         
         if (primitive == nullptr) {
             //error message already printed in getPrimitive
@@ -221,15 +223,15 @@ bool ROSEE::UniversalRosEndEffectorExecutor::updateGoal() {
             return false;
         }
         
-        joint_position_goal = primitive->getJointPos();
-        joint_involved_mask = primitive->getJointsInvolvedCount();
+        _motor_position_goal = primitive->getJointPos();
+        _motor_involved_mask = primitive->getJointsInvolvedCount();
 
         break;
     }
     case ROSEE::Action::Type::Generic : // same thing as composed
     case ROSEE::Action::Type::Composed :
     {
-        ROSEE::ActionGeneric::Ptr generic = mapActionHandler.getGeneric(goal.action_name);
+        ROSEE::ActionGeneric::Ptr generic = mapActionHandlerPtr->getGeneric(goal.action_name);
         
         if (generic == nullptr) {
             //error message already printed in getGeneric
@@ -237,8 +239,8 @@ bool ROSEE::UniversalRosEndEffectorExecutor::updateGoal() {
             return false;
         }
         
-        joint_position_goal = generic->getJointPos();
-        joint_involved_mask = generic->getJointsInvolvedCount();
+        _motor_position_goal = generic->getJointPos();
+        _motor_involved_mask = generic->getJointsInvolvedCount();
         
         break;
     }
@@ -246,7 +248,7 @@ bool ROSEE::UniversalRosEndEffectorExecutor::updateGoal() {
         // here we take the first of the timed action and we set refs for it
         //TODO first time margin (before) is not considered?
 
-        timedAction = mapActionHandler.getTimed(goal.action_name);
+        timedAction = mapActionHandlerPtr->getTimed(goal.action_name);
         
         if (timedAction == nullptr) {
             //error message already printed in getTimed
@@ -256,8 +258,8 @@ bool ROSEE::UniversalRosEndEffectorExecutor::updateGoal() {
         
         timed_requested = true;
         timed_index = 0;
-        joint_position_goal = timedAction->getAllJointPos().at(0);
-        joint_involved_mask = timedAction->getJointCountAction(
+        _motor_position_goal = timedAction->getAllJointPos().at(0);
+        _motor_involved_mask = timedAction->getJointCountAction(
             timedAction->getInnerActionsNames().at(0));
 
         goal.percentage = 1; //so we are sure it is set, for timed is always 100%
@@ -279,15 +281,57 @@ bool ROSEE::UniversalRosEndEffectorExecutor::updateGoal() {
         return false;
     }
     } 
+
+    //WE reset this so if it is not used it stay to zero
+    _qref_optional.setZero();
+    if (goal.optional_motors_names.size() != 0) {
+        readOptionalCommands(goal.optional_motors_names, goal.optional_motors_commands);
+    }
     
     return updateRefGoal(goal.percentage);
     
 }
 
+bool ROSEE::UniversalRosEndEffectorExecutor::readOptionalCommands(
+        std::vector<std::string> motors_names, std::vector<double> motors_commands) {
+    
+    bool flag = true;
+    
+    if (motors_names.size() != motors_commands.size() &&
+        motors_names.size() != _motors_num) {
+        ROS_ERROR_STREAM ( "In receiving the goal command, the optional field is formed badly: " 
+            << "optional_motors_names and optional_motors_commands and number of motors have different size (" 
+            <<  motors_names.size() << " and " << motors_commands.size() << " and " << _motors_num
+            << " respectively).  I will ignore the optional command");
+        return false;
+    } 
+    
+
+    for (int i=0; i<motors_names.size(); i++) {
+        
+        int id =-1;
+        _ee->getInternalIdForJoint ( motors_names.at(i), id );
+        if( id >= 0 ) {
+            // NOTE assume single dof
+            _qref_optional[id] = motors_commands.at(i);
+        }
+        
+        else {
+            ROS_WARN_STREAM ( "Trying to send an optional command to motor: " << motors_names.at(i) 
+            << " which is not defined" );
+            flag = false;
+        }
+    }
+    
+    //TODO we have to filter also qref_optional ??
+    
+    return flag;
+}
+
 bool ROSEE::UniversalRosEndEffectorExecutor::updateRefGoal(double percentage) {
     
     normGoalFromInitialPos = 0;
-    for ( auto it : joint_involved_mask ) {
+    for ( auto it : _motor_involved_mask ) {
 
         if ( it.second  != 0 ) {
             int id = -1;
@@ -295,10 +339,10 @@ bool ROSEE::UniversalRosEndEffectorExecutor::updateRefGoal(double percentage) {
             
             if( id >= 0 ) {
                 // NOTE assume single joint
-                _qref[id] = joint_position_goal.at ( it.first ).at ( 0 ) * percentage;
+                _qref[id] = _motor_position_goal.at ( it.first ).at ( 0 ) * percentage;
                 // to give the % as feedback, we store the initial distance from the goal
                 //TODO take care that initially jointPos can be empty...
-                normGoalFromInitialPos +=  pow (_qref[id] - jointPos.at(it.first).at(0), 2 )  ;
+                normGoalFromInitialPos +=  pow (_qref[id] - _joint_actual_pos.at(it.first).at(0), 2 )  ;
             }
             else {
                 ROS_WARN_STREAM ( "Trying to move Joint: " << it.first << " with ID: " << id );
@@ -334,7 +378,7 @@ double ROSEE::UniversalRosEndEffectorExecutor::sendFeedbackGoal(std::string curr
     
     double actualNorm = 0;
     
-    for ( auto it : joint_involved_mask ) {
+    for ( auto it : _motor_involved_mask ) {
 
         if ( it.second  != 0 ) {
             int id = -1;
@@ -342,8 +386,7 @@ double ROSEE::UniversalRosEndEffectorExecutor::sendFeedbackGoal(std::string curr
             
             if( id >= 0 ) {
                 // NOTE assume single joint
-                //TODO qref or qref_filtered?
-                actualNorm += pow ( _qref[id] - jointPos.at(it.first).at(0) , 2 );
+                actualNorm += pow ( _qref[id] - _joint_actual_pos.at(it.first).at(0) , 2 );
             }
             
             else {
@@ -368,175 +411,30 @@ double ROSEE::UniversalRosEndEffectorExecutor::sendFeedbackGoal(std::string curr
     return actualCompletationPercentage;
 }
 
-bool ROSEE::UniversalRosEndEffectorExecutor::init_actionsInfo_services() {
-        
-    for (auto primitiveContainers : mapActionHandler.getAllPrimitiveMaps() ) {
-        
-        rosee_msg::ActionInfo actInfo;
-        actInfo.action_name = primitiveContainers.first;
-        actInfo.action_type = ROSEE::Action::Type::Primitive;
-        actInfo.actionPrimitive_type = primitiveContainers.second.begin()->second->getPrimitiveType();
-        actInfo.seq = 0; //TODO check if necessary the seq in this msg
-        //until now, there is not a primitive that does not have "something" to select
-        // (eg pinch has 2 fing, trig one fing, singleJointMultipleTips 1 joint...). 
-        //Instead generic action has always no thing to select (next for loop)
-        actInfo.max_selectable = primitiveContainers.second.begin()->first.size();
-        //TODO extract the keys with another mapActionHandler function?
-        actInfo.selectable_names =
-            ROSEE::Utils::extract_keys_merged(primitiveContainers.second,
-                                              _ee->getFingers().size());
-        _actionsInfoVect.push_back(actInfo);
 
-    }
+bool ROSEE::UniversalRosEndEffectorExecutor::publish_motor_reference() {
 
-    for (auto genericMap : mapActionHandler.getAllGenerics() ) {
-
-        rosee_msg::ActionInfo actInfo;
-        actInfo.action_name = genericMap.first;
-        actInfo.action_type = genericMap.second->getType();
-        actInfo.actionPrimitive_type = ROSEE::ActionPrimitive::Type::None;
-        actInfo.seq = 0; //TODO check if necessary the seq in this msg
-        //Generic action has always no thing to select UNTIL NOW
-        actInfo.max_selectable = 0;
-
-        _actionsInfoVect.push_back(actInfo);
-
-    }
-    
-    for (auto timedMap : mapActionHandler.getAllTimeds() ) {
-        
-        rosee_msg::ActionInfo actInfo;
-        actInfo.action_name = timedMap.first;
-        actInfo.action_type = timedMap.second->getType();
-        actInfo.actionPrimitive_type = ROSEE::ActionPrimitive::Type::None;
-        actInfo.seq = 0; //TODO check if necessary the seq in this msg
-        actInfo.max_selectable = 0;
-        // we use selectable items info to store in it the action that compose this timed
-        for (std::string act : timedMap.second->getInnerActionsNames()) {
-            actInfo.inner_actions.push_back(act);
-            auto margin = timedMap.second->getActionMargins(act);
-            actInfo.before_margins.push_back(margin.first);
-            actInfo.after_margins.push_back(margin.second);
-        }
-        
-
-        _actionsInfoVect.push_back(actInfo);
-        
-    }
-    
-    _ros_server_actionsInfo = _nh.advertiseService("ActionsInfo", 
-        &ROSEE::UniversalRosEndEffectorExecutor::actionsInfoCallback, this);
-    
-    _ros_server_selectablePairInfo = _nh.advertiseService("SelectablePairInfo", 
-        &ROSEE::UniversalRosEndEffectorExecutor::selectablePairInfoCallback, this);
-    
-    return true;
-
-}
-
-
-bool ROSEE::UniversalRosEndEffectorExecutor::actionsInfoCallback(
-    rosee_msg::ActionsInfo::Request& request,
-    rosee_msg::ActionsInfo::Response& response) {
-    
-    //here we only send the actionsInfo vector, it is better to build it not in this clbk
-    
-    //TODO timestamp necessary?
-    for (auto &act : _actionsInfoVect) {
-        act.stamp = ros::Time::now();
-    }
-    response.actionsInfo = _actionsInfoVect;
-    return true;
-    
-}
-
-bool ROSEE::UniversalRosEndEffectorExecutor::selectablePairInfoCallback(
-    rosee_msg::SelectablePairInfo::Request& request,
-    rosee_msg::SelectablePairInfo::Response& response) {
-    
-    std::set<std::string> companionFingers;
-    if (request.action_name.compare ("pinchTight") == 0) {
-        companionFingers =
-            mapActionHandler.getFingertipsForPinch(request.element_name,
-                ROSEE::ActionPrimitive::Type::PinchTight) ;
-                
-    } else if (request.action_name.compare ("pinchLoose") == 0) {
-        companionFingers =
-            mapActionHandler.getFingertipsForPinch(request.element_name,
-                ROSEE::ActionPrimitive::Type::PinchLoose) ;
-                
-    } else {
-        ROS_ERROR_STREAM ( "Received" << request.action_name << " that is not" <<
-            "a recognizible action name to look for finger companions" );
-        return false;
-    }
-    
-    if (companionFingers.size() == 0) {
-        return false;
-    }
-    
-    //push the elements of set into the vector
-    for (auto fing : companionFingers ) {
-        response.pair_elements.push_back (fing);
-    }
-    
-    return true;
-        
-}
-
-void ROSEE::UniversalRosEndEffectorExecutor::fill_publish_joint_states() {
-
-    _js_msg.header.stamp = ros::Time::now();
-    _js_msg.header.seq = _seq_id++;
-
-    int c = 0;
-    for ( auto& f : _ee->getFingers() ) {
-
-        _ee->getActuatedJointsInFinger ( f, _joints );
-
-        double value = 0;
-        for ( auto& j : _joints ) {
-
-            _js_msg.name[c] = j;
-
-            _hal->getMotorPosition ( j, value );
-            _js_msg.position[c] = value;
-
-            _hal->getMotorVelocity ( j, value );
-            _js_msg.velocity[c] = value;
-
-            _hal->getMotorEffort ( j, value );
-            _js_msg.effort[c] = value;
-
-            c++;
-        }
-        _joints.clear();
-    }
-
-    _joint_state_pub.publish ( _js_msg );
-}
-
-void ROSEE::UniversalRosEndEffectorExecutor::set_references() {
+    _mr_msg.header.stamp = ros::Time::now();
+    _mr_msg.header.seq = _seq_id++;
 
     _qref_filtered = _filt_q.process ( _qref );
+    
     int id = -1;
+    for ( const auto& motor_name : _motors_names ) {
 
-    for ( const auto& j : _all_joints ) {
-
-        _ee->getInternalIdForJoint ( j, id );
-        _hal->setPositionReference ( j, _qref_filtered[id] );
+        //id to put take the qref from the right index in qref
+        _ee->getInternalIdForJoint ( motor_name, id );
+        _mr_msg.name[id] = motor_name;
+        _mr_msg.position[id] =_qref_filtered[id] ;
+        _mr_msg.effort[id] = _qref_optional[id];
     }
 
+    _motor_reference_pub.publish ( _mr_msg );
+    
+    return true;
 }
 
-
 void ROSEE::UniversalRosEndEffectorExecutor::timer_callback ( const ros::TimerEvent& timer_ev ) {
-
-    //TODO check the order of these functions...
-        
-    _hal->sense();
-
-    fill_publish_joint_states();
     
     //this is true only when a new goal has arrived... so new goal ovewrite the old one
     if (_ros_action_server->hasNewGoal()) {
@@ -573,8 +471,8 @@ void ROSEE::UniversalRosEndEffectorExecutor::timer_callback ( const ros::TimerEv
                 // so we have to execute the next one now
                     
                     timed_index++;
-                    joint_position_goal = timedAction->getAllJointPos().at(timed_index);
-                    joint_involved_mask = timedAction->getAllJointCountAction().at(timed_index);
+                    _motor_position_goal = timedAction->getAllJointPos().at(timed_index);
+                    _motor_involved_mask = timedAction->getAllJointCountAction().at(timed_index);
                     updateRefGoal();
                     
                 } 
@@ -583,23 +481,18 @@ void ROSEE::UniversalRosEndEffectorExecutor::timer_callback ( const ros::TimerEv
     }
 
 
+    //if it is a timed, we have to check if we need to still wait to execute the subsequent innet action
     if (timed_requested) {
-        //TODO is better a mini state machine to deal with timed action?
         if (timer.elapsed_time<double, std::chrono::milliseconds>()  >  msToWait )  {
-            //TODO fow now it is this function that make robot moves, and not _hal->move()
-            set_references(); 
+            publish_motor_reference(); 
                 
         } else {
             ROS_INFO_STREAM ("Waiting time to execute timed action...");
         }
             
-        
     } else {
-        //TODO fow now it is this function that make robot moves, and not _hal->move()
-        set_references(); 
+        publish_motor_reference(); 
     }
-
-    _hal->move();
 
     // update time
     _time += _period;

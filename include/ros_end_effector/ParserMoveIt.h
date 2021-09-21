@@ -24,6 +24,10 @@
 
 #include <moveit/robot_model_loader/robot_model_loader.h>
 
+//parse customized urdf with non linear mimic
+#include <tinyxml.h>
+
+
 namespace ROSEE {
 /**
  * @brief class to parse urdf and srdf with moveit classes and to give information about the model parsed
@@ -99,19 +103,19 @@ public:
     std::map < std::string, std::string > getFingertipOfFingerMap () const;
     
     /**
-     * @brief This function returns the name of the finger which the passed \ref tipName
+     * @brief This function returns the name of the finger which the passed \p tipName
      *   belongs to
      * @param tipName the name of the tip
-     * @return the name of the finger which the tip belongs to, empty string if the tipName
+     * @return the name of the finger which the tip belongs to, empty string if the \p tipName
      *   is not in the map
      * @note use \ref getFingerOfFingertipMap to get the full map
      */
     std::string getFingerOfFingertip (std::string tipName) const;
     
     /**
-     * @brief This function returns the name of the fingertip that belongs to the passed \ref fingerName
+     * @brief This function returns the name of the fingertip that belongs to the passed \p fingerName
      * @param fingerName the name of the tip
-     * @return the name of the fingertip that belongs to the finger, empty string if the fingerName
+     * @return the name of the fingertip that belongs to the finger, empty string if the \p fingerName
      *   is not in the map
      * @note use \ref getFingertipOfFingerMap to get the full map
      */
@@ -222,6 +226,25 @@ public:
      */
     std::string getFirstActuatedJointInFinger (std::string linkName) const ;
     
+    /**
+     * @todo make docs
+     * @WARNING as convention, in the equation there must exist only the variable x, that is, the 
+     *     position of the father joint
+     */
+    void parseNonLinearMimicRelations(std::string xml);
+    
+    /**
+     * @brief gets for the maps of non linear mimic joints
+     * 
+     */
+    std::pair<std::string, std::string> getMimicNLFatherOfJoint(std::string mimicNLJointName) const;
+    std::map<std::string, std::pair<std::string, std::string>> getMimicNLFatherOfJointMap() const;
+    
+    std::string getMimicNLJointOfFather(std::string mimicNLFatherName, std::string mimicNLJointName) const;
+    std::map<std::string, std::string> getMimicNLJointsOfFather(std::string mimicNLFatherName) const;
+    std::map<std::string, std::map<std::string, std::string>> getMimicNLJointsOfFatherMap() const;
+    
+    
 private:
     
     std::string handName;
@@ -253,6 +276,25 @@ private:
     /** @brief The map with as key the name of the fingertip (the last (not virtual) link of a finger)
      *  and as value the finger name (defined in the srdf) */
     std::map<std::string, std::string> fingertipOfFingerMap;
+    
+    /**
+     * @brief This map contain as key the name of the mimic joint which position follows a non linear
+     *   relationship with a father joint. As value there is a pair: first element is the name
+     *   of the father joint, second element is the non linear equation
+     *   
+     * @WARNING as convention, in the equation there must exist only the variable x, that is, the 
+     *     position of the father joint
+     */
+    std::map<std::string, std::pair<std::string, std::string>>  mimicNLFatherOfJointMap;
+    
+    /**
+     * @brief inverse map of previous, even if the function is replicated, this is anyway useful, 
+     * at the cost of having 2 copy of a string type.
+     * the key is the name of the father, the value is a map because more than one child can
+     * mimic the father (In the other map, there is a pair)
+     */
+    std::map<std::string, std::map<std::string, std::string>>  mimicNLJointsOfFatherMap;
+
     
     /**
      * @brief This function explore the robot_model (which was built from urdf and srdf files), 
@@ -319,6 +361,9 @@ private:
      */
     void getRealDescendantLinkModelsRecursive ( const moveit::core::LinkModel* link,  std::vector< const moveit::core::LinkModel* > & linksVect,
                                                 const moveit::core::JointModel* joint,  std::vector< const moveit::core::JointModel* > & jointsVect ) const;
+    
+                                                
+
         
 
 

@@ -5,12 +5,14 @@
 
 #include <ros_end_effector/YamlWorker.h>
 #include <ros_end_effector/ParserMoveIt.h>
-#include <ros_end_effector/Action.h>
-#include <ros_end_effector/ActionPinchTight.h>
-#include <ros_end_effector/ActionPinchLoose.h>
-#include <ros_end_effector/ActionTrig.h>
-#include <ros_end_effector/ActionSingleJointMultipleTips.h>
-#include <ros_end_effector/ActionMultiplePinchTight.h>
+#include <ros_end_effector/GraspingActions/Action.h>
+#include <ros_end_effector/GraspingActions/ActionPinchTight.h>
+#include <ros_end_effector/GraspingActions/ActionPinchLoose.h>
+#include <ros_end_effector/GraspingActions/ActionTrig.h>
+#include <ros_end_effector/GraspingActions/ActionSingleJointMultipleTips.h>
+#include <ros_end_effector/GraspingActions/ActionMultiplePinchTight.h>
+
+#include <muParser.h>
 
 
 #define N_EXP_COLLISION 5000 //5000 is ok
@@ -81,6 +83,9 @@ private:
     
     std::shared_ptr < ROSEE::ParserMoveIt > parserMoveIt;
     
+    //lets store this, we access at each setRandomPos
+    std::map<std::string, std::pair<std::string, std::string>> mimicNLRelMap;
+    
     /**
      * @brief principal function which check for collisions with moveit functions when looking for tight pinches
      * @return the map of ActionPinchTight
@@ -120,7 +125,7 @@ private:
      * We need at least \param nFinger - 1 collision: eg. for triPinch -> 2collision,
      * for 4finger pinch -> 3 collision. But, with only this check, we can also find 
      * a configuration whith two distint normal pinch. To solve, we also check if the number of
-     * tips that collide in this configuration is exaclty \param nFinger,
+     * tips that collide in this configuration is exaclty \param nFinger ,
      * eg with 2 collision we can have 4 finger colliding because there are two
      * normal distinct pinch and not a 3-pinch... so we exlude these collisions.
      * The \param strict can solves another problem. If it is true (default) we take only
@@ -143,10 +148,10 @@ private:
     /**
      * @brief Support function to remove the joint limits from the model. This is done when looking for Loose Pinches.
      * @param mapOfLoosePinches [in] pointer to the map of loose pinches
-     * @param RobotModelPtr the pointer to the robot model
+     * @param kinematic_model_noBound the pointer to the robot model
      */
     void removeBoundsOfNotCollidingTips ( const std::map < std::pair <std::string, std::string> , ROSEE::ActionPinchLoose >* mapOfLoosePinches, 
-                                          robot_model::RobotModelPtr );
+                                          robot_model::RobotModelPtr kinematic_model_noBound);
     
     /**
      * @brief function to "initialize" the map of ActionPinchLoose \p mapOfLoosePinches. 
@@ -243,7 +248,7 @@ private:
      * @brief Set to default pos the joints that do not move any of the tip included in the 
      * set \param tipsNames. Used by \ref findMultiplePinch function
      * @param tipsNames the tips involved
-     * @param jpos pointer to the map \ref JointPos with value to be setted if necessary
+     * @param jPos pointer to the map \ref JointPos with value to be setted if necessary
      * @return JointsInvolvedCount map, where value are 0 or 1 according to the usage of joint
      */
     ROSEE::JointsInvolvedCount setOnlyDependentJoints( std::set< std::string > tipsNames, 
@@ -259,7 +264,8 @@ private:
     
     /**
      * @brief set to \ref DEFAULT_JOINT_POS all the passive joints (defined so in
-     * the urdf file)
+     * the urdf file). this is necessary because moveit setToRandomPositions modify the position of passive joints,
+     * we do not want that
      */
     void setToDefaultPositionPassiveJoints(moveit::core::RobotState * kinematic_state);
     
@@ -289,7 +295,17 @@ private:
      */
     std::pair < std::string, std::string > getFingertipsPair (std::pair <std::string, std::string> fingersPair) const;
 
-
+    /**
+     * @brief This function set the random position of joint considering:
+     * 
+     *   - Non linear mimic joint relationship, if present
+     *   - Passive joints, which default position will be assured
+     *   - Positional limit of also mimic joint will be enforced
+     * 
+     *   These three things are not present in the moveit setToRandomPositions. So we use the moveit one but then 
+     *   we change a bit the things.
+     */
+    void setToRandomPositions(robot_state::RobotState* kinematic_state);
 
 
 };

@@ -21,6 +21,7 @@
 #include <cmath>
 #include <memory>
 #include <iostream>
+#include <dlfcn.h>
 
 //to find relative path for the config files and create directories
 #include <boost/filesystem.hpp>
@@ -45,18 +46,24 @@ static void out2file ( std::string pathFile, std::string output) {
     fout << output;
 }
 
+// static std::string get_environment_variable( std::string const & key )
+// {
+//     char * val = getenv( key.c_str() );
+//     return val == NULL ? std::string("") : std::string(val);
+// }
+
 static std::vector <std::string> getFilesInDir ( std::string pathFolder ) {
     
     boost::filesystem::path p (pathFolder);
     std::vector <std::string> retVect;
     
     if (! boost::filesystem::exists(p) ) {
-        std::cerr << "[ERROR " << __func__ << "] pathFolder" << pathFolder << " does not exists" << std::endl;
+        std::cerr << "[ERROR " << __func__ << "] path '" << pathFolder << "' does not exists" << std::endl;
         return retVect;
     }
     
     if (! boost::filesystem::is_directory(p)){ 
-        std::cerr << "[ERROR " << __func__ << "] pathFolder" << pathFolder << " is not a directory" << std::endl;
+        std::cerr << "[ERROR " << __func__ << "] path '" << pathFolder << "' is not a directory" << std::endl;
         return retVect;
     }
     
@@ -205,6 +212,61 @@ struct DifferentKeysException : public std::exception {
         return "Maps have different keys";
     }
 };
+
+/**
+ * @brief Utils to dynamically load an object. This is used to dynamically load 
+ *  a derived object from a node that only knows the base interface. 
+ *  For example, we call the create_object(ros::nodeHandle) method of a derived EEHAL class
+ *  The object must be a library which will return a RetType pointer with the \p function_name
+ *  This function will "convert" to smart pointer for convenience
+ * @param lib_name the name of the compiled library (eg DummyHal). Do not add the suffix .so
+ * @param function_name The method of \param lib_name which will return a RetType*. 
+ * @param args arguments for the \p function_name , if the case
+ * @return std::shared_ptr<RetType> a pointer to the new created object
+ */
+template <typename RetType, typename... Args>
+std::unique_ptr<RetType> loadObject(std::string lib_name, 
+                                    std::string function_name,
+                                    Args... args) {
+    
+    if (lib_name.empty()) {
+        
+        std::cerr << "[Utils::loadObject] ERROR: Please specify lib_name" << std::endl;
+        return nullptr;
+    } 
+    
+    std::string lib_name_path = "lib" + lib_name +".so"; 
+
+    //clear old errors
+    dlerror();
+
+    void* lib_handle = dlopen(lib_name_path.c_str(), RTLD_LAZY);
+    auto error = dlerror();
+
+    if (!lib_handle || error != NULL) {
+        std::cerr << "[Utils::loadObject] ERROR in opening the library: " << error << std::endl;
+        return nullptr;
+    }
+    
+    //clear old errors
+    dlerror();
+    
+    RetType* (*function)(Args... args);
+    function = reinterpret_cast<RetType* (*)(Args... args)>(dlsym(lib_handle, function_name.c_str()));
+    error = dlerror();
+    if ( error != NULL)  {
+        std::cerr << "[Utils::loadObject] ERROR in returning the function: " << error << std::endl;
+        return nullptr;
+    }
+    
+    RetType* objectRaw = function(args...);
+    
+    std::unique_ptr<RetType> objectPtr(objectRaw);
+    
+    dlclose(lib_handle);
+    
+    return objectPtr;
+}
 
 //default template as high_resolution_clock
 //copied from https://codereview.stackexchange.com/questions/196245/extremely-simple-timer-class-in-c

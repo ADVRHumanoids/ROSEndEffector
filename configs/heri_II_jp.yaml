@@ -1,0 +1,20 @@
+joint_map:
+  1: BASE__LFB1
+  2: BASE__LFB2
+  3: BASE__LFB3
+  4: BASE__SFB1
+  5: LFB1__LFP1_1
+  6: LFB2__LFP2_1
+  7: LFB3__LFP3_1
+  8: LFP1_1__LFP1_2
+  9: LFP1_2__LFP1_3
+  10: LFP2_1__LFP2_2
+  11: LFP2_2__LFP2_3
+  12: LFP3_1__LFP3_2
+  13: LFP3_2__LFP3_3
+  14: SFB1__SFP1_1
+  15: SFP1_1__SFP1_2
+  16: motor_finger1
+  17: motor_finger2
+  18: motor_finger3
+  19: motor_thumb

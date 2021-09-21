@@ -10,6 +10,34 @@ robotiq-3f-gripper_articulated - articulated version of the robotiq robotiq-3f-g
 -->
 <robot name="robotiq_3f" xmlns:xacro="http://ros.org/wiki/xacro">
 
+  <gazebo>
+      <plugin name='xbot2_gz_joint_server' filename='libxbot2_gz_joint_server.so'>
+        <pid>
+            <gain name="small_mot"  p="1"  d="0.05"/>
+            <gain name="medium_mot" p="1000" d="10"/>
+            <gain name="big_mot"    p="3000" d="10"/>
+            <gain name="wheel_mot"  p="0" d="30"/>
+            <gain name="null"  p="0" d="0" i="0"/>
+
+            <gain name="palm_finger_1_joint" profile="small_mot"/>
+            <gain name="finger_1_joint_1" profile="small_mot"/>
+
+            <gain name="finger_1_joint_2" profile="null"/>
+            <gain name="finger_1_joint_3" profile="null"/>
+
+            <gain name="palm_finger_2_joint" profile="null"/>
+            <gain name="finger_2_joint_1" profile="null"/>
+            <gain name="finger_2_joint_2" profile="null"/>
+            <gain name="finger_2_joint_3" profile="null"/>
+
+            <gain name="palm_finger_middle_joint" profile="null"/>
+            <gain name="finger_middle_joint_1" profile="null"/>
+            <gain name="finger_middle_joint_2" profile="null"/>
+            <gain name="finger_middle_joint_3" profile="null"/>
+
+        </pid>
+    </plugin>
+  </gazebo>
 
   <link name="world"/>
   <joint name="world_base" type="fixed">

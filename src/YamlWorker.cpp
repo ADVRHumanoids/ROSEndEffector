@@ -27,6 +27,15 @@ std::string ROSEE::YamlWorker::createYamlFile( const ROSEE::Action* action, std:
     
 }
 
+std::string ROSEE::YamlWorker::createYamlFile( const ROSEE::ActionGeneric::Ptr action, std::string pathFolder) {
+    
+    ROSEE::Utils::create_directory ( pathFolder );
+    std::string output = emitYaml ( action );
+    ROSEE::Utils::out2file(pathFolder + action->getName() + ".yaml", output);
+    return (pathFolder + action->getName() + ".yaml");
+    
+}
+
 std::string ROSEE::YamlWorker::createYamlFile(
     const std::map < std::set <std::string> , ActionPrimitive* > mapOfActions,
     const std::string actionName, std::string pathFolder) {
@@ -55,6 +64,15 @@ std::string ROSEE::YamlWorker::emitYaml (
 }
 
 std::string ROSEE::YamlWorker::emitYaml  ( const ROSEE::Action* action ) {
+    
+    YAML::Emitter out;
+    action->emitYaml(out);
+    out << YAML::Newline << YAML::Newline; //double to insert a blanck line
+    return out.c_str();
+    
+}
+
+std::string ROSEE::YamlWorker::emitYaml  ( const ROSEE::ActionGeneric::Ptr action ) {
     
     YAML::Emitter out;
     action->emitYaml(out);

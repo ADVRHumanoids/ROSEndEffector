@@ -7,13 +7,14 @@
 #include <ros_end_effector/ParserMoveIt.h>
 #include <ros_end_effector/FindActions.h>
 #include <ros_end_effector/EEInterface.h>
-#include <ros_end_effector/ActionGeneric.h>
+#include <ros_end_effector/GraspingActions/ActionGeneric.h>
 #include <ros_end_effector/Utils.h>
 #include <ros_end_effector/YamlWorker.h>
 
 #include <rosee_msg/ROSEECommandAction.h>
 #include <actionlib/client/simple_action_client.h>
 
+#include <random>
 
 
 namespace {
@@ -59,10 +60,10 @@ protected:
         
         folderForActions = p.getActionPath();
         if ( folderForActions.size() == 0 ){ //if no action path is set in the yaml file...
-            folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/" + ee->getName();
+            std::cout << "[TEST SEND ACTIONS] parser FAIL: action_path in the config file is missing" << std::endl;
+            return;
         }
 
-        /** Find all the actions **/
         //note: test on the findActions part is done in other test files
         parserMoveIt = std::make_shared<ROSEE::ParserMoveIt>();
         if (! parserMoveIt->init ("robot_description", false) ) {
@@ -71,6 +72,7 @@ protected:
             return;
         }
                 
+        //note: calls to find*** (like findTrig) are done in the specific testu
         actionsFinder = std::make_shared<ROSEE::FindActions>(parserMoveIt);
 
                                                                           
@@ -130,7 +132,6 @@ protected:
 
     ClbkHelper clbkHelper;
     
-protected:
     void setMainNode();
     void sendAction( ROSEE::Action::Ptr action, double percentageWanted);
     void testAction( ROSEE::Action::Ptr actionSent, double percentageWanted);
@@ -144,11 +145,7 @@ void testSendAction::setMainNode() {
 
     //TODO put a checkReady service instead of sleeping?
     sleep(5); // lets wait for test_rosee_startup to be ready
-    std::string topic_name_js;
-
-    nh.param<std::string>("/rosee/joint_states_topic", topic_name_js, "");
-    
-    ASSERT_TRUE ( topic_name_js.size() > 0);
+    std::string topic_name_js = "/ros_end_effector/joint_states";    
     
     receiveRobStateSub = nh.subscribe (topic_name_js, 1, &ClbkHelper::jointStateClbk, &clbkHelper);
     
@@ -273,7 +270,8 @@ TEST_F ( testSendAction, sendSimpleGeneric ) {
         
     }
 
-    ROSEE::Action::Ptr action = std::make_shared<ROSEE::ActionGeneric>("testAllUpperLim", jp, jpc);
+    //ROSEE::Action::Ptr action = std::make_shared<ROSEE::ActionGeneric>("testAllUpperLim", jp, jpc);
+    ROSEE::Action::Ptr action = std::make_shared<ROSEE::ActionGeneric>("AAAAAAAAAAAAAAAA", jp, jpc);
     //emit the yaml so roseeExecutor can find the action
     yamlWorker.createYamlFile( action.get(), folderForActions + "/generics/" );
 

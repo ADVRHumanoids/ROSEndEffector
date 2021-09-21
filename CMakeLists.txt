@@ -1,3 +1,4 @@
+
 cmake_minimum_required(VERSION 2.8.3)
 project(ros_end_effector)
 
@@ -23,9 +24,28 @@ find_package(catkin REQUIRED COMPONENTS srdfdom
                                         rosee_msg
                                         )
                                                                                
-# find_package(matlogger2 REQUIRED)
 find_package(Eigen3 REQUIRED)
+#TODO on my pc, find_package works. On iit pc, I need the find_library. Why?
+#find_package(muparser REQUIRED) 
+find_library(_MUPARSER_LIB muparser REQUIRED)
 find_package(yaml-cpp REQUIRED)
+find_package(matlogger2)
+if (${matlogger2_FOUND})
+    message("Logging with MatLogger2")
+    add_definitions(-D_MATLOGGER2)
+endif (${matlogger2_FOUND})
+
+#Xbot stuff
+option(BUILD_WITH_XBOT2 "Compile also the HAL used with XBot2" ON)
+
+if (BUILD_WITH_XBOT2)
+    message("Compiling with XBOT2")
+    option(XBOT2_ENABLE_XENO OFF "Compile against xenomai") #TODO necessary?
+    find_package(xbot2 REQUIRED)
+
+else()
+    message("Compiling without XBOT2")
+endif(BUILD_WITH_XBOT2)
 
 ###################################
 ## catkin specific configuration ##
@@ -37,7 +57,7 @@ find_package(yaml-cpp REQUIRED)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  INCLUDE_DIRS include
+    INCLUDE_DIRS include
 #  LIBRARIES ros_end_effector
 #  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
@@ -62,9 +82,21 @@ add_library(ROSEEInterface
 )
 
 add_library(DummyHal
-    src/EEHal.cpp
-    src/DummyHal.cpp
+     src/HAL/DummyHal.cpp
 )
+
+add_library(EEHal
+     src/HAL/EEHal.cpp
+)
+
+if (BUILD_WITH_XBOT2)
+
+    add_library(XBot2Hal
+        src/HAL/XBot2Hal.cpp
+    )
+
+endif(BUILD_WITH_XBOT2)
+
 
 add_library(UniversalRosEndEffectorExecutor
     src/UniversalRosEndEffectorExecutor.cpp
@@ -86,44 +118,48 @@ add_library(RosActionServer
     src/RosActionServer.cpp
 )
 
+add_library(RosServiceHandler
+    src/RosServiceHandler.cpp
+)
+
 add_library(MapActionHandler
     src/MapActionHandler.cpp
 )
 
 add_library(Action 
-    src/Action.cpp 
+    src/GraspingActions/Action.cpp 
 )
 
 add_library(ActionPrimitive 
-    src/ActionPrimitive.cpp
+    src/GraspingActions/ActionPrimitive.cpp
 )
 
 add_library(ActionPinchTight
-    src/ActionPinchTight.cpp
+    src/GraspingActions/ActionPinchTight.cpp
 )
 add_library(ActionPinchGeneric
-    src/ActionPinchGeneric.cpp
+    src/GraspingActions/ActionPinchGeneric.cpp
 )
 add_library(ActionPinchLoose
-    src/ActionPinchLoose.cpp
+    src/GraspingActions/ActionPinchLoose.cpp
 )
 add_library(ActionTrig
-    src/ActionTrig.cpp
+    src/GraspingActions/ActionTrig.cpp
 )
 add_library(ActionSingleJointMultipleTips
-    src/ActionSingleJointMultipleTips.cpp
+    src/GraspingActions/ActionSingleJointMultipleTips.cpp
 )
 add_library(ActionMultiplePinchTight
-    src/ActionMultiplePinchTight.cpp
+    src/GraspingActions/ActionMultiplePinchTight.cpp
 )
 add_library(ActionGeneric
-    src/ActionGeneric.cpp 
+    src/GraspingActions/ActionGeneric.cpp 
 )
 add_library(ActionComposed
-    src/ActionComposed.cpp 
+    src/GraspingActions/ActionComposed.cpp 
 )
 add_library(ActionTimed
-    src/ActionTimed.cpp 
+    src/GraspingActions/ActionTimed.cpp 
 )
 
 ## Add cmake target dependencies of the library
@@ -133,8 +169,9 @@ add_library(ActionTimed
 
 add_executable(UniversalRosEndEffector src/UniversalRosEndEffector.cpp)
 add_executable(UniversalFindActions src/UniversalFindActions.cpp)
-# add_dependencies(UniversalRosEndEffector rosee_msg_generate_messages_cpp)
-# add_dependencies(UniversalFindActions rosee_msg_generate_messages_cpp)
+add_executable(EEHalExecutor src/HAL/EEHalExecutor.cpp)
+# # add_dependencies(UniversalRosEndEffectorExecutor ros_end_effector_generate_messages_cpp)
+# # add_dependencies(UniversalFindActions ros_end_effector_generate_messages_cpp)
 
 
 ## Add cmake target dependencies of the executable
@@ -152,10 +189,6 @@ target_link_libraries(ROSEEInterface
     ROSEEParser
 )
 
-target_link_libraries(DummyHal
-    yaml-cpp
-)
-
 target_link_libraries(UniversalRosEndEffectorExecutor
     ${catkin_LIBRARIES}
     ROSEEParser
@@ -163,9 +196,7 @@ target_link_libraries(UniversalRosEndEffectorExecutor
     YamlWorker
     MapActionHandler
     RosActionServer
-    
-    # do it automatically
-    DummyHal
+    RosServiceHandler
     
 )
 
@@ -194,6 +225,11 @@ target_link_libraries(RosActionServer
     ${catkin_LIBRARIES}
 )
 add_dependencies(RosActionServer rosee_msg_generate_messages_cpp)
+
+target_link_libraries(RosServiceHandler
+    ${catkin_LIBRARIES}
+)
+add_dependencies(RosServiceHandler rosee_msg_generate_messages_cpp)
 
 target_link_libraries(ActionPinchTight
     ActionPinchGeneric
@@ -241,6 +277,7 @@ target_link_libraries(FindActions
     ActionPinchLoose
     ActionSingleJointMultipleTips
     ActionMultiplePinchTight
+    muparser
 )
 
 target_link_libraries(ParserMoveIt
@@ -249,6 +286,7 @@ target_link_libraries(ParserMoveIt
 
 target_link_libraries(UniversalRosEndEffector
     UniversalRosEndEffectorExecutor
+    
 )
 
 target_link_libraries(UniversalFindActions
@@ -266,6 +304,41 @@ target_link_libraries(UniversalFindActions
     MapActionHandler
 )
 
+if (${matlogger2_FOUND})
+    target_link_libraries(EEHalExecutor
+        ${catkin_LIBRARIES}
+        EEHal
+        matlogger2::matlogger2
+        #KEEP THIS. ERROR HAPPENS OTHERWISE. not anymore?
+        #XBot2Hal
+    )
+    
+else()
+    target_link_libraries(EEHalExecutor
+        ${catkin_LIBRARIES}
+        EEHal
+        #KEEP THIS. ERROR HAPPENS OTHERWISE. not anymore?
+        #XBot2Hal
+    )
+endif(${matlogger2_FOUND})
+
+target_link_libraries(EEHal 
+    ${catkin_LIBRARIES}
+    yaml-cpp
+)
+add_dependencies(EEHal rosee_msg_generate_messages_cpp)
+
+target_link_libraries(DummyHal
+    ${catkin_LIBRARIES}
+    EEHal 
+)
+
+if(BUILD_WITH_XBOT2)
+    target_link_libraries(XBot2Hal
+        xbot2::xbot2
+        EEHal
+    )
+endif(BUILD_WITH_XBOT2)
 
 
 #############
@@ -366,12 +439,29 @@ if(CATKIN_ENABLE_TESTING)
                                               ROSEEParser
                                               ROSEEInterface
                                               FindActions)  
+                                              
+    add_executable(ServiceHandler_test test/test_service_handler.cpp)
+    target_link_libraries(ServiceHandler_test ${catkin_LIBRARIES}
+                                              gtest
+                                              ROSEEParser
+                                              ROSEEInterface
+                                              MapActionHandler
+                                              RosServiceHandler)  
     
     list(APPEND testsExecutable 
-        EEInterface_test FindPinches_test FindTrigs_test ComposedAction_test TimedAction_test SendAction_test
+        EEInterface_test 
+        FindPinches_test 
+        FindTrigs_test 
+        ComposedAction_test 
+        TimedAction_test
+        SendAction_test 
+        ServiceHandler_test
     )
     list(APPEND handsForTests
-         test_ee test_ee_spread two_finger two_finger_mimic
+         test_ee 
+         test_ee_spread 
+         two_finger 
+         two_finger_mimic
     )
     
     #run each test with each hand
@@ -386,15 +476,17 @@ if(CATKIN_ENABLE_TESTING)
         endforeach()    
     endforeach()
     
-#     foreach(hand ${handsForTests})
-#         
-#         add_test(
-#             NAME ComposedAction_test_${hand}
-#             COMMAND ComposedAction_test ${hand}
-#         )
-#   
-#     endforeach()
+
+    foreach(hand ${handsForTests})
+         
+        add_test(
+            NAME ComposedAction_test_${hand}
+            COMMAND ComposedAction_test ${hand}
+        )
+   
+    endforeach()
     
+
     #for code coverage, from Arturo xbot2
     add_custom_target(test_clean_coverage
         COMMAND /bin/sh ${CMAKE_CURRENT_SOURCE_DIR}/test/scripts/clean_gcov.sh
@@ -427,3 +519,5 @@ macro(optional_build name path ONOFF)
 endmacro(optional_build name path ONOFF)
 
 optional_build(documentation doc ON)
+
+#unset(BUILD_WITH_XBOT2 CACHE) # todo check if necesasry

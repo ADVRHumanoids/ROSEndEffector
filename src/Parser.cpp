@@ -413,7 +413,7 @@ int ROSEE::Parser::getActuatedJointsNumber() const {
     return _joints_num;
 }
 
-std::map< std::string, std::vector< std::string > > ROSEE::Parser::getFingerJointMap() const {
+std::map< std::string, std::vector< std::string >> ROSEE::Parser::getFingerJointMap() const {
 
     return _finger_joint_map;
 }
@@ -428,7 +428,7 @@ std::map< std::string, urdf::JointConstSharedPtr > ROSEE::Parser::getUrdfJointMa
     return _urdf_joint_map;
 }
 
-void ROSEE::Parser::getFingerJointMap( std::map< std::string, std::vector< std::string > >& finger_joint_map ) const {
+void ROSEE::Parser::getFingerJointMap( std::map< std::string, std::vector< std::string >>& finger_joint_map ) const {
 
     finger_joint_map = _finger_joint_map;
 }

@@ -71,6 +71,7 @@ namespace ROSEE {
          * @brief getter for the actuated joints of a finger
          * 
          * @param finger_name the name of the finger where to retrieve actuated joints
+         * @param actuated_joints [out] will be filled with the actuated joints of the finger
          * @return bool true if the requested finger exists, false otherwise
          */
         bool getActuatedJointsInFinger( std::string finger_name, std::vector<std::string>& actuated_joints );

@@ -28,23 +28,15 @@
 
 #include <ros_end_effector/Parser.h>
 #include <ros_end_effector/EEInterface.h>
-#include <ros_end_effector/EEHal.h>
-#include <ros_end_effector/DummyHal.h>
 #include <ros_end_effector/Utils.h>
 #include <ros_end_effector/MapActionHandler.h>
 #include <ros_end_effector/YamlWorker.h>
 #include <ros_end_effector/RosActionServer.h>
+#include <ros_end_effector/RosServiceHandler.h>
 
-#include <ros_end_effector/ActionPrimitive.h>
-#include <ros_end_effector/ActionComposed.h>
-
-/// new messages from rosee_msg package
-//for services to gui
-#include <rosee_msg/ActionsInfo.h> //service
-#include <rosee_msg/ActionInfo.h>  //message
-#include <rosee_msg/SelectablePairInfo.h>  //message
-#include <rosee_msg/ROSEEActionControl.h> //msg
-#include <rosee_msg/ROSEECommandAction.h> //action
+#include <ros_end_effector/GraspingActions/ActionPrimitive.h>
+#include <ros_end_effector/GraspingActions/ActionComposed.h>
+#include <rosee_msg/HandInfo.h>
 
 namespace ROSEE
 {
@@ -70,22 +62,18 @@ public:
 
 private:
 
-    void fill_publish_joint_states();
-    
-    void set_references();
+    bool init_motor_reference_pub();
+    bool init_qref_filter();    
+    void init_joint_state_sub();
+    bool init_grasping_primitive();    
 
-    bool init_grapsing_primitive();
+    bool publish_motor_reference();
     
-    bool init_action_server();
-    
-    bool init_actionsInfo_services() ;
-    
-    bool actionsInfoCallback (rosee_msg::ActionsInfo::Request& request,
-        rosee_msg::ActionsInfo::Response& response);
-    
-    bool selectablePairInfoCallback( rosee_msg::SelectablePairInfo::Request& request,
-                                     rosee_msg::SelectablePairInfo::Response& response);
-
+    bool updateGoal(); //the "new" pinch/grasp callback (now used for all actions)
+    bool readOptionalCommands(std::vector<std::string> motors_names, std::vector<double> motors_commands);
+    bool updateRefGoal(double percentage = 1.0);
+    double sendFeedbackGoal(std::string currentAction = "");
+    bool update_send_timed();
     
     ros::NodeHandle _nh;
     ros::Timer _loop_timer;
@@ -94,22 +82,20 @@ private:
 
     ROSEE::EEInterface::Ptr _ee;
 
-    ros::Publisher _joint_state_pub;
-    sensor_msgs::JointState _js_msg;
-
-    int _joint_num = 0;
+    ros::Publisher _motor_reference_pub;
+    sensor_msgs::JointState _mr_msg;
+    int _motors_num = 0;
     int _seq_id = 0;
+    
+    ROSEE::JointPos _joint_actual_pos;
+    ros::Subscriber _joint_state_sub;
+    void joint_state_clbk(const sensor_msgs::JointStateConstPtr& msg);
 
-    ROSEE::EEHal::Ptr _hal;
-
-    std::vector<std::string> _all_joints;
-    std::vector<std::string> _joints;
+    std::vector<std::string> _motors_names;
     
     std::string folderForActions;
 
-    ros::Subscriber _sub_grasp, _sub_pinch, _sub_trigger, sub_finger_flextion, sub_tip_flextion;
-
-    Eigen::VectorXd _qref, _qref_filtered;
+    Eigen::VectorXd _qref, _qref_filtered, _qref_optional;
     
     ROSEE::Utils::SecondOrderFilter<Eigen::VectorXd> _filt_q;
     
@@ -123,46 +109,23 @@ private:
     
     std::shared_ptr<ROSEE::ActionGeneric> _graspParsed;
     
-    MapActionHandler mapActionHandler;
+    MapActionHandler::Ptr mapActionHandlerPtr;
     
-    //for service info to gui 
-    std::vector<rosee_msg::ActionInfo> _actionsInfoVect;
-    ros::ServiceServer _ros_server_actionsInfo;
-    ros::ServiceServer _ros_server_selectablePairInfo;
-    
+    std::shared_ptr <RosServiceHandler> _ros_service_handler;
     std::shared_ptr <RosActionServer> _ros_action_server;
     
-    // we need this as global member because in send_feedback we need it...
-    ROSEE::JointsInvolvedCount joint_involved_mask;
-    ROSEE::JointPos joint_position_goal;
+    ROSEE::JointsInvolvedCount _motor_involved_mask;
+    ROSEE::JointPos _motor_position_goal;
     double normGoalFromInitialPos;
-    
-    bool updateGoal(); //the "new" pinch/grasp callback (now used for all actions)
-    bool updateRefGoal(double percentage = 1.0);
-    double sendFeedbackGoal(std::string currentAction = "");
-    bool update_send_timed();
+
     bool timed_requested;
     std::shared_ptr<ROSEE::ActionTimed> timedAction;
     unsigned int timed_index;
     ROSEE::Utils::Timer<> timer; //for time margins of timed action
     double msToWait;
 
-    
-    //TODO this should be done by hal?
-    // ALSO todo get state from gazebo if it is used...
-    void init_robotState_sub();
-    ROSEE::JointPos jointPos;
-    ros::Subscriber jointPosSub;
-    void jointStateClbk(const sensor_msgs::JointStateConstPtr& msg);
-    
-    
-    
-
-    
-
 };
 
-}
-
+} //namespace
 
 #endif //__ROSEE_UNIVERSAL_ROS_END_EFFECTOR_EXECUTOR_
