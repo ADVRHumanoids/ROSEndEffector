@@ -1,3 +1,4 @@
+
 cmake_minimum_required(VERSION 2.8.3)
 project(ros_end_effector)
 
@@ -27,7 +28,11 @@ find_package(Eigen3 REQUIRED)
 #find_package(muparser REQUIRED) 
 find_library(_MUPARSER_LIB muparser REQUIRED)
 find_package(yaml-cpp REQUIRED)
-find_package(matlogger2 REQUIRED)
+find_package(matlogger2)
+if (${matlogger2_FOUND})
+    message("Logging with MatLogger2")
+    add_definitions(-D_MATLOGGER2)
+endif (${matlogger2_FOUND})
 
 #Xbot stuff
 option(BUILD_WITH_XBOT2 "Compile also the HAL used with XBot2" ON)
@@ -299,13 +304,23 @@ target_link_libraries(UniversalFindActions
     MapActionHandler
 )
 
-target_link_libraries(EEHalExecutor
-    ${catkin_LIBRARIES}
-    EEHal
-    matlogger2::matlogger2
-    #KEEP THIS. ERROR HAPPENS OTHERWISE. not anymore?
-    #XBot2Hal
-)
+if (${matlogger2_FOUND})
+    target_link_libraries(EEHalExecutor
+        ${catkin_LIBRARIES}
+        EEHal
+        matlogger2::matlogger2
+        #KEEP THIS. ERROR HAPPENS OTHERWISE. not anymore?
+        #XBot2Hal
+    )
+    
+else()
+    target_link_libraries(EEHalExecutor
+        ${catkin_LIBRARIES}
+        EEHal
+        #KEEP THIS. ERROR HAPPENS OTHERWISE. not anymore?
+        #XBot2Hal
+    )
+endif(${matlogger2_FOUND})
 
 target_link_libraries(EEHal 
     ${catkin_LIBRARIES}
