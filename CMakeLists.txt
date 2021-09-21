@@ -29,14 +29,14 @@ find_package(Eigen3 REQUIRED)
 #find_package(muparser REQUIRED) 
 find_library(_MUPARSER_LIB muparser REQUIRED)
 find_package(yaml-cpp REQUIRED)
-find_package(matlogger2)
+find_package(matlogger2 QUIET)
 if (${matlogger2_FOUND})
     message("Logging with MatLogger2")
     add_definitions(-D_MATLOGGER2)
 endif (${matlogger2_FOUND})
 
 #Xbot stuff
-option(BUILD_WITH_XBOT2 "Compile also the HAL used with XBot2" ON)
+option(BUILD_WITH_XBOT2 "Compile also the HAL used with XBot2" OFF)
 
 if (BUILD_WITH_XBOT2)
     message("Compiling with XBOT2")
