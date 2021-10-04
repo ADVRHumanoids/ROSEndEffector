@@ -19,7 +19,13 @@
   <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
   <license>Apache License 2.0</license>
 
-  <url type="website">https://advrhumanoids.github.io/ROSEndEffector/</url>
+  <url type="website">https://advrhumanoids.github.io/ROSEndEffectorDocs/</url>
+  <url type="repository">https://github.com/ADVRHumanoids/ROSEndEffector/</url>
+  <url type="bugtracker">https://github.com/ADVRHumanoids/ROSEndEffector/issues/</url>
+  
+  <author email="luca.muratore@iit.it">Luca Muratore</author>
+  <author email="davide.torielli@iit.it">Davide Torielli</author>
+  <author email="liana.bertoni@iit.it">Liana Bertoni</author>
 
   <!-- The *depend tags are used to specify dependencies -->
   <!-- Dependencies can be catkin packages or system dependencies -->
@@ -48,7 +54,7 @@
   <!-- Use test_depend for packages you need only for testing: -->
     <test_depend>gtest</test_depend>
   <!-- Use doc_depend for packages you need only for building documentation: -->
-  <!--   <doc_depend>doxygen</doc_depend> -->
+  <doc_depend>doxygen</doc_depend>
 
 
 
