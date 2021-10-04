@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>ros_end_effector</name>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
   <description>
     ROS End-Effector package: provides a ROS-based set of standard interfaces to command robotics end-effectors in an agnostic fashion
   </description>

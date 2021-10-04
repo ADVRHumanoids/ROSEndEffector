@@ -2,8 +2,8 @@
 Changelog for package ros_end_effector
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.2 (2021-10-04)
+------------------
 * package info url & authors
 * Contributors: Davide Torielli
 
