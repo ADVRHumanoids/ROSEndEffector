@@ -2,8 +2,8 @@
 Changelog for package end_effector
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.4 (2021-10-05)
+------------------
 * hotfix after the change of package name
 * Contributors: Davide Torielli
 
