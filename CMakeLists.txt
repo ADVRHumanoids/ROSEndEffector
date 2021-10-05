@@ -58,7 +58,7 @@ endif(BUILD_WITH_XBOT2)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
     INCLUDE_DIRS include
-#  LIBRARIES ros_end_effector
+#  LIBRARIES end_effector
 #  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
 )
@@ -170,8 +170,8 @@ add_library(ActionTimed
 add_executable(UniversalRosEndEffector src/UniversalRosEndEffector.cpp)
 add_executable(UniversalFindActions src/UniversalFindActions.cpp)
 add_executable(EEHalExecutor src/HAL/EEHalExecutor.cpp)
-# # add_dependencies(UniversalRosEndEffectorExecutor ros_end_effector_generate_messages_cpp)
-# # add_dependencies(UniversalFindActions ros_end_effector_generate_messages_cpp)
+# # add_dependencies(UniversalRosEndEffectorExecutor end_effector_generate_messages_cpp)
+# # add_dependencies(UniversalFindActions end_effector_generate_messages_cpp)
 
 
 ## Add cmake target dependencies of the executable

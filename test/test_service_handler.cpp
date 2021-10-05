@@ -42,7 +42,7 @@ protected:
         nh.getParam("robot_name", robot_name);
         
         std::string handNameArg = "hand_name:=" + robot_name;
-        roseeExecutor.reset(new ROSEE::TestUtils::Process({"roslaunch", "ros_end_effector", "test_rosee_startup.launch", handNameArg}));
+        roseeExecutor.reset(new ROSEE::TestUtils::Process({"roslaunch", "end_effector", "test_rosee_startup.launch", handNameArg}));
 
     }
 

@@ -4,14 +4,14 @@
     
   <!-- IF YOU WANT TO TEST WITH SCHUNK, REMEMBER TO ADD "MINUSMINUS" SIGNES BEFORE inorder'. I can't put them in comments -->
   <!-- <param name="robot_description" command="$(find xacro)/xacro 'inorder' '$(find schunk_svh_driver)/description/urdf/svh-standalone.urdf.xacro'"/>
-  <param name="robot_description_semantic" textfile="$(find ros_end_effector)/configs/srdf/svh-groupsForROSEE.srdf"/> -->
-  <param name="robot_description" textfile="$(find ros_end_effector)/configs/urdf/two_finger.urdf"/>
-  <param name="robot_description_semantic" textfile="$(find ros_end_effector)/configs/srdf/two_finger.srdf" /> 
-  <!-- <param name="robot_description" textfile="$(find ros_end_effector)/configs/urdf/test_ee.urdf"/>
-  <param name="robot_description_semantic" textfile="$(find ros_end_effector)/configs/srdf/test_ee.srdf" /> --> 
+  <param name="robot_description_semantic" textfile="$(find end_effector)/configs/srdf/svh-groupsForROSEE.srdf"/> -->
+  <param name="robot_description" textfile="$(find end_effector)/configs/urdf/two_finger.urdf"/>
+  <param name="robot_description_semantic" textfile="$(find end_effector)/configs/srdf/two_finger.srdf" /> 
+  <!-- <param name="robot_description" textfile="$(find end_effector)/configs/urdf/test_ee.urdf"/>
+  <param name="robot_description_semantic" textfile="$(find end_effector)/configs/srdf/test_ee.srdf" /> --> 
 
-    <node type="EEInterface_test" name="EEInterface_test" pkg="ros_end_effector" output="screen"/> 
-    <node type="FindPinches_test" name="FindPinches_test" pkg="ros_end_effector" output="screen"/>     
-    <node type="FindTrigs_test" name="FindTrigs_test" pkg="ros_end_effector" output="screen"/>
-    <node type="ComposedAction_test" name="ComposedAction_test" pkg="ros_end_effector" output="screen"/>
+    <node type="EEInterface_test" name="EEInterface_test" pkg="end_effector" output="screen"/> 
+    <node type="FindPinches_test" name="FindPinches_test" pkg="end_effector" output="screen"/>     
+    <node type="FindTrigs_test" name="FindTrigs_test" pkg="end_effector" output="screen"/>
+    <node type="ComposedAction_test" name="ComposedAction_test" pkg="end_effector" output="screen"/>
 </launch>

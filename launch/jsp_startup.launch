@@ -3,8 +3,8 @@
     <arg name="hand_name"/> 
     <arg name="gazebo" default="false" />
     
-  	<param name="robot_description" textfile="$(find ros_end_effector)/configs/urdf/$(arg hand_name).urdf"/>
-    <param name="ros_ee_config_path" value="$(find ros_end_effector)/configs/$(arg hand_name).yaml"/> 
+  	<param name="robot_description" textfile="$(find end_effector)/configs/urdf/$(arg hand_name).urdf"/>
+    <param name="ros_ee_config_path" value="$(find end_effector)/configs/$(arg hand_name).yaml"/> 
 
     <!-- arg is needed by this launch file itself to run the robot state publisher below -->
     <arg unless="$(arg gazebo)" name = "jointState4robotState" value="/js_publisher/joint_states" />
@@ -22,7 +22,7 @@
         <remap from="joint_states" to="$(arg jointState4robotState)" />
     </node> 
     
-    <node type="rviz" name="rviz" pkg="rviz" args="-d $(find ros_end_effector)/configs/rviz/$(arg hand_name).rviz" /> 
+    <node type="rviz" name="rviz" pkg="rviz" args="-d $(find end_effector)/configs/rviz/$(arg hand_name).rviz" /> 
  
     <include if="$(arg gazebo)" file="$(find rosee_gazebo_plugins)/launch/gazebo.launch"> 
     	  <arg name="hand_name" value="$(arg hand_name)"/>
