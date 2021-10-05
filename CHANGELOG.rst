@@ -2,6 +2,11 @@
 Changelog for package end_effector
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* hotfix after the change of package name
+* Contributors: Davide Torielli
+
 1.0.3 (2021-10-05)
 ------------------
 * Change name to comply with ROS policy REP 144
