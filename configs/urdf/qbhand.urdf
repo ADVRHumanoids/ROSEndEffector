@@ -321,14 +321,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://qb_hand_description/meshes/ph_small.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://qb_hand_description/meshes/ph_short.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="qbhand/proximal"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://qb_hand_description/meshes/ph_small.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://qb_hand_description/meshes/ph_short_collision.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
   </link>
@@ -562,14 +562,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://qb_hand_description/meshes/ph_small.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://qb_hand_description/meshes/ph_short.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="qbhand/middle"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://qb_hand_description/meshes/ph_small.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://qb_hand_description/meshes/ph_short_collision.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
   </link>
@@ -803,14 +803,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://qb_hand_description/meshes/ph_small.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://qb_hand_description/meshes/ph_short.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="qbhand/middle"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://qb_hand_description/meshes/ph_small.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://qb_hand_description/meshes/ph_short_collision.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
   </link>
@@ -1044,14 +1044,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://qb_hand_description/meshes/ph_small.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://qb_hand_description/meshes/ph_short.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="qbhand/middle"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://qb_hand_description/meshes/ph_small.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://qb_hand_description/meshes/ph_short_collision.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
   </link>
@@ -1218,14 +1218,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://qb_hand_description/meshes/ph_small.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://qb_hand_description/meshes/ph_short.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="qbhand/proximal"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://qb_hand_description/meshes/ph_small.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://qb_hand_description/meshes/ph_short_collision.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
   </link>
@@ -1285,14 +1285,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://qb_hand_description/meshes/ph_small.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://qb_hand_description/meshes/ph_short.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="qbhand/middle"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://qb_hand_description/meshes/ph_small.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://qb_hand_description/meshes/ph_short_collision.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
   </link>
