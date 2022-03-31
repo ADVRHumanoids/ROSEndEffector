@@ -2,8 +2,8 @@
 Changelog for package end_effector
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.5 (2022-03-31)
+------------------
 * Updated qb urdf to comply with new mesh name, but problems on gazebo
 * Contributors: Davide Torielli
 
