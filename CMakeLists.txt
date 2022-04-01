@@ -73,27 +73,35 @@ include_directories(
   ${EIGEN3_INCLUDE_DIRS}
 )
 
+
+list(APPEND libToInstall)
+
 add_library(ROSEEParser
     src/Parser.cpp
 )
+list(APPEND libToInstall ROSEEParser)
 
 add_library(ROSEEInterface
     src/EEInterface.cpp
 )
+list(APPEND libToInstall ROSEEInterface)
 
 add_library(DummyHal
      src/HAL/DummyHal.cpp
 )
+list(APPEND libToInstall DummyHal)
 
 add_library(EEHal
      src/HAL/EEHal.cpp
 )
+list(APPEND libToInstall EEHal)
 
 if (BUILD_WITH_XBOT2)
 
     add_library(XBot2Hal
         src/HAL/XBot2Hal.cpp
     )
+    list(APPEND libToInstall XBot2Hal)
 
 endif(BUILD_WITH_XBOT2)
 
@@ -101,66 +109,53 @@ endif(BUILD_WITH_XBOT2)
 add_library(UniversalRosEndEffectorExecutor
     src/UniversalRosEndEffectorExecutor.cpp
 )
+list(APPEND libToInstall UniversalRosEndEffectorExecutor)
 
-add_library(FindActions 
+add_library(ROSEEFindActions 
     src/FindActions.cpp
 )
+list(APPEND libToInstall ROSEEFindActions)
 
-add_library(ParserMoveIt
+add_library(ROSEEParserMoveIt
     src/ParserMoveIt.cpp
 )
+list(APPEND libToInstall ROSEEParserMoveIt)
 
-add_library(YamlWorker
+add_library(ROSEEYamlWorker
     src/YamlWorker.cpp
 )
+list(APPEND libToInstall ROSEEYamlWorker)
 
-add_library(RosActionServer
+add_library(ROSEERosActionServer
     src/RosActionServer.cpp
 )
+list(APPEND libToInstall ROSEERosActionServer)
 
-add_library(RosServiceHandler
+add_library(ROSEERosServiceHandler
     src/RosServiceHandler.cpp
 )
+list(APPEND libToInstall ROSEERosServiceHandler)
 
-add_library(MapActionHandler
+add_library(ROSEEMapActionHandler
     src/MapActionHandler.cpp
 )
+list(APPEND libToInstall ROSEEMapActionHandler)
 
-add_library(Action 
+add_library(ROSEEActions 
     src/GraspingActions/Action.cpp 
-)
-
-add_library(ActionPrimitive 
     src/GraspingActions/ActionPrimitive.cpp
-)
-
-add_library(ActionPinchTight
     src/GraspingActions/ActionPinchTight.cpp
-)
-add_library(ActionPinchGeneric
     src/GraspingActions/ActionPinchGeneric.cpp
-)
-add_library(ActionPinchLoose
     src/GraspingActions/ActionPinchLoose.cpp
-)
-add_library(ActionTrig
     src/GraspingActions/ActionTrig.cpp
-)
-add_library(ActionSingleJointMultipleTips
     src/GraspingActions/ActionSingleJointMultipleTips.cpp
-)
-add_library(ActionMultiplePinchTight
     src/GraspingActions/ActionMultiplePinchTight.cpp
-)
-add_library(ActionGeneric
     src/GraspingActions/ActionGeneric.cpp 
-)
-add_library(ActionComposed
     src/GraspingActions/ActionComposed.cpp 
-)
-add_library(ActionTimed
     src/GraspingActions/ActionTimed.cpp 
 )
+list(APPEND libToInstall ROSEEActions)
+
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -193,94 +188,42 @@ target_link_libraries(UniversalRosEndEffectorExecutor
     ${catkin_LIBRARIES}
     ROSEEParser
     ROSEEInterface
-    YamlWorker
-    MapActionHandler
-    RosActionServer
-    RosServiceHandler
+    ROSEEYamlWorker
+    ROSEEMapActionHandler
+    ROSEERosActionServer
+    ROSEERosServiceHandler
     
 )
 
-target_link_libraries(YamlWorker
+target_link_libraries(ROSEEYamlWorker
     yaml-cpp
-    Action
-    ActionPrimitive
-    ActionPinchTight
-    ActionTrig
-    ActionPinchLoose
-    ActionSingleJointMultipleTips
-    ActionMultiplePinchTight
-    ActionComposed
-    ActionTimed
+    ROSEEActions
 )
 
-target_link_libraries(MapActionHandler
-    Action
-    ActionPrimitive
-    ActionGeneric
-    ActionTimed
-    YamlWorker
+target_link_libraries(ROSEEMapActionHandler
+    ROSEEActions
+    ROSEEYamlWorker
 )
 
-target_link_libraries(RosActionServer
+target_link_libraries(ROSEERosActionServer
     ${catkin_LIBRARIES}
 )
-add_dependencies(RosActionServer rosee_msg_generate_messages_cpp)
+add_dependencies(ROSEERosActionServer rosee_msg_generate_messages_cpp)
 
-target_link_libraries(RosServiceHandler
+target_link_libraries(ROSEERosServiceHandler
     ${catkin_LIBRARIES}
 )
-add_dependencies(RosServiceHandler rosee_msg_generate_messages_cpp)
+add_dependencies(ROSEERosServiceHandler rosee_msg_generate_messages_cpp)
 
-target_link_libraries(ActionPinchTight
-    ActionPinchGeneric
-)
-
-target_link_libraries(ActionPinchGeneric
-    ActionPrimitive
-)
-
-target_link_libraries(ActionPinchLoose
-    ActionPinchGeneric
-)
-
-target_link_libraries(ActionTrig
-    ActionPrimitive
-)
-
-target_link_libraries(ActionSingleJointMultipleTips
-    ActionPrimitive
-)
-
-target_link_libraries(ActionMultiplePinchTight
-    ActionPinchGeneric
-)
-
-target_link_libraries(ActionGeneric
-    Action
-)
-
-target_link_libraries(ActionComposed
-    ActionGeneric
-)
-
-target_link_libraries(ActionTimed
-    Action
-)
-
-target_link_libraries(FindActions
+target_link_libraries(ROSEEFindActions
     ${catkin_LIBRARIES}
-    ParserMoveIt
-    YamlWorker
-    Action
-    ActionPinchTight
-    ActionTrig
-    ActionPinchLoose
-    ActionSingleJointMultipleTips
-    ActionMultiplePinchTight
+    ROSEEParserMoveIt
+    ROSEEYamlWorker
+    ROSEEActions
     muparser
 )
 
-target_link_libraries(ParserMoveIt
+target_link_libraries(ROSEEParserMoveIt
     ${catkin_LIBRARIES}
 )
 
@@ -290,18 +233,11 @@ target_link_libraries(UniversalRosEndEffector
 )
 
 target_link_libraries(UniversalFindActions
-    ParserMoveIt
+    ROSEEParserMoveIt
     ROSEEParser
-    FindActions
-    Action
-    ActionPrimitive
-    ActionTrig
-    ActionPinchTight
-    ActionPinchLoose
-    ActionSingleJointMultipleTips
-    ActionTimed
-    ActionGeneric
-    MapActionHandler
+    ROSEEFindActions
+    ROSEEActions
+    ROSEEMapActionHandler
 )
 
 if (${matlogger2_FOUND})
@@ -309,16 +245,12 @@ if (${matlogger2_FOUND})
         ${catkin_LIBRARIES}
         EEHal
         matlogger2::matlogger2
-        #KEEP THIS. ERROR HAPPENS OTHERWISE. not anymore?
-        #XBot2Hal
     )
     
 else()
     target_link_libraries(EEHalExecutor
         ${catkin_LIBRARIES}
         EEHal
-        #KEEP THIS. ERROR HAPPENS OTHERWISE. not anymore?
-        #XBot2Hal
     )
 endif(${matlogger2_FOUND})
 
@@ -355,12 +287,15 @@ endif(BUILD_WITH_XBOT2)
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
 
-## Mark executables and/or libraries for installation
-# install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_node
-#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
+# Mark executables and/or libraries for installation
+install(TARGETS UniversalRosEndEffector
+                UniversalFindActions
+                EEHalExecutor
+                ${libToInstall} 
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
 
 ## Mark cpp header files for installation
 install(DIRECTORY include/${PROJECT_NAME}/
@@ -374,12 +309,44 @@ install(DIRECTORY launch/
   FILES_MATCHING PATTERN "*.launch"
 )
 
-## Mark other files for installation (e.g. launch and bag files, etc.)
-# install(FILES
-#   # myfile1
-#   # myfile2
-#   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-# )
+install(FILES
+  configs/heri_II.yaml
+  configs/qbhand.yaml
+  configs/robotiq_2f_140.yaml
+  configs/robotiq_3f.yaml
+  configs/schunk.yaml
+  configs/test_ee.yaml
+  configs/test_ee_spread.yaml
+  configs/two_finger.yaml
+  configs/two_finger_mimic.yaml
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/configs
+)
+
+install(FILES
+  configs/urdf/heri_II.urdf
+  configs/urdf/qbhand.urdf
+  configs/urdf/robotiq_2f_140.urdf
+  configs/urdf/robotiq_3f.urdf
+  configs/urdf/schunk.urdf
+  configs/urdf/test_ee.urdf
+  configs/urdf/test_ee_spread.urdf
+  configs/urdf/two_finger.urdf
+  configs/urdf/two_finger_mimic.urdf
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/configs/urdf
+)
+
+install(FILES
+  configs/srdf/heri_II.srdf
+  configs/srdf/qbhand.srdf
+  configs/srdf/robotiq_2f_140.srdf
+  configs/srdf/robotiq_3f.srdf
+  configs/srdf/schunk.srdf
+  configs/srdf/test_ee.srdf
+  configs/srdf/test_ee_spread.srdf
+  configs/srdf/two_finger.srdf
+  configs/srdf/two_finger_mimic.srdf
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/configs/srdf
+)
 
 #############
 ## Testing ##
@@ -397,56 +364,44 @@ if(CATKIN_ENABLE_TESTING)
                                            
     add_executable(FindPinches_test test/test_find_pinches.cpp)
     target_link_libraries(FindPinches_test ${catkin_LIBRARIES}
-                                            FindActions
-                                            ActionPrimitive
-                                            ActionPinchTight
-                                            ActionPinchLoose
+                                            ROSEEFindActions
+                                            ROSEEActions
                                             gtest)
                                             
     add_executable(FindTrigs_test test/test_find_trigs.cpp)
     target_link_libraries(FindTrigs_test ${catkin_LIBRARIES}
-                                         FindActions
-                                         ActionPrimitive
-                                         ActionTrig
+                                         ROSEEFindActions
+                                         ROSEEActions
                                          gtest)
                                          
     add_executable(ComposedAction_test test/test_composedAction.cpp)
     target_link_libraries(ComposedAction_test ${catkin_LIBRARIES}
-                                              FindActions
-                                              Action
-                                              ActionPrimitive
-                                              ActionTrig
-                                              ActionComposed
+                                              ROSEEFindActions
+                                              ROSEEActions
                                               gtest)
                                               
     add_executable(TimedAction_test test/test_timedAction.cpp)
     target_link_libraries(TimedAction_test ${catkin_LIBRARIES}
-                                              FindActions
-                                              Action
-                                              ActionPrimitive
-                                              ActionTrig
-                                              ActionPinchGeneric
-                                              ActionComposed
+                                              ROSEEFindActions
+                                              ROSEEActions
                                               gtest)
                                               
     add_executable(SendAction_test test/test_send_action.cpp)
     target_link_libraries(SendAction_test ${catkin_LIBRARIES}
-                                              Action
-                                              ActionGeneric
-                                              ActionComposed
+                                              ROSEEActions
                                               gtest
-                                              YamlWorker
+                                              ROSEEYamlWorker
                                               ROSEEParser
                                               ROSEEInterface
-                                              FindActions)  
+                                              ROSEEFindActions)  
                                               
     add_executable(ServiceHandler_test test/test_service_handler.cpp)
     target_link_libraries(ServiceHandler_test ${catkin_LIBRARIES}
                                               gtest
                                               ROSEEParser
                                               ROSEEInterface
-                                              MapActionHandler
-                                              RosServiceHandler)  
+                                              ROSEEMapActionHandler
+                                              ROSEERosServiceHandler)  
     
     list(APPEND testsExecutable 
         EEInterface_test 
