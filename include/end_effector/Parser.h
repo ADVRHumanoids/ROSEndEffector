@@ -65,10 +65,13 @@ namespace ROSEE {
         /**
          * @brief Initialization function using the path_to_cfg parameter for the path
          * 
-         * @param path_to_cfg path to the config file
+         * @param urdf_path path to the urdf file
+         * @param srdf_path path to the srdf file
+         * @param action_path path to the action folder
          * @return bool true for success, false otherwise
          */
-        bool init (const std::string& path_to_cfg);
+        bool init (const std::string& urdf_path, const std::string& srdf_path, const std::string& action_path );
+
         
         /**
          * @brief getter for the URDF information of the joints of the End-Effector
@@ -166,7 +169,7 @@ namespace ROSEE {
     private:
         
         ros::NodeHandle _nh;
-        std::string _ros_ee_config_path, _urdf_path, _srdf_path, _urdf_string, _srdf_string;
+        std::string _urdf_path, _srdf_path, _urdf_string, _srdf_string;
         std::string _action_path;
         bool _is_initialized = false;
         
@@ -201,7 +204,7 @@ namespace ROSEE {
          * errors (either in the main YAML, or in URDF, or in SRDF or in EE-HAL library path.
          * or in the Grasping Primitive Definition).
          */
-        bool getROSEndEffectorConfig();
+        //bool getROSEndEffectorConfig();
         
         /**
          * @brief Function responsible to parse the URDF data

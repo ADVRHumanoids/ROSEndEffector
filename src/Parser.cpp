@@ -260,7 +260,7 @@ bool ROSEE::Parser::parseURDF() {
     }
 }
 
-
+/*
 bool ROSEE::Parser::getROSEndEffectorConfig() {
 
     bool success = true;
@@ -320,17 +320,21 @@ bool ROSEE::Parser::getROSEndEffectorConfig() {
 
     return success;
 }
+*/
+
 
 bool ROSEE::Parser::configure() {
 
     bool ret = true;
-    if ( getROSEndEffectorConfig() ) {
+    //if ( getROSEndEffectorConfig() ) {
 
         if ( parseURDF() ) {
             
             if ( parseSRDF() ) {
                 
-                ROS_INFO_STREAM ( "ROSEndEffector Parser successfully configured using config file:  " << _ros_ee_config_path );
+                ROS_INFO_STREAM ( "ROSEndEffector Parser successfully configured using urdf file:  " << _urdf_path 
+                    << "\n\t srdf file: " << _srdf_path << "\n\t actions folder " << _action_path
+                );
             
             } else {
             
@@ -344,10 +348,10 @@ bool ROSEE::Parser::configure() {
             ret = false;
         }
 
-    } else {
+    //} else {
 
-        ret = false;
-    }
+    //    ret = false;
+    //}
 
 
     return ret;
@@ -358,21 +362,26 @@ bool ROSEE::Parser::configure() {
 bool ROSEE::Parser::init() {
 
     // try to retrive the path to config from the ROS param server TBD namespace should be take into account
-    if ( _nh.getParam ( "/ros_ee_config_path", _ros_ee_config_path ) ) {
+    if ( _nh.getParam ( "/urdf_path", _urdf_path ) && 
+         _nh.getParam ( "/srdf_path", _srdf_path ) &&
+         _nh.getParam ( "/actions_folder_path", _action_path )
+    ) {
 
         _is_initialized =  configure();
         return _is_initialized;
     }
 
     // error
-    ROS_ERROR_STREAM ( "in " << __func__ << " : ros_ee_config_path not found on ROS parameter server" );
+    ROS_ERROR_STREAM ( "in " << __func__ << " : '_urdf_path' and/or '_srdf_path' and/or 'actions_folder_path' not found on ROS parameter server" );
     return false;
 
 }
 
-bool ROSEE::Parser::init ( const std::string& path_to_cfg ) {
+bool ROSEE::Parser::init ( const std::string& urdf_path, const std::string& srdf_path, const std::string& action_path ) {
 
-    _ros_ee_config_path = path_to_cfg;
+    _urdf_path = urdf_path;
+    _srdf_path = srdf_path;
+    _action_path = action_path;
 
     _is_initialized =  configure();
     return _is_initialized;
@@ -451,9 +460,6 @@ std::string ROSEE::Parser::getSrdfString() const {
     return _srdf_string;
 }
 
-std::string ROSEE::Parser::getRoseeConfigPath() const {
-    return _ros_ee_config_path;
-}
 
 std::string ROSEE::Parser::getActionPath() const {
     return _action_path;

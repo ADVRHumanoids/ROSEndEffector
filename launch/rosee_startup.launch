@@ -5,13 +5,16 @@
     <arg name="gdb" default="false"/> <!-- for debug with gdb -->
     <arg name="hal_lib" default="DummyHal"/>
     <arg name="matlogger_path" default=""/> <!--/home/pilot/src/ROSEndEffectorPackageManager-->
-
-
+    <arg name="urdf_path" default="$(find end_effector)/configs/urdf/$(arg hand_name).urdf"/>
+	<arg name="srdf_path" default="$(find end_effector)/configs/srdf/$(arg hand_name).srdf"/>
+    <arg name="actions_folder_path" default="ROSEE/actions/$(arg hand_name)/"/>
 
     <!-- send urdf to parameter server. This is necessary because sometimes UniversalRosEndEffector can not put them in time and joint state pub crashes-->
-    <!-- BE SURE that the values are the same in the ros_ee_config_path file -->
-    <param name="robot_description" textfile="$(find end_effector)/configs/urdf/$(arg hand_name).urdf"/>
-    <param name="robot_description_semantic" textfile="$(find end_effector)/configs/srdf/$(arg hand_name).srdf" />
+    <param name="robot_description" textfile="$(arg urdf_path)"/>
+    <param name="robot_description_semantic" textfile="$(arg srdf_path)" />
+    <param name="urdf_path" value="$(arg urdf_path)"/> 
+	<param name="srdf_path" value="$(arg srdf_path)"/> 
+	<param name="actions_folder_path" value="$(arg actions_folder_path)"/> 
 
     <!-- param for services names-->
     <param name = "/rosee/primitive_aggregated_srv_name" value="primitives_aggregated_available" />
@@ -23,7 +26,6 @@
     <!-- param for action server -->
     <param name = "/rosee/rosAction_grasping_command" value="action_command" />
 
-    <param name="ros_ee_config_path" value="$(find end_effector)/configs/$(arg hand_name).yaml"/> 
     <param name="rate" value="100.0"/>
     
     <node unless="$(arg gdb)" type="UniversalRosEndEffector" name="UniversalRosEndEffector" pkg="end_effector" output="screen"/>

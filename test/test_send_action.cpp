@@ -50,7 +50,10 @@ protected:
         nh.getParam("robot_name", robot_name);
         
         ROSEE::Parser p ( nh );
-        if (! p.init (  ROSEE::Utils::getPackagePath() + "/configs/" + robot_name + ".yaml" )) {
+        if (! p.init ( ROSEE::Utils::getPackagePath() + "/configs/urdf/" + robot_name + ".urdf",
+                       ROSEE::Utils::getPackagePath() + "/configs/srdf/" + robot_name + ".srdf",
+                       ROSEE::Utils::getPackagePath() + "/configs/actions/" + robot_name + "/") ) 
+        {
             
             std::cout << "[TEST SEND ACTIONS]parser FAIL: some config file missing]" << std::endl;
             return;

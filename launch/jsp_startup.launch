@@ -2,9 +2,13 @@
 <launch>
     <arg name="hand_name"/> 
     <arg name="gazebo" default="false" />
+    <arg name="urdf_path" default="$(find end_effector)/configs/urdf/$(arg hand_name).urdf"/>
+	<arg name="srdf_path" default="$(find end_effector)/configs/srdf/$(arg hand_name).srdf"/>
     
   	<param name="robot_description" textfile="$(find end_effector)/configs/urdf/$(arg hand_name).urdf"/>
-    <param name="ros_ee_config_path" value="$(find end_effector)/configs/$(arg hand_name).yaml"/> 
+	
+	<param name="urdf_path" value="$(arg urdf_path)"/> 
+	<param name="srdf_path" value="$(arg srdf_path)"/> 
 
     <!-- arg is needed by this launch file itself to run the robot state publisher below -->
     <arg unless="$(arg gazebo)" name = "jointState4robotState" value="/js_publisher/joint_states" />

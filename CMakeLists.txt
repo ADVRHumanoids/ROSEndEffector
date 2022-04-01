@@ -310,19 +310,6 @@ install(DIRECTORY launch/
 )
 
 install(FILES
-  configs/heri_II.yaml
-  configs/qbhand.yaml
-  configs/robotiq_2f_140.yaml
-  configs/robotiq_3f.yaml
-  configs/schunk.yaml
-  configs/test_ee.yaml
-  configs/test_ee_spread.yaml
-  configs/two_finger.yaml
-  configs/two_finger_mimic.yaml
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/configs
-)
-
-install(FILES
   configs/urdf/heri_II.urdf
   configs/urdf/qbhand.urdf
   configs/urdf/robotiq_2f_140.urdf

@@ -28,7 +28,10 @@ protected:
         ros::NodeHandle nh;
 
         ROSEE::Parser p ( nh );
-        p.init ( ROSEE::Utils::getPackagePath() + "/configs/test_ee.yaml" );
+        p.init ( ROSEE::Utils::getPackagePath() + "/configs/urdf/test_ee.urdf",
+                 ROSEE::Utils::getPackagePath() + "/configs/srdf/test_ee.srdf",
+                 ROSEE::Utils::getPackagePath() + "/configs/actions/test_ee"
+        );
         p.printEndEffectorFingerJointsMap();
 
         ee = std::make_shared<ROSEE::EEInterface>(p);
