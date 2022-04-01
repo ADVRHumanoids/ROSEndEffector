@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-#include <ros_end_effector/GraspingActions/Action.h>
+#include <end_effector/GraspingActions/Action.h>
 
 /******************************** OPERATORS OVERLOAD FOR TYPEDEFS ***********************************/
 

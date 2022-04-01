@@ -30,10 +30,10 @@
 
 #include <Eigen/Dense>
 #include <yaml-cpp/yaml.h>
-#include <ros_end_effector/Utils.h>
-#include <ros_end_effector/UtilsEigen.h>
+#include <end_effector/Utils.h>
+#include <end_effector/UtilsEigen.h>
 
-#include <ros_end_effector/UtilsYAML.h>
+#include <end_effector/UtilsYAML.h>
 
 #include <rosee_msg/HandInfo.h>
 #include <rosee_msg/MotorPhalangePressure.h>

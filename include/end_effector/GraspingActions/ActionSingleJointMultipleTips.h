@@ -17,7 +17,7 @@
 #ifndef ACTIONSINGLEJOINTMULTIPLETIPS_H
 #define ACTIONSINGLEJOINTMULTIPLETIPS_H
 
-#include <ros_end_effector/GraspingActions/ActionPrimitive.h>
+#include <end_effector/GraspingActions/ActionPrimitive.h>
 #include <yaml-cpp/yaml.h>
 #include <iostream>
 

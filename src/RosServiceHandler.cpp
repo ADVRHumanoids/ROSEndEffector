@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <ros_end_effector/RosServiceHandler.h>
+#include <end_effector/RosServiceHandler.h>
 
 ROSEE::RosServiceHandler::RosServiceHandler( ros::NodeHandle *nh, ROSEE::MapActionHandler::Ptr mapActionHandler, std::string path2saveYamlGeneric) {
     

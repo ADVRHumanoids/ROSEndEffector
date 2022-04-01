@@ -83,8 +83,8 @@ script:
 - source devel/setup.bash
 - ctest --verbose
 # OLD WAY to test with roscore needed in this file. test with test_ee hand
-#- rosparam set -t $(rospack find ros_end_effector)/configs/urdf/test_ee.urdf robot_description
-#- rosparam set -t $(rospack find ros_end_effector)/configs/srdf/test_ee.srdf robot_description_semantic
+#- rosparam set -t $(rospack find end_effector)/configs/urdf/test_ee.urdf robot_description
+#- rosparam set -t $(rospack find end_effector)/configs/srdf/test_ee.srdf robot_description_semantic
 #- make test ARGS="-V" -i
 # to test with schunk hand we would need to install its package...
 # add other hand test...

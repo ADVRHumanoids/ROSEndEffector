@@ -26,7 +26,7 @@
 #include <ros/ros.h>
 #include <ros/console.h>
 
-#include <ros_end_effector/Utils.h>
+#include <end_effector/Utils.h>
 
 #include <yaml-cpp/yaml.h>
 #include <urdf_parser/urdf_parser.h>

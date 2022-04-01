@@ -15,7 +15,7 @@
  * limitations under the License.
 */
 
-#include <ros_end_effector/HAL/DummyHal.h>
+#include <end_effector/HAL/DummyHal.h>
 
 ROSEE::DummyHal::DummyHal ( ros::NodeHandle *nh) : EEHal ( nh ) {
     

@@ -22,7 +22,7 @@
 #include <vector>
 #include <memory>
 
-#include <ros_end_effector/Parser.h>
+#include <end_effector/Parser.h>
 
 #include <Eigen/Dense>
 

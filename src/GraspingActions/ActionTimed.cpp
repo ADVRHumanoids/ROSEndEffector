@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <ros_end_effector/GraspingActions/ActionTimed.h>
+#include <end_effector/GraspingActions/ActionTimed.h>
 
 ROSEE::ActionTimed::ActionTimed() {
     type = Action::Type::Timed;

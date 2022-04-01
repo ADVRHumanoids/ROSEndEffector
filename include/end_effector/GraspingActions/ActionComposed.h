@@ -21,8 +21,8 @@
 
 #include <vector>
 #include <string>
-#include <ros_end_effector/GraspingActions/ActionGeneric.h>
-#include <ros_end_effector/Utils.h>
+#include <end_effector/GraspingActions/ActionGeneric.h>
+#include <end_effector/Utils.h>
 #include <yaml-cpp/yaml.h>
 #include <memory>
 

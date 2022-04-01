@@ -15,7 +15,7 @@
  * limitations under the License.
 */
 
-#include <ros_end_effector/Parser.h>
+#include <end_effector/Parser.h>
 
 #define CHAIN_PER_GROUP 1
 

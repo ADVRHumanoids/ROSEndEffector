@@ -8,7 +8,7 @@
 
 //for the function prepareROSForTests
 #include <ros/ros.h>
-#include <ros_end_effector/Utils.h>
+#include <end_effector/Utils.h>
 
 
 /** Utils funcion to create process to run roscore,

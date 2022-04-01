@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-#include <ros_end_effector/GraspingActions/ActionPinchLoose.h>
+#include <end_effector/GraspingActions/ActionPinchLoose.h>
 
 ROSEE::ActionPinchLoose::ActionPinchLoose() : 
     ActionPinchGeneric ("pinchLoose", 2, 3, ActionPrimitive::Type::PinchLoose) { }

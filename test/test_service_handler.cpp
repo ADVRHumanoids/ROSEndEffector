@@ -3,11 +3,11 @@
 
 #include <ros/ros.h>
 
-#include <ros_end_effector/Parser.h>
-#include <ros_end_effector/EEInterface.h>
+#include <end_effector/Parser.h>
+#include <end_effector/EEInterface.h>
 
-#include <ros_end_effector/RosServiceHandler.h>
-#include <ros_end_effector/MapActionHandler.h>
+#include <end_effector/RosServiceHandler.h>
+#include <end_effector/MapActionHandler.h>
 
 #include <rosee_msg/NewGenericGraspingActionSrv.h>
 

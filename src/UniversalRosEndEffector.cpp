@@ -17,7 +17,7 @@
 
 #include <ros/ros.h>
 
-#include <ros_end_effector/UniversalRosEndEffectorExecutor.h>
+#include <end_effector/UniversalRosEndEffectorExecutor.h>
 
 int main ( int argc, char **argv ) {
 

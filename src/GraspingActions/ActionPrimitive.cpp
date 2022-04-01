@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-#include <ros_end_effector/GraspingActions/ActionPrimitive.h>
+#include <end_effector/GraspingActions/ActionPrimitive.h>
 
 // std::ostream& operator<<(std::ostream& out, const ROSEE::ActionPrimitive::Type type){
 //     const char* s = 0;

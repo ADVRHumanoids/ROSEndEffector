@@ -22,13 +22,13 @@
 #include <set>
 #include <memory>
 
-#include <ros_end_effector/YamlWorker.h>
-#include <ros_end_effector/Utils.h>
+#include <end_effector/YamlWorker.h>
+#include <end_effector/Utils.h>
 
-#include <ros_end_effector/GraspingActions/Action.h>
-#include <ros_end_effector/GraspingActions/ActionPrimitive.h>
-#include <ros_end_effector/GraspingActions/ActionTimed.h>
-#include <ros_end_effector/GraspingActions/ActionGeneric.h>
+#include <end_effector/GraspingActions/Action.h>
+#include <end_effector/GraspingActions/ActionPrimitive.h>
+#include <end_effector/GraspingActions/ActionTimed.h>
+#include <end_effector/GraspingActions/ActionGeneric.h>
 
 
 

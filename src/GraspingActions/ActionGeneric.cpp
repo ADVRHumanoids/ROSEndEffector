@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <ros_end_effector/GraspingActions/ActionGeneric.h>
+#include <end_effector/GraspingActions/ActionGeneric.h>
 
 
 ROSEE::ActionGeneric::ActionGeneric () {}

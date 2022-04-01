@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <ros_end_effector/GraspingActions/ActionSingleJointMultipleTips.h>
+#include <end_effector/GraspingActions/ActionSingleJointMultipleTips.h>
 
 ROSEE::ActionSingleJointMultipleTips::ActionSingleJointMultipleTips() : 
     ActionPrimitive ( "singleJointMultipleTips", 1, ROSEE::ActionPrimitive::Type::SingleJointMultipleTips ) {}

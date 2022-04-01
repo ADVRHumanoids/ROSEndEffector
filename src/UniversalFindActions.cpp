@@ -16,16 +16,16 @@
  */
 
 #include <ros/ros.h>
-//#include <ros_end_effector/UniversalRosEndEffectorExecutor.h>
-#include <ros_end_effector/FindActions.h>
-#include <ros_end_effector/GraspingActions/Action.h>
-#include <ros_end_effector/GraspingActions/ActionComposed.h>
-#include <ros_end_effector/GraspingActions/ActionTimed.h>
-#include <ros_end_effector/GraspingActions/ActionGeneric.h>
-#include <ros_end_effector/ParserMoveIt.h>
-#include <ros_end_effector/Parser.h> //to take urdf from conf file
+//#include <end_effector/UniversalRosEndEffectorExecutor.h>
+#include <end_effector/FindActions.h>
+#include <end_effector/GraspingActions/Action.h>
+#include <end_effector/GraspingActions/ActionComposed.h>
+#include <end_effector/GraspingActions/ActionTimed.h>
+#include <end_effector/GraspingActions/ActionGeneric.h>
+#include <end_effector/ParserMoveIt.h>
+#include <end_effector/Parser.h> //to take urdf from conf file
 
-#include <ros_end_effector/MapActionHandler.h>
+#include <end_effector/MapActionHandler.h>
 
 int main ( int argc, char **argv ) {
 

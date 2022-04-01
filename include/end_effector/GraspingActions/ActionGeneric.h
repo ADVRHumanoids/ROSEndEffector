@@ -17,9 +17,9 @@
 #ifndef ROSEE_ACTIONGENERIC_H
 #define ROSEE_ACTIONGENERIC_H
 
-#include <ros_end_effector/GraspingActions/Action.h>
+#include <end_effector/GraspingActions/Action.h>
 #include <yaml-cpp/yaml.h>
-#include <ros_end_effector/Utils.h>
+#include <end_effector/Utils.h>
 
 
 namespace ROSEE {

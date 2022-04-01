@@ -1,4 +1,4 @@
-#include <ros_end_effector/HAL/XBot2Hal.h>
+#include <end_effector/HAL/XBot2Hal.h>
 
 
 ROSEE::XBot2Hal::XBot2Hal( ros::NodeHandle* nh ) : EEHal ( nh ) {

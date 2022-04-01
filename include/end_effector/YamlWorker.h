@@ -25,18 +25,18 @@
 #include <yaml-cpp/yaml.h>
 
 //to create directories
-#include <ros_end_effector/Utils.h>
+#include <end_effector/Utils.h>
 
-#include <ros_end_effector/GraspingActions/Action.h>
-#include <ros_end_effector/GraspingActions/ActionPrimitive.h>
-#include <ros_end_effector/GraspingActions/ActionPinchTight.h>
-#include <ros_end_effector/GraspingActions/ActionPinchLoose.h>
-#include <ros_end_effector/GraspingActions/ActionTrig.h>
-#include <ros_end_effector/GraspingActions/ActionSingleJointMultipleTips.h>
-#include <ros_end_effector/GraspingActions/ActionMultiplePinchTight.h>
+#include <end_effector/GraspingActions/Action.h>
+#include <end_effector/GraspingActions/ActionPrimitive.h>
+#include <end_effector/GraspingActions/ActionPinchTight.h>
+#include <end_effector/GraspingActions/ActionPinchLoose.h>
+#include <end_effector/GraspingActions/ActionTrig.h>
+#include <end_effector/GraspingActions/ActionSingleJointMultipleTips.h>
+#include <end_effector/GraspingActions/ActionMultiplePinchTight.h>
 
-#include <ros_end_effector/GraspingActions/ActionComposed.h>
-#include <ros_end_effector/GraspingActions/ActionTimed.h>
+#include <end_effector/GraspingActions/ActionComposed.h>
+#include <end_effector/GraspingActions/ActionTimed.h>
 
 namespace ROSEE
 {

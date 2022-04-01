@@ -3,11 +3,11 @@
 
 #include <ros/ros.h>
 
-#include <ros_end_effector/FindActions.h>
-#include <ros_end_effector/ParserMoveIt.h>
-#include <ros_end_effector/GraspingActions/ActionPrimitive.h>
-#include <ros_end_effector/GraspingActions/ActionPinchTight.h>
-#include <ros_end_effector/GraspingActions/ActionPinchLoose.h>
+#include <end_effector/FindActions.h>
+#include <end_effector/ParserMoveIt.h>
+#include <end_effector/GraspingActions/ActionPrimitive.h>
+#include <end_effector/GraspingActions/ActionPinchTight.h>
+#include <end_effector/GraspingActions/ActionPinchLoose.h>
 
 
 namespace {

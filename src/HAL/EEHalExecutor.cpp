@@ -3,7 +3,7 @@
 
 #include <ros/ros.h>
 
-#include <ros_end_effector/HAL/EEHal.h>
+#include <end_effector/HAL/EEHal.h>
 
 #ifdef _MATLOGGER2
     #include <matlogger2/matlogger2.h>

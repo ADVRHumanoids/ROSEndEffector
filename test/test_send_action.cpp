@@ -3,13 +3,13 @@
 
 #include <ros/ros.h>
 
-#include <ros_end_effector/Parser.h>
-#include <ros_end_effector/ParserMoveIt.h>
-#include <ros_end_effector/FindActions.h>
-#include <ros_end_effector/EEInterface.h>
-#include <ros_end_effector/GraspingActions/ActionGeneric.h>
-#include <ros_end_effector/Utils.h>
-#include <ros_end_effector/YamlWorker.h>
+#include <end_effector/Parser.h>
+#include <end_effector/ParserMoveIt.h>
+#include <end_effector/FindActions.h>
+#include <end_effector/EEInterface.h>
+#include <end_effector/GraspingActions/ActionGeneric.h>
+#include <end_effector/Utils.h>
+#include <end_effector/YamlWorker.h>
 
 #include <rosee_msg/ROSEECommandAction.h>
 #include <actionlib/client/simple_action_client.h>

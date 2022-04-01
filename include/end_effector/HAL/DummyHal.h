@@ -20,7 +20,7 @@
 
 #include <ros/ros.h>
 
-#include <ros_end_effector/HAL/EEHal.h>
+#include <end_effector/HAL/EEHal.h>
 
 #include <string>
 #include <memory>

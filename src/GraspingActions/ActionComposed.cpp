@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-#include <ros_end_effector/GraspingActions/ActionComposed.h>
+#include <end_effector/GraspingActions/ActionComposed.h>
 
 ROSEE::ActionComposed::ActionComposed() : ActionGeneric() {
     independent = true;

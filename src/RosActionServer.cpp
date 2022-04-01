@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <ros_end_effector/RosActionServer.h>
+#include <end_effector/RosActionServer.h>
 
 ROSEE::RosActionServer::RosActionServer (std::string topicForAction, ros::NodeHandle* nh) :
     _actionServer(*nh, topicForAction, false) {

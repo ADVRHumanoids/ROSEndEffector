@@ -15,7 +15,7 @@
  * limitations under the License.
 */
 
-#include <ros_end_effector/HAL/EEHal.h>
+#include <end_effector/HAL/EEHal.h>
 
 ROSEE::EEHal::EEHal(ros::NodeHandle* nh) {
     

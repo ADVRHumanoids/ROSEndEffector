@@ -19,7 +19,7 @@
 #ifndef __ROSEE_ACTIONMULTIPLEPINCHTIGHT_H
 #define __ROSEE_ACTIONMULTIPLEPINCHTIGHT_H
 
-#include <ros_end_effector/GraspingActions/ActionPinchGeneric.h>
+#include <end_effector/GraspingActions/ActionPinchGeneric.h>
 #include <moveit/planning_scene/planning_scene.h>
 #include <yaml-cpp/yaml.h>
 #include <iostream>

@@ -20,8 +20,8 @@
 #include <vector>
 #include <string>
 #include <map>
-#include <ros_end_effector/GraspingActions/Action.h>
-#include <ros_end_effector/Utils.h>
+#include <end_effector/GraspingActions/Action.h>
+#include <end_effector/Utils.h>
 #include <yaml-cpp/yaml.h>
 
 namespace ROSEE {

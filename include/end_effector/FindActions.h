@@ -3,14 +3,14 @@
 
 #include <moveit/planning_scene/planning_scene.h>
 
-#include <ros_end_effector/YamlWorker.h>
-#include <ros_end_effector/ParserMoveIt.h>
-#include <ros_end_effector/GraspingActions/Action.h>
-#include <ros_end_effector/GraspingActions/ActionPinchTight.h>
-#include <ros_end_effector/GraspingActions/ActionPinchLoose.h>
-#include <ros_end_effector/GraspingActions/ActionTrig.h>
-#include <ros_end_effector/GraspingActions/ActionSingleJointMultipleTips.h>
-#include <ros_end_effector/GraspingActions/ActionMultiplePinchTight.h>
+#include <end_effector/YamlWorker.h>
+#include <end_effector/ParserMoveIt.h>
+#include <end_effector/GraspingActions/Action.h>
+#include <end_effector/GraspingActions/ActionPinchTight.h>
+#include <end_effector/GraspingActions/ActionPinchLoose.h>
+#include <end_effector/GraspingActions/ActionTrig.h>
+#include <end_effector/GraspingActions/ActionSingleJointMultipleTips.h>
+#include <end_effector/GraspingActions/ActionMultiplePinchTight.h>
 
 #include <muParser.h>
 

@@ -26,16 +26,16 @@
 
 #include <sensor_msgs/JointState.h>
 
-#include <ros_end_effector/Parser.h>
-#include <ros_end_effector/EEInterface.h>
-#include <ros_end_effector/Utils.h>
-#include <ros_end_effector/MapActionHandler.h>
-#include <ros_end_effector/YamlWorker.h>
-#include <ros_end_effector/RosActionServer.h>
-#include <ros_end_effector/RosServiceHandler.h>
+#include <end_effector/Parser.h>
+#include <end_effector/EEInterface.h>
+#include <end_effector/Utils.h>
+#include <end_effector/MapActionHandler.h>
+#include <end_effector/YamlWorker.h>
+#include <end_effector/RosActionServer.h>
+#include <end_effector/RosServiceHandler.h>
 
-#include <ros_end_effector/GraspingActions/ActionPrimitive.h>
-#include <ros_end_effector/GraspingActions/ActionComposed.h>
+#include <end_effector/GraspingActions/ActionPrimitive.h>
+#include <end_effector/GraspingActions/ActionComposed.h>
 #include <rosee_msg/HandInfo.h>
 
 namespace ROSEE
