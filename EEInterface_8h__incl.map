@@ -1,4 +1,4 @@
-<map id="/home/travis/build/ADVRHumanoids/ROSEndEffector/include/ros_end_effector/EEInterface.h" name="/home/travis/build/ADVRHumanoids/ROSEndEffector/include/ros_end_effector/EEInterface.h">
-<area shape="rect" id="node5" href="$Parser_8h.html" title="ros_end_effector/Parser.h" alt="" coords="515,124,701,151"/>
-<area shape="rect" id="node10" href="$Utils_8h.html" title="ros_end_effector/Utils.h" alt="" coords="371,199,544,225"/>
+<map id="/home/travis/build/ADVRHumanoids/ROSEndEffector/include/end_effector/EEInterface.h" name="/home/travis/build/ADVRHumanoids/ROSEndEffector/include/end_effector/EEInterface.h">
+<area shape="rect" id="node5" href="$Parser_8h.html" title="end_effector/Parser.h" alt="" coords="502,109,661,136"/>
+<area shape="rect" id="node10" href="$Utils_8h.html" title="end_effector/Utils.h" alt="" coords="371,184,517,211"/>
 </map>

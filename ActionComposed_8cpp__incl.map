@@ -1,6 +1,6 @@
 <map id="/home/travis/build/ADVRHumanoids/ROSEndEffector/src/GraspingActions/ActionComposed.cpp" name="/home/travis/build/ADVRHumanoids/ROSEndEffector/src/GraspingActions/ActionComposed.cpp">
-<area shape="rect" id="node2" href="$ActionComposed_8h.html" title="ros_end_effector/Grasping\lActions/ActionComposed.h" alt="" coords="84,109,279,151"/>
-<area shape="rect" id="node5" href="$ActionGeneric_8h.html" title="ros_end_effector/Grasping\lActions/ActionGeneric.h" alt="" coords="278,199,469,240"/>
-<area shape="rect" id="node11" href="$Utils_8h.html" title="ros_end_effector/Utils.h" alt="" coords="536,377,709,404"/>
-<area shape="rect" id="node6" href="$Action_8h.html" title="ros_end_effector/Grasping\lActions/Action.h" alt="" coords="307,288,498,329"/>
+<area shape="rect" id="node2" href="$ActionComposed_8h.html" title="end_effector/GraspingActions\l/ActionComposed.h" alt="" coords="75,109,285,151"/>
+<area shape="rect" id="node5" href="$ActionGeneric_8h.html" title="end_effector/GraspingActions\l/ActionGeneric.h" alt="" coords="276,199,487,240"/>
+<area shape="rect" id="node11" href="$Utils_8h.html" title="end_effector/Utils.h" alt="" coords="536,377,683,404"/>
+<area shape="rect" id="node6" href="$Action_8h.html" title="end_effector/GraspingActions\l/Action.h" alt="" coords="305,288,516,329"/>
 </map>

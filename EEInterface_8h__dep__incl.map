@@ -1,6 +1,6 @@
-<map id="/home/travis/build/ADVRHumanoids/ROSEndEffector/include/ros_end_effector/EEInterface.h" name="/home/travis/build/ADVRHumanoids/ROSEndEffector/include/ros_end_effector/EEInterface.h">
-<area shape="rect" id="node2" href="$UniversalRosEndEffectorExecutor_8h.html" title="/home/travis/build\l/ADVRHumanoids/ROSEndEffector\l/include/ros_end_effector\l/UniversalRosEndEffectorExecutor.h" alt="" coords="143,124,392,195"/>
-<area shape="rect" id="node5" href="$EEInterface_8cpp.html" title="/home/travis/build\l/ADVRHumanoids/ROSEndEffector\l/src/EEInterface.cpp" alt="" coords="416,131,655,187"/>
-<area shape="rect" id="node3" href="$UniversalRosEndEffector_8cpp.html" title="/home/travis/build\l/ADVRHumanoids/ROSEndEffector\l/src/UniversalRosEndEffector.cpp" alt="" coords="5,243,244,299"/>
-<area shape="rect" id="node4" href="$UniversalRosEndEffectorExecutor_8cpp.html" title="/home/travis/build\l/ADVRHumanoids/ROSEndEffector\l/src/UniversalRosEndEffectorExecutor.cpp" alt="" coords="268,243,555,299"/>
+<map id="/home/travis/build/ADVRHumanoids/ROSEndEffector/include/end_effector/EEInterface.h" name="/home/travis/build/ADVRHumanoids/ROSEndEffector/include/end_effector/EEInterface.h">
+<area shape="rect" id="node2" href="$UniversalRosEndEffectorExecutor_8h.html" title="/home/travis/build\l/ADVRHumanoids/ROSEndEffector\l/include/end_effector/UniversalRos\lEndEffectorExecutor.h" alt="" coords="147,109,388,180"/>
+<area shape="rect" id="node5" href="$EEInterface_8cpp.html" title="/home/travis/build\l/ADVRHumanoids/ROSEndEffector\l/src/EEInterface.cpp" alt="" coords="412,117,651,173"/>
+<area shape="rect" id="node3" href="$UniversalRosEndEffector_8cpp.html" title="/home/travis/build\l/ADVRHumanoids/ROSEndEffector\l/src/UniversalRosEndEffector.cpp" alt="" coords="5,228,244,284"/>
+<area shape="rect" id="node4" href="$UniversalRosEndEffectorExecutor_8cpp.html" title="/home/travis/build\l/ADVRHumanoids/ROSEndEffector\l/src/UniversalRosEndEffectorExecutor.cpp" alt="" coords="268,228,555,284"/>
 </map>

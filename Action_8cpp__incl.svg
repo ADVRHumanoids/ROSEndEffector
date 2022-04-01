@@ -17,10 +17,10 @@
 </g>
 <!-- Node2 -->
 <g id="node2" class="node"><title>Node2</title>
-<g id="a_node2"><a xlink:href="Action_8h.html" target="_top" xlink:title="ros_end_effector/Grasping\lActions/Action.h">
-<polygon fill="none" stroke="black" points="160,-112.5 160,-142.5 303,-142.5 303,-112.5 160,-112.5"/>
-<text text-anchor="start" x="168" y="-130.5" font-family="Helvetica,sans-Serif" font-size="10.00">ros_end_effector/Grasping</text>
-<text text-anchor="middle" x="231.5" y="-119.5" font-family="Helvetica,sans-Serif" font-size="10.00">Actions/Action.h</text>
+<g id="a_node2"><a xlink:href="Action_8h.html" target="_top" xlink:title="end_effector/GraspingActions\l/Action.h">
+<polygon fill="none" stroke="black" points="152.5,-112.5 152.5,-142.5 310.5,-142.5 310.5,-112.5 152.5,-112.5"/>
+<text text-anchor="start" x="160.5" y="-130.5" font-family="Helvetica,sans-Serif" font-size="10.00">end_effector/GraspingActions</text>
+<text text-anchor="middle" x="231.5" y="-119.5" font-family="Helvetica,sans-Serif" font-size="10.00">/Action.h</text>
 </a>
 </g>
 </g>
@@ -91,9 +91,9 @@
 </g>
 <!-- Node9 -->
 <g id="node9" class="node"><title>Node9</title>
-<g id="a_node9"><a xlink:href="Utils_8h.html" target="_top" xlink:title="ros_end_effector/Utils.h">
-<polygon fill="none" stroke="black" points="417.5,-56.5 417.5,-75.5 547.5,-75.5 547.5,-56.5 417.5,-56.5"/>
-<text text-anchor="middle" x="482.5" y="-63.5" font-family="Helvetica,sans-Serif" font-size="10.00">ros_end_effector/Utils.h</text>
+<g id="a_node9"><a xlink:href="Utils_8h.html" target="_top" xlink:title="end_effector/Utils.h">
+<polygon fill="none" stroke="black" points="427.5,-56.5 427.5,-75.5 537.5,-75.5 537.5,-56.5 427.5,-56.5"/>
+<text text-anchor="middle" x="482.5" y="-63.5" font-family="Helvetica,sans-Serif" font-size="10.00">end_effector/Utils.h</text>
 </a>
 </g>
 </g>
@@ -169,8 +169,8 @@
 </g>
 <!-- Node9&#45;&gt;Node15 -->
 <g id="edge16" class="edge"><title>Node9&#45;&gt;Node15</title>
-<path fill="none" stroke="midnightblue" d="M547.555,-57.6342C607.699,-50.3324 699.706,-37.9187 788.369,-20.0379"/>
-<polygon fill="midnightblue" stroke="midnightblue" points="789.227,-23.435 798.324,-18.004 787.826,-16.5767 789.227,-23.435"/>
+<path fill="none" stroke="midnightblue" d="M537.73,-58.8159C597.333,-51.7147 695.19,-38.8201 788.443,-20.0219"/>
+<polygon fill="midnightblue" stroke="midnightblue" points="789.227,-23.4342 798.324,-18.004 787.826,-16.5757 789.227,-23.4342"/>
 </g>
 </g>
 </svg>

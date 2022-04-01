@@ -17,9 +17,9 @@
 </g>
 <!-- Node2 -->
 <g id="node2" class="node"><title>Node2</title>
-<g id="a_node2"><a xlink:href="ParserMoveIt_8h.html" target="_top" xlink:title="ros_end_effector/ParserMoveIt.h">
-<polygon fill="none" stroke="black" points="94.5,-78.5 94.5,-97.5 265.5,-97.5 265.5,-78.5 94.5,-78.5"/>
-<text text-anchor="middle" x="180" y="-85.5" font-family="Helvetica,sans-Serif" font-size="10.00">ros_end_effector/ParserMoveIt.h</text>
+<g id="a_node2"><a xlink:href="ParserMoveIt_8h.html" target="_top" xlink:title="end_effector/ParserMoveIt.h">
+<polygon fill="none" stroke="black" points="104.5,-78.5 104.5,-97.5 255.5,-97.5 255.5,-78.5 104.5,-78.5"/>
+<text text-anchor="middle" x="180" y="-85.5" font-family="Helvetica,sans-Serif" font-size="10.00">end_effector/ParserMoveIt.h</text>
 </a>
 </g>
 </g>

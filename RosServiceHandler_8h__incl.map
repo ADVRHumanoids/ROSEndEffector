@@ -1,16 +1,16 @@
-<map id="/home/travis/build/ADVRHumanoids/ROSEndEffector/include/ros_end_effector/RosServiceHandler.h" name="/home/travis/build/ADVRHumanoids/ROSEndEffector/include/ros_end_effector/RosServiceHandler.h">
-<area shape="rect" id="node3" href="$MapActionHandler_8h.html" title="ros_end_effector/MapAction\lHandler.h" alt="" coords="2113,124,2313,165"/>
-<area shape="rect" id="node8" href="$YamlWorker_8h.html" title="ros_end_effector/YamlWorker.h" alt="" coords="1099,213,1319,240"/>
-<area shape="rect" id="node10" href="$Utils_8h.html" title="ros_end_effector/Utils.h" alt="" coords="2185,660,2359,687"/>
-<area shape="rect" id="node18" href="$Action_8h.html" title="ros_end_effector/Grasping\lActions/Action.h" alt="" coords="1841,571,2031,612"/>
-<area shape="rect" id="node20" href="$ActionPrimitive_8h.html" title="ros_end_effector/Grasping\lActions/ActionPrimitive.h" alt="" coords="1179,481,1370,523"/>
-<area shape="rect" id="node29" href="$ActionGeneric_8h.html" title="ros_end_effector/Grasping\lActions/ActionGeneric.h" alt="" coords="1993,481,2183,523"/>
-<area shape="rect" id="node30" href="$ActionTimed_8h.html" title="ros_end_effector/Grasping\lActions/ActionTimed.h" alt="" coords="1778,481,1969,523"/>
-<area shape="rect" id="node21" href="$ActionPinchTight_8h.html" title="ros_end_effector/Grasping\lActions/ActionPinchTight.h" alt="" coords="671,288,862,329"/>
-<area shape="rect" id="node24" href="$ActionPinchLoose_8h.html" title="ros_end_effector/Grasping\lActions/ActionPinchLoose.h" alt="" coords="889,288,1087,329"/>
-<area shape="rect" id="node25" href="$ActionTrig_8h.html" title="ros_end_effector/Grasping\lActions/ActionTrig.h" alt="" coords="1027,385,1218,426"/>
-<area shape="rect" id="node26" href="$ActionSingleJointMultipleTips_8h.html" title="ros_end_effector/Grasping\lActions/ActionSingleJointMultiple\lTips.h" alt="" coords="145,377,373,433"/>
-<area shape="rect" id="node27" href="$ActionMultiplePinchTight_8h.html" title="ros_end_effector/Grasping\lActions/ActionMultiplePinchTight.h" alt="" coords="409,288,647,329"/>
-<area shape="rect" id="node28" href="$ActionComposed_8h.html" title="ros_end_effector/Grasping\lActions/ActionComposed.h" alt="" coords="1445,385,1640,426"/>
-<area shape="rect" id="node22" href="$ActionPinchGeneric_8h.html" title="ros_end_effector/Grasping\lActions/ActionPinchGeneric.h" alt="" coords="448,385,656,426"/>
+<map id="/home/travis/build/ADVRHumanoids/ROSEndEffector/include/end_effector/RosServiceHandler.h" name="/home/travis/build/ADVRHumanoids/ROSEndEffector/include/end_effector/RosServiceHandler.h">
+<area shape="rect" id="node3" href="$MapActionHandler_8h.html" title="end_effector/MapActionHandler.h" alt="" coords="2148,117,2383,143"/>
+<area shape="rect" id="node8" href="$YamlWorker_8h.html" title="end_effector/YamlWorker.h" alt="" coords="1137,199,1330,225"/>
+<area shape="rect" id="node10" href="$Utils_8h.html" title="end_effector/Utils.h" alt="" coords="2253,631,2400,657"/>
+<area shape="rect" id="node18" href="$Action_8h.html" title="end_effector/GraspingActions\l/Action.h" alt="" coords="1876,541,2087,583"/>
+<area shape="rect" id="node20" href="$ActionPrimitive_8h.html" title="end_effector/GraspingActions\l/ActionPrimitive.h" alt="" coords="1171,452,1381,493"/>
+<area shape="rect" id="node29" href="$ActionGeneric_8h.html" title="end_effector/GraspingActions\l/ActionGeneric.h" alt="" coords="2028,452,2239,493"/>
+<area shape="rect" id="node30" href="$ActionTimed_8h.html" title="end_effector/GraspingActions\l/ActionTimed.h" alt="" coords="1793,452,2004,493"/>
+<area shape="rect" id="node21" href="$ActionPinchTight_8h.html" title="end_effector/GraspingActions\l/ActionPinchTight.h" alt="" coords="647,273,857,315"/>
+<area shape="rect" id="node24" href="$ActionPinchLoose_8h.html" title="end_effector/GraspingActions\l/ActionPinchLoose.h" alt="" coords="881,273,1092,315"/>
+<area shape="rect" id="node25" href="$ActionTrig_8h.html" title="end_effector/GraspingActions\l/ActionTrig.h" alt="" coords="1019,363,1229,404"/>
+<area shape="rect" id="node26" href="$ActionSingleJointMultipleTips_8h.html" title="end_effector/GraspingActions\l/ActionSingleJointMultipleTips.h" alt="" coords="144,363,363,404"/>
+<area shape="rect" id="node27" href="$ActionMultiplePinchTight_8h.html" title="end_effector/GraspingActions\l/ActionMultiplePinchTight.h" alt="" coords="412,273,623,315"/>
+<area shape="rect" id="node28" href="$ActionComposed_8h.html" title="end_effector/GraspingActions\l/ActionComposed.h" alt="" coords="1456,363,1667,404"/>
+<area shape="rect" id="node22" href="$ActionPinchGeneric_8h.html" title="end_effector/GraspingActions\l/ActionPinchGeneric.h" alt="" coords="437,363,648,404"/>
 </map>
