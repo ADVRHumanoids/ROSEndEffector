@@ -30,7 +30,7 @@ protected:
         ASSERT_TRUE(parserMoveIt->init ("robot_description", false)) ;
         ROSEE::FindActions actionsFinder (parserMoveIt);
         
-        std::string folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/tests/" + parserMoveIt->getHandName();
+        std::string folderForActions = "ROSEE/actions/" + parserMoveIt->getHandName();
 
         auto theTwoMaps = actionsFinder.findPinch(folderForActions + "/primitives/");
 

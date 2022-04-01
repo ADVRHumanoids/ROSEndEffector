@@ -52,7 +52,7 @@ protected:
         ROSEE::Parser p ( nh );
         if (! p.init ( ROSEE::Utils::getPackagePath() + "/configs/urdf/" + robot_name + ".urdf",
                        ROSEE::Utils::getPackagePath() + "/configs/srdf/" + robot_name + ".srdf",
-                       ROSEE::Utils::getPackagePath() + "/configs/actions/" + robot_name + "/") ) 
+                       "ROSEE/actions/" + robot_name + "/") ) 
         {
             
             std::cout << "[TEST SEND ACTIONS]parser FAIL: some config file missing]" << std::endl;

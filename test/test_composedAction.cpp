@@ -31,7 +31,7 @@ protected:
 
         ROSEE::FindActions actionsFinder (parserMoveIt);
         
-        std::string folderForActions = ROSEE::Utils::getPackagePath() + "/configs/actions/tests/" + parserMoveIt->getHandName();
+        std::string folderForActions = "ROSEE/actions/" + parserMoveIt->getHandName();
         
         trigMap = actionsFinder.findTrig(ROSEE::ActionPrimitive::Type::Trig, folderForActions + "/primitives/") ;  
 
@@ -51,7 +51,7 @@ protected:
         } 
     }
 
-    virtual void TearDown() {
+    virtual void TearDown() override{
     }
     
     std::map < std::string , ROSEE::ActionTrig > trigMap;
