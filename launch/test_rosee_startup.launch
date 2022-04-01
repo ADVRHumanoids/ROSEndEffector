@@ -5,7 +5,7 @@
     <arg name="hal_lib" default="DummyHal"/>
     <arg name="urdf_path" default="$(find end_effector)/configs/urdf/$(arg hand_name).urdf"/>
 	<arg name="srdf_path" default="$(find end_effector)/configs/srdf/$(arg hand_name).srdf"/>
-    <arg name="actions_folder_path" default="ROSEE/actions/$(arg hand_name)/"/>
+    <arg name="actions_folder_path" default="$(find end_effector)/actions/$(arg hand_name)/"/>
 
     <!-- send urdf to parameter server. This is necessary because sometimes UniversalRosEndEffector can not put them in time and joint state pub crashes-->
     <param name="robot_description" textfile="$(arg urdf_path)"/>

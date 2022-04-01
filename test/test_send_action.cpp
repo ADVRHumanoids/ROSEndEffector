@@ -2,6 +2,7 @@
 #include "testUtils.h"
 
 #include <ros/ros.h>
+#include <ros/package.h>
 
 #include <end_effector/Parser.h>
 #include <end_effector/ParserMoveIt.h>
@@ -52,7 +53,7 @@ protected:
         ROSEE::Parser p ( nh );
         if (! p.init ( ROSEE::Utils::getPackagePath() + "/configs/urdf/" + robot_name + ".urdf",
                        ROSEE::Utils::getPackagePath() + "/configs/srdf/" + robot_name + ".srdf",
-                       "ROSEE/actions/" + robot_name + "/") ) 
+                       ros::package::getPath("end_effector") + "/actions/" + robot_name + "/") ) 
         {
             
             std::cout << "[TEST SEND ACTIONS]parser FAIL: some config file missing]" << std::endl;
@@ -274,7 +275,7 @@ TEST_F ( testSendAction, sendSimpleGeneric ) {
     }
 
     //ROSEE::Action::Ptr action = std::make_shared<ROSEE::ActionGeneric>("testAllUpperLim", jp, jpc);
-    ROSEE::Action::Ptr action = std::make_shared<ROSEE::ActionGeneric>("AAAAAAAAAAAAAAAA", jp, jpc);
+    ROSEE::Action::Ptr action = std::make_shared<ROSEE::ActionGeneric>("RandomActionGeneric", jp, jpc);
     //emit the yaml so roseeExecutor can find the action
     yamlWorker.createYamlFile( action.get(), folderForActions + "/generics/" );
 
