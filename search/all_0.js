@@ -63,7 +63,6 @@ var searchData=
   ['_5frobot',['_robot',['../classROSEE_1_1XBot2Hal.html#a6470847eacc8c9d360cfc01f6bd80965',1,'ROSEE::XBot2Hal']]],
   ['_5frobot_5ftree',['_robot_tree',['../classROSEE_1_1Parser.html#adc92c7b5760f12c96a34b951889fa3d7',1,'ROSEE::Parser']]],
   ['_5fros_5faction_5fserver',['_ros_action_server',['../classROSEE_1_1UniversalRosEndEffectorExecutor.html#a45a26506081f45f37eb74d0fe41548c3',1,'ROSEE::UniversalRosEndEffectorExecutor']]],
-  ['_5fros_5fee_5fconfig_5fpath',['_ros_ee_config_path',['../classROSEE_1_1Parser.html#a0bad4472e5db601432314df707087f83',1,'ROSEE::Parser']]],
   ['_5fros_5fservice_5fhandler',['_ros_service_handler',['../classROSEE_1_1UniversalRosEndEffectorExecutor.html#a219af21d7612273281694c903630cf96',1,'ROSEE::UniversalRosEndEffectorExecutor']]],
   ['_5fseq_5fid',['_seq_id',['../classROSEE_1_1UniversalRosEndEffectorExecutor.html#a35c748801c084b1002f5086860aa5d22',1,'ROSEE::UniversalRosEndEffectorExecutor']]],
   ['_5fserver_5fselectablepairinfo',['_server_selectablePairInfo',['../classROSEE_1_1RosServiceHandler.html#a21d8d60c23dd42f0da411f4519d4b668',1,'ROSEE::RosServiceHandler']]],

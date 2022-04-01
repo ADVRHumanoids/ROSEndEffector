@@ -1,7 +1,7 @@
 var searchData=
 [
   ['independent',['independent',['../classROSEE_1_1ActionComposed.html#a9680ec0a67088564862a6cbd55868f96',1,'ROSEE::ActionComposed']]],
-  ['init',['init',['../classROSEE_1_1Parser.html#a47625fa3893edcd015c8db2a2ad42092',1,'ROSEE::Parser::init()'],['../classROSEE_1_1Parser.html#af789f736f91cb612876d4d3782613207',1,'ROSEE::Parser::init(const std::string &amp;path_to_cfg)'],['../classROSEE_1_1ParserMoveIt.html#a3263b369caff8941396fe61e5879ff1e',1,'ROSEE::ParserMoveIt::init()'],['../classROSEE_1_1RosServiceHandler.html#a3273a3d8d8c353d09d26fa1fe84290ec',1,'ROSEE::RosServiceHandler::init()']]],
+  ['init',['init',['../classROSEE_1_1Parser.html#a47625fa3893edcd015c8db2a2ad42092',1,'ROSEE::Parser::init()'],['../classROSEE_1_1Parser.html#aa03e350a74ad9e2c20bb49f49c08637d',1,'ROSEE::Parser::init(const std::string &amp;urdf_path, const std::string &amp;srdf_path, const std::string &amp;action_path)'],['../classROSEE_1_1ParserMoveIt.html#a3263b369caff8941396fe61e5879ff1e',1,'ROSEE::ParserMoveIt::init()'],['../classROSEE_1_1RosServiceHandler.html#a3273a3d8d8c353d09d26fa1fe84290ec',1,'ROSEE::RosServiceHandler::init()']]],
   ['init_5fgrasping_5fprimitive',['init_grasping_primitive',['../classROSEE_1_1UniversalRosEndEffectorExecutor.html#ae4b2f72d48774c1073198cccef32002b',1,'ROSEE::UniversalRosEndEffectorExecutor']]],
   ['init_5fhand_5finfo_5fresponse',['init_hand_info_response',['../classROSEE_1_1EEHal.html#af733bb9f08b4532170d8af1f64d375d3',1,'ROSEE::EEHal']]],
   ['init_5fjoint_5fstate_5fsub',['init_joint_state_sub',['../classROSEE_1_1UniversalRosEndEffectorExecutor.html#a5bc1b2d7a1c1c1adb15964e383f5323f',1,'ROSEE::UniversalRosEndEffectorExecutor']]],

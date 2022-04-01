@@ -94,7 +94,6 @@ var searchData=
   ['getrealdescendantlinkmodelsrecursive',['getRealDescendantLinkModelsRecursive',['../classROSEE_1_1ParserMoveIt.html#a65c501482f136712233fb5fb200fe8d0',1,'ROSEE::ParserMoveIt']]],
   ['getrobotmodel',['getRobotModel',['../classROSEE_1_1ParserMoveIt.html#a99dd849b43792c670a11c11b03d9c2a0',1,'ROSEE::ParserMoveIt']]],
   ['getroseeconfigpath',['getRoseeConfigPath',['../classROSEE_1_1Parser.html#aed1993414bec57909a85321436ec3636',1,'ROSEE::Parser']]],
-  ['getrosendeffectorconfig',['getROSEndEffectorConfig',['../classROSEE_1_1Parser.html#a53d714a213418b679dda11b606ac82ba',1,'ROSEE::Parser']]],
   ['getsmallerboundfromzero',['getSmallerBoundFromZero',['../classROSEE_1_1ParserMoveIt.html#af4fd23e36b873b16a66498e7132dcb88',1,'ROSEE::ParserMoveIt::getSmallerBoundFromZero(std::string jointName) const '],['../classROSEE_1_1ParserMoveIt.html#a26ccae35c70469fabe24d9c7f5f4023d',1,'ROSEE::ParserMoveIt::getSmallerBoundFromZero(const moveit::core::JointModel *joint) const ']]],
   ['getsrdfstring',['getSrdfString',['../classROSEE_1_1Parser.html#ae4df0918a1b7ca101d6e25dd3550a98f',1,'ROSEE::Parser']]],
   ['gettimed',['getTimed',['../classROSEE_1_1MapActionHandler.html#a9435b2509139108c8ca92291425cad2b',1,'ROSEE::MapActionHandler']]],
