@@ -2,8 +2,8 @@
 Changelog for package end_effector
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.6 (2022-04-04)
+------------------
 * urdf and srdf path from ros param and not from conf file
 * Cmake installing missing things
 * renamed include directory according to package name
