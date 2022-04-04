@@ -2,6 +2,13 @@
 Changelog for package end_effector
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* urdf and srdf path from ros param and not from conf file
+* Cmake installing missing things
+* renamed include directory according to package name
+* Contributors: Davide Torielli
+
 1.0.5 (2022-03-31)
 ------------------
 * Updated qb urdf to comply with new mesh name, but problems on gazebo
