@@ -2,7 +2,7 @@
 #define __ROSEE_ROBOTIQ2F85_HAL__
 
 #include <end_effector/HAL/EEHal.h>
-#include <modbus.h>
+#include <end_effector/ModbusRTU.h>
 #include <string>
 #include <memory>
 
@@ -22,6 +22,8 @@ public:
 
     Robotiq2f85Hal( ros::NodeHandle* nh );
     virtual ~Robotiq2f85Hal();
+    
+    virtual bool init() override;
     
     virtual bool sense() override;
     
@@ -45,6 +47,7 @@ private:
 
     const int max_width_value_{0};
     const int min_width_value_{230};
+    double width_closure_, max_width_, min_width_, error_tollerance_;
 
     void fillBytes();
     bool fillReadedValues();

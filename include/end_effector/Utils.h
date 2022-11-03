@@ -29,6 +29,7 @@
 
 #include <chrono>
 #include <atomic>
+#include <thread>
 
 namespace ROSEE
 {
@@ -224,48 +225,98 @@ struct DifferentKeysException : public std::exception {
  * @param args arguments for the \p function_name , if the case
  * @return std::shared_ptr<RetType> a pointer to the new created object
  */
+// template <typename RetType, typename... Args>
+// std::unique_ptr<RetType> loadObject(std::string lib_name, 
+//                                     std::string function_name,
+//                                     Args... args) {
+//     
+//     if (lib_name.empty()) {
+//         
+//         std::cerr << "[Utils::loadObject] ERROR: Please specify lib_name" << std::endl;
+//         return nullptr;
+//     } 
+//     
+//     std::string lib_name_path = "lib" + lib_name +".so"; 
+// 
+//     //clear old errors
+//     dlerror();
+// 
+//     void* lib_handle = dlopen(lib_name_path.c_str(), RTLD_LAZY);
+//     auto error = dlerror();
+// 
+//     if (!lib_handle || error != NULL) {
+//         std::cerr << "[Utils::loadObject] ERROR in opening the library: " << error << std::endl;
+//         return nullptr;
+//     }
+//     
+//     //clear old errors
+//     dlerror();
+//     
+//     RetType* (*function)(Args... args);
+//     function = reinterpret_cast<RetType* (*)(Args... args)>(dlsym(lib_handle, function_name.c_str()));
+//     error = dlerror();
+//     if ( error != NULL)  {
+//         std::cerr << "[Utils::loadObject] ERROR in returning the function: " << error << std::endl;
+//         return nullptr;
+//     }
+//     
+//     RetType* objectRaw = function(args...);
+//     
+//     std::unique_ptr<RetType> objectPtr(objectRaw);
+//     
+//     dlclose(lib_handle);
+//     
+//     return objectPtr;
+// }
+
 template <typename RetType, typename... Args>
-std::unique_ptr<RetType> loadObject(std::string lib_name, 
-                                    std::string function_name,
-                                    Args... args) {
-    
-    if (lib_name.empty()) {
-        
-        std::cerr << "[Utils::loadObject] ERROR: Please specify lib_name" << std::endl;
-        return nullptr;
-    } 
-    
-    std::string lib_name_path = "lib" + lib_name +".so"; 
+RetType loadObject(std::string lib_name,
+                     std::string function_name,
+                     Args... args)
+{
 
-    //clear old errors
+    void * lib_handle = nullptr;
+
+    lib_name = "lib" + lib_name +".so";
     dlerror();
+    
+    /* Try to open the provided library (if any) */
+    if(!lib_name.empty())
+    {
+        lib_handle = dlopen(lib_name.c_str(), RTLD_NOW);
+    }
+    else
+    {
+        // otherwise, search the symbol among the already loaded
+        // libs
+        lib_handle = RTLD_DEFAULT;
+    }
 
-    void* lib_handle = dlopen(lib_name_path.c_str(), RTLD_LAZY);
-    auto error = dlerror();
-
-    if (!lib_handle || error != NULL) {
-        std::cerr << "[Utils::loadObject] ERROR in opening the library: " << error << std::endl;
+    /* Not able to open so, report error */
+    if(!lib_name.empty() && !lib_handle)
+    {
+        std::cerr << "[Utils::loadObject] ERROR: " << dlerror() << std::endl;
         return nullptr;
     }
-    
-    //clear old errors
-    dlerror();
-    
-    RetType* (*function)(Args... args);
-    function = reinterpret_cast<RetType* (*)(Args... args)>(dlsym(lib_handle, function_name.c_str()));
-    error = dlerror();
-    if ( error != NULL)  {
+
+    /* Typedef for the factory type */
+    typedef RetType (*FactoryType)(Args... args);
+
+    /* Try to obtain the address of the factory */
+    dlerror();  // clear errors
+    FactoryType function = reinterpret_cast<FactoryType>(dlsym(lib_handle,
+                                                               function_name.c_str())
+                                                         );
+
+    const char * error = dlerror();
+    if(error != nullptr)
+    {
         std::cerr << "[Utils::loadObject] ERROR in returning the function: " << error << std::endl;
         return nullptr;
     }
-    
-    RetType* objectRaw = function(args...);
-    
-    std::unique_ptr<RetType> objectPtr(objectRaw);
-    
-    dlclose(lib_handle);
-    
-    return objectPtr;
+
+    return function(args...);
+
 }
 
 //default template as high_resolution_clock

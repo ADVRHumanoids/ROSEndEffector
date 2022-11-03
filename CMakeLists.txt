@@ -35,6 +35,9 @@ if (${matlogger2_FOUND})
     add_definitions(-D_MATLOGGER2)
 endif (${matlogger2_FOUND})
 
+find_package(PkgConfig REQUIRED)
+pkg_search_module(PKG_modbus REQUIRED IMPORTED_TARGET libmodbus)
+
 #Xbot stuff
 option(BUILD_WITH_XBOT2 "Compile also the HAL used with XBot2" OFF)
 
@@ -104,6 +107,11 @@ if (BUILD_WITH_XBOT2)
     list(APPEND libToInstall XBot2Hal)
 
 endif(BUILD_WITH_XBOT2)
+
+add_library(Robotiq2f85Hal
+    src/HAL/Robotiq2f85Hal.cpp
+)
+list(APPEND libToInstall Robotiq2f85Hal)
 
 
 add_library(UniversalRosEndEffectorExecutor
@@ -271,6 +279,12 @@ if(BUILD_WITH_XBOT2)
         EEHal
     )
 endif(BUILD_WITH_XBOT2)
+
+target_link_libraries(Robotiq2f85Hal
+    ${catkin_LIBRARIES}
+    EEHal
+    PkgConfig::PKG_modbus
+)
 
 
 #############

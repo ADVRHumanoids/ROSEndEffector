@@ -39,9 +39,6 @@ ROSEE::EEHal::EEHal(ros::NodeHandle* nh) {
     }
     
     _pressure_active = false; // if a derived class want to use this, it must call initPressureSensing()
-    
-
-    
 }
 
 bool ROSEE::EEHal::checkCommandPub() {

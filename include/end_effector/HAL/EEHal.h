@@ -60,6 +60,8 @@ namespace ROSEE {
         
         EEHal ( ros::NodeHandle* nh );
         virtual ~EEHal() {};
+        
+        virtual bool init() {return true;};
                 
         virtual bool sense() = 0;
         

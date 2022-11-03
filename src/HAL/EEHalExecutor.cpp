@@ -39,15 +39,23 @@ int main ( int argc, char **argv ) {
     }
 #endif
 
-    std::unique_ptr<ROSEE::EEHal> eeHalPtr = ROSEE::Utils::loadObject<ROSEE::EEHal>
-                                         (hal_lib, "create_object_"+hal_lib, &nh);
-
+    //std::unique_ptr<ROSEE::EEHal> eeHalPtr = ROSEE::Utils::loadObject<ROSEE::EEHal>
+    auto eeHalPtrRaw = ROSEE::Utils::loadObject<ROSEE::EEHal*>
+                                                (hal_lib, "create_object_"+hal_lib, &nh);
+                                     
+    std::unique_ptr<ROSEE::EEHal> eeHalPtr(eeHalPtrRaw);
+                              
     if (eeHalPtr == nullptr) {
         ROS_ERROR_STREAM( "[EEHalExecutor ERROR] in loading the EEHal Object" );
         return -1;    
     }
     
     ROS_INFO_STREAM ( "[EEHalExecutor] Loaded "<<  hal_lib << " HAL"  );   
+    
+    if (! eeHalPtr->init()) {
+        ROS_ERROR_STREAM( "[EEHalExecutor ERROR] in initializing the EEHal Object" );
+        return -1;   
+    }
     
     if (eeHalPtr->isHandInfoPresent()) { 
         eeHalPtr->init_hand_info_response();
@@ -58,6 +66,7 @@ int main ( int argc, char **argv ) {
       
     //TODO take rate from param
     ros::Rate r(100);
+    
     while(ros::ok()) {
         
         //TODO check order of these
@@ -78,8 +87,6 @@ int main ( int argc, char **argv ) {
         //send _js_msg to external (ie to ROSEE main node)
         eeHalPtr->publish_joint_state();
         
-        
-        
         if (eeHalPtr->_pressure_active) {
             eeHalPtr->publish_pressure();
         } 
@@ -89,17 +96,19 @@ int main ( int argc, char **argv ) {
             logger->add("motor_pos_ref", eeHalPtr->getMotorReference());
             logger->add("motor_pos", eeHalPtr->getJointPosition());
             logger->add("motor_eff", eeHalPtr->getJointEffort());
-            auto pressures =  eeHalPtr->getPressure();
-            logger->add("pressure1", pressures.row(0));
-            logger->add("pressure2", pressures.row(1));
-            logger->add("pressure3", pressures.row(2));
-            logger->add("pressure4", pressures.row(3));
+            
+            if (eeHalPtr->_pressure_active) {
+                auto pressures = eeHalPtr->getPressure();
+                logger->add("pressure1", pressures.row(0));
+                logger->add("pressure2", pressures.row(1));
+                logger->add("pressure3", pressures.row(2));
+                logger->add("pressure4", pressures.row(3));
+            }
         }
 #endif
 
         ros::spinOnce();
-        r.sleep();
-        
+        r.sleep();        
     }
     
     return 0;
