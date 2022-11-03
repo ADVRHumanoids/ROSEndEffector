@@ -1,0 +1,13 @@
+ros_end_effector:
+  urdf_path: "urdf/robotiq_2f_85.urdf"
+  srdf_path: "srdf/robotiq_2f_85.srdf"
+  
+  
+## Arguments for rosee_plugin control for gazebo. Similar syntax to
+# the one used by "official" ros plugin http://gazebosim.org/tutorials/?tut=ros_control
+rosee_gazebo_plugins_args: #robot name
+  #Controller for each joint. type now is only JointPositionControllerfor JointVelocityController
+  finger_joint_controller:
+    type: JointPositionController
+    joint_name: finger_joint
+    pid: {p: 0.1, i: 0.05, d: 0.01}
