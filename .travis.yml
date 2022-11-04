@@ -36,6 +36,9 @@ script:
 - pwd
 - source /opt/ros/kinetic/setup.bash
 
+#install modbus to compile also some hal
+- sudo apt-get install libmodbus-dev
+
 
 # rosee_msgs from sources
 # NOTE: We can now clone, the old wget was because it was a private repo?
