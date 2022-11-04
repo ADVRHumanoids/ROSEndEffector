@@ -1,5 +1,5 @@
-#ifndef _UTILS_MODBUSRTU_H_
-#define _UTILS_MODBUSRTU_H_
+#ifndef _UTILS_MODBUSTCP_H_
+#define _UTILS_MODBUSTCP_H_
 
 #include "modbus/modbus.h"
 #include <string>
@@ -7,26 +7,33 @@
 
 namespace ROSEE {
 
-class ModbusRTU
+class ModbusTCP
 {
     public:
-        ModbusRTU(){};
-        ~ModbusRTU(){};
+        ModbusTCP(){};
 
-        bool connectDevice(std::string device, int slave_id, int baud_rate, char parity, int data_bit, int stop_bit)
+        virtual ~ModbusTCP() {};
+
+        bool connectDevice(std::string device, int port)
         {
-            mb_ = modbus_new_rtu(device.c_str(), baud_rate, parity, data_bit, stop_bit);
+            std::cout << "Connecting device: \"" << device.c_str()<< "\" at port: "<< port <<"\n";
+            mb_ = modbus_new_tcp(device.c_str(), port);
 
-            if(modbus_set_slave(mb_, slave_id) == -1) 
+            if (mb_ == NULL)
             {
-                modbus_free(mb_);
-                std::cout << "Invalid slave ID.\n";
+                std::cout << "Unable to allocate libmodbus context.\n";
                 return false;
             }
+            //display_.debug("Context allocated.\nSetting timeout response.");
+            timeval response_timeout;
+            response_timeout.tv_sec = 3;
+            response_timeout.tv_usec = 0;
+            modbus_set_response_timeout(mb_, &response_timeout);
 
+            //display_.debug("Connecting modbus...");
             if(modbus_connect(mb_) == -1) 
             {
-                std::cout << "Connection failed: " << modbus_strerror(errno) << ".\n";
+                std::cout << "Connection failed: "<< modbus_strerror(errno)<< ".\n";
                 modbus_free(mb_);
                 return false;
             }
@@ -51,8 +58,8 @@ class ModbusRTU
 
             if (ret == -1 || ret != nb) 
             {
-                std::cout << "Error in writing on registers. " << modbus_strerror(errno) << ".\n";
-                closeConnection();
+                std::cout << "Error in writing on regiters. "<< modbus_strerror(errno)<< ".\n";
+                // closeConnection();
                 return false;
             }
             return true;
@@ -64,8 +71,8 @@ class ModbusRTU
             int ret = modbus_read_registers(mb_, address, register_number, message.data());
 
             if (ret == -1 || ret != register_number) {
-                std::cout << "Error in reading regiters. " << modbus_strerror(errno) << ".\n";
-                closeConnection();
+                std::cout << "Error in reading registers. "<< modbus_strerror(errno)<< ".\n";
+                // closeConnection();
                 return false;
             }
 
@@ -76,6 +83,6 @@ class ModbusRTU
         modbus_t *mb_;
 };
 
-} // namespace
+} // namespace ROSEE
 
-#endif //_UTILS_MODBUS_H_
+#endif
