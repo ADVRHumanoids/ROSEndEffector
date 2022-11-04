@@ -1,5 +1,4 @@
-
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.0.2)
 project(end_effector)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
@@ -29,14 +28,20 @@ find_package(Eigen3 REQUIRED)
 #find_package(muparser REQUIRED) 
 find_library(_MUPARSER_LIB muparser REQUIRED)
 find_package(yaml-cpp REQUIRED)
+
+unset(matlogger2_FOUND CACHE)
 find_package(matlogger2 QUIET)
 if (${matlogger2_FOUND})
     message("Logging with MatLogger2")
     add_definitions(-D_MATLOGGER2)
 endif (${matlogger2_FOUND})
 
+unset(PKG_modbus_FOUND CACHE)
 find_package(PkgConfig REQUIRED)
-pkg_search_module(PKG_modbus REQUIRED IMPORTED_TARGET libmodbus)
+pkg_search_module(PKG_modbus IMPORTED_TARGET libmodbus)
+if (${PKG_modbus_FOUND})
+    message("libmodbus found, compiling HALs dependent on this")
+endif (${PKG_modbus_FOUND})
 
 #Xbot stuff
 option(BUILD_WITH_XBOT2 "Compile also the HAL used with XBot2" OFF)
@@ -108,11 +113,12 @@ if (BUILD_WITH_XBOT2)
 
 endif(BUILD_WITH_XBOT2)
 
-add_library(Robotiq2f85Hal
-    src/HAL/Robotiq2f85Hal.cpp
-)
-list(APPEND libToInstall Robotiq2f85Hal)
-
+if (${PKG_modbus_FOUND})
+    add_library(Robotiq2f85Hal
+        src/HAL/Robotiq2f85Hal.cpp
+    )
+    list(APPEND libToInstall Robotiq2f85Hal)
+endif(${PKG_modbus_FOUND})
 
 add_library(UniversalRosEndEffectorExecutor
     src/UniversalRosEndEffectorExecutor.cpp
@@ -280,11 +286,13 @@ if(BUILD_WITH_XBOT2)
     )
 endif(BUILD_WITH_XBOT2)
 
-target_link_libraries(Robotiq2f85Hal
-    ${catkin_LIBRARIES}
-    EEHal
-    PkgConfig::PKG_modbus
-)
+if (${PKG_modbus_FOUND})
+    target_link_libraries(Robotiq2f85Hal
+        ${catkin_LIBRARIES}
+        EEHal
+        PkgConfig::PKG_modbus
+    )
+endif(${PKG_modbus_FOUND})
 
 
 #############
@@ -327,6 +335,7 @@ install(FILES
   configs/urdf/heri_II.urdf
   configs/urdf/qbhand.urdf
   configs/urdf/robotiq_2f_140.urdf
+  configs/urdf/robotiq_2f_85.urdf
   configs/urdf/robotiq_3f.urdf
   configs/urdf/schunk.urdf
   configs/urdf/test_ee.urdf
@@ -340,6 +349,7 @@ install(FILES
   configs/srdf/heri_II.srdf
   configs/srdf/qbhand.srdf
   configs/srdf/robotiq_2f_140.srdf
+  configs/srdf/robotiq_2f_85.srdf
   configs/srdf/robotiq_3f.srdf
   configs/srdf/schunk.srdf
   configs/srdf/test_ee.srdf
