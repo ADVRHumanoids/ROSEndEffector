@@ -93,9 +93,21 @@ int main ( int argc, char **argv ) {
         
 #ifdef _MATLOGGER2        
         if (logging) {
-            logger->add("motor_pos_ref", eeHalPtr->getMotorReference());
-            logger->add("motor_pos", eeHalPtr->getJointPosition());
-            logger->add("motor_eff", eeHalPtr->getJointEffort());
+            
+            Eigen::VectorXd motor_ref = eeHalPtr->getMotorReference();
+            Eigen::VectorXd motor_pos = eeHalPtr->getJointPosition();
+            Eigen::VectorXd motor_eff = eeHalPtr->getJointEffort();
+            
+            //prevent warning about variable with invalid dimension 0x1
+            if (motor_ref.size()>0){
+                logger->add("motor_pos_ref", motor_ref);
+            }
+            if (motor_pos.size()>0){
+                logger->add("motor_pos", motor_pos);
+            }
+            if (motor_eff.size()>0){
+                logger->add("motor_eff", motor_eff);
+            }
             
             if (eeHalPtr->_pressure_active) {
                 auto pressures = eeHalPtr->getPressure();
