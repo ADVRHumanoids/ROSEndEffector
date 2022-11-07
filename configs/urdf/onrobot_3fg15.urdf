@@ -89,14 +89,14 @@
     <child link="robot_onrobot_3fg15_finger1"/>
     <origin rpy="0 0 -0.5236" xyz="-0.026 0.016 0.11"/>
     <axis xyz="0 0 1"/>
-    <limit effort="20" lower="0.0" upper="2.8" velocity="3.0"/>
+    <limit effort="20" lower="0.0" upper="2.9" velocity="3.0"/>
   </joint>
   <joint name="robot_onrobot_3fg15_finger_joint2" type="revolute">
     <parent link="robot_onrobot_3fg15_base_link"/>
     <child link="robot_onrobot_3fg15_finger2"/>
     <origin rpy="0 0 -2.61799" xyz="0.026 0.016 0.11"/>
     <axis xyz="0 0 1"/>
-    <limit effort="20" lower="0.0" upper="2.8" velocity="3.0"/>
+    <limit effort="20" lower="0.0" upper="2.9" velocity="3.0"/>
     <mimic joint="robot_onrobot_3fg15_finger_joint1"/>
   </joint>
   <joint name="robot_onrobot_3fg15_finger_joint3" type="revolute">
@@ -104,7 +104,7 @@
     <child link="robot_onrobot_3fg15_finger3"/>
     <origin rpy="0 0 1.5707963267948966" xyz="0.0 -0.0305 0.11"/>
     <axis xyz="0 0 1"/>
-    <limit effort="20" lower="0.0" upper="2.8" velocity="3.0"/>
+    <limit effort="20" lower="0.0" upper="2.9" velocity="3.0"/>
     <mimic joint="robot_onrobot_3fg15_finger_joint1"/>
   </joint>
   <transmission name="robot_onrobot_3fg15_finger_joint1_trans">
