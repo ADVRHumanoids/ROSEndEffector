@@ -118,6 +118,11 @@ if (${PKG_modbus_FOUND})
         src/HAL/Robotiq2f85Hal.cpp
     )
     list(APPEND libToInstall Robotiq2f85Hal)
+    
+    add_library(Onrobot3fg15Hal
+        src/HAL/Onrobot3fg15Hal.cpp
+    )
+    list(APPEND libToInstall Onrobot3fg15Hal)
 endif(${PKG_modbus_FOUND})
 
 add_library(UniversalRosEndEffectorExecutor
@@ -292,6 +297,12 @@ if (${PKG_modbus_FOUND})
         EEHal
         PkgConfig::PKG_modbus
     )
+    
+    target_link_libraries(Onrobot3fg15Hal
+        ${catkin_LIBRARIES}
+        EEHal
+        PkgConfig::PKG_modbus
+    )
 endif(${PKG_modbus_FOUND})
 
 
@@ -337,6 +348,7 @@ install(FILES
   configs/urdf/robotiq_2f_140.urdf
   configs/urdf/robotiq_2f_85.urdf
   configs/urdf/robotiq_3f.urdf
+  configs/urdf/onrobot_3fg15.urdf
   configs/urdf/schunk.urdf
   configs/urdf/test_ee.urdf
   configs/urdf/test_ee_spread.urdf
@@ -351,6 +363,7 @@ install(FILES
   configs/srdf/robotiq_2f_140.srdf
   configs/srdf/robotiq_2f_85.srdf
   configs/srdf/robotiq_3f.srdf
+  configs/srdf/onrobot_3fg15.srdf
   configs/srdf/schunk.srdf
   configs/srdf/test_ee.srdf
   configs/srdf/test_ee_spread.srdf

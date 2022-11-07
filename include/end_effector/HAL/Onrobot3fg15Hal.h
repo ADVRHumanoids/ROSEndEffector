@@ -25,6 +25,7 @@
 
 #include <string>
 #include <memory>
+#include <bitset>
 
 namespace ROSEE {
     
@@ -49,20 +50,25 @@ namespace ROSEE {
     private:
         ModbusTCP mb_;
         std::string gripper_ip_;
+        int slave_device_num_;
         
         double min_joint_pos_, max_joint_pos_;
-        uint8_t w_force_, w_diameter_, w_grip_type_, w_control_ ; // Writing values (control = 1->grasp(force), 2->move, 4->stop)
-        uint8_t r_status_, r_raw_diameter_, r_diameter_fingertip_offset_, r_force_, r_finger_angle_,
+        uint16_t w_force_, w_diameter_, w_grip_type_, w_control_ ; // Writing values (control = 1->grasp(force), 2->move, 4->stop)
+        std::bitset<4> r_status_; //bit 1: business   bit 2: grip detected  bit 2: force grip detected  bit 3: 1 when calibration is ok
+        uint16_t r_raw_diameter_, r_diameter_fingertip_offset_, r_force_, r_finger_angle_,
             r_finger_length_, r_finger_position_, r_fingertip_offset_;
-        uint8_t r_min_diameter_, r_max_diameter_;
+        uint16_t r_min_diameter_, r_max_diameter_;
         
         const int reg_address_wr_{0x0000};
         const int reg_address_rd_{0x0100};
         
         std::vector<uint16_t> values_rd_;
+        std::vector<uint16_t> values_wr_;
         
         bool fillReadedValues();
         bool readDiameterInit();
+        bool readWriteFingerSetupInit();
+        void fillValuesToWrite();
 
         
     };

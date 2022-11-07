@@ -14,7 +14,7 @@ class ModbusTCP
 
         virtual ~ModbusTCP() {};
 
-        bool connectDevice(std::string device, int port)
+        bool connectDevice(std::string device, int port, int slave)
         {
             std::cout << "Connecting device: \"" << device.c_str()<< "\" at port: "<< port <<"\n";
             mb_ = modbus_new_tcp(device.c_str(), port);
@@ -25,10 +25,11 @@ class ModbusTCP
                 return false;
             }
             //display_.debug("Context allocated.\nSetting timeout response.");
-            timeval response_timeout;
-            response_timeout.tv_sec = 3;
-            response_timeout.tv_usec = 0;
-            modbus_set_response_timeout(mb_, &response_timeout);
+            //struct timeval response_timeout;
+            //response_timeout.tv_sec = 3;
+            //response_timeout.tv_usec = 0;
+            //modbus_set_response_timeout(mb_, &response_timeout);
+            modbus_set_response_timeout(mb_, 3, 0); //3sec, 0usec
 
             //display_.debug("Connecting modbus...");
             if(modbus_connect(mb_) == -1) 
@@ -38,6 +39,7 @@ class ModbusTCP
                 return false;
             }
 
+            modbus_set_slave(mb_, slave);
             std::cout << "Connected to the device.\n";
             return true;
         }
@@ -58,7 +60,7 @@ class ModbusTCP
 
             if (ret == -1 || ret != nb) 
             {
-                std::cout << "Error in writing on regiters. "<< modbus_strerror(errno)<< ".\n";
+                std::cout << "Error in writing on regiters: "<< modbus_strerror(errno)<< ".\n";
                 // closeConnection();
                 return false;
             }
@@ -67,11 +69,13 @@ class ModbusTCP
   
         bool read(int address, int register_number, std::vector<uint16_t> &message)
         {
+            
             message.resize(register_number);
-            int ret = modbus_read_registers(mb_, address, register_number, message.data());
-
+            
+            int ret = modbus_read_registers(mb_, address, register_number, message.data()); //Modbus function code 0x03
+            
             if (ret == -1 || ret != register_number) {
-                std::cout << "Error in reading registers. "<< modbus_strerror(errno)<< ".\n";
+                std::cout << "Error in reading registers. Error " << errno << ": "<< modbus_strerror(errno)<< ".\n";
                 // closeConnection();
                 return false;
             }
