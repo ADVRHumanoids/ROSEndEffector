@@ -42,7 +42,7 @@ namespace ROSEE {
         typedef std::shared_ptr<const QbhandHal> ConstPtr;
         
         QbhandHal( ros::NodeHandle* nh);
-        virtual ~QbhandHal() {};
+        virtual ~QbhandHal();
         
         virtual bool init() override;
         virtual bool sense() override;
@@ -53,6 +53,9 @@ namespace ROSEE {
         std::map<std::string, std::unique_ptr<std::mutex>> serial_protectors_;  // only callbacks must lock the serial resources
         std::map<int, std::string> connected_devices_;
         
+        double max_joint_pos_, min_joint_pos_;
+        double close_hand_value_, open_hand_value_;
+        
 //         handlers to manage the communication with qbdevices
         std::shared_ptr<qbrobotics_research_api::Communication> communication_handler_;
         std::shared_ptr<qbrobotics_research_api::Communication> communication_handler_legacy_;
@@ -61,12 +64,18 @@ namespace ROSEE {
         std::map<int, std::shared_ptr<qbrobotics_research_api::Device>> devices_;
 //         IDs of connected devices 
         std::vector<qbrobotics_research_api::Communication::ConnectedDeviceInfo> device_ids_;
+        
+        int getPositions(const int &id, const int &max_repeats, std::vector<short int> &positions);
+        int setCommandsAndWait(const int &id, const int &max_repeats, std::vector<short int> &commands);
+        int setCommandsAsync(const int &id, std::vector<short int> &commands);
 
         int getSerialPortsAndDevices(const int &max_repeats);
         int close(const std::string &serial_port);
         int activate(const int &id, const bool &command, const int &max_repeats);
         int activate(const int &id, const int &max_repeats);
         int deactivate(const int &id, const int &max_repeats);
+        
+        int setControlMode(const int &id, const int &max_repeats, uint8_t &control_id);
         int isActive(const int &id, const int &max_repeats, bool &status);
     };
     
