@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0.2)
 project(end_effector)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-std=c++11)
+add_compile_options(-std=c++14)
 
 ##test code coverage
 option(ROSEE_ENABLE_COVERAGE "Compile with coverage information" ON)
@@ -28,6 +28,10 @@ find_package(Eigen3 REQUIRED)
 #find_package(muparser REQUIRED) 
 find_library(_MUPARSER_LIB muparser REQUIRED)
 find_package(yaml-cpp REQUIRED)
+
+#qb softhand
+find_package(Serial REQUIRED)
+find_package(qbrobotics_driver REQUIRED)
 
 unset(matlogger2_FOUND CACHE)
 find_package(matlogger2 QUIET)
@@ -124,6 +128,11 @@ if (${PKG_modbus_FOUND})
     )
     list(APPEND libToInstall Onrobot3fg15Hal)
 endif(${PKG_modbus_FOUND})
+
+add_library(QbhandHal
+    src/HAL/QbhandHal.cpp
+)
+list(APPEND libToInstall QbhandHal)
 
 add_library(UniversalRosEndEffectorExecutor
     src/UniversalRosEndEffectorExecutor.cpp
@@ -304,6 +313,13 @@ if (${PKG_modbus_FOUND})
         PkgConfig::PKG_modbus
     )
 endif(${PKG_modbus_FOUND})
+
+target_link_libraries(QbhandHal
+    ${catkin_LIBRARIES}
+    EEHal
+    Serial::Serial
+    qbrobotics_driver::qbrobotics_driver
+)
 
 
 #############
