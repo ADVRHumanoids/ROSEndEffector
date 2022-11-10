@@ -142,9 +142,9 @@ bool ROSEE::Onrobot3fg15Hal::fillReadedValues() {
     
     //cout for debug
 //     std::cout << "r_status_:" << r_status_ << "\n";
-    std::cout << "r_raw_diameter_ (1/10mm): " << unsigned(r_raw_diameter_) << "\n";
-    std::cout << "max (1/10mm): " << unsigned(r_max_diameter_) << "\n";
-    std::cout << "min (1/10mm): " << unsigned(r_min_diameter_) << "\n";
+//    std::cout << "r_raw_diameter_ (1/10mm): " << unsigned(r_raw_diameter_) << "\n";
+//    std::cout << "max (1/10mm): " << unsigned(r_max_diameter_) << "\n";
+//    std::cout << "min (1/10mm): " << unsigned(r_min_diameter_) << "\n";
 //     std::cout << "r_diameter_fingertip_offset_:" << unsigned(r_diameter_fingertip_offset_) << "\n";
 //     std::cout << "r_force_:" << unsigned(r_force_) << "\n";
 //     std::cout << "r_finger_angle_:" << unsigned(r_finger_angle_) << "\n";
@@ -164,9 +164,6 @@ bool ROSEE::Onrobot3fg15Hal::readDiameterInit() {
     const int reg_address = 0x0201;
     const int n_address = 2;
 
-//     const int reg_address = 0;
-//     const int n_address = 1;
-
     if (!mb_.read(reg_address, n_address, max_min_diameter)) {
         std::cout << "Onrobot3fg15Hal: Error in reading register " << reg_address << std::endl;
         return false;
@@ -177,8 +174,8 @@ bool ROSEE::Onrobot3fg15Hal::readDiameterInit() {
     r_max_diameter_ = max_min_diameter[1];
     
     //cout for debug
-    std::cout << "r_min_diameter_: (1/10mm): " << unsigned(r_min_diameter_) << "\n";
-    std::cout << "r_max_diameter_: " << unsigned(r_max_diameter_) << "\n";
+//    std::cout << "r_min_diameter_: (1/10mm): " << unsigned(r_min_diameter_) << "\n";
+//    std::cout << "r_max_diameter_: " << unsigned(r_max_diameter_) << "\n";
     
     return true;
 }
@@ -193,11 +190,11 @@ bool ROSEE::Onrobot3fg15Hal::readWriteFingerSetupInit() {
     }
     
     //cout for debug
-    std::cout << "finger lenght: (1/10mm): " << finger_setup_data[0] << "\n";
-    std::cout << "finger position (1-2-3): " << finger_setup_data[2] << "\n";
-    std::cout << "finger offset: (1/100mm): " << finger_setup_data[3] << "\n";
+    //std::cout << "finger lenght: (1/10mm): " << finger_setup_data[0] << "\n";
+    //std::cout << "finger position (1-2-3): " << finger_setup_data[2] << "\n";
+    //std::cout << "finger offset: (1/100mm): " << finger_setup_data[3] << "\n";
     
-    finger_setup_data[2] = 2;
+    finger_setup_data[2] = 2; //position of the finger mount (1 2 3)
     
     if(!mb_.write(reg_addres, finger_setup_data)) {
         std::cout << "Onrobot3fg15Hal::move: Error in writing on register " << 0x0401 << std::endl;
