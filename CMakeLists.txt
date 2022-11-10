@@ -29,9 +29,7 @@ find_package(Eigen3 REQUIRED)
 find_library(_MUPARSER_LIB muparser REQUIRED)
 find_package(yaml-cpp REQUIRED)
 
-#qb softhand
-find_package(Serial REQUIRED)
-find_package(qbrobotics_driver REQUIRED)
+
 
 unset(matlogger2_FOUND CACHE)
 find_package(matlogger2 QUIET)
@@ -46,6 +44,15 @@ pkg_search_module(PKG_modbus IMPORTED_TARGET libmodbus)
 if (${PKG_modbus_FOUND})
     message("libmodbus found, compiling HALs dependent on this")
 endif (${PKG_modbus_FOUND})
+
+#qb softhand
+unset(qbrobotics_driver_FOUND CACHE)
+unset(Serial_FOUND CACHE)
+find_package(Serial QUIET)
+find_package(qbrobotics_driver QUIET)
+if (${qbrobotics_driver_FOUND} AND ${Serial_FOUND} )
+    message("qbrobotics_driver found, compiling HALs for qb Softhand")
+endif (${qbrobotics_driver_FOUND} AND ${Serial_FOUND})
 
 #Xbot stuff
 option(BUILD_WITH_XBOT2 "Compile also the HAL used with XBot2" OFF)
@@ -129,10 +136,12 @@ if (${PKG_modbus_FOUND})
     list(APPEND libToInstall Onrobot3fg15Hal)
 endif(${PKG_modbus_FOUND})
 
-add_library(QbhandHal
-    src/HAL/QbhandHal.cpp
-)
-list(APPEND libToInstall QbhandHal)
+if (${qbrobotics_driver_FOUND} AND ${Serial_FOUND} )
+    add_library(QbhandHal
+        src/HAL/QbhandHal.cpp
+    )
+    list(APPEND libToInstall QbhandHal)
+endif(${qbrobotics_driver_FOUND} AND ${Serial_FOUND} )
 
 add_library(UniversalRosEndEffectorExecutor
     src/UniversalRosEndEffectorExecutor.cpp
@@ -314,12 +323,14 @@ if (${PKG_modbus_FOUND})
     )
 endif(${PKG_modbus_FOUND})
 
-target_link_libraries(QbhandHal
-    ${catkin_LIBRARIES}
-    EEHal
-    Serial::Serial
-    qbrobotics_driver::qbrobotics_driver
-)
+if (${qbrobotics_driver_FOUND} AND ${Serial_FOUND} )
+    target_link_libraries(QbhandHal
+        ${catkin_LIBRARIES}
+        EEHal
+        Serial::Serial
+        qbrobotics_driver::qbrobotics_driver
+    )
+endif(${qbrobotics_driver_FOUND} AND ${Serial_FOUND} )
 
 
 #############
