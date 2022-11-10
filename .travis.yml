@@ -1,7 +1,7 @@
 os: linux
 language: cpp
 compiler: g++
-dist: xenial
+dist: focal
 notifications:
   email:
     recipients:
@@ -20,10 +20,10 @@ script:
 - sudo apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
 
 - sudo apt-get update
-- sudo apt-get install ros-kinetic-desktop ros-kinetic-srdfdom
+- sudo apt-get install ros-noetic-desktop ros-noetic-srdfdom
 
 # moveit 
-- sudo apt-get install ros-kinetic-moveit
+- sudo apt-get install ros-noetic-moveit
 
 # basic tools
 - sudo apt-get install git cmake doxygen
@@ -34,7 +34,7 @@ script:
 
 #source env variables and install missing packages
 - pwd
-- source /opt/ros/kinetic/setup.bash
+- source /opt/ros/noetic/setup.bash
 
 #install modbus to compile also some hal
 - sudo apt-get install libmodbus-dev
@@ -47,8 +47,8 @@ script:
 - git clone -b master https://github.com/ADVRHumanoids/rosee_msg.git
 - cd rosee_msg && mkdir build && cd build
 # workaround for installing ROS catkin package without catkin_workspace
-- cmake .. -DCMAKE_INSTALL_PREFIX:=/opt/ros/kinetic
-- sudo chmod -R 777 /opt/ros/kinetic
+- cmake .. -DCMAKE_INSTALL_PREFIX:=/opt/ros/noetic
+- sudo chmod -R 777 /opt/ros/noetic
 - make install
 
 #install muparser
@@ -66,8 +66,8 @@ script:
 # download and install xbot2
 # xbot dependencies
 - sudo apt-get install libmatio-dev
-- wget https://github.com/ADVRHumanoids/XBotControl/releases/download/2.0-devel-core-updated/xenial-latest.tar.gz
-- tar -xvf xenial-latest.tar.gz && cd xenial-16.04-2020_12_13_21_10_00
+- wget https://github.com/ADVRHumanoids/XBotControl/releases/download/2.0-devel-core-updated/focal-latest.tar.gz
+- tar -xvf focal-latest.tar.gz && cd focal-16.04-2020_12_13_21_10_00
 - sudo ./install.sh
 - chmod +x ./setup.sh
 - ./setup.sh
