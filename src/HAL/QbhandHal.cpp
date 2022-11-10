@@ -24,6 +24,9 @@ ROSEE::QbhandHal::QbhandHal ( ros::NodeHandle *nh) : EEHal ( nh ) {
     close_hand_value_ = 19000;
     open_hand_value_ = 0;
     
+    //real hand id type is 2, but it is casted as int to become 1. This one is then used as key for the devices_ map
+    hand_id_ = 1;
+    
 }
 
 ROSEE::QbhandHal::~QbhandHal() { 
@@ -47,25 +50,43 @@ bool ROSEE::QbhandHal::init () {
         ROS_WARN_STREAM_NAMED("communication_handler", "[CommunicationHandler] is waiting for devices...");
         ros::Duration(1.0).sleep();
     }
+        
+    if (activate(hand_id_, 3) >= 3) {
+        std::cout << "Error in activating device " << hand_id_ << std::endl;
+        return false;
+    } 
+    std::cout << "Device " << hand_id_ << " active!" << std::endl;
     
-    //activate motors
-    for (const auto& dev_pair : connected_devices_) {
-        if (activate(dev_pair.first, 3) >= 3) {
-            std::cout << "Error in activating device " << dev_pair.first << std::endl;
-            return false;
-        } 
-        std::cout << "Device " << dev_pair.first << " active!" << std::endl;
-    }
+    //control mode makes everyithing crashes
+//     uint8_t control_id = 0; //position mode
+//     if (setControlMode(hand_id_, 3, control_id) >= 3) {
+//         std::cout << "Error in setting control mode" << std::endl;
+//         return false;
+//     } 
     
-    //control mode 
-    uint8_t control_id = 0; //position mode
-    for (const auto& dev_pair : connected_devices_) {
-        if (setControlMode(dev_pair.first, 3, control_id) >= 3) {
-            std::cout << "Error in activating device " << dev_pair.first << std::endl;
-            return false;
-        } 
-        std::cout << "Device " << dev_pair.first << " active!" << std::endl;
-    }
+    //input mode makes everyithing crashes
+//     uint8_t input_id = 0; //usb mode
+//     if (setInputMode(hand_id_, 3, input_id) >= 3) {
+//         std::cout << "Error in setting input mode" << std::endl;
+//         return false;
+//     } 
+
+    _js_msg.position.resize(1);
+    _js_msg.velocity.resize(1);
+    _js_msg.effort.resize(1);
+    _js_msg.name.resize(1);
+    
+    _mr_msg.position.resize(1);
+    _mr_msg.velocity.resize(1);
+    _mr_msg.effort.resize(1);
+    _mr_msg.name.resize(1);
+    
+    _mr_msg.position[0] = 0;
+    
+    _js_msg.header.stamp = ros::Time::now();
+    _js_msg.header.seq =0;
+    
+    _js_msg.name[0] = "qbhand_synergy_joint";
     
     return true;
 }
@@ -77,15 +98,14 @@ bool ROSEE::QbhandHal::sense() {
     //failures = isActive(devices.first, max_repeats, status);
     
     std::vector<short int> positions(1);
+    std::string info;
     
-    for (const auto& dev_pair : connected_devices_) {
-        getPositions(dev_pair.first, 3, positions);
-    }
+    getPositions(hand_id_, 3, positions);
     
     double old_range = (close_hand_value_ - open_hand_value_);  
     double new_range = (max_joint_pos_ - min_joint_pos_);  
     
-    _js_msg.position[0] = (((_mr_msg.position[0] - open_hand_value_) * new_range) / old_range) + min_joint_pos_;
+    _js_msg.position[0] = (((positions[0] - open_hand_value_) * new_range) / old_range) + min_joint_pos_;
     _js_msg.header.stamp = ros::Time::now();
     _js_msg.header.seq =_js_msg.header.seq+1;
     
@@ -102,10 +122,8 @@ bool ROSEE::QbhandHal::move() {
     
     commands.at(0) = std::round(command);
     
-    for (const auto& dev_pair : connected_devices_) {
-        setCommandsAndWait(dev_pair.first, 3, commands);
-        //setCommandsAsync(dev_pair.first, 3, commands);
-    }
+    //setCommandsAndWait(hand_id_, 3, commands);
+    setCommandsAsync(hand_id_, commands);
 
     return true;
 }
@@ -240,11 +258,35 @@ int ROSEE::QbhandHal::setControlMode(const int &id, const int &max_repeats, uint
   return failures;
 }
 
+int ROSEE::QbhandHal::setInputMode(const int &id, const int &max_repeats, uint8_t &input_id) {
+  int failures = 0;
+  while (failures <= max_repeats) {
+    if (devices_.at(id)->setParamInputMode(input_id) < 0) {
+      failures++;
+      continue;
+    }
+    break;
+  }
+  return failures;
+}
+
 int ROSEE::QbhandHal::getPositions(const int &id, const int &max_repeats, std::vector<short int> &positions) {
   int failures = 0;
   positions.resize(3);  // required by 'getPositions()'
   while (failures <= max_repeats) {
     if (devices_.at(id)->getPositions(positions) < 0) {
+      failures++;
+      continue;
+    }
+    break;
+  }
+  return failures;
+}
+
+int ROSEE::QbhandHal::getInfo(const int &id, const int &max_repeats, std::string &info) {
+  int failures = 0;
+  while (failures <= max_repeats) {
+    if (devices_.at(id)->getInfo(INFO_ALL, info) < 0) {
       failures++;
       continue;
     }

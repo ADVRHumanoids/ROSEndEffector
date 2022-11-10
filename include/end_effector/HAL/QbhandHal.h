@@ -55,6 +55,7 @@ namespace ROSEE {
         
         double max_joint_pos_, min_joint_pos_;
         double close_hand_value_, open_hand_value_;
+        int hand_id_;
         
 //         handlers to manage the communication with qbdevices
         std::shared_ptr<qbrobotics_research_api::Communication> communication_handler_;
@@ -66,6 +67,7 @@ namespace ROSEE {
         std::vector<qbrobotics_research_api::Communication::ConnectedDeviceInfo> device_ids_;
         
         int getPositions(const int &id, const int &max_repeats, std::vector<short int> &positions);
+        int getInfo(const int &id, const int &max_repeats, std::string &info);
         int setCommandsAndWait(const int &id, const int &max_repeats, std::vector<short int> &commands);
         int setCommandsAsync(const int &id, std::vector<short int> &commands);
 
@@ -76,6 +78,7 @@ namespace ROSEE {
         int deactivate(const int &id, const int &max_repeats);
         
         int setControlMode(const int &id, const int &max_repeats, uint8_t &control_id);
+        int setInputMode(const int &id, const int &max_repeats, uint8_t &input_id);
         int isActive(const int &id, const int &max_repeats, bool &status);
     };
     
