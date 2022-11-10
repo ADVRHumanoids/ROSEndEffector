@@ -1,0 +1,44 @@
+/*
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+*/
+
+#include <end_effector/HAL/DaganaHal.h>
+
+ROSEE::DaganaHal::DaganaHal ( ros::NodeHandle *nh) : EEHal ( nh ) {
+    
+    _dagana_name = "dagana_2";
+    
+    _hal_joint_state_pub = nh->advertise<sensor_msgs::JointState>("/xbotcore/gripper/" + _dagana_name + "/command", 1);
+    _hal_joint_state_sub = nh->subscribe("/xbotcore/gripper/" + _dagana_name + "/state", 1, &ROSEE::DaganaHal::hal_js_clbk, this);
+}
+
+bool ROSEE::DaganaHal::init() {
+    return true;
+}
+
+bool ROSEE::DaganaHal::sense() {
+    //do nothing, it is the hal_js_clbk who "sense"
+    return true;
+}
+
+bool ROSEE::DaganaHal::move() {
+    _hal_joint_state_pub.publish(_mr_msg);
+    return true;
+}
+
+void ROSEE::DaganaHal::hal_js_clbk(const sensor_msgs::JointState::ConstPtr& msg) {
+    
+    //TODO check if msg.name is correct joint name
+    _js_msg = *msg;
+}
+

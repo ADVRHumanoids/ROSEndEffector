@@ -125,6 +125,12 @@ if (${PKG_modbus_FOUND})
     list(APPEND libToInstall Onrobot3fg15Hal)
 endif(${PKG_modbus_FOUND})
 
+add_library(DaganaHal
+    src/HAL/DaganaHal.cpp
+)   
+list(APPEND libToInstall DaganaHal)
+
+  
 add_library(UniversalRosEndEffectorExecutor
     src/UniversalRosEndEffectorExecutor.cpp
 )
@@ -305,6 +311,10 @@ if (${PKG_modbus_FOUND})
     )
 endif(${PKG_modbus_FOUND})
 
+target_link_libraries(DaganaHal
+    ${catkin_LIBRARIES}
+    EEHal 
+)
 
 #############
 ## Install ##
