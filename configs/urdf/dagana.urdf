@@ -40,10 +40,10 @@
     </collision>
   </link>
   <joint name="dagana_gripper_claw_joint" type="revolute">
-    <origin rpy="1.57079632679 0 3.14159265359" xyz="0.0 -0.028 0.05025"/>
+    <origin rpy="0.5 0 3.14159265359" xyz="0.0 -0.028 0.05025"/>
     <parent link="dagana_gripper_top_link"/>
     <child link="dagana_gripper_bottom_link"/>
-    <axis xyz="-1 0 0"/>
+    <axis xyz="1 0 0"/>
     <limit effort="1000" lower="0" upper="1" velocity="2.0"/>
   </joint>
   <link name="dagana_gripper_bottom_link">

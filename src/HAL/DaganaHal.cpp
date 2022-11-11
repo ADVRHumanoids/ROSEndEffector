@@ -40,5 +40,7 @@ void ROSEE::DaganaHal::hal_js_clbk(const sensor_msgs::JointState::ConstPtr& msg)
     
     //TODO check if msg.name is correct joint name
     _js_msg = *msg;
+    
+    _js_msg.name[0] = "dagana_gripper_claw_joint";
 }
 
