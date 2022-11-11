@@ -22,7 +22,7 @@ bool ROSEE::Onrobot3fg15Hal::init()
 {
     //TODO hardcoded bad
     gripper_ip_ = "192.168.1.1";
-    slave_device_num_ = 65;
+    slave_device_num_ = 66; //WARNING if connection time out, try change this to 65 or 66
     
     min_joint_pos_ = 0;
     max_joint_pos_ = 2.9;
