@@ -9,10 +9,14 @@
   <!-- ********* -->
   <link name="robot_onrobot_3fg15_base_link">
     <inertial>
-      <mass value="0.54"/>
-      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+<!--      <mass value="0.54"/>-->
+      <mass value="1.15"/>
+
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.055"/>
       <!-- <inertia ixx="0.000888868887021" ixy="-0.00012239074652" ixz="3.98699829666e-05" iyy="0.000888001373233" iyz="-9.33825115206e-05" izz="0.0007176834609"/> -->
-      <inertia ixx="0.0010845" ixy="0.0" ixz="0.0" iyy="0.00009" iyz="0.0" izz="0.0010305"/>
+<!--      <inertia ixx="0.0010845" ixy="0.0" ixz="0.0" iyy="0.00009" iyz="0.0" izz="0.0010305"/>-->
+<!--  as a cube of side 110mm     -->
+      <inertia ixx="0.00231916666666666667" iyy="0.00231916666666666667" izz="0.00231916666666666667" ixy="0" ixz="0" iyz="0"/>
     </inertial>
     <visual>
       <origin rpy="-1.5707963267948966 0 0" xyz="0 0 0.058"/>
