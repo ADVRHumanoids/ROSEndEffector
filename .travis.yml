@@ -89,6 +89,11 @@ script:
 # to test with schunk hand we would need to install its package...
 # add other hand test...
 
+before_deploy:
+  - yes | gem update --system --force
+  - gem install bundler
+  - gem install uri
+  - gem install logger
 
 deploy:
   provider: pages
