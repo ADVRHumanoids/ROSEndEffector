@@ -8,7 +8,7 @@ notifications:
       - luca.muratore89@gmail.com
       - davide.torielli@iit.it
     on_success: never
-    on_failure: always
+    on_failure: never
 
 before_install:
 
